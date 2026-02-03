@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/sections/Navigation';
+import Hero from '../components/sections/Hero';
+import About from '../components/sections/About';
+import Experience from '../components/sections/Experience';
+import Research from '../components/sections/Research';
+import EducationSection from '../components/sections/Education';
+import Contact from '../components/sections/Contact';
+---
+
+<Layout>
+  <Navigation client:load />
+  <main>
+    <Hero client:load />
+    <About client:visible />
+    <Experience client:visible />
+    <Research client:visible />
+    <EducationSection client:visible />
+    <Contact client:visible />
+  </main>
+</Layout>
