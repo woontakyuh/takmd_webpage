@@ -55,7 +55,7 @@ export const profile = {
     googleScholar: "https://scholar.google.com/citations?user=YOUR_ID",
     researchGate: "https://www.researchgate.net/profile/Woon-Tak-Yuh",
     email: "contact@takmd.com",
-    linkedin: "https://linkedin.com/in/woontakyuh",
+    linkedin: "https://www.linkedin.com/in/woon-tak-yuh-03420311b/",
   },
 } as const;
 
