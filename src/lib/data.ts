@@ -53,7 +53,7 @@ export const profile = {
   ],
   links: {
     googleScholar: "https://scholar.google.com/citations?user=YOUR_ID",
-    researchGate: "https://www.researchgate.net/profile/YOUR_PROFILE",
+    researchGate: "https://www.researchgate.net/profile/Woon-Tak-Yuh",
     email: "contact@takmd.com",
     linkedin: "https://linkedin.com/in/woontakyuh",
   },
