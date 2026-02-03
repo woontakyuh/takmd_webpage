@@ -1,13 +1,8 @@
 @import "tailwindcss";
 @import "@fontsource-variable/inter";
-@import "@fontsource-variable/jetbrains-mono";
 
 @theme {
   --font-sans: "Inter Variable", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono Variable", monospace;
-
-  --color-primary: #0d9488;
-  --color-primary-hover: #0f766e;
 }
 
 @layer base {
@@ -16,51 +11,67 @@
   }
 
   body {
-    @apply bg-white text-neutral-800 font-sans antialiased;
-    @apply leading-relaxed;
+    @apply bg-neutral-50 text-neutral-800 font-sans antialiased;
+    @apply text-[15px] leading-relaxed;
   }
 
   ::selection {
-    @apply bg-teal-100 text-teal-900;
+    @apply bg-teal-200 text-teal-900;
   }
 
   a {
-    @apply text-neutral-800 underline decoration-neutral-300 underline-offset-2;
-    @apply hover:decoration-teal-500 transition-colors;
+    @apply text-teal-600 hover:text-teal-700 transition-colors;
   }
 
-  h1, h2, h3 {
-    @apply font-semibold text-neutral-900;
+  h2 {
+    @apply text-2xl sm:text-3xl font-bold text-neutral-900 leading-tight;
   }
 }
 
 @layer components {
-  .divider {
-    @apply border-t border-neutral-200 my-8;
+  .section {
+    @apply py-16 sm:py-24 border-b border-neutral-200;
   }
 
-  .section-icon {
-    @apply w-5 h-5 text-teal-600 inline-block mr-2;
+  .section:last-of-type {
+    @apply border-b-0;
   }
 
-  .entry {
-    @apply py-6;
+  .container {
+    @apply max-w-5xl mx-auto px-6;
   }
 
-  .entry + .entry {
-    @apply border-t border-neutral-100;
+  .prose {
+    @apply text-neutral-600 leading-relaxed;
   }
 
-  .tag {
-    @apply inline-block px-2 py-0.5 text-xs rounded bg-neutral-100 text-neutral-600 mr-2 mb-2;
+  .prose strong {
+    @apply text-neutral-800 font-semibold;
   }
 
-  .link-arrow {
-    @apply inline-flex items-center gap-1 text-sm text-teal-600 no-underline hover:text-teal-700;
+  .card {
+    @apply bg-white rounded-xl p-6 border border-neutral-200;
+    @apply hover:border-neutral-300 hover:shadow-sm transition-all;
   }
 
-  .link-arrow::before {
-    content: "→";
-    @apply text-teal-500;
+  .stat-number {
+    @apply text-4xl sm:text-5xl font-bold text-teal-600;
+  }
+
+  .stat-label {
+    @apply text-sm text-neutral-500 mt-1;
+  }
+
+  .table-row {
+    @apply flex justify-between items-center py-3 border-b border-neutral-100;
+  }
+
+  .table-row:last-child {
+    @apply border-b-0;
+  }
+
+  .social-icon {
+    @apply w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center;
+    @apply text-neutral-600 hover:bg-teal-100 hover:text-teal-600 transition-all;
   }
 }

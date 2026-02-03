@@ -3,180 +3,234 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-  <main class="max-w-2xl mx-auto px-6 py-16">
-    
-    <!-- Header -->
-    <header class="mb-4">
-      <h1 class="text-2xl font-semibold text-neutral-900">Woon Tak Yuh, MD</h1>
-    </header>
-
-    <hr class="divider" />
-
-    <!-- Social Links -->
-    <nav class="flex flex-wrap gap-x-4 gap-y-2 text-sm mb-4">
-      <a href="https://scholar.google.com/citations?user=YOUR_ID" target="_blank" rel="noopener">Google Scholar</a>
-      <span class="text-neutral-300">—</span>
-      <a href="https://www.researchgate.net/profile/Woon-Tak-Yuh" target="_blank" rel="noopener">ResearchGate</a>
-      <span class="text-neutral-300">—</span>
-      <a href="https://www.linkedin.com/in/woon-tak-yuh-03420311b/" target="_blank" rel="noopener">LinkedIn</a>
-      <span class="text-neutral-300">—</span>
-      <a href="mailto:woontak.yuh@gmail.com">Email</a>
-    </nav>
-
-    <hr class="divider" />
-
-    <!-- Bio -->
-    <section class="mb-4">
-      <p class="text-neutral-700 leading-relaxed">
-        Woon Tak is a <strong>neurosurgeon</strong> and <strong>clinical AI researcher</strong> with expertise in minimally invasive spine surgery. 
-        Currently, he serves as Director of the Spine Endoscopy Center at <a href="#" class="text-teal-600">Davos Hospital</a>, 
-        specializing in <strong>Unilateral Biportal Endoscopy (UBE)</strong>. He is passionate about advancing surgical techniques 
-        through education and international collaboration.
-      </p>
-    </section>
-
-    <hr class="divider" />
-
-    <!-- Background -->
-    <section class="mb-4">
-      <h2 class="flex items-center text-lg font-semibold mb-6">
-        <svg class="section-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
-        </svg>
-        Background
-      </h2>
-
-      <div class="entry">
-        <h3 class="font-medium text-neutral-900">Director, Spine Endoscopy Center</h3>
-        <p class="text-sm text-neutral-500 mb-2">Davos Hospital · Present</p>
-        <p class="text-neutral-600 text-sm">Leading advanced endoscopic spine surgery techniques and international physician training programs.</p>
-      </div>
-
-      <div class="entry">
-        <h3 class="font-medium text-neutral-900">Assistant Professor, Department of Neurosurgery</h3>
-        <p class="text-sm text-neutral-500 mb-2">Hallym University Dongtan Sacred Heart Hospital · Previous</p>
-        <p class="text-neutral-600 text-sm">Academic position combining clinical practice with research and medical education.</p>
-      </div>
-
-      <div class="entry">
-        <h3 class="font-medium text-neutral-900">MS in Neurosurgery</h3>
-        <p class="text-sm text-neutral-500">Seoul National University College of Medicine</p>
-      </div>
-    </section>
-
-    <hr class="divider" />
-
-    <!-- Research -->
-    <section class="mb-4">
-      <h2 class="flex items-center text-lg font-semibold mb-6">
-        <svg class="section-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-        </svg>
-        Research
-      </h2>
-
-      <div class="flex gap-8 mb-6 text-center">
-        <div>
-          <div class="text-2xl font-semibold text-teal-600">11</div>
-          <div class="text-xs text-neutral-500">h-index</div>
-        </div>
-        <div>
-          <div class="text-2xl font-semibold text-teal-600">30+</div>
-          <div class="text-xs text-neutral-500">Presentations</div>
-        </div>
-        <div>
-          <div class="text-2xl font-semibold text-teal-600">10+</div>
-          <div class="text-xs text-neutral-500">Workshops</div>
-        </div>
-      </div>
-
-      <div class="entry">
-        <h3 class="font-medium text-neutral-900">Endoscopic Spine Surgery</h3>
-        <p class="text-neutral-600 text-sm mb-3">Developing and refining minimally invasive surgical techniques, particularly Unilateral Biportal Endoscopy (UBE) for various spinal conditions.</p>
-        <a href="https://scholar.google.com/citations?user=YOUR_ID" target="_blank" rel="noopener" class="link-arrow">View publications</a>
-      </div>
-
-      <div class="entry">
-        <h3 class="font-medium text-neutral-900">Clinical AI Applications</h3>
-        <p class="text-neutral-600 text-sm mb-3">Leveraging artificial intelligence for improved diagnosis, treatment planning, and surgical outcome prediction in spine surgery.</p>
-        <a href="https://www.researchgate.net/profile/Woon-Tak-Yuh" target="_blank" rel="noopener" class="link-arrow">View on ResearchGate</a>
-      </div>
-    </section>
-
-    <hr class="divider" />
-
-    <!-- Education & Teaching -->
-    <section class="mb-4">
-      <h2 class="flex items-center text-lg font-semibold mb-6">
-        <svg class="section-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-        </svg>
-        Education & Teaching
-      </h2>
-
-      <div class="entry">
-        <h3 class="font-medium text-neutral-900">International Endoscopic Spine Surgery Training Center</h3>
-        <p class="text-sm text-neutral-500 mb-2">2024 – 2025</p>
-        <p class="text-neutral-600 text-sm">Training international physicians in advanced endoscopic spine surgery techniques. Surgeons from multiple countries worldwide.</p>
-      </div>
-
-      <div class="entry">
-        <h3 class="font-medium text-neutral-900">Endoscopic Spine Surgery Workshop for Beginners</h3>
-        <p class="text-sm text-neutral-500 mb-2">2024 – 2025</p>
-        <p class="text-neutral-600 text-sm mb-3">Comprehensive training program for surgeons new to endoscopic techniques:</p>
-        <div class="flex flex-wrap">
-          <span class="tag">Dummy Workshop</span>
-          <span class="tag">Live Pig Workshop</span>
-          <span class="tag">Cadaver Workshop</span>
+  <main>
+    <!-- Hero Section -->
+    <section class="section bg-white">
+      <div class="container">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h1 class="text-4xl sm:text-5xl font-bold text-neutral-900 mb-4">
+              Woon Tak Yuh, MD
+            </h1>
+            <p class="text-xl text-neutral-500 mb-6">
+              Spine Surgeon · AI Researcher · Educator
+            </p>
+            <p class="prose text-lg">
+              I'm a <strong>neurosurgeon</strong> specializing in <strong>minimally invasive spine surgery</strong>. 
+              I spend my days operating, researching clinical AI applications, and training the next generation of spine surgeons.
+            </p>
+          </div>
+          <div class="flex justify-center md:justify-end">
+            <div class="w-48 h-48 sm:w-64 sm:h-64 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-6xl sm:text-8xl font-bold shadow-lg">
+              W
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <hr class="divider" />
-
-    <!-- Affiliations -->
-    <section class="mb-4">
-      <h2 class="flex items-center text-lg font-semibold mb-6">
-        <svg class="section-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-        </svg>
-        Affiliations
-      </h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-        <div>
-          <p class="font-medium text-neutral-800">KOMISS</p>
-          <p class="text-neutral-500">Academic Secretary</p>
+    <!-- I Operate Section -->
+    <section class="section bg-white">
+      <div class="container">
+        <h2 class="mb-8">I operate</h2>
+        <div class="prose max-w-3xl mb-10">
+          <p class="text-lg">
+            Currently, I serve as <strong>Director of the Spine Endoscopy Center</strong> at 
+            <a href="#">Davos Hospital</a>, where I specialize in <strong>Unilateral Biportal Endoscopy (UBE)</strong> — 
+            a cutting-edge minimally invasive technique for treating various spinal conditions.
+          </p>
+          <p class="text-lg mt-4">
+            Previously, I was <strong>Assistant Professor</strong> in the Department of Neurosurgery at 
+            Hallym University Dongtan Sacred Heart Hospital.
+          </p>
         </div>
-        <div>
-          <p class="font-medium text-neutral-800">KOSESS</p>
-          <p class="text-neutral-500">Research Committee</p>
-        </div>
-        <div>
-          <p class="font-medium text-neutral-800">Neurospine Journal</p>
-          <p class="text-neutral-500">Editor</p>
-        </div>
-        <div>
-          <p class="font-medium text-neutral-800">Korean Society of Spine Surgery</p>
-          <p class="text-neutral-500">Lifetime Member, IT Committee</p>
-        </div>
-        <div>
-          <p class="font-medium text-neutral-800">NASS</p>
-          <p class="text-neutral-500">Full Member</p>
-        </div>
-        <div>
-          <p class="font-medium text-neutral-800">KASS</p>
-          <p class="text-neutral-500">Full Member</p>
+        
+        <div class="grid sm:grid-cols-3 gap-6">
+          <div class="card text-center">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Years of Experience</div>
+          </div>
+          <div class="card text-center">
+            <div class="stat-number">UBE</div>
+            <div class="stat-label">Subspecialty</div>
+          </div>
+          <div class="card text-center">
+            <div class="stat-number">AI</div>
+            <div class="stat-label">Research Focus</div>
+          </div>
         </div>
       </div>
     </section>
 
-    <hr class="divider" />
+    <!-- I Research Section -->
+    <section class="section">
+      <div class="container">
+        <h2 class="mb-8">I research</h2>
+        <div class="prose max-w-3xl mb-10">
+          <p class="text-lg">
+            My research bridges <strong>clinical practice</strong> and <strong>artificial intelligence</strong>. 
+            I'm passionate about using AI to improve diagnosis, treatment planning, and surgical outcomes in spine surgery.
+          </p>
+        </div>
+
+        <div class="grid sm:grid-cols-4 gap-6 mb-12">
+          <div class="card text-center">
+            <div class="stat-number">11</div>
+            <div class="stat-label">h-index</div>
+          </div>
+          <div class="card text-center">
+            <div class="stat-number">30+</div>
+            <div class="stat-label">Presentations</div>
+          </div>
+          <div class="card text-center">
+            <div class="stat-number">10+</div>
+            <div class="stat-label">Workshops Led</div>
+          </div>
+          <div class="card text-center">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Publications</div>
+          </div>
+        </div>
+
+        <h3 class="text-lg font-semibold text-neutral-900 mb-4">Research Areas</h3>
+        <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+          <div class="table-row px-6">
+            <span class="font-medium text-neutral-800">Endoscopic Spine Surgery</span>
+            <a href="https://scholar.google.com/citations?user=YOUR_ID" target="_blank" class="text-sm">View papers →</a>
+          </div>
+          <div class="table-row px-6">
+            <span class="font-medium text-neutral-800">Clinical AI Applications</span>
+            <a href="https://www.researchgate.net/profile/Woon-Tak-Yuh" target="_blank" class="text-sm">View papers →</a>
+          </div>
+          <div class="table-row px-6">
+            <span class="font-medium text-neutral-800">Surgical Outcome Analysis</span>
+            <span class="text-sm text-neutral-400">Ongoing</span>
+          </div>
+          <div class="table-row px-6">
+            <span class="font-medium text-neutral-800">Minimally Invasive Techniques</span>
+            <span class="text-sm text-neutral-400">Ongoing</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- I Teach Section -->
+    <section class="section bg-white">
+      <div class="container">
+        <h2 class="mb-8">I teach</h2>
+        <div class="prose max-w-3xl mb-10">
+          <p class="text-lg">
+            I'm committed to <strong>educating the next generation</strong> of spine surgeons through comprehensive 
+            training programs. From simulation to live surgery, I help surgeons worldwide master endoscopic techniques.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="card">
+            <div class="text-sm text-teal-600 font-medium mb-2">2024 – 2025</div>
+            <h3 class="text-lg font-semibold text-neutral-900 mb-2">International Training Center</h3>
+            <p class="text-neutral-600 text-sm">
+              Training international physicians in advanced endoscopic spine surgery techniques. 
+              Surgeons from 10+ countries worldwide.
+            </p>
+          </div>
+          <div class="card">
+            <div class="text-sm text-teal-600 font-medium mb-2">2024 – 2025</div>
+            <h3 class="text-lg font-semibold text-neutral-900 mb-2">Beginner Workshop Series</h3>
+            <p class="text-neutral-600 text-sm mb-4">
+              Comprehensive training program for surgeons new to endoscopic techniques.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1 bg-neutral-100 rounded-full text-xs text-neutral-600">Dummy Workshop</span>
+              <span class="px-3 py-1 bg-neutral-100 rounded-full text-xs text-neutral-600">Live Pig Workshop</span>
+              <span class="px-3 py-1 bg-neutral-100 rounded-full text-xs text-neutral-600">Cadaver Workshop</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Affiliations Section -->
+    <section class="section">
+      <div class="container">
+        <h2 class="mb-8">I'm connected</h2>
+        <div class="prose max-w-3xl mb-10">
+          <p class="text-lg">
+            I actively contribute to the medical community through various <strong>academic societies</strong> 
+            and <strong>editorial roles</strong>.
+          </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="card">
+            <div class="font-semibold text-neutral-900">KOMISS</div>
+            <div class="text-sm text-neutral-500">Academic Secretary</div>
+          </div>
+          <div class="card">
+            <div class="font-semibold text-neutral-900">KOSESS</div>
+            <div class="text-sm text-neutral-500">Research Committee</div>
+          </div>
+          <div class="card">
+            <div class="font-semibold text-neutral-900">Neurospine Journal</div>
+            <div class="text-sm text-neutral-500">Editor</div>
+          </div>
+          <div class="card">
+            <div class="font-semibold text-neutral-900">Korean Society of Spine Surgery</div>
+            <div class="text-sm text-neutral-500">Lifetime Member · IT Committee</div>
+          </div>
+          <div class="card">
+            <div class="font-semibold text-neutral-900">NASS</div>
+            <div class="text-sm text-neutral-500">Full Member</div>
+          </div>
+          <div class="card">
+            <div class="font-semibold text-neutral-900">KASS</div>
+            <div class="text-sm text-neutral-500">Full Member</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section bg-white">
+      <div class="container">
+        <h2 class="mb-8">Let's connect</h2>
+        <div class="prose max-w-3xl mb-10">
+          <p class="text-lg">
+            Interested in <strong>collaboration</strong>, <strong>training programs</strong>, or just want to chat about spine surgery? 
+            I'd love to hear from you.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="mailto:woontak.yuh@gmail.com" class="social-icon" title="Email">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+            </svg>
+          </a>
+          <a href="https://scholar.google.com/citations?user=YOUR_ID" target="_blank" class="social-icon" title="Google Scholar">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/>
+            </svg>
+          </a>
+          <a href="https://www.researchgate.net/profile/Woon-Tak-Yuh" target="_blank" class="social-icon" title="ResearchGate">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.586 0c-.818 0-1.508.19-2.073.565-.563.377-.97.936-1.213 1.68a3.193 3.193 0 0 0-.112.437 8.365 8.365 0 0 0-.078.53 9 9 0 0 0-.05.727c-.01.282-.013.621-.013 1.016a31.121 31.121 0 0 0 .014 1.017 9 9 0 0 0 .05.727 7.946 7.946 0 0 0 .078.53h-.005a3.334 3.334 0 0 0 .112.438c.243.743.65 1.303 1.213 1.68.565.376 1.256.564 2.073.564.8 0 1.536-.213 2.105-.603.57-.39.94-.916 1.175-1.65.076-.235.135-.558.177-.93a10.9 10.9 0 0 0 .043-1.207v-.82c0-.095-.047-.142-.14-.142h-3.064c-.094 0-.14.047-.14.141v.956c0 .094.046.14.14.14h1.666c.056 0 .084.03.084.086 0 .36 0 .62-.036.865-.038.244-.1.447-.147.606-.108.335-.311.622-.603.853-.29.232-.68.347-1.138.347-.422 0-.752-.132-.99-.396a2.09 2.09 0 0 1-.49-.907 4.06 4.06 0 0 1-.152-1.014 9.292 9.292 0 0 1-.023-.882c0-.298.01-.55.023-.757.015-.254.058-.486.116-.698.06-.212.15-.4.267-.56.12-.158.27-.28.456-.372.186-.092.405-.138.66-.138.18 0 .34.027.473.08.134.056.244.126.336.21.09.086.162.19.22.318.056.13.096.26.12.395.027.09.063.136.113.136.043 0 .092-.01.14-.026l.79-.308c.094-.038.14-.09.14-.156 0-.02-.003-.044-.01-.07a2.5 2.5 0 0 0-.37-.783 2.48 2.48 0 0 0-.637-.602 3.107 3.107 0 0 0-.9-.405A3.9 3.9 0 0 0 19.586 0zM6.293 5.2c-1.41 0-2.47.37-3.177 1.11-.71.74-1.065 1.73-1.065 2.97 0 1.26.355 2.26 1.065 3.005.707.743 1.767 1.115 3.177 1.115.64 0 1.203-.1 1.696-.3.49-.2.9-.49 1.225-.865.325-.374.567-.82.726-1.34.16-.514.24-1.088.24-1.72V8.87c0-.615-.08-1.17-.24-1.67a3.322 3.322 0 0 0-.726-1.3 3.262 3.262 0 0 0-1.225-.833 4.367 4.367 0 0 0-1.696-.32v.001zm-.18 1.25c.31 0 .57.056.78.168.21.112.38.275.51.492.13.217.227.486.288.805.06.32.09.68.09 1.082v.405c0 .403-.03.764-.09 1.083-.06.32-.158.588-.288.804-.13.216-.3.38-.51.49-.21.11-.47.166-.78.166-.31 0-.57-.056-.78-.167-.21-.11-.38-.273-.51-.49a2.426 2.426 0 0 1-.29-.804 5.685 5.685 0 0 1-.088-1.082v-.405c0-.403.03-.764.088-1.083.06-.32.157-.588.29-.805.13-.217.3-.38.51-.492.21-.112.47-.168.78-.168z"/>
+            </svg>
+          </a>
+          <a href="https://www.linkedin.com/in/woon-tak-yuh-03420311b/" target="_blank" class="social-icon" title="LinkedIn">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="text-center text-sm text-neutral-400 pt-4">
-      <p>© 2025 Woon Tak Yuh, MD</p>
+    <footer class="py-8 text-center text-sm text-neutral-400">
+      <div class="container">
+        © 2025 Woon Tak Yuh, MD. Seoul, South Korea.
+      </div>
     </footer>
-
   </main>
 </Layout>
