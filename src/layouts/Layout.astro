@@ -5,8 +5,8 @@ interface Props {
 }
 
 const { 
-  title = "Dr. Woon Tak Yuh | Neurosurgeon & AI Researcher",
-  description = "Dr. Woon Tak Yuh (여운탁) - Neurosurgeon specializing in endoscopic spine surgery and clinical AI research. Director of Spine Endoscopy Center at Davos Hospital."
+  title = "Woon Tak Yuh, MD — Spine Surgeon & AI Researcher",
+  description = "Woon Tak Yuh, MD - Neurosurgeon specializing in endoscopic spine surgery (UBE) and clinical AI research. Director of Spine Endoscopy Center."
 } = Astro.props;
 ---
 
@@ -18,47 +18,20 @@ const {
     <meta name="description" content={description} />
     <meta name="author" content="Woon Tak Yuh" />
     
-    <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://takmd.com" />
     
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
     <title>{title}</title>
-    
-    <!-- Theme Script - Must be in head to prevent flash -->
-    <script is:inline>
-      const theme = (() => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
-        }
-        return 'light';
-      })();
-      
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    </script>
   </head>
-  <body class="min-h-screen overflow-x-hidden">
-    <div class="fixed inset-0 -z-10 overflow-hidden">
-      <!-- Background gradient -->
-      <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl"></div>
-      <!-- Grid pattern -->
-      <div class="absolute inset-0 bg-[linear-gradient(var(--border-color)_1px,transparent_1px),linear-gradient(90deg,var(--border-color)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,black_40%,transparent_100%)] opacity-30"></div>
-    </div>
-    
+  <body class="min-h-screen">
     <slot />
   </body>
 </html>
