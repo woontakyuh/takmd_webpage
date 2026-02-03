@@ -32,26 +32,26 @@
 
 @layer base {
   :root {
-    --bg-primary: var(--color-surface-50);
-    --bg-secondary: var(--color-surface-100);
-    --bg-card: rgba(255, 255, 255, 0.8);
-    --text-primary: var(--color-surface-900);
-    --text-secondary: var(--color-surface-600);
-    --text-muted: var(--color-surface-400);
-    --border-color: var(--color-surface-200);
-    --accent: var(--color-primary-500);
-    --accent-hover: var(--color-primary-600);
-    --glow: rgba(20, 184, 166, 0.15);
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --accent: var(--color-primary-600);
+    --accent-hover: var(--color-primary-700);
+    --glow: rgba(20, 184, 166, 0.2);
   }
 
   .dark {
     --bg-primary: var(--color-surface-950);
     --bg-secondary: var(--color-surface-900);
-    --bg-card: rgba(30, 41, 59, 0.8);
-    --text-primary: var(--color-surface-50);
-    --text-secondary: var(--color-surface-300);
-    --text-muted: var(--color-surface-500);
-    --border-color: var(--color-surface-700);
+    --bg-card: rgba(30, 41, 59, 0.9);
+    --text-primary: #ffffff;
+    --text-secondary: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border-color: var(--color-surface-600);
     --accent: var(--color-primary-400);
     --accent-hover: var(--color-primary-300);
     --glow: rgba(20, 184, 166, 0.25);
@@ -87,8 +87,12 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600;
+    @apply bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800;
     @apply bg-clip-text text-transparent;
+  }
+
+  .dark .gradient-text {
+    @apply bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600;
   }
 
   .gradient-border {
