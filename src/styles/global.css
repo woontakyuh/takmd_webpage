@@ -87,12 +87,17 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800;
-    @apply bg-clip-text text-transparent;
+    background: linear-gradient(to right, #0f766e, #0d9488, #14b8a6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .dark .gradient-text {
-    @apply bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600;
+    background: linear-gradient(to right, #2dd4bf, #14b8a6, #0d9488);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .gradient-border {
