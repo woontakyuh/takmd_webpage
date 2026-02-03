@@ -52,12 +52,8 @@ export default function Hero() {
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">
                 <span className="text-[var(--text-primary)]">Hi, I'm </span>
-                <span className="gradient-text">{profile.name.en}</span>
+                <span className="gradient-text">{profile.name.en}, MD</span>
               </h1>
-              
-              <p className="text-xl sm:text-2xl text-[var(--text-secondary)] mb-2">
-                {profile.name.ko}
-              </p>
               
               <p className="text-lg text-primary-500 font-medium mb-6">
                 {profile.title}
