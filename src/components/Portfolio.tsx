@@ -84,9 +84,9 @@ const SIDE_PROJECTS = [
   },
   {
     icon: "📊",
-    title: "Surgical Outcomes DB",
-    description: "Personal database tracking surgical outcomes and patient follow-ups.",
-    url: "#",
+    title: "Surgery Dashboard",
+    description: "Interactive analytics dashboard — 1,830 spine surgery cases with drill-down charts.",
+    url: "/dashboard",
   },
   {
     icon: "📱",
