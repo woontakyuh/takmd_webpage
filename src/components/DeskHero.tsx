@@ -1,0 +1,974 @@
+import { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+// ─── Data ────────────────────────────────────────────────────────
+
+const SOCIAL_LINKS = {
+  email: "woontak.yuh@gmail.com",
+  scholar: "https://scholar.google.com/citations?user=tbTBemUAAAAJ",
+  linkedin: "https://www.linkedin.com/in/woon-tak-yuh-03420311b/",
+  hospital:
+    "https://www.davoshospital.co.kr/depart/page02-detail.html?dr_idx=139",
+  researchgate:
+    "https://www.researchgate.net/profile/Woon-Tak-Yuh?ev=hdr_xprf",
+  github: "https://github.com/woontakyuh",
+};
+
+type HotspotId =
+  | "ube"
+  | "myself"
+  | "research"
+  | "education"
+  | "personal"
+  | "schedule"
+  | "roles";
+
+interface Marker {
+  id: HotspotId;
+  label: string;
+  /** centre of the dot, as % of image */
+  x: number;
+  y: number;
+  color: string;
+  rgb: string;
+}
+
+// Positions: exact centre of each object in desk3.png
+const MARKERS: Marker[] = [
+  { id: "roles",     label: "Roles",      x: 8,    y: 23,  color: "#38bdf8", rgb: "56,189,248"  }, // framed certificate on wall
+  { id: "schedule",  label: "Schedule",   x: 21,   y: 61,  color: "#fb923c", rgb: "251,146,60"  }, // calendar centre
+  { id: "myself",    label: "About Me",   x: 38,   y: 63,  color: "#60a5fa", rgb: "96,165,250"  }, // mac mini body
+  { id: "research",  label: "Research",   x: 49,   y: 72,  color: "#fbbf24", rgb: "251,191,36"  }, // leather notebook centre
+  { id: "personal",  label: "Personal",   x: 64,   y: 59,  color: "#f472b6", rgb: "244,114,182" }, // AirPods Max centre
+  { id: "ube",       label: "UBE",        x: 76,   y: 42,  color: "#2dd4bf", rgb: "45,212,191"  }, // spine model centre
+  { id: "education", label: "Education",  x: 88,   y: 56,  color: "#a78bfa", rgb: "167,139,250" }, // textbooks centre
+];
+
+const MONITOR = { x: 32, y: 28, w: 37, h: 30 };
+
+// ─── Terminal page contents ──────────────────────────────────────
+
+interface TermPage {
+  command: string;
+  lines: string[];
+  links?: { label: string; url: string }[];
+  subPages?: { label: string; pageKey: string }[];
+}
+
+const PAGES: Record<string, TermPage> = {
+  // ─ Myself ─
+  myself: {
+    command: "whoami",
+    lines: [
+      "",
+      "Woon Tak Yuh, MD",
+      "━━━━━━━━━━━━━━━━━",
+      "",
+      "Spine Surgeon & AI Researcher",
+      "Director @ Davos Hospital",
+      "",
+      "Seoul / Yongin, South Korea",
+      "",
+    ],
+    links: [
+      { label: "LinkedIn", url: SOCIAL_LINKS.linkedin },
+      { label: "Scholar", url: SOCIAL_LINKS.scholar },
+      { label: "Email", url: `mailto:${SOCIAL_LINKS.email}` },
+    ],
+    subPages: [
+      { label: "Career Timeline", pageKey: "myself_career" },
+      { label: "Affiliations", pageKey: "myself_affiliations" },
+    ],
+  },
+  myself_career: {
+    command: "cat career/timeline.md",
+    lines: [
+      "",
+      "# Career Timeline",
+      "━━━━━━━━━━━━━━━━━",
+      "",
+      "2025  Director, Davos Hospital",
+      "2025  AO Spine Fellowship, Keio",
+      "2023  Asst Prof, Hallym Univ",
+      "2021  Fellowship, SNU Hospital",
+      "2019  Director, Military Academy",
+      "2017  Board Certified, NS",
+      "2013  Residency, SNU Hospital",
+      "2006  Medical School, Keimyung",
+      "",
+    ],
+  },
+  myself_affiliations: {
+    command: "cat affiliations.md",
+    lines: [
+      "",
+      "# Affiliations",
+      "━━━━━━━━━━━━━━",
+      "",
+      "KNS ········· Board Certified",
+      "KSNS ········ Lifetime Member",
+      "KOMISS ······ Academic Committee",
+      "KOSESS ······ Education Committee",
+      "Neurospine ·· Editorial Board",
+      "NASS ········ Member",
+      "KASS ········ Member",
+      "AO Spine ···· Member",
+      "",
+    ],
+  },
+
+  // ─ UBE ─
+  ube: {
+    command: "cat surgery/ube.md",
+    lines: [
+      "",
+      "# Unilateral Biportal Endoscopy",
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "Cases ····· 500+",
+      "Specialty · MIS Spine Surgery",
+      "Role ······ Director, ESC",
+      "",
+      "Notable: UBE resection of high cervical schwannoma",
+      "",
+    ],
+    links: [{ label: "Davos Hospital →", url: SOCIAL_LINKS.hospital }],
+    subPages: [
+      { label: "What is UBE?", pageKey: "ube_what" },
+      { label: "Case Statistics", pageKey: "ube_stats" },
+    ],
+  },
+  ube_what: {
+    command: "cat surgery/ube-intro.md",
+    lines: [
+      "",
+      "# What is UBE?",
+      "━━━━━━━━━━━━━━━",
+      "",
+      "Unilateral Biportal Endoscopy",
+      "is a cutting-edge minimally",
+      "invasive spine surgery that",
+      "uses two small portals and",
+      "an endoscope for clear",
+      "visualization.",
+      "",
+      "Benefits:",
+      "  ├─ Less tissue damage",
+      "  ├─ Faster recovery",
+      "  ├─ Less postop pain",
+      "  └─ Same-day discharge",
+      "",
+    ],
+  },
+  ube_stats: {
+    command: "cat surgery/statistics.md",
+    lines: [
+      "",
+      "# Case Statistics",
+      "━━━━━━━━━━━━━━━━━",
+      "",
+      "Total cases ····· 500+",
+      "Lumbar ·········· 65%",
+      "Cervical ········ 25%",
+      "Thoracic ········ 10%",
+      "",
+      "Complications ··· < 2%",
+      "Satisfaction ···· 94%",
+      "",
+    ],
+  },
+
+  // ─ Research ─
+  research: {
+    command: "ls research/",
+    lines: [
+      "",
+      "Publications ···· 50+",
+      "h-index ········· 11",
+      "First author ···· 15+ papers",
+      "",
+      "Focus:",
+      "  ├─ AI + Spine Diagnosis",
+      "  ├─ ERAS Protocols",
+      "  └─ Deep Learning Imaging",
+      "",
+    ],
+    links: [
+      { label: "Google Scholar →", url: SOCIAL_LINKS.scholar },
+      { label: "ResearchGate →", url: SOCIAL_LINKS.researchgate },
+    ],
+    subPages: [
+      { label: "AI Research", pageKey: "research_ai" },
+      { label: "Publications", pageKey: "research_pubs" },
+    ],
+  },
+  research_ai: {
+    command: "cat research/ai-projects.md",
+    lines: [
+      "",
+      "# AI Research Projects",
+      "━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "SpineAlign AI",
+      "  Auto spine alignment",
+      "  measurement from X-rays",
+      "",
+      "Fracture Detection",
+      "  Deep learning model for",
+      "  vertebral fracture dx",
+      "",
+      "Surgery Dashboard",
+      "  Interactive analytics",
+      "  for 1,830+ cases",
+      "",
+    ],
+  },
+  research_pubs: {
+    command: "ls research/publications/",
+    lines: [
+      "",
+      "# Selected Publications",
+      "━━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "50+ peer-reviewed papers",
+      "h-index 11",
+      "15+ first/co-first author",
+      "",
+      "Key journals:",
+      "  ├─ Neurospine",
+      "  ├─ World Neurosurgery",
+      "  ├─ European Spine Journal",
+      "  └─ J Korean Neurosurg Soc",
+      "",
+    ],
+    links: [
+      { label: "Full list on Scholar →", url: SOCIAL_LINKS.scholar },
+      { label: "ResearchGate →", url: SOCIAL_LINKS.researchgate },
+    ],
+  },
+
+  // ─ Education ─
+  education: {
+    command: "cat education/training.md",
+    lines: [
+      "",
+      "# Education & Training",
+      "━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "International UBE Training Center",
+      "  2024–2025, 40+ surgeons, 11+ countries",
+      "",
+      "Endoscopic Spine Surgery Workshop",
+      "  for beginners, 2025–2026",
+      "",
+    ],
+    subPages: [
+      { label: "Training Program", pageKey: "edu_program" },
+      { label: "Invited Lectures", pageKey: "edu_lectures" },
+    ],
+  },
+  edu_program: {
+    command: "cat education/program.md",
+    lines: [
+      "",
+      "# UBE Training Program",
+      "━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "Cadaver workshops",
+      "Live surgery sessions",
+      "Online tutorial series",
+      "",
+      "Trainees from:",
+      "  Japan, China, India,",
+      "  Thailand, Indonesia,",
+      "  Vietnam, Philippines,",
+      "  Egypt, Turkey, Brazil...",
+      "",
+    ],
+  },
+  edu_lectures: {
+    command: "cat education/lectures.md",
+    lines: [
+      "",
+      "# Invited Lectures",
+      "━━━━━━━━━━━━━━━━━━",
+      "",
+      "International conferences",
+      "and workshops worldwide.",
+      "",
+      "  ├─ WCMISST",
+      "  ├─ KOMISS Annual Meeting",
+      "  ├─ KOSESS Summit",
+      "  ├─ AO Spine Events",
+      "  └─ Various hospital",
+      "     visiting lectures",
+      "",
+    ],
+  },
+
+  // ─ Personal ─
+  personal: {
+    command: "cat ~/personal.md",
+    lines: [
+      "",
+      "Interests beyond the OR:",
+      "",
+      "  ○ AI/ML side projects",
+      "  ○ AI-agent augmented workflow",
+      "  ○ Medical education innovation",
+      "  ○ Coffee & late night coding",
+      "",
+    ],
+    subPages: [
+      { label: "Side Projects", pageKey: "personal_projects" },
+    ],
+  },
+  personal_projects: {
+    command: "ls ~/projects/",
+    lines: [
+      "",
+      "# Side Projects",
+      "━━━━━━━━━━━━━━━",
+      "",
+      "SpineAlign AI · DL spine alignment from X-rays",
+      "Spinoscopy · multi-agents dashboard",
+      "Patient-specific surgery dashboard",
+      "Novel digitally converged PROM",
+      "",
+    ],
+    links: [
+      { label: "GitHub →", url: SOCIAL_LINKS.github },
+      { label: "Dashboard →", url: "/dashboard" },
+    ],
+  },
+
+  // ─ Roles (nameplate) ─
+  roles: {
+    command: "cat roles/current.md",
+    lines: [
+      "",
+      "# Society Roles & Positions",
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "Editorial Board Member,",
+      "  Neurospine",
+      "Academic Committee, KOMISS",
+      "Education Committee, KOSESS",
+      "Computation Committee, KSNS",
+      "Academic Committee, KNDCRS",
+      "",
+    ],
+    subPages: [
+      { label: "Neurospine", pageKey: "roles_neurospine" },
+      { label: "KOMISS (Korean Minimally Invasive Spine Society)", pageKey: "roles_komiss" },
+      { label: "KOSESS (Korean Research Society of Endoscopic Spine Surgery)", pageKey: "roles_kosess" },
+      { label: "KSNS (Korean Spinal Neurosurgery Society)", pageKey: "roles_ksns" },
+      { label: "KNDCRS (Korean Neurosurgical Digital Convergence Research Society)", pageKey: "roles_kndcrs" },
+    ],
+  },
+  roles_neurospine: {
+    command: "cat roles/neurospine.md",
+    lines: [
+      "",
+      "# AI Section Editor",
+      "━━━━━━━━━━━━━━━━━━━",
+      "",
+      "Neurospine",
+      "Official journal of KSNS",
+      "(Korean Spinal Neurosurgery",
+      "Society)",
+      "",
+      "AI & computational research",
+      "in spine surgery and",
+      "neuroscience",
+      "",
+    ],
+  },
+  roles_komiss: {
+    command: "cat roles/komiss.md",
+    lines: [
+      "",
+      "# Academic Committee",
+      "━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "KOMISS",
+      "Korean Minimally Invasive",
+      "Spine Society",
+      "",
+    ],
+  },
+  roles_kosess: {
+    command: "cat roles/kosess.md",
+    lines: [
+      "",
+      "# Education Committee",
+      "━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "KOSESS",
+      "Korean Research Society of",
+      "Endoscopic Spine Surgery",
+      "",
+    ],
+  },
+  roles_ksns: {
+    command: "cat roles/ksns.md",
+    lines: [
+      "",
+      "# Computation Committee",
+      "━━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "KSNS",
+      "Korean Spinal Neurosurgery",
+      "Society",
+      "",
+    ],
+  },
+  roles_kndcrs: {
+    command: "cat roles/kndcrs.md",
+    lines: [
+      "",
+      "# Academic Committee",
+      "━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "KNDCRS",
+      "Korean Neurosurgical Digital",
+      "Convergence Research Society",
+      "",
+    ],
+  },
+
+  // ─ Schedule ─
+  schedule: {
+    command: "cat schedule/2026.md",
+    lines: [
+      "",
+      "# 2026 학회 참석 · 발표 일정",
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+    ],
+    subPages: [
+      { label: "Q1  Jan–Mar", pageKey: "schedule_q1" },
+      { label: "Q2  Apr–Jun", pageKey: "schedule_q2" },
+      { label: "Q3–Q4  Jul–Dec", pageKey: "schedule_q34" },
+    ],
+  },
+  schedule_q1: {
+    command: "cat schedule/2026-Q1.md",
+    lines: [
+      "",
+      "# 2026 Q1  (Jan – Mar)",
+      "━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "Jan 09  KOMISS 신년하례식",
+      "Jan 16  대척신 동계 · 무주",
+      "Feb 07  PPEM Symposium · 부산",
+      "Feb 26  Spine Summit",
+      "        · Phoenix, AZ",
+      "Mar 06  척추기초연구회 춘계",
+      "Mar 08  신경통증학회 춘계",
+      "Mar 13  SNU-Stanford Symp",
+      "Mar 14  KOSESS Summit · 여수",
+      "Mar 28  KOMISS 워크샵 · 대만",
+      "",
+    ],
+  },
+  schedule_q2: {
+    command: "cat schedule/2026-Q2.md",
+    lines: [
+      "",
+      "# 2026 Q2  (Apr – Jun)",
+      "━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "Apr 04  WUBES",
+      "Apr 16  대신 춘계 · 제주",
+      "May 08  WCMISST · LA, CA",
+      "",
+      "  (more events TBA)",
+      "",
+    ],
+  },
+  schedule_q34: {
+    command: "cat schedule/2026-Q34.md",
+    lines: [
+      "",
+      "# 2026 Q3-Q4  (Jul – Dec)",
+      "━━━━━━━━━━━━━━━━━━━━━━━━━",
+      "",
+      "Jul 09  KASS 2026",
+      "        · Maui, Hawaii",
+      "Aug 29  KOSESS 정기학술대회",
+      "Dec 12  11th Neurospine Symp",
+      "        · 전남대병원",
+      "",
+      "  (more events TBA)",
+      "",
+    ],
+  },
+};
+
+// ─── Components ──────────────────────────────────────────────────
+
+function TypewriterText({ text, speed = 25 }: { text: string; speed?: number }) {
+  const [len, setLen] = useState(0);
+
+  useEffect(() => {
+    setLen(0);
+  }, [text]);
+
+  useEffect(() => {
+    if (len >= text.length) return;
+    const t = setTimeout(() => setLen((l) => l + 1), speed);
+    return () => clearTimeout(t);
+  }, [len, text, speed]);
+
+  return <>{text.slice(0, len)}</>;
+}
+
+function TerminalView({
+  rootPageKey,
+  onClose,
+  mobile = false,
+}: {
+  rootPageKey: HotspotId;
+  onClose: () => void;
+  mobile?: boolean;
+}) {
+  const [pageStack, setPageStack] = useState<string[]>([rootPageKey]);
+  const [typingDone, setTypingDone] = useState(false);
+  const [bodyText, setBodyText] = useState("");
+  const pageKey = pageStack[pageStack.length - 1];
+  const page = PAGES[pageKey];
+  const allText = page.lines.join("\n");
+
+  useEffect(() => {
+    setBodyText("");
+    setTypingDone(false);
+  }, [pageKey]);
+
+  useEffect(() => {
+    setPageStack([rootPageKey]);
+  }, [rootPageKey]);
+
+  useEffect(() => {
+    if (bodyText.length >= allText.length) {
+      setTypingDone(true);
+      return;
+    }
+    const t = setTimeout(
+      () => setBodyText(allText.slice(0, bodyText.length + 1)),
+      10,
+    );
+    return () => clearTimeout(t);
+  }, [bodyText, allText]);
+
+  const goBack = () => {
+    if (pageStack.length > 1) setPageStack((s) => s.slice(0, -1));
+    else onClose();
+  };
+
+  const goSub = (subKey: string) => setPageStack((s) => [...s, subKey]);
+
+  return (
+    <div className="w-full h-full flex flex-col font-mono text-green-400 overflow-hidden relative">
+      {/* CRT scanlines */}
+      <div
+        className="pointer-events-none absolute inset-0 z-10"
+        style={{
+          background:
+            "repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,0.03) 2px,rgba(0,255,65,0.03) 4px)",
+        }}
+      />
+
+      {/* Top bar */}
+      <div className={`shrink-0 flex items-center justify-between z-20 ${mobile ? "px-4 pt-3 pb-1" : "px-[6%] pt-[5%] pb-[2%]"}`}>
+        <button
+          onClick={goBack}
+          className={`${mobile ? "text-xs" : "text-[min(1.2vw,11px)]"} text-green-600 hover:text-green-400 transition-colors pointer-events-auto`}
+        >
+          {pageStack.length > 1 ? "← back" : "✕ close"}
+        </button>
+        <span className={`${mobile ? "text-[10px]" : "text-[min(1vw,10px)]"} text-green-700`}>
+          {pageStack.join(" / ")}
+        </span>
+      </div>
+
+      {/* Command line */}
+      <div className={`shrink-0 leading-relaxed z-20 ${mobile ? "px-4 text-sm" : "px-[6%] text-[min(1.3vw,13px)]"}`}>
+        <span className="text-green-500">~</span>
+        <span className="text-green-600"> $ </span>
+        <TypewriterText text={page.command} speed={25} />
+      </div>
+
+      {/* Body */}
+      <div className={`flex-1 min-h-0 overflow-y-auto overflow-x-hidden z-20 scrollbar-hide ${mobile ? "px-4 pb-4" : "px-[6%] pb-[4%]"}`}>
+        <pre className={`${mobile ? "text-[13px] leading-[1.8]" : "text-[min(1.15vw,11.5px)] leading-[1.7]"} whitespace-pre-wrap break-words text-green-300`}>
+          {bodyText}
+          {!typingDone && (
+            <span className="inline-block w-[0.5em] h-[1em] bg-green-400 ml-0.5 animate-pulse align-middle" />
+          )}
+        </pre>
+
+        {typingDone && page.links && (
+          <motion.div
+            className="flex flex-wrap gap-2 mt-1 pointer-events-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {page.links.map((l) => (
+              <a
+                key={l.label}
+                href={l.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${mobile ? "text-xs px-3 py-1" : "text-[min(1.05vw,10.5px)] px-2 py-0.5"} border border-green-500/40 rounded text-green-400 hover:bg-green-500/10 hover:border-green-400/60 transition-colors`}
+              >
+                {l.label}
+              </a>
+            ))}
+          </motion.div>
+        )}
+
+        {typingDone && page.subPages && (
+          <motion.div
+            className="flex flex-col gap-1.5 mt-3 pointer-events-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {page.subPages.map((sp) => (
+              <button
+                key={sp.pageKey}
+                onClick={() => goSub(sp.pageKey)}
+                className={`text-left ${mobile ? "text-xs px-3 py-2" : "text-[min(1.1vw,11px)] px-2 py-1"} border border-green-500/30 rounded text-green-400 hover:bg-green-500/10 hover:border-green-400/50 transition-colors`}
+              >
+                → {sp.label}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Glowing dot marker — wider hit area, centred on the object.
+ */
+function DotMarker({
+  marker,
+  isHovered,
+  isLocked,
+  onHover,
+  onLeave,
+  onClick,
+}: {
+  marker: Marker;
+  isHovered: boolean;
+  isLocked: boolean;
+  onHover: () => void;
+  onLeave: () => void;
+  onClick: () => void;
+}) {
+  const active = isHovered || isLocked;
+
+  return (
+    <div
+      className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 flex items-center justify-center"
+      style={{
+        left: `${marker.x}%`,
+        top: `${marker.y}%`,
+        /* wider circular hit area */
+        width: 56,
+        height: 56,
+      }}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      onClick={onClick}
+    >
+      {/* Glow ring */}
+      <motion.div
+        className="absolute rounded-full"
+        animate={{
+          width: active ? 40 : 20,
+          height: active ? 40 : 20,
+          opacity: active ? 0.4 : 0.15,
+        }}
+        transition={{ duration: 0.3 }}
+        style={{
+          background: `radial-gradient(circle, rgba(${marker.rgb},0.6) 0%, transparent 70%)`,
+        }}
+      />
+
+      {/* Dot */}
+      <motion.div
+        className="relative rounded-full"
+        animate={{
+          width: active ? 12 : 7,
+          height: active ? 12 : 7,
+          boxShadow: active
+            ? `0 0 10px rgba(${marker.rgb},0.9), 0 0 25px rgba(${marker.rgb},0.4)`
+            : `0 0 6px rgba(${marker.rgb},0.5)`,
+        }}
+        transition={{ duration: 0.3 }}
+        style={{ backgroundColor: marker.color }}
+      />
+
+      {/* Label */}
+      <motion.div
+        className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap font-mono pointer-events-none"
+        style={{
+          bottom: "100%",
+          marginBottom: 6,
+          color: marker.color,
+          fontSize: "min(1.1vw, 11px)",
+          textShadow: `0 0 8px rgba(${marker.rgb},0.6)`,
+        }}
+        initial={false}
+        animate={{ opacity: active ? 1 : 0, y: active ? 0 : 4 }}
+        transition={{ duration: 0.2 }}
+      >
+        {marker.label}
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── Main ────────────────────────────────────────────────────────
+
+export default function DeskHero() {
+  const [hovered, setHovered] = useState<HotspotId | null>(null);
+  const [locked, setLocked] = useState<HotspotId | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [imageDims, setImageDims] = useState({
+    width: 0,
+    height: 0,
+    offsetX: 0,
+    offsetY: 0,
+  });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const activeSpot = locked ?? hovered;
+
+  const updateDims = useCallback(() => {
+    const c = containerRef.current;
+    const img = imgRef.current;
+    if (!c || !img) return;
+    const cW = c.clientWidth;
+    const cH = c.clientHeight;
+    const nW = img.naturalWidth || 1024;
+    const nH = img.naturalHeight || 680;
+    const iA = nW / nH;
+    const cA = cW / cH;
+    let rW: number, rH: number;
+    if (cA > iA) {
+      rH = cH;
+      rW = cH * iA;
+    } else {
+      rW = cW;
+      rH = cW / iA;
+    }
+    setImageDims({
+      width: rW,
+      height: rH,
+      offsetX: (cW - rW) / 2,
+      offsetY: (cH - rH) / 2,
+    });
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    updateDims();
+    window.addEventListener("resize", () => {
+      checkMobile();
+      updateDims();
+    });
+    return () => window.removeEventListener("resize", updateDims);
+  }, [updateDims]);
+
+  const handleClick = (id: HotspotId) =>
+    setLocked((prev) => (prev === id ? null : id));
+
+  const handleBgClick = () => {
+    if (locked) setLocked(null);
+  };
+
+  // ─── Mobile layout ──────────────────────────────────────────────
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-screen bg-[#0a0a0a] select-none">
+        {/* Hero image */}
+        <div className="relative h-[35vh] shrink-0 overflow-hidden">
+          <img
+            src="/desk-setup.png"
+            alt="Desk setup"
+            className="w-full h-full object-cover object-center"
+            draggable={false}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a]" />
+          <div className="absolute top-4 left-4 font-mono text-xs text-white/40 tracking-wider">
+            WTY.md
+          </div>
+        </div>
+
+        {/* Content area */}
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <AnimatePresence mode="wait">
+            {locked ? (
+              <motion.div
+                key={`mobile-term-${locked}`}
+                className="h-full bg-black/95 rounded-t-xl border-t border-green-500/20"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.2 }}
+              >
+                <TerminalView
+                  rootPageKey={locked}
+                  onClose={() => setLocked(null)}
+                  mobile
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="mobile-menu"
+                className="flex flex-col gap-2 px-4 py-3"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {MARKERS.map((m) => (
+                  <motion.button
+                    key={m.id}
+                    onClick={() => setLocked(m.id)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg border border-white/5 bg-white/[0.02] active:bg-white/[0.06] transition-colors text-left"
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div
+                      className="w-2.5 h-2.5 rounded-full shrink-0"
+                      style={{
+                        backgroundColor: m.color,
+                        boxShadow: `0 0 8px rgba(${m.rgb},0.5)`,
+                      }}
+                    />
+                    <span className="font-mono text-sm text-white/80">
+                      {m.label}
+                    </span>
+                  </motion.button>
+                ))}
+
+                <p className="text-center font-mono text-[10px] text-white/20 mt-2">
+                  tap to explore
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Desktop layout ─────────────────────────────────────────────
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-screen h-screen bg-[#0a0a0a] overflow-hidden select-none"
+      onClick={handleBgClick}
+    >
+      <img
+        ref={imgRef}
+        src="/desk-setup.png"
+        alt="Desk setup"
+        className="absolute"
+        style={{
+          left: imageDims.offsetX,
+          top: imageDims.offsetY,
+          width: imageDims.width,
+          height: imageDims.height,
+        }}
+        onLoad={updateDims}
+        draggable={false}
+      />
+
+      {imageDims.width > 0 && (
+        <div
+          className="absolute"
+          style={{
+            left: imageDims.offsetX,
+            top: imageDims.offsetY,
+            width: imageDims.width,
+            height: imageDims.height,
+          }}
+        >
+          {MARKERS.map((m) => (
+            <DotMarker
+              key={m.id}
+              marker={m}
+              isHovered={hovered === m.id}
+              isLocked={locked === m.id}
+              onHover={() => {
+                if (!locked) setHovered(m.id);
+              }}
+              onLeave={() => {
+                if (!locked) setHovered(null);
+              }}
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                handleClick(m.id);
+              }}
+            />
+          ))}
+
+          {/* Monitor screen */}
+          <div
+            className="absolute overflow-hidden"
+            style={{
+              left: `${MONITOR.x}%`,
+              top: `${MONITOR.y}%`,
+              width: `${MONITOR.w}%`,
+              height: `${MONITOR.h}%`,
+              borderRadius: "0.6%",
+            }}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <AnimatePresence mode="wait">
+              {activeSpot && (
+                <motion.div
+                  key={activeSpot}
+                  className="absolute inset-0 bg-black/92"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <TerminalView
+                    rootPageKey={activeSpot}
+                    onClose={() => setLocked(null)}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      )}
+
+      <AnimatePresence>
+        {!locked && (
+          <motion.div
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 font-mono text-[11px] text-white/30 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ delay: 1 }}
+          >
+            hover or click the dots to explore
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="fixed top-5 left-6 font-mono text-xs text-white/40 tracking-wider">
+        WTY.md
+      </div>
+    </div>
+  );
+}
