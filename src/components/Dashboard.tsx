@@ -21,6 +21,8 @@ interface CategoryStats {
   byClassB: Record<string, number>;
   byClassC: Record<string, number>;
   byCTL: Record<string, number>;
+  byLevelCount: Record<string, number>;
+  totalLevels: number;
   complicationRate: { total: number; withCx: number };
   ageDistribution: { mean: number; min: number; max: number; buckets: Record<string, number> };
   promTrends: { vas: PromPoint[]; odi: PromPoint[] };
@@ -82,6 +84,76 @@ function ageBucket(age: number): string {
   return d >= 90 ? "90s" : `${d}s`;
 }
 
+/** Parse surgical level string → number of operated levels.
+ *  e.g. L4-5 → 1, L3-5 → 2, L5-S1 → 1, C3-6 → 3 */
+function parseLevelCount(s: string | null | undefined): number | null {
+  if (!s) return null;
+  s = s.trim();
+
+  // Multiple levels separated by comma or +
+  if (s.includes(",") || s.includes("+")) {
+    const parts = s.split(/[,+]/).map((p) => p.trim()).filter(Boolean);
+    let total = 0;
+    for (const p of parts) {
+      const n = parseLevelCount(p);
+      if (n) total += n;
+    }
+    return total > 0 ? total : null;
+  }
+
+  // Normalize spaces and slashes
+  s = s.replace(/\s+/g, "").replace(/\//g, "-");
+
+  // Single level: L1, T12, C5, S1
+  if (/^[CTLS]\d+$/i.test(s)) return 1;
+
+  // Cross-region concatenated: L5S1, C7T1
+  let m = s.match(/^([CTLS])(\d+)([CTLS])(\d+)$/i);
+  if (m) {
+    const R: Record<string, number> = { C: 0, T: 7, L: 19, S: 24 };
+    const a = (R[m[1].toUpperCase()] || 0) + parseInt(m[2]);
+    const b = (R[m[3].toUpperCase()] || 0) + parseInt(m[4]);
+    return Math.abs(b - a);
+  }
+
+  // Multi-dash same region: C4-5-6, T10-11-12, C3-4-5-6, L1-2-3
+  m = s.match(/^([CTLS])(\d+(?:-\d+)+)$/i);
+  if (m) {
+    const nums = m[2].split("-").map(Number);
+    if (nums.length >= 2) return Math.abs(nums[nums.length - 1] - nums[0]);
+  }
+
+  // Range same region short: L4-5, L3-5, C3-6
+  m = s.match(/^([CTLS])(\d+)-(\d+)$/i);
+  if (m) return Math.abs(parseInt(m[3]) - parseInt(m[2]));
+
+  // Range cross-region: L4-L5, T12-L2, L5-S1
+  m = s.match(/^([CTLS])(\d+)-([CTLS])(\d+)$/i);
+  if (m) {
+    const R: Record<string, number> = { C: 0, T: 7, L: 19, S: 24 };
+    const a = (R[m[1].toUpperCase()] || 0) + parseInt(m[2]);
+    const b = (R[m[3].toUpperCase()] || 0) + parseInt(m[4]);
+    return Math.abs(b - a);
+  }
+
+  // Iliac anchor: L2-iliac ≈ L2 to S1
+  m = s.match(/^([CTLS])(\d+)-iliac$/i);
+  if (m) {
+    const R: Record<string, number> = { C: 0, T: 7, L: 19, S: 24 };
+    return Math.abs(25 - ((R[m[1].toUpperCase()] || 0) + parseInt(m[2])));
+  }
+
+  // Concatenated 2-digit: C56, L45
+  m = s.match(/^([CTLS])(\d)(\d)$/i);
+  if (m) return Math.abs(parseInt(m[3]) - parseInt(m[2]));
+
+  // Concatenated 3-digit: C456
+  m = s.match(/^([CTLS])(\d)(\d)(\d)$/i);
+  if (m) return Math.abs(parseInt(m[4]) - parseInt(m[2]));
+
+  return null;
+}
+
 function computePromPoints(
   cases: CaseRecord[],
   field: "vas" | "odi"
@@ -110,10 +182,12 @@ function computeStatsFromCases(cases: CaseRecord[]): CategoryStats {
   const byClassB: Record<string, number> = {};
   const byClassC: Record<string, number> = {};
   const byCTL: Record<string, number> = {};
+  const byLevelCount: Record<string, number> = {};
   const buckets: Record<string, number> = {};
   let ageSum = 0, ageMin = Infinity, ageMax = -Infinity;
   let cxTotal = 0, cxWith = 0;
   let earliest = "9999-99", latest = "0000-00";
+  let levelCountSum = 0, levelCountN = 0;
 
   for (const c of cases) {
     inc(byYear, String(c.year));
@@ -125,6 +199,13 @@ function computeStatsFromCases(cases: CaseRecord[]): CategoryStats {
     if (c.classB) inc(byClassB, c.classB);
     if (c.classC) inc(byClassC, c.classC);
     if (c.ctl) inc(byCTL, c.ctl);
+    // Level count (number of surgical levels)
+    const lc = parseLevelCount(c.level);
+    if (lc != null && lc > 0 && lc <= 15) {
+      inc(byLevelCount, `${lc}L`);
+      levelCountSum += lc;
+      levelCountN++;
+    }
     if (c.age != null) {
       ageSum += c.age;
       if (c.age < ageMin) ageMin = c.age;
@@ -145,6 +226,8 @@ function computeStatsFromCases(cases: CaseRecord[]): CategoryStats {
     dateRange: { earliest: earliest === "9999-99" ? "" : earliest, latest: latest === "0000-00" ? "" : latest },
     byYear, bySex, byLevel, bySurgeon, byHospital,
     byClassA, byClassB, byClassC, byCTL,
+    byLevelCount,
+    totalLevels: levelCountSum,
     complicationRate: { total: cxTotal, withCx: cxWith },
     ageDistribution: {
       mean: n > 0 ? Math.round(ageSum / n * 10) / 10 : 0,
@@ -207,6 +290,13 @@ function sorted(obj: Record<string, number>, limit?: number, by: "key" | "value"
   const entries = Object.entries(obj).map(([name, value]) => ({ name, value }));
   entries.sort(by === "value" ? (a, b) => b.value - a.value : (a, b) => a.name.localeCompare(b.name));
   return limit ? entries.slice(0, limit) : entries;
+}
+
+/** Sort level count keys numerically: 1L, 2L, 3L, ... */
+function sortedLevelCounts(obj: Record<string, number>) {
+  return Object.entries(obj)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => parseInt(a.name) - parseInt(b.name));
 }
 
 function fmtDateRange(e: string, l: string) {
@@ -327,11 +417,12 @@ function OverviewView({ onSelectCategory, stats, categoryCounts }: { onSelectCat
 
   return (
     <>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <StatCard label="전체 수술 건수" value={s.totalCases} sub="cases" i={0} />
-        <StatCard label="수술 기간" value={fmtDateRange(s.dateRange.earliest, s.dateRange.latest)} i={1} />
-        <StatCard label="수술 분류" value={Object.keys(categoryCounts).length} sub="categories" i={2} />
-        <StatCard label="평균 연령" value={s.ageDistribution.mean} sub={`${s.ageDistribution.min}–${s.ageDistribution.max}세`} i={3} />
+        <StatCard label="수술 레벨 수" value={s.totalLevels} sub="levels" i={1} />
+        <StatCard label="수술 기간" value={fmtDateRange(s.dateRange.earliest, s.dateRange.latest)} i={2} />
+        <StatCard label="수술 분류" value={Object.keys(categoryCounts).length} sub="categories" i={3} />
+        <StatCard label="평균 연령" value={s.ageDistribution.mean} sub={`${s.ageDistribution.min}–${s.ageDistribution.max}세`} i={4} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -378,6 +469,10 @@ function OverviewView({ onSelectCategory, stats, categoryCounts }: { onSelectCat
 
         <ChartCard title="부위별 분포 (CTL)">
           <VBarChart items={sorted(s.byCTL)} color="#14b8a6" />
+        </ChartCard>
+
+        <ChartCard title="수술 레벨 수 분포">
+          <VBarChart items={sortedLevelCounts(s.byLevelCount)} color="#0d9488" />
         </ChartCard>
 
         <ChartCard title="ClassA 분포">
@@ -431,11 +526,12 @@ function DetailView({ category, categoryStats }: { category: string; categorySta
 
   return (
     <>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <StatCard label="수술 건수" value={stats.totalCases} i={0} />
-        <StatCard label="수술 기간" value={fmtDateRange(stats.dateRange.earliest, stats.dateRange.latest)} i={1} />
-        <StatCard label="평균 연령" value={stats.ageDistribution.mean} sub={`${stats.ageDistribution.min}–${stats.ageDistribution.max}세`} i={2} />
-        <StatCard label="합병증률" value={`${cxRate}%`} sub={`${stats.complicationRate.withCx}/${stats.complicationRate.total}`} i={3} />
+        <StatCard label="수술 레벨 수" value={stats.totalLevels} sub="levels" i={1} />
+        <StatCard label="수술 기간" value={fmtDateRange(stats.dateRange.earliest, stats.dateRange.latest)} i={2} />
+        <StatCard label="평균 연령" value={stats.ageDistribution.mean} sub={`${stats.ageDistribution.min}–${stats.ageDistribution.max}세`} i={3} />
+        <StatCard label="합병증률" value={`${cxRate}%`} sub={`${stats.complicationRate.withCx}/${stats.complicationRate.total}`} i={4} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -459,6 +555,10 @@ function DetailView({ category, categoryStats }: { category: string; categorySta
 
         <ChartCard title="수술 레벨 분포">
           <HBarChart items={sorted(stats.byLevel, 10)} color="#0d9488" />
+        </ChartCard>
+
+        <ChartCard title="수술 레벨 수 분포">
+          <VBarChart items={sortedLevelCounts(stats.byLevelCount)} color="#f59e0b" />
         </ChartCard>
 
         <ChartCard title="수술자별 건수">
