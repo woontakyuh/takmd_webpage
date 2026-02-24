@@ -794,74 +794,81 @@ export default function DeskHero() {
   // ─── Mobile layout ──────────────────────────────────────────────
   if (isMobile) {
     return (
-      <div className="flex flex-col h-screen bg-[#0a0a0a] select-none">
-        {/* Hero image */}
-        <div className="relative h-[35vh] shrink-0 overflow-hidden">
+      <div
+        className="flex flex-col min-h-screen bg-[#0a0a0a] select-none"
+        onClick={handleBgClick}
+      >
+        {/* Hero image with dots */}
+        <div
+          ref={containerRef}
+          className="relative w-full shrink-0"
+          style={{ aspectRatio: "1024 / 680" }}
+        >
           <img
+            ref={imgRef}
             src="/desk-setup.png"
             alt="Desk setup"
-            className="w-full h-full object-cover object-center"
+            className="absolute inset-0 w-full h-full object-contain"
+            onLoad={updateDims}
             draggable={false}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a]" />
-          <div className="absolute top-4 left-4 font-mono text-xs text-white/40 tracking-wider">
+          {imageDims.width > 0 && (
+            <div
+              className="absolute"
+              style={{
+                left: imageDims.offsetX,
+                top: imageDims.offsetY,
+                width: imageDims.width,
+                height: imageDims.height,
+              }}
+            >
+              {MARKERS.map((m) => (
+                <DotMarker
+                  key={m.id}
+                  marker={m}
+                  isHovered={false}
+                  isLocked={locked === m.id}
+                  onHover={() => {}}
+                  onLeave={() => {}}
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    handleClick(m.id);
+                  }}
+                />
+              ))}
+            </div>
+          )}
+          <div className="absolute top-3 left-3 font-mono text-[10px] text-white/40 tracking-wider">
             WTY.md
           </div>
         </div>
 
-        {/* Content area */}
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          <AnimatePresence mode="wait">
-            {locked ? (
-              <motion.div
-                key={`mobile-term-${locked}`}
-                className="h-full bg-black/95 rounded-t-xl border-t border-green-500/20"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.2 }}
-              >
-                <TerminalView
-                  rootPageKey={locked}
-                  onClose={() => setLocked(null)}
-                  mobile
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="mobile-menu"
-                className="flex flex-col gap-2 px-4 py-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                {MARKERS.map((m) => (
-                  <motion.button
-                    key={m.id}
-                    onClick={() => setLocked(m.id)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg border border-white/5 bg-white/[0.02] active:bg-white/[0.06] transition-colors text-left"
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <div
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{
-                        backgroundColor: m.color,
-                        boxShadow: `0 0 8px rgba(${m.rgb},0.5)`,
-                      }}
-                    />
-                    <span className="font-mono text-sm text-white/80">
-                      {m.label}
-                    </span>
-                  </motion.button>
-                ))}
+        {/* Terminal below image */}
+        <AnimatePresence mode="wait">
+          {locked && (
+            <motion.div
+              key={`mobile-term-${locked}`}
+              className="flex-1 min-h-[50vh] bg-black/95 border-t border-green-500/20"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.2 }}
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            >
+              <TerminalView
+                rootPageKey={locked}
+                onClose={() => setLocked(null)}
+                mobile
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-                <p className="text-center font-mono text-[10px] text-white/20 mt-2">
-                  tap to explore
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        {!locked && (
+          <div className="py-4 text-center font-mono text-[10px] text-white/25">
+            tap the dots to explore
+          </div>
+        )}
       </div>
     );
   }
