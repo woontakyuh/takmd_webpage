@@ -147,7 +147,10 @@ const PAGES: Record<string, TermPage> = {
       "Notable: UBE resection of high cervical schwannoma",
       "",
     ],
-    links: [{ label: "Davos Hospital →", url: SOCIAL_LINKS.hospital }],
+    links: [
+      { label: "Surgery Dashboard →", url: "/dashboard" },
+      { label: "Davos Hospital →", url: SOCIAL_LINKS.hospital },
+    ],
     subPages: [
       { label: "What is UBE?", pageKey: "ube_what" },
       { label: "Case Statistics", pageKey: "ube_stats" },
@@ -378,7 +381,6 @@ const PAGES: Record<string, TermPage> = {
     ],
     links: [
       { label: "Spinoscopy Dashboard →", url: SOCIAL_LINKS.dashboard },
-      { label: "Surgery DB Dashboard →", url: "/dashboard" },
     ],
     subPages: [
       { label: "Side Projects", pageKey: "personal_projects" },
