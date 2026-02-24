@@ -78,8 +78,8 @@ const PAGES: Record<string, TermPage> = {
     ],
     subPages: [
       { label: "Career Timeline", pageKey: "myself_career" },
-      { label: "Awards", pageKey: "myself_awards" },
       { label: "Affiliations", pageKey: "myself_affiliations" },
+      { label: "Awards", pageKey: "myself_awards" },
     ],
   },
   myself_career: {
@@ -100,19 +100,6 @@ const PAGES: Record<string, TermPage> = {
       "",
     ],
   },
-  myself_awards: {
-    command: "cat awards.md",
-    lines: [
-      "",
-      "# Awards",
-      "━━━━━━━━",
-      "",
-      "2025 Best Research Award, KOSESS",
-      "2024 Best Paper (이헌재학술상), KNS",
-      "2024 Most Cited Paper, NSC",
-      "",
-    ],
-  },
   myself_affiliations: {
     command: "cat affiliations.md",
     lines: [
@@ -128,6 +115,19 @@ const PAGES: Record<string, TermPage> = {
       "NASS ········ Member",
       "KASS ········ Member",
       "AO Spine ···· Member",
+      "",
+    ],
+  },
+  myself_awards: {
+    command: "cat awards.md",
+    lines: [
+      "",
+      "# Awards",
+      "━━━━━━━━",
+      "",
+      "2025 Best Research Award, KOSESS",
+      "2024 Best Paper (이헌재학술상), KNS",
+      "2024 Most Cited Paper, NSC",
       "",
     ],
   },
@@ -502,8 +502,8 @@ const PAGES: Record<string, TermPage> = {
     command: "cat schedule/overview.md",
     lines: [
       "",
-      "# Conference & Lecture Schedule",
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+      "# Academic Schedule",
+      "━━━━━━━━━━━━━━━━━━━",
       "",
       "Select a year to view details.",
       "",
