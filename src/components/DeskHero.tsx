@@ -731,8 +731,6 @@ const PAGES: Record<string, TermPage> = {
       "# 2026 Schedule",
       "━━━━━━━━━━━━━━━",
       "",
-      "Jan 02  경기남부 모임",
-      "Feb 23  다보스 신규간호사 교육",
       "Feb 26  Spine Summit",
       "Mar 14  경추-부울경 합동 심포지엄",
       "Mar 28  KOMISS 대만 워크샵",
