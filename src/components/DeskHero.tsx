@@ -1087,9 +1087,12 @@ export default function DeskHero() {
               ))}
             </div>
           )}
-          <div className="absolute top-3 left-3 font-mono text-[10px] text-white/40 tracking-wider">
+          <button
+            onClick={() => setLocked(null)}
+            className="absolute top-3 left-3 font-mono text-[10px] text-white/40 tracking-wider hover:text-white/70 transition-colors cursor-pointer"
+          >
             WTY.md
-          </div>
+          </button>
         </div>
 
         {/* Terminal below image */}
@@ -1220,9 +1223,12 @@ export default function DeskHero() {
         )}
       </AnimatePresence>
 
-      <div className="fixed top-5 left-6 font-mono text-xs text-white/40 tracking-wider">
+      <button
+        onClick={() => { setLocked(null); setHovered(null); }}
+        className="fixed top-5 left-6 font-mono text-xs text-white/40 tracking-wider hover:text-white/70 transition-colors cursor-pointer z-50"
+      >
         WTY.md
-      </div>
+      </button>
     </div>
   );
 }
