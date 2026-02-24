@@ -35,7 +35,7 @@ interface CaseRecord {
   age: number;
   sex: string;
   level: string;
-  opCategory: string;
+  opCategory: string[];
   ctl: string;
   classA: string;
   classB: string;
@@ -251,17 +251,23 @@ interface FilteredData {
   overallStats: CategoryStats;
   categoryCounts: Record<string, number>;
   categoryStats: Record<string, CategoryStats>;
+  cases: CaseRecord[];
 }
 
 function computeFilteredData(cases: CaseRecord[]): FilteredData {
+  // Count each individual category from opCategory arrays
+  // e.g. ["VP","MBB"] → VP +1, MBB +1 (individual category counts)
+  // but patient count = 1 case
   const categoryCounts: Record<string, number> = {};
   const categoryBuckets: Record<string, CaseRecord[]> = {};
 
   for (const c of cases) {
-    const cat = c.opCategory || "Unknown";
-    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
-    if (!categoryBuckets[cat]) categoryBuckets[cat] = [];
-    categoryBuckets[cat].push(c);
+    const cats = c.opCategory && c.opCategory.length > 0 ? c.opCategory : ["Uncategorized"];
+    for (const cat of cats) {
+      categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+      if (!categoryBuckets[cat]) categoryBuckets[cat] = [];
+      categoryBuckets[cat].push(c);
+    }
   }
 
   const categoryStats: Record<string, CategoryStats> = {};
@@ -273,6 +279,7 @@ function computeFilteredData(cases: CaseRecord[]): FilteredData {
     overallStats: computeStatsFromCases(cases),
     categoryCounts,
     categoryStats,
+    cases,
   };
 }
 
@@ -411,7 +418,7 @@ function PromLineChart({ points, color, label }: { points: PromPoint[]; color: s
   );
 }
 
-function OverviewView({ onSelectCategory, stats, categoryCounts }: { onSelectCategory: (cat: string) => void; stats: CategoryStats; categoryCounts: Record<string, number> }) {
+function OverviewView({ onSelectCategory, onSelectYear, stats, categoryCounts }: { onSelectCategory: (cat: string) => void; onSelectYear: (year: string) => void; stats: CategoryStats; categoryCounts: Record<string, number> }) {
   const s = stats;
   const catData = sorted(categoryCounts, 20);
 
@@ -489,7 +496,7 @@ function OverviewView({ onSelectCategory, stats, categoryCounts }: { onSelectCat
           </ChartCard>
         )}
 
-        <ChartCard title="연도별 수술 건수" className="lg:col-span-2">
+        <ChartCard title="연도별 수술 건수 (클릭하여 상세보기)" className="lg:col-span-2">
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={sorted(s.byYear, undefined, "key")} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
@@ -497,7 +504,8 @@ function OverviewView({ onSelectCategory, stats, categoryCounts }: { onSelectCat
                 <XAxis dataKey="name" tick={{ fontSize: 13, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 12, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
-                <Bar dataKey="value" fill="#0d9488" radius={[6, 6, 0, 0]} maxBarSize={64} />
+                <Bar dataKey="value" fill="#0d9488" radius={[6, 6, 0, 0]} maxBarSize={64} cursor="pointer"
+                  onClick={(d) => { if (d?.name) onSelectYear(String(d.name)); }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -515,7 +523,7 @@ function OverviewView({ onSelectCategory, stats, categoryCounts }: { onSelectCat
   );
 }
 
-function DetailView({ category, categoryStats }: { category: string; categoryStats: Record<string, CategoryStats> }) {
+function DetailView({ category, categoryStats, onSelectYear }: { category: string; categoryStats: Record<string, CategoryStats>; onSelectYear: (year: string) => void }) {
   const stats = categoryStats[category];
   if (!stats) return <div className="text-neutral-400 text-center py-12">상세 데이터가 없습니다.</div>;
 
@@ -535,7 +543,7 @@ function DetailView({ category, categoryStats }: { category: string; categorySta
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartCard title="연도별 수술 건수" className="lg:col-span-2">
+        <ChartCard title="연도별 수술 건수 (클릭하여 상세보기)" className="lg:col-span-2">
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={sorted(stats.byYear, undefined, "key")} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
@@ -543,7 +551,8 @@ function DetailView({ category, categoryStats }: { category: string; categorySta
                 <XAxis dataKey="name" tick={{ fontSize: 13, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 12, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
-                <Bar dataKey="value" fill="#0d9488" radius={[6, 6, 0, 0]} maxBarSize={64} />
+                <Bar dataKey="value" fill="#0d9488" radius={[6, 6, 0, 0]} maxBarSize={64} cursor="pointer"
+                  onClick={(d) => { if (d?.name) onSelectYear(String(d.name)); }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -622,6 +631,159 @@ function DetailView({ category, categoryStats }: { category: string; categorySta
   );
 }
 
+function YearDetailView({ year, cases, category }: { year: string; cases: CaseRecord[]; category?: string }) {
+  const yearCases = useMemo(() => {
+    let filtered = cases.filter((c) => String(c.year) === year);
+    if (category) filtered = filtered.filter((c) => c.opCategory.includes(category));
+    return filtered;
+  }, [year, cases, category]);
+
+  const stats = useMemo(() => computeStatsFromCases(yearCases), [yearCases]);
+
+  if (yearCases.length === 0)
+    return <div className="text-neutral-400 text-center py-12">{year}년 데이터가 없습니다.</div>;
+
+  const cxRate = stats.complicationRate.total > 0
+    ? ((stats.complicationRate.withCx / stats.complicationRate.total) * 100).toFixed(1)
+    : "0";
+  const ageBucketOrder = ["10s", "20s", "30s", "40s", "50s", "60s", "70s", "80s", "90s"];
+  const ageItems = ageBucketOrder.filter((b) => stats.ageDistribution.buckets[b] != null).map((b) => ({ name: b, value: stats.ageDistribution.buckets[b] }));
+  const sexItems = sorted(stats.bySex);
+  const catItems = sorted(
+    yearCases.reduce<Record<string, number>>((acc, c) => {
+      const cats = c.opCategory && c.opCategory.length > 0 ? c.opCategory : ["Uncategorized"];
+      for (const cat of cats) {
+        acc[cat] = (acc[cat] || 0) + 1;
+      }
+      return acc;
+    }, {}),
+    15
+  );
+
+  return (
+    <>
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <StatCard label="수술 건수" value={stats.totalCases} i={0} />
+        <StatCard label="수술 레벨 수" value={stats.totalLevels} sub="levels" i={1} />
+        <StatCard label="평균 연령" value={stats.ageDistribution.mean} sub={`${stats.ageDistribution.min}–${stats.ageDistribution.max}세`} i={2} />
+        <StatCard label="합병증률" value={`${cxRate}%`} sub={`${stats.complicationRate.withCx}/${stats.complicationRate.total}`} i={3} />
+        <StatCard label="수술 분류" value={Object.keys(stats.byClassA).length} sub="types" i={4} />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {!category && (
+          <ChartCard title="수술 분류별 분포" className="lg:col-span-2">
+            <div className="flex flex-col lg:flex-row items-center gap-6">
+              <div className="h-64 w-full lg:w-1/2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={catItems} cx="50%" cy="50%" outerRadius={100} innerRadius={40}
+                      paddingAngle={1} dataKey="value" stroke="none"
+                    >
+                      {catItems.map((_, i) => <Cell key={i} fill={CATEGORY_COLORS[i % CATEGORY_COLORS.length]} />)}
+                    </Pie>
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (!active || !payload?.length) return null;
+                        const d = payload[0].payload as { name: string; value: number };
+                        return (
+                          <div className="bg-white rounded-xl shadow-lg border border-neutral-100 px-4 py-3">
+                            <p className="text-sm font-medium text-neutral-900">{d.name}</p>
+                            <p className="text-sm text-teal-600 font-semibold">{d.value}건 ({((d.value / stats.totalCases) * 100).toFixed(1)}%)</p>
+                          </div>
+                        );
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 w-full lg:w-1/2 max-h-64 overflow-y-auto">
+                {catItems.map((d, i) => (
+                  <div key={d.name} className="flex items-center gap-2 px-3 py-2 text-left">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: CATEGORY_COLORS[i % CATEGORY_COLORS.length] }} />
+                    <span className="text-sm text-neutral-700 truncate">{d.name}</span>
+                    <span className="text-xs text-neutral-400 ml-auto">{d.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </ChartCard>
+        )}
+
+        <ChartCard title="진단별 분포 (ClassB)">
+          <HBarChart items={sorted(stats.byClassB, 8)} color="#14b8a6" />
+        </ChartCard>
+
+        <ChartCard title="수술 레벨 분포">
+          <HBarChart items={sorted(stats.byLevel, 10)} color="#0d9488" />
+        </ChartCard>
+
+        <ChartCard title="수술 레벨 수 분포">
+          <VBarChart items={sortedLevelCounts(stats.byLevelCount)} color="#f59e0b" />
+        </ChartCard>
+
+        <ChartCard title="수술자별 건수">
+          <VBarChart items={sorted(stats.bySurgeon)} color="#0d9488" />
+        </ChartCard>
+
+        <ChartCard title="연령대 분포">
+          <VBarChart items={ageItems} color="#2dd4bf" />
+        </ChartCard>
+
+        <ChartCard title="성별 분포">
+          <div className="flex flex-col items-center">
+            <div className="h-40 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={sexItems} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={3} dataKey="value" stroke="none">
+                    {sexItems.map((_, i) => <Cell key={i} fill={PIE_COLORS_SEX[i % PIE_COLORS_SEX.length]} />)}
+                  </Pie>
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (!active || !payload?.length) return null;
+                      const d = payload[0].payload as { name: string; value: number };
+                      return (
+                        <div className="bg-white rounded-xl shadow-lg border border-neutral-100 px-4 py-3">
+                          <p className="text-sm font-medium text-neutral-900">{d.name === "M" ? "남성" : d.name === "F" ? "여성" : "미기록"}</p>
+                          <p className="text-sm text-teal-600 font-semibold">{d.value}건 ({((d.value / stats.totalCases) * 100).toFixed(1)}%)</p>
+                        </div>
+                      );
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex gap-5 mt-1 text-sm">
+              {sexItems.map((d, i) => (
+                <span key={d.name} className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS_SEX[i] }} />
+                  <span className="text-neutral-600">{d.name === "M" ? "남" : d.name === "F" ? "여" : "?"}</span>
+                  <span className="text-neutral-400">{d.value}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </ChartCard>
+
+        {Object.keys(stats.byCTL).length > 0 && (
+          <ChartCard title="부위별 (CTL)">
+            <VBarChart items={sorted(stats.byCTL)} color="#14b8a6" />
+          </ChartCard>
+        )}
+
+        <ChartCard title="VAS 추이">
+          <PromLineChart points={stats.promTrends.vas} color="#0d9488" label="VAS" />
+        </ChartCard>
+
+        <ChartCard title="ODI 추이">
+          <PromLineChart points={stats.promTrends.odi} color="#f59e0b" label="ODI" />
+        </ChartCard>
+      </div>
+    </>
+  );
+}
+
 function SurgeonFilter({ selected, onChange }: { selected: string[]; onChange: (s: string[]) => void }) {
   const isAll = selected.length === 0;
 
@@ -668,6 +830,7 @@ function SurgeonFilter({ selected, onChange }: { selected: string[]; onChange: (
 
 export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [selectedSurgeons, setSelectedSurgeons] = useState<string[]>([]);
 
   const filtered = useMemo(() => {
@@ -677,6 +840,39 @@ export default function Dashboard() {
 
   const isFiltered = selectedSurgeons.length > 0;
   const filterLabel = isFiltered ? selectedSurgeons.join(", ") : "";
+
+  // Breadcrumb label logic
+  const backArrow = (
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+    </svg>
+  );
+
+  let title = "Surgery Dashboard";
+  let subtitle = `Surgical Case Analytics${isFiltered ? ` · ${filterLabel}` : ""}`;
+  if (selectedYear && selectedCategory) {
+    title = `${selectedCategory} · ${selectedYear}`;
+    subtitle = `Year + Category Detail${isFiltered ? ` · ${filterLabel}` : ""}`;
+  } else if (selectedYear) {
+    title = `${selectedYear}년`;
+    subtitle = `Year Detail${isFiltered ? ` · ${filterLabel}` : ""}`;
+  } else if (selectedCategory) {
+    title = selectedCategory;
+    subtitle = `Category Detail${isFiltered ? ` · ${filterLabel}` : ""}`;
+  }
+
+  const handleBack = () => {
+    if (selectedYear) {
+      setSelectedYear(null);
+    } else if (selectedCategory) {
+      setSelectedCategory(null);
+    }
+  };
+
+  const hasBack = selectedCategory || selectedYear;
+  const backLabel = selectedYear
+    ? selectedCategory ? selectedCategory : "전체 수술"
+    : "전체 수술";
 
   return (
     <main className="min-h-screen bg-neutral-100 p-4 sm:p-6 lg:p-8">
@@ -688,30 +884,20 @@ export default function Dashboard() {
           className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
         >
           <div>
-            {selectedCategory ? (
-              <button onClick={() => setSelectedCategory(null)}
+            {hasBack ? (
+              <button onClick={handleBack}
                 className="text-sm text-neutral-400 hover:text-teal-600 transition-colors inline-flex items-center gap-1 mb-2">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                </svg>
-                전체 수술
+                {backArrow}
+                {backLabel}
               </button>
             ) : (
               <a href="/" className="text-sm text-neutral-400 hover:text-teal-600 transition-colors inline-flex items-center gap-1 mb-2">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                </svg>
+                {backArrow}
                 Portfolio
               </a>
             )}
-            <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">
-              {selectedCategory ?? "Surgery Dashboard"}
-            </h1>
-            <p className="text-neutral-500 text-sm mt-1">
-              {selectedCategory
-                ? `Category Detail${isFiltered ? ` · ${filterLabel}` : ""}`
-                : `Surgical Case Analytics${isFiltered ? ` · ${filterLabel}` : ""}`}
-            </p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">{title}</h1>
+            <p className="text-neutral-500 text-sm mt-1">{subtitle}</p>
           </div>
           <div className="flex flex-col items-end gap-2">
             <SurgeonFilter selected={selectedSurgeons} onChange={setSelectedSurgeons} />
@@ -722,13 +908,17 @@ export default function Dashboard() {
         </motion.div>
 
         <AnimatePresence mode="wait">
-          {selectedCategory ? (
-            <motion.div key={`${selectedCategory}-${selectedSurgeons.join(",")}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3, ease }}>
-              <DetailView category={selectedCategory} categoryStats={filtered.categoryStats} />
+          {selectedYear ? (
+            <motion.div key={`year-${selectedYear}-${selectedCategory || "all"}-${selectedSurgeons.join(",")}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3, ease }}>
+              <YearDetailView year={selectedYear} cases={filtered.cases} category={selectedCategory ?? undefined} />
+            </motion.div>
+          ) : selectedCategory ? (
+            <motion.div key={`cat-${selectedCategory}-${selectedSurgeons.join(",")}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3, ease }}>
+              <DetailView category={selectedCategory} categoryStats={filtered.categoryStats} onSelectYear={setSelectedYear} />
             </motion.div>
           ) : (
             <motion.div key={`overview-${selectedSurgeons.join(",")}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease }}>
-              <OverviewView onSelectCategory={setSelectedCategory} stats={filtered.overallStats} categoryCounts={filtered.categoryCounts} />
+              <OverviewView onSelectCategory={setSelectedCategory} onSelectYear={setSelectedYear} stats={filtered.overallStats} categoryCounts={filtered.categoryCounts} />
             </motion.div>
           )}
         </AnimatePresence>
