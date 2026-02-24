@@ -12,6 +12,7 @@ const SOCIAL_LINKS = {
   researchgate:
     "https://www.researchgate.net/profile/Woon-Tak-Yuh?ev=hdr_xprf",
   github: "https://github.com/woontakyuh",
+  dashboard: "https://dashboard.takmd.com",
 };
 
 type HotspotId =
@@ -371,9 +372,13 @@ const PAGES: Record<string, TermPage> = {
       "",
       "  ○ AI/ML side projects",
       "  ○ AI-agent augmented workflow",
-      "  ○ Medical education innovation",
+      "  ○ Live Surgery Analytics Dashboard",
       "  ○ Coffee & late night coding",
       "",
+    ],
+    links: [
+      { label: "Spinoscopy Dashboard →", url: SOCIAL_LINKS.dashboard },
+      { label: "Surgery DB Dashboard →", url: "/dashboard" },
     ],
     subPages: [
       { label: "Side Projects", pageKey: "personal_projects" },
@@ -394,7 +399,6 @@ const PAGES: Record<string, TermPage> = {
     ],
     links: [
       { label: "GitHub →", url: SOCIAL_LINKS.github },
-      { label: "Dashboard →", url: "/dashboard" },
     ],
   },
 
