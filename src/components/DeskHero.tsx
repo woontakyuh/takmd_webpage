@@ -198,8 +198,26 @@ const PAGES: Record<string, TermPage> = {
       { label: "ResearchGate →", url: SOCIAL_LINKS.researchgate },
     ],
     subPages: [
+      { label: "Awards", pageKey: "research_awards" },
       { label: "AI Research", pageKey: "research_ai" },
       { label: "Publications", pageKey: "research_pubs" },
+    ],
+  },
+  research_awards: {
+    command: "cat research/awards.md",
+    lines: [
+      "",
+      "# Awards",
+      "━━━━━━━━",
+      "",
+      "2025  Best Research Award",
+      "  KOSESS Annual Meeting",
+      "2024  Best Paper Award",
+      "  (Lee Heon-Jae Academic Award)",
+      "  KNS Autumn Meeting",
+      "2024  Most Cited Paper Award",
+      "  NeuroSpinal Congress",
+      "",
     ],
   },
   research_ai: {
