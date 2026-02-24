@@ -6,6 +6,7 @@ import {
   type TooltipProps,
 } from "recharts";
 import rawData from "../data/surgery-data.json";
+import { useMemo } from "react";
 
 interface PromPoint { timepoint: string; mean: number; n: number }
 interface CategoryStats {
@@ -25,13 +26,172 @@ interface CategoryStats {
   promTrends: { vas: PromPoint[]; odi: PromPoint[] };
 }
 
+interface CaseRecord {
+  id: number;
+  opDate: string;
+  year: number;
+  age: number;
+  sex: string;
+  level: string;
+  opCategory: string;
+  ctl: string;
+  classA: string;
+  classB: string;
+  classC: string;
+  surgeon: string[];
+  hospital: string;
+  cx: number;
+  vasPreop: number | null;
+  vasPostop: number | null;
+  vas3m: number | null;
+  vas6m: number | null;
+  vas12m: number | null;
+  odiPreop: number | null;
+  odiPostop: number | null;
+  odi3m: number | null;
+  odi6m: number | null;
+  odi12m: number | null;
+  opTime: number | null;
+  rsFactor: string | null;
+}
+
 const data = rawData as {
   generatedAt: string;
   overallStats: CategoryStats;
   categoryCounts: Record<string, number>;
   categoryStats: Record<string, CategoryStats>;
-  cases: unknown[];
+  cases: CaseRecord[];
 };
+
+// All unique surgeon names from the dataset
+const ALL_SURGEONS = (() => {
+  const s = new Set<string>();
+  data.cases.forEach((c) => c.surgeon.forEach((n) => s.add(n)));
+  return [...s].sort();
+})();
+
+// Primary surgeons for the toggle UI
+const PRIMARY_SURGEONS = ["여운탁", "최일"];
+
+function inc(obj: Record<string, number>, key: string) {
+  obj[key] = (obj[key] || 0) + 1;
+}
+
+function ageBucket(age: number): string {
+  const d = Math.floor(age / 10) * 10;
+  return d >= 90 ? "90s" : `${d}s`;
+}
+
+function computePromPoints(
+  cases: CaseRecord[],
+  field: "vas" | "odi"
+): PromPoint[] {
+  const timepointKeys = field === "vas"
+    ? [["Preop", "vasPreop"], ["Postop", "vasPostop"], ["3M", "vas3m"], ["6M", "vas6m"], ["12M", "vas12m"]] as const
+    : [["Preop", "odiPreop"], ["Postop", "odiPostop"], ["3M", "odi3m"], ["6M", "odi6m"], ["12M", "odi12m"]] as const;
+
+  return timepointKeys.map(([tp, key]) => {
+    const vals = cases.map((c) => c[key] as number | null).filter((v) => v != null) as number[];
+    return {
+      timepoint: tp,
+      mean: vals.length > 0 ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10 : 0,
+      n: vals.length,
+    };
+  });
+}
+
+function computeStatsFromCases(cases: CaseRecord[]): CategoryStats {
+  const byYear: Record<string, number> = {};
+  const bySex: Record<string, number> = {};
+  const byLevel: Record<string, number> = {};
+  const bySurgeon: Record<string, number> = {};
+  const byHospital: Record<string, number> = {};
+  const byClassA: Record<string, number> = {};
+  const byClassB: Record<string, number> = {};
+  const byClassC: Record<string, number> = {};
+  const byCTL: Record<string, number> = {};
+  const buckets: Record<string, number> = {};
+  let ageSum = 0, ageMin = Infinity, ageMax = -Infinity;
+  let cxTotal = 0, cxWith = 0;
+  let earliest = "9999-99", latest = "0000-00";
+
+  for (const c of cases) {
+    inc(byYear, String(c.year));
+    if (c.sex) inc(bySex, c.sex);
+    if (c.level) inc(byLevel, c.level);
+    c.surgeon.forEach((s) => inc(bySurgeon, s));
+    if (c.hospital) inc(byHospital, c.hospital);
+    if (c.classA) inc(byClassA, c.classA);
+    if (c.classB) inc(byClassB, c.classB);
+    if (c.classC) inc(byClassC, c.classC);
+    if (c.ctl) inc(byCTL, c.ctl);
+    if (c.age != null) {
+      ageSum += c.age;
+      if (c.age < ageMin) ageMin = c.age;
+      if (c.age > ageMax) ageMax = c.age;
+      inc(buckets, ageBucket(c.age));
+    }
+    if (c.cx != null) {
+      cxTotal++;
+      if (c.cx > 0) cxWith++;
+    }
+    if (c.opDate < earliest) earliest = c.opDate;
+    if (c.opDate > latest) latest = c.opDate;
+  }
+
+  const n = cases.length;
+  return {
+    totalCases: n,
+    dateRange: { earliest: earliest === "9999-99" ? "" : earliest, latest: latest === "0000-00" ? "" : latest },
+    byYear, bySex, byLevel, bySurgeon, byHospital,
+    byClassA, byClassB, byClassC, byCTL,
+    complicationRate: { total: cxTotal, withCx: cxWith },
+    ageDistribution: {
+      mean: n > 0 ? Math.round(ageSum / n * 10) / 10 : 0,
+      min: ageMin === Infinity ? 0 : ageMin,
+      max: ageMax === -Infinity ? 0 : ageMax,
+      buckets,
+    },
+    promTrends: {
+      vas: computePromPoints(cases, "vas"),
+      odi: computePromPoints(cases, "odi"),
+    },
+  };
+}
+
+function filterCases(cases: CaseRecord[], surgeons: string[]): CaseRecord[] {
+  if (surgeons.length === 0) return cases;
+  return cases.filter((c) => c.surgeon.some((s) => surgeons.includes(s)));
+}
+
+interface FilteredData {
+  overallStats: CategoryStats;
+  categoryCounts: Record<string, number>;
+  categoryStats: Record<string, CategoryStats>;
+}
+
+function computeFilteredData(cases: CaseRecord[]): FilteredData {
+  const categoryCounts: Record<string, number> = {};
+  const categoryBuckets: Record<string, CaseRecord[]> = {};
+
+  for (const c of cases) {
+    const cat = c.opCategory || "Unknown";
+    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+    if (!categoryBuckets[cat]) categoryBuckets[cat] = [];
+    categoryBuckets[cat].push(c);
+  }
+
+  const categoryStats: Record<string, CategoryStats> = {};
+  for (const [cat, bucket] of Object.entries(categoryBuckets)) {
+    categoryStats[cat] = computeStatsFromCases(bucket);
+  }
+
+  return {
+    overallStats: computeStatsFromCases(cases),
+    categoryCounts,
+    categoryStats,
+  };
+}
 
 const TEAL = ["#0d9488", "#14b8a6", "#2dd4bf", "#5eead4", "#99f6e4", "#ccfbf1"];
 const CATEGORY_COLORS = [
@@ -161,16 +321,16 @@ function PromLineChart({ points, color, label }: { points: PromPoint[]; color: s
   );
 }
 
-function OverviewView({ onSelectCategory }: { onSelectCategory: (cat: string) => void }) {
-  const s = data.overallStats;
-  const catData = sorted(data.categoryCounts, 20);
+function OverviewView({ onSelectCategory, stats, categoryCounts }: { onSelectCategory: (cat: string) => void; stats: CategoryStats; categoryCounts: Record<string, number> }) {
+  const s = stats;
+  const catData = sorted(categoryCounts, 20);
 
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="전체 수술 건수" value={s.totalCases} sub="cases" i={0} />
         <StatCard label="수술 기간" value={fmtDateRange(s.dateRange.earliest, s.dateRange.latest)} i={1} />
-        <StatCard label="수술 분류" value={Object.keys(data.categoryCounts).length} sub="categories" i={2} />
+        <StatCard label="수술 분류" value={Object.keys(categoryCounts).length} sub="categories" i={2} />
         <StatCard label="평균 연령" value={s.ageDistribution.mean} sub={`${s.ageDistribution.min}–${s.ageDistribution.max}세`} i={3} />
       </div>
 
@@ -260,8 +420,8 @@ function OverviewView({ onSelectCategory }: { onSelectCategory: (cat: string) =>
   );
 }
 
-function DetailView({ category }: { category: string }) {
-  const stats = data.categoryStats[category];
+function DetailView({ category, categoryStats }: { category: string; categoryStats: Record<string, CategoryStats> }) {
+  const stats = categoryStats[category];
   if (!stats) return <div className="text-neutral-400 text-center py-12">상세 데이터가 없습니다.</div>;
 
   const cxRate = stats.totalCases > 0 ? ((stats.complicationRate.withCx / stats.complicationRate.total) * 100).toFixed(1) : "0";
@@ -362,8 +522,61 @@ function DetailView({ category }: { category: string }) {
   );
 }
 
+function SurgeonFilter({ selected, onChange }: { selected: string[]; onChange: (s: string[]) => void }) {
+  const isAll = selected.length === 0;
+
+  const toggle = (name: string) => {
+    if (selected.includes(name)) {
+      onChange(selected.filter((s) => s !== name));
+    } else {
+      onChange([...selected, name]);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <span className="text-xs text-neutral-400 font-medium mr-1">Surgeon</span>
+      <button
+        onClick={() => onChange([])}
+        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+          isAll
+            ? "bg-teal-600 text-white shadow-sm"
+            : "bg-white text-neutral-500 hover:bg-neutral-50 border border-neutral-200"
+        }`}
+      >
+        All
+      </button>
+      {PRIMARY_SURGEONS.map((name) => {
+        const active = selected.includes(name);
+        return (
+          <button
+            key={name}
+            onClick={() => toggle(name)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              active
+                ? "bg-teal-600 text-white shadow-sm"
+                : "bg-white text-neutral-500 hover:bg-neutral-50 border border-neutral-200"
+            }`}
+          >
+            {name}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSurgeons, setSelectedSurgeons] = useState<string[]>([]);
+
+  const filtered = useMemo(() => {
+    const cases = filterCases(data.cases, selectedSurgeons);
+    return computeFilteredData(cases);
+  }, [selectedSurgeons]);
+
+  const isFiltered = selectedSurgeons.length > 0;
+  const filterLabel = isFiltered ? selectedSurgeons.join(", ") : "";
 
   return (
     <main className="min-h-screen bg-neutral-100 p-4 sm:p-6 lg:p-8">
@@ -395,22 +608,27 @@ export default function Dashboard() {
               {selectedCategory ?? "Surgery Dashboard"}
             </h1>
             <p className="text-neutral-500 text-sm mt-1">
-              {selectedCategory ? "Category Detail" : "Surgical Case Analytics"}
+              {selectedCategory
+                ? `Category Detail${isFiltered ? ` · ${filterLabel}` : ""}`
+                : `Surgical Case Analytics${isFiltered ? ` · ${filterLabel}` : ""}`}
             </p>
           </div>
-          <div className="text-xs text-neutral-300">
-            Updated {new Date(data.generatedAt).toLocaleDateString("ko-KR")}
+          <div className="flex flex-col items-end gap-2">
+            <SurgeonFilter selected={selectedSurgeons} onChange={setSelectedSurgeons} />
+            <div className="text-xs text-neutral-300">
+              Updated {new Date(data.generatedAt).toLocaleDateString("ko-KR")}
+            </div>
           </div>
         </motion.div>
 
         <AnimatePresence mode="wait">
           {selectedCategory ? (
-            <motion.div key={selectedCategory} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3, ease }}>
-              <DetailView category={selectedCategory} />
+            <motion.div key={`${selectedCategory}-${selectedSurgeons.join(",")}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3, ease }}>
+              <DetailView category={selectedCategory} categoryStats={filtered.categoryStats} />
             </motion.div>
           ) : (
-            <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease }}>
-              <OverviewView onSelectCategory={setSelectedCategory} />
+            <motion.div key={`overview-${selectedSurgeons.join(",")}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease }}>
+              <OverviewView onSelectCategory={setSelectedCategory} stats={filtered.overallStats} categoryCounts={filtered.categoryCounts} />
             </motion.div>
           )}
         </AnimatePresence>
