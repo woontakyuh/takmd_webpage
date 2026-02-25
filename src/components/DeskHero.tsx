@@ -92,7 +92,7 @@ const PAGES: Record<string, TermPage> = {
       "2025       AO Spine Fellowship, Keio",
       "2023-2025  Asst Prof, Hallym Univ",
       "2021-2022  Spine Fellowship, SNUH",
-      "2019-2021  Director, Military Academy",
+      "2019-2021  Director, Korean Military Academy",
       "2017       Board Certified, NS",
       "2013-2017  Neurosurgery Residency, SNUH",
       "2012-2013  Internship, SNUH",
