@@ -385,7 +385,7 @@ const PAGES: Record<string, TermPage> = {
       "  ○ AI/ML side projects",
       "  ○ AI-agent augmented workflow",
       "  ○ Surgery Analytics",
-      "  ○ Coffee & late night coding",
+      "  ○ Vibe coding & coffee",
       "",
     ],
     links: [
