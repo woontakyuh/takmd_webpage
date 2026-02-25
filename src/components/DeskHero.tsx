@@ -445,7 +445,7 @@ const PAGES: Record<string, TermPage> = {
       "━━━━━━",
       "",
       "Nose riding · 9'6\" Beacon, Bing Surfboards",
-      "Alpine Snowboard · Giant Slalom, F2",
+      "Giant Slalom · Alpine Snowboard, F2",
       "FSD · Model 3 Highland, Tesla",
       "Crypto",
       "",
