@@ -203,10 +203,9 @@ const PAGES: Record<string, TermPage> = {
       "",
       "Focus:",
       "  ├─ Endoscopic Spine Surgery",
-      "  ├─ Spinal Cord & Column Tumors",
-      "  ├─ AI + Spine Diagnosis",
-      "  ├─ ERAS Protocols",
-      "  └─ Deep Learning Imaging",
+      "  ├─ Spinal Tumor Research",
+      "  ├─ AI Research",
+      "  └─ ERAS in Spine",
       "",
     ],
     links: [
