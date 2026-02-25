@@ -205,7 +205,7 @@ const PAGES: Record<string, TermPage> = {
       "  ├─ Endoscopic Spine Surgery",
       "  ├─ Spinal Tumor Research",
       "  ├─ AI Research",
-      "  └─ ERAS in Spine",
+      "  └─ ERAS in Spine Surgery",
       "",
     ],
     links: [
