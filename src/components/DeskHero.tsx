@@ -202,6 +202,8 @@ const PAGES: Record<string, TermPage> = {
       "First author ···· 15+ papers",
       "",
       "Focus:",
+      "  ├─ Endoscopic Spine Surgery",
+      "  ├─ Spinal Cord & Column Tumors",
       "  ├─ AI + Spine Diagnosis",
       "  ├─ ERAS Protocols",
       "  └─ Deep Learning Imaging",
