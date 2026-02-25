@@ -384,12 +384,12 @@ const PAGES: Record<string, TermPage> = {
       "",
       "  ○ AI/ML side projects",
       "  ○ AI-agent augmented workflow",
-      "  ○ Surgery Analytics Dashboard",
+      "  ○ Surgery Analytics",
       "  ○ Coffee & late night coding",
       "",
     ],
     links: [
-      { label: "Spinoscopy Dashboard →", url: SOCIAL_LINKS.dashboard },
+      { label: "Dashboard →", url: "/dashboard" },
     ],
     subPages: [
       { label: "Side Projects", pageKey: "personal_projects" },
