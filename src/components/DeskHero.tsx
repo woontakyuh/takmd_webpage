@@ -204,6 +204,9 @@ const PAGES: Record<string, TermPage> = {
       "cervical dumbbell schwannoma",
       "",
     ],
+    links: [
+      { label: "JMISST →", url: "https://doi.org/10.21182/jmisst.2025.02747" },
+    ],
   },
 
   // ─ Research ─
