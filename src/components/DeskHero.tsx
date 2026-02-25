@@ -1077,7 +1077,7 @@ export default function DeskHero() {
             >
               <TerminalView
                 rootPageKey={locked}
-                onClose={() => setLocked(null)}
+                onClose={() => { setLocked(null); setHovered(null); }}
                 mobile
               />
             </motion.div>
@@ -1168,7 +1168,7 @@ export default function DeskHero() {
                 >
                   <TerminalView
                     rootPageKey={activeSpot}
-                    onClose={() => setLocked(null)}
+                    onClose={() => { setLocked(null); setHovered(null); }}
                   />
                 </motion.div>
               )}
