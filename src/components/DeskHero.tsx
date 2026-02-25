@@ -141,7 +141,8 @@ const PAGES: Record<string, TermPage> = {
       "# Spine Surgery",
       "━━━━━━━━━━━━━━━",
       "",
-      "Specialty:",
+      "Cases ····· 500+",
+      "Levels ···· 700+",
       "",
     ],
     links: [
