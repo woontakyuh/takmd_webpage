@@ -38,7 +38,7 @@ interface Marker {
 const MARKERS: Marker[] = [
   { id: "roles",     label: "Roles",      x: 8,    y: 23,  color: "#38bdf8", rgb: "56,189,248"  }, // framed certificate on wall
   { id: "schedule",  label: "Talks",      x: 21,   y: 61,  color: "#fb923c", rgb: "251,146,60"  }, // calendar centre
-  { id: "myself",    label: "About Me",   x: 38,   y: 63,  color: "#60a5fa", rgb: "96,165,250"  }, // mac mini body
+  { id: "myself",    label: "About Me",   x: 35,   y: 67,  color: "#60a5fa", rgb: "96,165,250"  }, // mac mini body
   { id: "research",  label: "Research",   x: 49,   y: 72,  color: "#fbbf24", rgb: "251,191,36"  }, // leather notebook centre
   { id: "personal",  label: "Personal",   x: 64,   y: 59,  color: "#f472b6", rgb: "244,114,182" }, // AirPods Max centre
   { id: "ube",       label: "UBE",        x: 76,   y: 42,  color: "#2dd4bf", rgb: "45,212,191"  }, // spine model centre
