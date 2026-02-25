@@ -41,7 +41,7 @@ const MARKERS: Marker[] = [
   { id: "myself",    label: "About Me",   x: 35,   y: 66,  color: "#60a5fa", rgb: "96,165,250"  }, // mac mini body
   { id: "research",  label: "Research",   x: 49,   y: 72,  color: "#fbbf24", rgb: "251,191,36"  }, // leather notebook centre
   { id: "personal",  label: "Personal",   x: 64,   y: 59,  color: "#f472b6", rgb: "244,114,182" }, // AirPods Max centre
-  { id: "ube",       label: "UBE",        x: 76,   y: 42,  color: "#2dd4bf", rgb: "45,212,191"  }, // spine model centre
+  { id: "ube",       label: "Spine Surgery", x: 76, y: 42,  color: "#2dd4bf", rgb: "45,212,191"  }, // spine model centre
   { id: "education", label: "Education",  x: 88,   y: 56,  color: "#a78bfa", rgb: "167,139,250" }, // textbooks centre
 ];
 
@@ -135,17 +135,13 @@ const PAGES: Record<string, TermPage> = {
 
   // ─ UBE ─
   ube: {
-    command: "cat surgery/ube.md",
+    command: "cat surgery/overview.md",
     lines: [
       "",
-      "# Unilateral Biportal Endoscopy",
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+      "# Spine Surgery",
+      "━━━━━━━━━━━━━━━",
       "",
-      "Cases ····· 500+",
-      "Specialty · MIS Spine Surgery",
-      "Role ······ Director, ESC",
-      "",
-      "Notable: UBE resection of high cervical schwannoma",
+      "Specialty:",
       "",
     ],
     links: [
@@ -153,42 +149,59 @@ const PAGES: Record<string, TermPage> = {
       { label: "Davos Hospital →", url: SOCIAL_LINKS.hospital },
     ],
     subPages: [
-      { label: "What is UBE?", pageKey: "ube_what" },
-      { label: "Case Statistics", pageKey: "ube_stats" },
+      { label: "UBE (Unilateral Biportal Endoscopy)", pageKey: "surgery_ube" },
+      { label: "MIS (Minimally Invasive Surgery)", pageKey: "surgery_mis" },
+      { label: "Tumor", pageKey: "surgery_tumor" },
     ],
   },
-  ube_what: {
-    command: "cat surgery/ube-intro.md",
+  surgery_ube: {
+    command: "cat surgery/ube.md",
     lines: [
       "",
-      "# What is UBE?",
-      "━━━━━━━━━━━━━━━",
+      "# UBE",
+      "━━━━━",
       "",
-      "Unilateral Biportal Endoscopy –",
-      "cutting-edge MIS spine surgery using",
-      "two small portals and an endoscope",
+      "Unilateral Biportal Endoscopy",
+      "",
+      "Cases ····· 500+",
+      "Role ······ Director, Center for",
+      "            Endoscopic Spine Surgery",
+      "",
+      "Two small portals + endoscope",
       "for clear visualization.",
-      "",
-      "Benefits: Less tissue damage,",
-      "faster recovery, less postop pain,",
-      "same-day discharge possible.",
+      "Less tissue damage, faster recovery.",
       "",
     ],
   },
-  ube_stats: {
-    command: "cat surgery/statistics.md",
+  surgery_mis: {
+    command: "cat surgery/mis.md",
     lines: [
       "",
-      "# Case Statistics",
-      "━━━━━━━━━━━━━━━━━",
+      "# MIS",
+      "━━━━━",
       "",
-      "Total cases ····· 500+",
-      "Lumbar ·········· 65%",
-      "Cervical ········ 25%",
-      "Thoracic ········ 10%",
+      "Minimally Invasive Spine Surgery",
       "",
-      "Complications ··· < 2%",
-      "Satisfaction ···· 94%",
+      "MIS-TLIF / OLIF / LLIF",
+      "Percutaneous pedicle screw fixation",
+      "",
+    ],
+  },
+  surgery_tumor: {
+    command: "cat surgery/tumor.md",
+    lines: [
+      "",
+      "# Tumor",
+      "━━━━━━━",
+      "",
+      "Spinal cord & column tumors",
+      "",
+      "Schwannoma, meningioma,",
+      "ependymoma, hemangioblastoma,",
+      "metastatic spine tumors",
+      "",
+      "Notable: UBE resection of high",
+      "cervical dumbbell schwannoma",
       "",
     ],
   },
