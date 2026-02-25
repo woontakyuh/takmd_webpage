@@ -391,14 +391,14 @@ const PAGES: Record<string, TermPage> = {
       { label: "Dashboard →", url: "/dashboard" },
     ],
     subPages: [
-      { label: "Side Projects", pageKey: "personal_projects" },
+      { label: "AI Side Projects", pageKey: "personal_projects" },
     ],
   },
   personal_projects: {
     command: "ls ~/projects/",
     lines: [
       "",
-      "# Side Projects",
+      "# AI Side Projects",
       "━━━━━━━━━━━━━━━",
       "",
       "SpineAlign AI · DL spine alignment from X-rays",
