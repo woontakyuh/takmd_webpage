@@ -88,7 +88,8 @@ const PAGES: Record<string, TermPage> = {
       "# Career Timeline",
       "━━━━━━━━━━━━━━━━━",
       "",
-      "2025  Director, Davos Hospital",
+      "2025  Director, Center for Endoscopic",
+      "      Spine Surgery, Davos Hospital",
       "2025  AO Spine Fellowship, Keio",
       "2023  Asst Prof, Hallym Univ",
       "2021  Fellowship, SNU Hospital",
@@ -931,13 +932,12 @@ export default function DeskHero() {
     const iA = nW / nH;
     const cA = cW / cH;
     let rW: number, rH: number;
-    // "cover" – always fill the viewport; crop overflow
     if (cA > iA) {
-      rW = cW;
-      rH = cW / iA;
-    } else {
       rH = cH;
       rW = cH * iA;
+    } else {
+      rW = cW;
+      rH = cW / iA;
     }
     setImageDims({
       width: rW,
