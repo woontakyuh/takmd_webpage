@@ -932,12 +932,13 @@ export default function DeskHero() {
     const iA = nW / nH;
     const cA = cW / cH;
     let rW: number, rH: number;
+    // "cover" – always fill the viewport; crop overflow
     if (cA > iA) {
-      rH = cH;
-      rW = cH * iA;
-    } else {
       rW = cW;
       rH = cW / iA;
+    } else {
+      rH = cH;
+      rW = cH * iA;
     }
     setImageDims({
       width: rW,
