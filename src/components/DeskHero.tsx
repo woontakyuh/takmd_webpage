@@ -507,8 +507,7 @@ const PAGES: Record<string, TermPage> = {
       "# Presentations & Lectures",
       "━━━━━━━━━━━━━━━━━━━━━━━━━━",
       "",
-      "Oral presentations and",
-      "invited lectures by year.",
+      "Browse by year.",
       "",
     ],
     subPages: [
