@@ -90,6 +90,7 @@ const PAGES: Record<string, TermPage> = {
       "",
       "2025-      Director, Davos Hospital",
       "2025       AO Spine Fellowship, Keio",
+      "2024       WSO Mission, Dominican Republic",
       "2023-2025  Asst Prof, Hallym Univ",
       "2021-2022  Spine Fellowship, SNUH",
       "2019-2021  Director, Korean Military Academy",
