@@ -382,10 +382,9 @@ const PAGES: Record<string, TermPage> = {
       "",
       "Interests beyond the OR:",
       "",
-      "  ○ AI/ML side projects",
+      "  ○ Vibe coding my own domain",
       "  ○ AI-agent augmented workflow",
-      "  ○ Surgery Analytics",
-      "  ○ Vibe coding & coffee",
+      "  ○ Surgery Statistics",
       "",
     ],
     links: [
