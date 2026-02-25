@@ -368,7 +368,7 @@ const PAGES: Record<string, TermPage> = {
       "",
       "2025–current",
       "Government-funded national project",
-      "w/ Incheon Technopark & Hayan Medical",
+      "w/ Incheon Technopark & Hayan Co., Ltd",
       "",
       "For domestic surgeons in Korea",
       "",
