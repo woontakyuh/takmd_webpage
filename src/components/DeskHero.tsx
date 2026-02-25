@@ -66,9 +66,8 @@ const PAGES: Record<string, TermPage> = {
       "━━━━━━━━━━━━━━━━━",
       "",
       "Spine Surgeon & AI Researcher",
-      "Director @ Davos Hospital",
-      "",
-      "Seoul / Yongin, South Korea",
+      "Director, Center for Endoscopic Spine Surgery",
+      "Davos Hospital, South Korea",
       "",
     ],
     links: [
