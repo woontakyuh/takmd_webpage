@@ -412,7 +412,7 @@ const PAGES: Record<string, TermPage> = {
       "# Society Roles & Positions",
       "━━━━━━━━━━━━━━━━━━━━━━━━━━━",
       "",
-      "Editorial Board Member, Neurospine",
+      "Editorial Board Member, Neurospine (IF 3.6)",
       "Academic Committee, KOMISS",
       "Education Committee, KOSESS",
       "Computation Committee, KSNS",
