@@ -1,0 +1,44 @@
+/*
+ * Hex color fallbacks for Chrome < 111 (no OKLCH / color-mix support).
+ * This file is served as-is and is NOT processed by Tailwind/Vite,
+ * so hex values are preserved and override the OKLCH values generated
+ * by Tailwind v4 for older browsers.
+ */
+
+/* ── solid text colors ─────────────────────────────────────────────── */
+.text-green-300 { color: #86efac !important; }
+.text-green-400 { color: #4ade80 !important; }
+.text-green-500 { color: #22c55e !important; }
+.text-green-600 { color: #16a34a !important; }
+.text-green-700 { color: #15803d !important; }
+.text-white      { color: #ffffff !important; }
+
+/* ── solid bg colors ───────────────────────────────────────────────── */
+.bg-green-400   { background-color: #4ade80 !important; }
+.bg-black       { background-color: #000000 !important; }
+
+/* ── opacity bg variants ───────────────────────────────────────────── */
+.bg-green-500\/10 { background-color: rgba(34,197,94,0.10) !important; }
+.bg-black\/92     { background-color: rgba(0,0,0,0.92)     !important; }
+.bg-black\/95     { background-color: rgba(0,0,0,0.95)     !important; }
+
+/* ── opacity border variants ───────────────────────────────────────── */
+.border-green-500\/20 { border-color: rgba(34,197,94,0.20) !important; }
+.border-green-500\/30 { border-color: rgba(34,197,94,0.30) !important; }
+.border-green-500\/40 { border-color: rgba(34,197,94,0.40) !important; }
+.border-green-400\/50 { border-color: rgba(74,222,128,0.50) !important; }
+.border-green-400\/60 { border-color: rgba(74,222,128,0.60) !important; }
+
+/* ── opacity text variants ─────────────────────────────────────────── */
+.text-white\/25 { color: rgba(255,255,255,0.25) !important; }
+.text-white\/30 { color: rgba(255,255,255,0.30) !important; }
+.text-white\/40 { color: rgba(255,255,255,0.40) !important; }
+.text-white\/70 { color: rgba(255,255,255,0.70) !important; }
+.text-white\/90 { color: rgba(255,255,255,0.90) !important; }
+
+/* ── hover variants ────────────────────────────────────────────────── */
+.hover\:text-green-400:hover          { color: #4ade80 !important; }
+.hover\:text-white\/70:hover          { color: rgba(255,255,255,0.70) !important; }
+.hover\:bg-green-500\/10:hover        { background-color: rgba(34,197,94,0.10) !important; }
+.hover\:border-green-400\/50:hover    { border-color: rgba(74,222,128,0.50) !important; }
+.hover\:border-green-400\/60:hover    { border-color: rgba(74,222,128,0.60) !important; }
