@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+---
+
+<Layout title="Research - takmd" description="Selected publications and research interests in spine surgery and AI.">
+  <section class="page-shell py-14">
+    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">Research</h1>
+    <div class="mt-8 grid max-w-3xl grid-cols-3 gap-4">
+      <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <p class="text-3xl font-semibold text-[var(--color-link)]">29</p>
+        <p class="mt-1 text-sm text-[var(--color-text-secondary)]">Publications</p>
+      </div>
+      <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <p class="text-3xl font-semibold text-[var(--color-link)]">15</p>
+        <p class="mt-1 text-sm text-[var(--color-text-secondary)]">First Author</p>
+      </div>
+      <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <p class="text-3xl font-semibold text-[var(--color-link)]">11</p>
+        <p class="mt-1 text-sm text-[var(--color-text-secondary)]">h-index</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="📄" title="Selected Publications" />
+    <div class="grid gap-4 md:grid-cols-2">
+      <Card title="Deep Learning for Vertebral Fracture Detection" description="Imaging-focused AI model development and validation." tags={['AI/ML', 'Imaging']} />
+      <Card title="UBE Learning Curve Analysis" description="Competency progression analysis for endoscopic spine trainees." tags={['UBE', 'Education']} />
+      <Card title="ERAS Protocol for Spine Surgery" description="Clinical pathway optimization and recovery outcome measurements." tags={['Clinical', 'Outcomes']} />
+      <Card title="Endoscopic Techniques for Spinal Tumors" description="Technical adaptation and safety considerations in tumor surgery." tags={['Surgery', 'Oncology']} />
+    </div>
+    <a href="https://scholar.google.com/citations?user=tbTBemUAAAAJ&hl=ko&oi=ao" target="_blank" rel="noreferrer" class="mt-5 inline-flex text-sm font-medium text-[var(--color-link)] hover:text-[var(--color-text)]">
+      View full publication list on Google Scholar ->
+    </a>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="🔬" title="Research Interests" />
+    <ul class="list-disc space-y-2 pl-5 text-[var(--color-text-secondary)]">
+      <li>Endoscopic spine surgery</li>
+      <li>Clinical AI & deep learning</li>
+      <li>Spinal tumor surgery</li>
+      <li>Surgical outcome analysis</li>
+      <li>Education methodology</li>
+    </ul>
+  </section>
+
+  <section class="page-shell pb-16">
+    <SectionHeader icon="🧪" title="Projects" />
+    <p class="max-w-3xl text-[var(--color-text-secondary)]">
+      Current exploratory work focuses on the UBE x AI interface, with emphasis on workflow standardization,
+      structured data capture, and practical translational utility.
+    </p>
+  </section>
+</Layout>

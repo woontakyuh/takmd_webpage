@@ -1,0 +1,35 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import TagChip from '../../components/TagChip.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('knowledge', ({ data }) => !data.draft);
+
+  return entries.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Layout title={`${entry.data.title} - Knowledge - takmd`} description={entry.data.description}>
+  <article class="page-shell py-14">
+    <header class="max-w-3xl">
+      <p class="text-sm text-[var(--color-text-muted)]">{entry.data.date.toLocaleDateString('en-CA')}</p>
+      <h1 class="page-title-gradient mt-2 text-3xl font-extrabold sm:text-4xl">{entry.data.title}</h1>
+      <div class="mt-4 flex flex-wrap gap-2">
+        {entry.data.tags.map((tag: string) => (
+          <TagChip label={tag} />
+        ))}
+      </div>
+    </header>
+
+    <div class="prose-content mt-10">
+      <Content />
+    </div>
+  </article>
+</Layout>

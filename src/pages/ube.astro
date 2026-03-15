@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+---
+
+<Layout title="UBE - takmd" description="Unilateral Biportal Endoscopy philosophy, learning resources, and advanced concepts.">
+  <section class="page-shell py-14">
+    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">Unilateral Biportal Endoscopy</h1>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="🩺" title="Philosophy of UBE" />
+    <div class="space-y-4 text-[var(--color-text-secondary)]">
+      <p>
+        UBE is grounded in minimal tissue disruption while preserving a broad and stable endoscopic field. The approach
+        prioritizes deliberate decompression through small portals instead of large exposures.
+      </p>
+      <p>
+        Continuous saline irrigation supports clear visualization and steady hemostasis, allowing precise work around neural
+        elements. This visibility changes decision quality during critical steps.
+      </p>
+      <p>
+        The objective is not simply smaller incisions, but reproducible outcomes through measured instrument control,
+        anatomic respect, and efficient recovery pathways.
+      </p>
+    </div>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="🧭" title="Anchor-based Surgical Thinking" />
+    <p class="max-w-3xl text-[var(--color-text-secondary)]">
+      Anchor points are defined landmarks that guide orientation, decompression depth, and trajectory. This framework reduces
+      uncertainty and improves consistency across straightforward and complex cases.
+    </p>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="🎬" title="Educational Playlists" description="Curated procedural and concept-focused videos" />
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Card title="Foundational UBE Cases" description="Coming soon" />
+      <Card title="Advanced Decompression" description="Coming soon" />
+      <Card title="Fusion and Revision Cases" description="Coming soon" />
+    </div>
+  </section>
+
+  <section class="page-shell pb-16">
+    <SectionHeader icon="⚠️" title="Common Pitfalls & Advanced Concepts" />
+    <ul class="list-disc space-y-2 pl-5 text-[var(--color-text-secondary)]">
+      <li>Portal misalignment and unstable instrument trajectory</li>
+      <li>Inadequate contralateral decompression despite acceptable ipsilateral view</li>
+      <li>Bleeding control strategy before deep progression</li>
+      <li>Safe expansion from focal decompression to broader bilateral goals</li>
+    </ul>
+  </section>
+</Layout>

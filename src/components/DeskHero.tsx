@@ -1021,14 +1021,17 @@ export default function DeskHero() {
           className="relative w-full shrink-0"
           style={{ aspectRatio: "1024 / 680" }}
         >
-          <img
-            ref={imgRef}
-            src="/desk-setup.png"
-            alt="Desk setup"
-            className="absolute inset-0 w-full h-full object-contain"
-            onLoad={updateDims}
-            draggable={false}
-          />
+          <picture>
+            <source srcSet="/desk-setup.webp" type="image/webp" />
+            <img
+              ref={imgRef}
+              src="/desk-setup.png"
+              alt="Desk setup with monitor, keyboard, and accessories"
+              className="absolute inset-0 w-full h-full object-contain"
+              onLoad={updateDims}
+              draggable={false}
+            />
+          </picture>
           {imageDims.width > 0 && (
             <div
               className="absolute"
@@ -1100,20 +1103,23 @@ export default function DeskHero() {
       className="relative w-screen h-screen bg-[#0a0a0a] overflow-hidden select-none"
       onClick={handleBgClick}
     >
-      <img
-        ref={imgRef}
-        src="/desk-setup.png"
-        alt="Desk setup"
-        className="absolute"
-        style={{
-          left: imageDims.offsetX,
-          top: imageDims.offsetY,
-          width: imageDims.width,
-          height: imageDims.height,
-        }}
-        onLoad={updateDims}
-        draggable={false}
-      />
+      <picture>
+        <source srcSet="/desk-setup.webp" type="image/webp" />
+        <img
+          ref={imgRef}
+          src="/desk-setup.png"
+          alt="Desk setup with monitor, keyboard, and accessories"
+          className="absolute"
+          style={{
+            left: imageDims.offsetX,
+            top: imageDims.offsetY,
+            width: imageDims.width,
+            height: imageDims.height,
+          }}
+          onLoad={updateDims}
+          draggable={false}
+        />
+      </picture>
 
       {imageDims.width > 0 && (
         <div

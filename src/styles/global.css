@@ -6,15 +6,26 @@
   --font-sans: "Inter Variable", system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 
-  --color-bg: #f5f5f4;
-  --color-fg: #ffffff;
-  --color-fg-lifted: #fafaf9;
-  --color-border: #e7e5e4;
-  --color-border-dark: #d6d3d1;
-  --color-text-primary: #1c1917;
-  --color-text-secondary: #57534e;
-  --color-text-tertiary: #a8a29e;
+  /* Dark theme base */
+  --color-bg: #09090b;
+  --color-fg: #18181b;
+  --color-fg-lifted: #1c1c1e;
+  --color-border: #27272a;
+  --color-border-dark: #3f3f46;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
   --color-accent: #0d9488;
+
+  /* Missing variables used by Nav/Footer/Cards/Pages */
+  --color-text: #fafafa;
+  --color-text-muted: #52525b;
+  --color-link: #2dd4bf;
+  --color-surface: #18181b;
+  --color-surface-alt: #1f1f23;
+  --color-border-strong: #3f3f46;
+  --color-border-hover: #52525b;
+  --color-accent-soft: rgba(20, 184, 166, 0.10);
 
   /* Override OKLCH defaults with hex for cross-browser compatibility */
   --color-green-100: #dcfce7;
@@ -51,7 +62,7 @@
   }
 
   ::selection {
-    @apply bg-stone-200 text-stone-900;
+    @apply bg-teal-900 text-teal-100;
   }
 }
 
@@ -171,11 +182,79 @@
     @apply p-4;
   }
 
+  .page-shell {
+    @apply mx-auto w-full max-w-5xl px-4 sm:px-6;
+  }
+
+  .page-title-gradient {
+    background: linear-gradient(135deg, #fafafa 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .prose-content {
+    @apply max-w-3xl text-sm leading-relaxed;
+    color: var(--color-text-secondary);
+  }
+
+  .prose-content h2 {
+    @apply mt-8 mb-3 text-xl font-bold;
+    color: var(--color-text);
+  }
+
+  .prose-content h3 {
+    @apply mt-6 mb-2 text-lg font-semibold;
+    color: var(--color-text);
+  }
+
+  .prose-content p {
+    @apply mb-4;
+  }
+
+  .prose-content ul,
+  .prose-content ol {
+    @apply mb-4 ml-5 list-disc space-y-1;
+  }
+
+  .prose-content ol {
+    @apply list-decimal;
+  }
+
+  .prose-content code {
+    @apply rounded bg-[var(--color-surface-alt)] px-1.5 py-0.5 font-mono text-xs;
+    color: var(--color-link);
+  }
+
+  .prose-content pre {
+    @apply mb-4 overflow-x-auto rounded-lg p-4;
+    background-color: var(--color-surface-alt);
+  }
+
+  .prose-content pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .prose-content a {
+    color: var(--color-link);
+    @apply underline underline-offset-2 transition-colors;
+  }
+
+  .prose-content a:hover {
+    color: var(--color-text);
+  }
+
+  .prose-content blockquote {
+    @apply mb-4 border-l-2 pl-4 italic;
+    border-color: var(--color-border-strong);
+    color: var(--color-text-tertiary);
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }

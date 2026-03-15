@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+---
+
+<Layout title="AI - takmd" description="AI integration in clinical spine surgery practice.">
+  <section class="page-shell py-14">
+    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">AI Integration in Clinical Spine Practice</h1>
+    <p class="mt-4 text-base text-[var(--color-link)]">AI assists cognition, not replaces surgeons.</p>
+  </section>
+
+  <section class="page-shell space-y-8 pb-16">
+    <div>
+      <SectionHeader icon="🧠" title="Workflow Augmentation" />
+      <p class="max-w-3xl text-[var(--color-text-secondary)]">
+        AI supports preoperative and postoperative workflow continuity by reducing repetitive synthesis tasks and helping
+        maintain structured clinical context across encounters.
+      </p>
+    </div>
+
+    <div>
+      <SectionHeader icon="🗂️" title="Documentation Assist" />
+      <p class="max-w-3xl text-[var(--color-text-secondary)]">
+        Voice-to-structured note pipelines reduce documentation burden while preserving surgeon review at every stage of
+        final clinical communication.
+      </p>
+    </div>
+
+    <div>
+      <SectionHeader icon="📊" title="Registry Structuring" />
+      <p class="max-w-3xl text-[var(--color-text-secondary)]">
+        Standardized fields and consistent tagging support prospective data quality and simplify later analysis for quality
+        improvement and publication-ready registries.
+      </p>
+    </div>
+
+    <div>
+      <SectionHeader icon="✅" title="Decision Checklist Support" />
+      <p class="max-w-3xl text-[var(--color-text-secondary)]">
+        Prompt-driven checklists offer cognitive safety rails around indications, contraindications, and expected outcomes,
+        while final decisions remain physician-led.
+      </p>
+    </div>
+
+    <a href="/ai-workflow" class="inline-flex text-sm font-medium text-[var(--color-link)] transition-colors hover:text-[var(--color-text)]">
+      See the detailed workflow ->
+    </a>
+  </section>
+</Layout>

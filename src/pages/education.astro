@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+---
+
+<Layout title="Education - takmd" description="Global surgical education programs in endoscopic spine surgery.">
+  <section class="page-shell py-14">
+    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">Global Surgical Education</h1>
+    <div class="mt-8 grid max-w-2xl grid-cols-2 gap-4">
+      <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <p class="text-3xl font-semibold text-[var(--color-link)]">11+</p>
+        <p class="mt-1 text-sm text-[var(--color-text-secondary)]">countries</p>
+      </div>
+      <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+        <p class="text-3xl font-semibold text-[var(--color-link)]">40+</p>
+        <p class="mt-1 text-sm text-[var(--color-text-secondary)]">surgeons trained</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="🎓" title="Training Philosophy" />
+    <p class="max-w-3xl text-[var(--color-text-secondary)]">
+      Training is built around reproducible steps, direct feedback, and progressive complexity. The aim is independent,
+      safe adoption of endoscopic techniques through clear principles rather than imitation alone.
+    </p>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="🛠️" title="Programs" />
+    <div class="grid gap-4 md:grid-cols-2">
+      <Card title="International Training Center" description="Structured observation and hands-on progression with faculty guidance." />
+      <Card title="Dummy Workshop" description="Foundational instrument handling and portal orientation drills." />
+      <Card title="Live Pig/Animal Workshop" description="Tissue handling, hemostasis strategy, and procedural flow rehearsal." />
+      <Card title="Cadaver Workshop" description="Anatomic precision and full-sequence execution in realistic scenarios." />
+    </div>
+  </section>
+
+  <section class="page-shell pb-16">
+    <SectionHeader icon="📅" title="Past & Upcoming Programs" />
+    <div class="rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-alt)] p-8 text-center text-sm text-[var(--color-text-secondary)]">
+      Program calendar and archived sessions will be published soon.
+    </div>
+  </section>
+</Layout>

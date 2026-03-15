@@ -3,6 +3,22 @@ import Layout from '../layouts/Layout.astro';
 import DeskHero from '../components/DeskHero';
 ---
 
-<Layout>
+<Layout hideNav hideFooter>
   <DeskHero client:load />
+
+  <!-- SSG content for SEO crawlers — visually hidden -->
+  <div class="sr-only">
+    <h1>Woon Tak Yuh, MD</h1>
+    <p>Spine Surgeon & AI Researcher | Director, Spine Endoscopy Center at Davos Hospital</p>
+    <p>Specializing in Unilateral Biportal Endoscopy (UBE), clinical AI integration, and global surgical education.</p>
+    <nav>
+      <a href="/ube">UBE Surgery</a>
+      <a href="/education">Surgical Education</a>
+      <a href="/ai">AI in Clinical Practice</a>
+      <a href="/research">Research & Publications</a>
+      <a href="/media">Media</a>
+      <a href="/knowledge">Knowledge Base</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </div>
 </Layout>

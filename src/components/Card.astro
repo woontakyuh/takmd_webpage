@@ -1,0 +1,42 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href?: string;
+  tags?: string[];
+}
+
+const { title, description, href, tags = [] } = Astro.props;
+const cardClass =
+  'group block rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-border-hover)]';
+---
+
+{href ? (
+  <a href={href} class={cardClass}>
+    <h3 class="text-base font-semibold text-[var(--color-text)]">{title}</h3>
+    <p class="mt-2 text-sm text-[var(--color-text-secondary)]">{description}</p>
+    {tags.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <span class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-2.5 py-0.5 text-xs text-[var(--color-text-secondary)]">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </a>
+) : (
+  <article class={cardClass}>
+    <h3 class="text-base font-semibold text-[var(--color-text)]">{title}</h3>
+    <p class="mt-2 text-sm text-[var(--color-text-secondary)]">{description}</p>
+    {tags.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <span class="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-2.5 py-0.5 text-xs text-[var(--color-text-secondary)]">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </article>
+)}

@@ -1,0 +1,24 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  href?: string;
+  linkText?: string;
+  icon?: string;
+}
+
+const { title, description, href, linkText = 'View all ->', icon = '🔎' } = Astro.props;
+---
+
+<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+  <div>
+    <p class="text-xl" aria-hidden="true">{icon}</p>
+    <h2 class="mt-2 text-2xl font-bold text-[var(--color-text)]">{title}</h2>
+    {description && <p class="mt-1 text-sm text-[var(--color-text-secondary)]">{description}</p>}
+  </div>
+  {href && (
+    <a href={href} class="mt-1 text-sm font-medium text-[var(--color-link)] transition-colors hover:text-[var(--color-text)]">
+      {linkText}
+    </a>
+  )}
+</div>

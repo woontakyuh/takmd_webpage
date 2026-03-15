@@ -1,0 +1,117 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+
+const workflowSteps = [
+  {
+    title: 'Patient Encounter',
+    description: 'Structured history, examination, and problem framing at point of care.',
+  },
+  {
+    title: 'AI-assisted Documentation',
+    description: 'Voice capture and guided drafts for notes, plans, and communication.',
+  },
+  {
+    title: 'Notion DB',
+    description: 'Clean registry fields for case indexing and longitudinal follow-up.',
+  },
+  {
+    title: 'PROM Capture',
+    description: 'Standardized patient-reported outcome collection at defined intervals.',
+  },
+  {
+    title: 'Obsidian Insight Graph',
+    description: 'Cross-linking concepts, outcomes, and hypotheses for clinical learning.',
+  },
+  {
+    title: 'Research/Registry',
+    description: 'Export-ready datasets for audits, abstracts, and publication pipelines.',
+  },
+];
+---
+
+<Layout title="AI Workflow - takmd" description="AI-augmented workflow used in endoscopic spine practice.">
+  <section class="page-shell py-14">
+    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">AI-Augmented Surgical Workflow</h1>
+    <p class="mt-3 max-w-3xl text-[var(--color-text-secondary)]">
+      How I integrate LLMs and automation into daily endoscopic spine practice.
+    </p>
+    <p class="mt-6 inline-flex rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-2 text-sm text-[var(--color-link)]">
+      Educational example only. No patient-identifiable data.
+    </p>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="🧬" title="Workflow Map" />
+    <div class="mx-auto max-w-2xl">
+      {workflowSteps.map((step, index) => (
+        <div>
+          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <h3 class="text-base font-semibold text-[var(--color-text)]">{step.title}</h3>
+            <p class="mt-1 text-sm text-[var(--color-text-secondary)]">{step.description}</p>
+          </div>
+          {index < workflowSteps.length - 1 && (
+            <div class="py-2 text-center text-xl text-[var(--color-text-muted)]">&darr;</div>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="🧰" title="What I Use" />
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Card title="Voice capture" description="Rapid input for consult details and procedure context." />
+      <Card title="Claude Desktop + MCP" description="Structured drafting and safe prompt-driven checklists." />
+      <Card title="Notion databases" description="Case registry organization and downstream analytics readiness." />
+      <Card title="Obsidian knowledge base" description="Linked notes for pattern recognition across cases." />
+      <Card title="Automation scripts" description="File flow and standardized formatting for repeatable pipelines." />
+      <Card title="LLM consultation assist" description="Second-pass synthesis for educational and planning support." />
+    </div>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="📈" title="Sample Dashboard" />
+    <div class="rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-alt)] p-10 text-center text-sm text-[var(--color-text-secondary)]">
+      Mock data demonstration only. No real patient data.
+    </div>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="🕸️" title="Obsidian Insight Graph" />
+    <div class="rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-alt)] p-10 text-center text-sm text-[var(--color-text-secondary)]">
+      Knowledge graph visualization placeholder
+    </div>
+  </section>
+
+  <section class="page-shell pb-10">
+    <SectionHeader icon="📚" title="Starter Resources" />
+    <div class="space-y-2">
+      <a href="#" class="block text-sm text-[var(--color-link)] hover:text-[var(--color-text)]">Notion template (placeholder)</a>
+      <a href="#" class="block text-sm text-[var(--color-link)] hover:text-[var(--color-text)]">GitHub scripts (placeholder)</a>
+    </div>
+  </section>
+
+  <section class="page-shell pb-16">
+    <SectionHeader icon="❓" title="FAQ" />
+    <div class="space-y-3">
+      <details class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <summary class="cursor-pointer font-medium text-[var(--color-text)]">No EMR integration?</summary>
+        <p class="mt-2 text-sm text-[var(--color-text-secondary)]">Current workflow is intentionally external and educational, without direct EMR hooks.</p>
+      </details>
+      <details class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <summary class="cursor-pointer font-medium text-[var(--color-text)]">No PHI?</summary>
+        <p class="mt-2 text-sm text-[var(--color-text-secondary)]">The model flow uses de-identified and abstracted data structures only.</p>
+      </details>
+      <details class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <summary class="cursor-pointer font-medium text-[var(--color-text)]">Minimal setup possible?</summary>
+        <p class="mt-2 text-sm text-[var(--color-text-secondary)]">A simple stack can start with voice notes, one database, and basic summary prompts.</p>
+      </details>
+      <details class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <summary class="cursor-pointer font-medium text-[var(--color-text)]">Coding optional?</summary>
+        <p class="mt-2 text-sm text-[var(--color-text-secondary)]">Yes. Most flow can be configured with no-code tools and lightweight templates.</p>
+      </details>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,120 @@
+---
+const navLinks = [
+  { label: 'Home', href: '/' },
+  { label: 'UBE', href: '/ube' },
+  { label: 'Education', href: '/education' },
+  { label: 'AI', href: '/ai' },
+  { label: 'Research', href: '/research' },
+  { label: 'Media', href: '/media' },
+  { label: 'Knowledge', href: '/knowledge' },
+  { label: 'Contact', href: '/contact' },
+];
+
+const pathname = Astro.url.pathname;
+const isActive = (href: string) => {
+  if (href === '/') {
+    return pathname === '/';
+  }
+
+  return pathname === href || pathname.startsWith(`${href}/`);
+};
+---
+
+<header class="sticky top-0 z-50 border-b border-[var(--color-border-strong)] bg-[rgba(13,3,15,0.95)] backdrop-blur-[12px]">
+  <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6">
+    <a href="/" class="text-xl font-bold tracking-tight text-[var(--color-accent)]">takmd</a>
+
+    <nav class="hidden items-center gap-1 md:flex">
+      {navLinks.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            isActive(item.href)
+              ? 'bg-[var(--color-accent-soft)] text-[var(--color-text)]'
+              : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)]',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+      <a
+        href="/dashboard"
+        class="ml-2 rounded-full border border-[var(--color-border-strong)] px-3 py-1.5 text-xs font-medium text-[var(--color-link)] transition-colors hover:border-[var(--color-border-hover)] hover:text-[var(--color-text)]"
+      >
+        Dashboard
+      </a>
+    </nav>
+
+    <button
+      id="mobile-menu-button"
+      class="inline-flex items-center justify-center rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-2 text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text)] md:hidden"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Toggle navigation menu"
+    >
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+    </button>
+  </div>
+
+  <div
+    id="mobile-menu"
+    class="max-h-0 overflow-hidden border-t border-transparent bg-[rgba(13,3,15,0.98)] transition-all duration-200 md:hidden"
+    data-open="false"
+  >
+    <div class="mx-auto max-w-7xl space-y-1 px-4 py-3 sm:px-6">
+      {navLinks.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'block rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            isActive(item.href)
+              ? 'bg-[var(--color-accent-soft)] text-[var(--color-text)]'
+              : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)] hover:text-[var(--color-text)]',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+      <a
+        href="/dashboard"
+        class="mt-2 block rounded-lg border border-[var(--color-border-strong)] px-3 py-2 text-sm font-medium text-[var(--color-link)] transition-colors hover:border-[var(--color-border-hover)] hover:text-[var(--color-text)]"
+      >
+        Dashboard
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const button = document.getElementById('mobile-menu-button');
+  const menu = document.getElementById('mobile-menu');
+
+  if (button && menu) {
+    button.addEventListener('click', () => {
+      const isOpen = menu.getAttribute('data-open') === 'true';
+      menu.setAttribute('data-open', String(!isOpen));
+      button.setAttribute('aria-expanded', String(!isOpen));
+
+      if (isOpen) {
+        menu.style.maxHeight = '0px';
+        menu.classList.remove('border-[var(--color-border-strong)]');
+      } else {
+        menu.style.maxHeight = `${menu.scrollHeight}px`;
+        menu.classList.add('border-[var(--color-border-strong)]');
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) {
+        menu.style.maxHeight = '0px';
+        menu.setAttribute('data-open', 'false');
+        button.setAttribute('aria-expanded', 'false');
+        menu.classList.remove('border-[var(--color-border-strong)]');
+      }
+    });
+  }
+</script>
