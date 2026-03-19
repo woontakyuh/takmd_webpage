@@ -1,9 +1,9 @@
 @import "tailwindcss";
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/manrope";
 @import "@fontsource-variable/jetbrains-mono";
 
 @theme {
-  --font-sans: "Inter Variable", system-ui, sans-serif;
+  --font-sans: "Manrope Variable", system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 
   /* Dark theme base */
