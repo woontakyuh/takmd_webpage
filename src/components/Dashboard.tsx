@@ -25,24 +25,24 @@ interface CategoryStats {
   totalLevels: number;
   complicationRate: { total: number; withCx: number };
   ageDistribution: { mean: number; min: number; max: number; buckets: Record<string, number> };
-  promTrends: { vas: PromPoint[]; odi: PromPoint[] };
+  promTrends: { vas: PromPoint[]; odi: PromPoint[]; ndi: PromPoint[]; joa: PromPoint[]; eq5d: PromPoint[] };
 }
 
 interface CaseRecord {
-  id: number;
+  id: string;
   opDate: string;
   year: number;
   age: number;
   sex: string;
   level: string;
   opCategory: string[];
-  ctl: string;
-  classA: string;
-  classB: string;
-  classC: string;
+  ctl: string[];
+  classA: string[];
+  classB: string[];
+  classC: string[];
   surgeon: string[];
   hospital: string;
-  cx: number;
+  cx: string;
   preVAS: number | null;
   oneMonthVAS: number | null;
   threeMonthVAS: number | null;
@@ -54,12 +54,25 @@ interface CaseRecord {
   sixMonthODI: number | null;
   oneYearODI: number | null;
   preJOA: number | null;
+  oneMonthJOA: number | null;
+  threeMonthJOA: number | null;
+  sixMonthJOA: number | null;
+  oneYearJOA: number | null;
   preNDI: number | null;
+  oneMonthNDI: number | null;
+  threeMonthNDI: number | null;
+  sixMonthNDI: number | null;
+  oneYearNDI: number | null;
+  preEQ5D: number | null;
+  oneMonthEQ5D: number | null;
+  threeMonthEQ5D: number | null;
+  sixMonthEQ5D: number | null;
+  oneYearEQ5D: number | null;
   opTime: number | null;
   rsFactor: string[] | null;
 }
 
-const data = rawData as {
+const data = rawData as unknown as {
   generatedAt: string;
   overallStats: CategoryStats;
   categoryCounts: Record<string, number>;
@@ -158,11 +171,16 @@ function parseLevelCount(s: string | null | undefined): number | null {
 
 function computePromPoints(
   cases: CaseRecord[],
-  field: "vas" | "odi"
+  field: "vas" | "odi" | "ndi" | "joa" | "eq5d"
 ): PromPoint[] {
-  const timepointKeys = field === "vas"
-    ? [["Pre", "preVAS"], ["1mo", "oneMonthVAS"], ["3mo", "threeMonthVAS"], ["6mo", "sixMonthVAS"], ["1y", "oneYearVAS"]] as const
-    : [["Pre", "preODI"], ["1mo", "oneMonthODI"], ["3mo", "threeMonthODI"], ["6mo", "sixMonthODI"], ["1y", "oneYearODI"]] as const;
+  const fieldMap: Record<string, [string, string][]> = {
+    vas: [["Pre", "preVAS"], ["1mo", "oneMonthVAS"], ["3mo", "threeMonthVAS"], ["6mo", "sixMonthVAS"], ["1y", "oneYearVAS"]],
+    odi: [["Pre", "preODI"], ["1mo", "oneMonthODI"], ["3mo", "threeMonthODI"], ["6mo", "sixMonthODI"], ["1y", "oneYearODI"]],
+    ndi: [["Pre", "preNDI"], ["1mo", "oneMonthNDI"], ["3mo", "threeMonthNDI"], ["6mo", "sixMonthNDI"], ["1y", "oneYearNDI"]],
+    joa: [["Pre", "preJOA"], ["1mo", "oneMonthJOA"], ["3mo", "threeMonthJOA"], ["6mo", "sixMonthJOA"], ["1y", "oneYearJOA"]],
+    eq5d: [["Pre", "preEQ5D"], ["1mo", "oneMonthEQ5D"], ["3mo", "threeMonthEQ5D"], ["6mo", "sixMonthEQ5D"], ["1y", "oneYearEQ5D"]],
+  };
+  const timepointKeys = fieldMap[field];
 
   return timepointKeys.map(([tp, key]) => {
     const vals = cases.map((c) => c[key as keyof CaseRecord] as number | null).filter((v): v is number => v != null);
@@ -197,10 +215,10 @@ function computeStatsFromCases(cases: CaseRecord[]): CategoryStats {
     if (c.level) inc(byLevel, c.level);
     c.surgeon.forEach((s) => inc(bySurgeon, s));
     if (c.hospital) inc(byHospital, c.hospital);
-    if (c.classA) inc(byClassA, c.classA);
-    if (c.classB) inc(byClassB, c.classB);
-    if (c.classC) inc(byClassC, c.classC);
-    if (c.ctl) inc(byCTL, c.ctl);
+    c.classA.forEach((s) => inc(byClassA, s));
+    c.classB.forEach((s) => inc(byClassB, s));
+    c.classC.forEach((s) => inc(byClassC, s));
+    c.ctl.forEach((s) => inc(byCTL, s));
     // Level count (number of surgical levels)
     const lc = parseLevelCount(c.level);
     if (lc != null && lc > 0 && lc <= 15) {
@@ -214,10 +232,8 @@ function computeStatsFromCases(cases: CaseRecord[]): CategoryStats {
       if (c.age > ageMax) ageMax = c.age;
       inc(buckets, ageBucket(c.age));
     }
-    if (c.cx != null) {
-      cxTotal++;
-      if (c.cx > 0) cxWith++;
-    }
+    cxTotal++;
+    if (c.cx && c.cx.trim().length > 0) cxWith++;
     if (c.opDate < earliest) earliest = c.opDate;
     if (c.opDate > latest) latest = c.opDate;
   }
@@ -240,6 +256,9 @@ function computeStatsFromCases(cases: CaseRecord[]): CategoryStats {
     promTrends: {
       vas: computePromPoints(cases, "vas"),
       odi: computePromPoints(cases, "odi"),
+      ndi: computePromPoints(cases, "ndi"),
+      joa: computePromPoints(cases, "joa"),
+      eq5d: computePromPoints(cases, "eq5d"),
     },
   };
 }
@@ -520,6 +539,18 @@ function OverviewView({ onSelectCategory, onSelectYear, stats, categoryCounts }:
         <ChartCard title="ODI 추이 (전체)">
           <PromLineChart points={s.promTrends.odi} color="#f59e0b" label="ODI" />
         </ChartCard>
+
+        <ChartCard title="NDI 추이 (전체)">
+          <PromLineChart points={s.promTrends.ndi} color="#06b6d4" label="NDI" />
+        </ChartCard>
+
+        <ChartCard title="JOA 추이 (전체)">
+          <PromLineChart points={s.promTrends.joa} color="#a78bfa" label="JOA" />
+        </ChartCard>
+
+        <ChartCard title="EQ-5D 추이 (전체)">
+          <PromLineChart points={s.promTrends.eq5d} color="#fb923c" label="EQ-5D" />
+        </ChartCard>
       </div>
     </>
   );
@@ -627,6 +658,18 @@ function DetailView({ category, categoryStats, onSelectYear }: { category: strin
 
         <ChartCard title="ODI 추이" className="lg:col-span-2">
           <PromLineChart points={stats.promTrends.odi} color="#f59e0b" label="ODI" />
+        </ChartCard>
+
+        <ChartCard title="NDI 추이" className="lg:col-span-2">
+          <PromLineChart points={stats.promTrends.ndi} color="#06b6d4" label="NDI" />
+        </ChartCard>
+
+        <ChartCard title="JOA 추이" className="lg:col-span-2">
+          <PromLineChart points={stats.promTrends.joa} color="#a78bfa" label="JOA" />
+        </ChartCard>
+
+        <ChartCard title="EQ-5D 추이" className="lg:col-span-2">
+          <PromLineChart points={stats.promTrends.eq5d} color="#fb923c" label="EQ-5D" />
         </ChartCard>
       </div>
     </>
@@ -781,6 +824,18 @@ function YearDetailView({ year, cases, category }: { year: string; cases: CaseRe
         <ChartCard title="ODI 추이">
           <PromLineChart points={stats.promTrends.odi} color="#f59e0b" label="ODI" />
         </ChartCard>
+
+        <ChartCard title="NDI 추이">
+          <PromLineChart points={stats.promTrends.ndi} color="#06b6d4" label="NDI" />
+        </ChartCard>
+
+        <ChartCard title="JOA 추이">
+          <PromLineChart points={stats.promTrends.joa} color="#a78bfa" label="JOA" />
+        </ChartCard>
+
+        <ChartCard title="EQ-5D 추이">
+          <PromLineChart points={stats.promTrends.eq5d} color="#fb923c" label="EQ-5D" />
+        </ChartCard>
       </div>
     </>
   );
@@ -877,7 +932,7 @@ export default function Dashboard() {
     : "전체 수술";
 
   return (
-    <main className="min-h-screen p-4 sm:p-6 lg:p-8" style={{ backgroundColor: "#f5f5f4", color: "#1c1917" }}>
+    <main className="min-h-screen bg-neutral-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -16 }}

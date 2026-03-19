@@ -11,3 +11,15 @@ import DashboardWithAuth from '../components/DashboardWithAuth';
 >
   <DashboardWithAuth client:load />
 </Layout>
+
+<style is:global>
+  /* Reset to light theme for dashboard — scoped to main, not body,
+     so the auth terminal overlay keeps its dark theme + green text */
+  body > main,
+  body > div > main {
+    --color-text-primary: #1c1917;
+    --color-text-secondary: #57534e;
+    --color-text-tertiary: #a8a29e;
+    color: #1c1917;
+  }
+</style>

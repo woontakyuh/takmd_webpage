@@ -58,7 +58,20 @@ interface SurgeryCase {
   sixMonthODI: number | null;
   oneYearODI: number | null;
   preJOA: number | null;
+  oneMonthJOA: number | null;
+  threeMonthJOA: number | null;
+  sixMonthJOA: number | null;
+  oneYearJOA: number | null;
   preNDI: number | null;
+  oneMonthNDI: number | null;
+  threeMonthNDI: number | null;
+  sixMonthNDI: number | null;
+  oneYearNDI: number | null;
+  preEQ5D: number | null;
+  oneMonthEQ5D: number | null;
+  threeMonthEQ5D: number | null;
+  sixMonthEQ5D: number | null;
+  oneYearEQ5D: number | null;
   opTime: number | null;
   rsFactor: string[];
 }
@@ -108,6 +121,18 @@ function parseScore(raw: string): number | null {
   const cleaned = raw.split(",")[0].split("/")[0].trim();
   const num = parseFloat(cleaned);
   return isNaN(num) ? null : num;
+}
+
+/** Parse EQ-5D from "31331,50" or "23441/60" → extracts EQ-VAS (second number after , or /) */
+function parseEQ5D(raw: string): number | null {
+  if (!raw) return null;
+  // Format: "profile,eqvas" or "profile/eqvas"
+  const parts = raw.split(/[,\/]/);
+  if (parts.length >= 2) {
+    const eqvas = parseFloat(parts[1].trim());
+    return isNaN(eqvas) ? null : eqvas;
+  }
+  return null;
 }
 
 // --- Fetch all Op pages ---
@@ -179,7 +204,20 @@ function transformPage(page: NotionPage): SurgeryCase | null {
     sixMonthODI: parseScore(getRichText(p["6mo ODI"])),
     oneYearODI: parseScore(getRichText(p["1y ODI"])),
     preJOA: parseScore(getRichText(p["pre JOA"])),
+    oneMonthJOA: parseScore(getRichText(p["1mo JOA"])),
+    threeMonthJOA: parseScore(getRichText(p["3mo JOA"])),
+    sixMonthJOA: parseScore(getRichText(p["6mo JOA"])),
+    oneYearJOA: parseScore(getRichText(p["1y JOA"])),
     preNDI: parseScore(getRichText(p["pre NDI"])),
+    oneMonthNDI: parseScore(getRichText(p["1mo NDI"])),
+    threeMonthNDI: parseScore(getRichText(p["3mo NDI"])),
+    sixMonthNDI: parseScore(getRichText(p["6mo NDI"])),
+    oneYearNDI: parseScore(getRichText(p["1y NDI"])),
+    preEQ5D: parseEQ5D(getRichText(p["pre EQ5D"])),
+    oneMonthEQ5D: parseEQ5D(getRichText(p["1mo EQ5D"])),
+    threeMonthEQ5D: parseEQ5D(getRichText(p["3mo EQ5D"])),
+    sixMonthEQ5D: parseEQ5D(getRichText(p["6mo EQ5D"])),
+    oneYearEQ5D: parseEQ5D(getRichText(p["1y EQ5D"])),
     opTime: getNumber(p["Op time"]),
     rsFactor: getMultiSelect(p["RS factor"]),
   };
@@ -188,20 +226,15 @@ function transformPage(page: NotionPage): SurgeryCase | null {
 // --- Compute stats ---
 
 function computePromTrends(cases: SurgeryCase[]) {
-  const vasFields: { key: keyof SurgeryCase; label: string }[] = [
-    { key: "preVAS", label: "Pre" },
-    { key: "oneMonthVAS", label: "1mo" },
-    { key: "threeMonthVAS", label: "3mo" },
-    { key: "sixMonthVAS", label: "6mo" },
-    { key: "oneYearVAS", label: "1y" },
-  ];
-  const odiFields: { key: keyof SurgeryCase; label: string }[] = [
-    { key: "preODI", label: "Pre" },
-    { key: "oneMonthODI", label: "1mo" },
-    { key: "threeMonthODI", label: "3mo" },
-    { key: "sixMonthODI", label: "6mo" },
-    { key: "oneYearODI", label: "1y" },
-  ];
+  function makeFields(prefix: string, keys: [string, string, string, string, string]): { key: keyof SurgeryCase; label: string }[] {
+    return [
+      { key: keys[0] as keyof SurgeryCase, label: "Pre" },
+      { key: keys[1] as keyof SurgeryCase, label: "1mo" },
+      { key: keys[2] as keyof SurgeryCase, label: "3mo" },
+      { key: keys[3] as keyof SurgeryCase, label: "6mo" },
+      { key: keys[4] as keyof SurgeryCase, label: "1y" },
+    ];
+  }
 
   function calcMeans(fields: { key: keyof SurgeryCase; label: string }[]) {
     return fields.map((f) => {
@@ -216,7 +249,13 @@ function computePromTrends(cases: SurgeryCase[]) {
     });
   }
 
-  return { vas: calcMeans(vasFields), odi: calcMeans(odiFields) };
+  return {
+    vas: calcMeans(makeFields("VAS", ["preVAS", "oneMonthVAS", "threeMonthVAS", "sixMonthVAS", "oneYearVAS"])),
+    odi: calcMeans(makeFields("ODI", ["preODI", "oneMonthODI", "threeMonthODI", "sixMonthODI", "oneYearODI"])),
+    ndi: calcMeans(makeFields("NDI", ["preNDI", "oneMonthNDI", "threeMonthNDI", "sixMonthNDI", "oneYearNDI"])),
+    joa: calcMeans(makeFields("JOA", ["preJOA", "oneMonthJOA", "threeMonthJOA", "sixMonthJOA", "oneYearJOA"])),
+    eq5d: calcMeans(makeFields("EQ5D", ["preEQ5D", "oneMonthEQ5D", "threeMonthEQ5D", "sixMonthEQ5D", "oneYearEQ5D"])),
+  };
 }
 
 function countMulti(arr: string[], counter: Record<string, number>) {
