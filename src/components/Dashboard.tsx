@@ -43,18 +43,20 @@ interface CaseRecord {
   surgeon: string[];
   hospital: string;
   cx: number;
-  vasPreop: number | null;
-  vasPostop: number | null;
-  vas3m: number | null;
-  vas6m: number | null;
-  vas12m: number | null;
-  odiPreop: number | null;
-  odiPostop: number | null;
-  odi3m: number | null;
-  odi6m: number | null;
-  odi12m: number | null;
+  preVAS: number | null;
+  oneMonthVAS: number | null;
+  threeMonthVAS: number | null;
+  sixMonthVAS: number | null;
+  oneYearVAS: number | null;
+  preODI: number | null;
+  oneMonthODI: number | null;
+  threeMonthODI: number | null;
+  sixMonthODI: number | null;
+  oneYearODI: number | null;
+  preJOA: number | null;
+  preNDI: number | null;
   opTime: number | null;
-  rsFactor: string | null;
+  rsFactor: string[] | null;
 }
 
 const data = rawData as {
@@ -159,11 +161,11 @@ function computePromPoints(
   field: "vas" | "odi"
 ): PromPoint[] {
   const timepointKeys = field === "vas"
-    ? [["Preop", "vasPreop"], ["Postop", "vasPostop"], ["3M", "vas3m"], ["6M", "vas6m"], ["12M", "vas12m"]] as const
-    : [["Preop", "odiPreop"], ["Postop", "odiPostop"], ["3M", "odi3m"], ["6M", "odi6m"], ["12M", "odi12m"]] as const;
+    ? [["Pre", "preVAS"], ["1mo", "oneMonthVAS"], ["3mo", "threeMonthVAS"], ["6mo", "sixMonthVAS"], ["1y", "oneYearVAS"]] as const
+    : [["Pre", "preODI"], ["1mo", "oneMonthODI"], ["3mo", "threeMonthODI"], ["6mo", "sixMonthODI"], ["1y", "oneYearODI"]] as const;
 
   return timepointKeys.map(([tp, key]) => {
-    const vals = cases.map((c) => c[key] as number | null).filter((v) => v != null) as number[];
+    const vals = cases.map((c) => c[key as keyof CaseRecord] as number | null).filter((v): v is number => v != null);
     return {
       timepoint: tp,
       mean: vals.length > 0 ? Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 10) / 10 : 0,
@@ -875,7 +877,7 @@ export default function Dashboard() {
     : "전체 수술";
 
   return (
-    <main className="min-h-screen bg-neutral-100 p-4 sm:p-6 lg:p-8">
+    <main className="min-h-screen p-4 sm:p-6 lg:p-8" style={{ backgroundColor: "#f5f5f4", color: "#1c1917" }}>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -16 }}
