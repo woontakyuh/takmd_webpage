@@ -17,9 +17,18 @@ export interface Marker {
   rgb: string;
 }
 
+export interface PubItem {
+  title: string;
+  journal: string;
+  year: number;
+  role: "first" | "corresponding" | "coauthor" | "other";
+  url: string;
+}
+
 export interface TermPage {
   command: string;
   lines: string[];
   links?: { label: string; url: string }[];
   subPages?: { label: string; pageKey: string }[];
+  publications?: PubItem[];
 }

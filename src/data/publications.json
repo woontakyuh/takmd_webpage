@@ -1,0 +1,554 @@
+{
+  "generatedAt": "2026-04-07T03:08:32.846Z",
+  "count": 29,
+  "publications": [
+    {
+      "id": "32d908af",
+      "title": "UBE Removal of a Cervical Extradural Schwannoma at the C1-2 Level",
+      "shortTitle": "UBE Removal of a Cervical Extradural Schwannoma at the…",
+      "journal": "JMISST",
+      "year": 2026,
+      "date": "2026-01-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "최일"
+      ],
+      "coAuthors": [
+        "김치헌",
+        "정천기",
+        "Don Park"
+      ],
+      "role": "first",
+      "doi": "10.21182/jmisst.2025.02747",
+      "doiUrl": "https://doi.org/10.21182/jmisst.2025.02747"
+    },
+    {
+      "id": "32d908af",
+      "title": "Potential Pharmacologic Treatments in Spinal Cord Injury: A Narrative Review",
+      "shortTitle": "Potential Pharmacologic Treatments in Spinal Cord…",
+      "journal": "KJNT",
+      "year": 2025,
+      "date": "2025-10-01",
+      "firstAuthor": [
+        "안경득"
+      ],
+      "corresponding": [
+        "여운탁"
+      ],
+      "coAuthors": [],
+      "role": "corresponding",
+      "doi": "10.13004/kjnt.2025.21.e35",
+      "doiUrl": "https://doi.org/10.13004/kjnt.2025.21.e35"
+    },
+    {
+      "id": "32d908af",
+      "title": "Technical Note: Intraoperative Injection of Indigo Carmine for Differentiating Neural Tissue During UBE Surgery",
+      "shortTitle": "Intraoperative Injection of Indigo Carmine for…",
+      "journal": "JMISST",
+      "year": 2025,
+      "date": "2025-10-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "최일"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.21182/jmisst.2025.02726",
+      "doiUrl": "https://doi.org/10.21182/jmisst.2025.02726"
+    },
+    {
+      "id": "32d908af",
+      "title": "Augmented prediction of vertebral collapse after OVCF through parameter-efficient fine-tuning of biomedical foundation models",
+      "shortTitle": "Augmented prediction of vertebral collapse after OVCF…",
+      "journal": "Sci Rep",
+      "year": 2024,
+      "date": "2024-12-30",
+      "firstAuthor": [],
+      "corresponding": [
+        "박성배"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.1038/s41598-024-82902-w",
+      "doiUrl": "https://doi.org/10.1038/s41598-024-82902-w"
+    },
+    {
+      "id": "32d908af",
+      "title": "Comparative efficacy of AP and lateral X-ray based deep learning in detection of osteoporotic vertebral compression fracture",
+      "shortTitle": "Comparative efficacy of AP and lateral X-ray based…",
+      "journal": "Sci Rep",
+      "year": 2024,
+      "date": "2024-11-18",
+      "firstAuthor": [],
+      "corresponding": [
+        "강석형"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.1038/s41598-024-79610-w",
+      "doiUrl": "https://doi.org/10.1038/s41598-024-79610-w"
+    },
+    {
+      "id": "32d908af",
+      "title": "Spinal Schwannoma Classification Based on the Presumed Origin With Preoperative MRI",
+      "shortTitle": "Spinal Schwannoma Classification Based on the Presumed…",
+      "journal": "Neurospine",
+      "year": 2024,
+      "date": "2024-09-01",
+      "firstAuthor": [
+        "김태신"
+      ],
+      "corresponding": [
+        "정천기"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.14245/ns.2448468.234",
+      "doiUrl": "https://doi.org/10.14245/ns.2448468.234"
+    },
+    {
+      "id": "32d908af",
+      "title": "Trends in degenerative lumbar spinal surgery during the early COVID-19 pandemic in Republic of Korea: A national study",
+      "shortTitle": "Trends in degenerative lumbar spinal surgery during…",
+      "journal": "PLOS One",
+      "year": 2024,
+      "date": "2024-06-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "김치헌"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.1371/journal.pone.0305128",
+      "doiUrl": "https://doi.org/10.1371/journal.pone.0305128"
+    },
+    {
+      "id": "32d908af",
+      "title": "Deep Learning Method for Precise Landmark Identification and Structural Assessment of Whole-Spine Radiographs",
+      "shortTitle": "Deep Learning Method for Precise Landmark…",
+      "journal": "Engineering (MDPI)",
+      "year": 2024,
+      "date": "2024-05-11",
+      "firstAuthor": [],
+      "corresponding": [
+        "노성현"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.3390/bioengineering11050481",
+      "doiUrl": "https://doi.org/10.3390/bioengineering11050481"
+    },
+    {
+      "id": "32d908af",
+      "title": "Deep Learning-Assisted Quantitative Measurement of Thoracolumbar Fracture Features on Lateral Radiographs",
+      "shortTitle": "Deep Learning-Assisted Quantitative Measurement of…",
+      "journal": "Neurospine",
+      "year": 2024,
+      "date": "2024-03-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "길은경"
+      ],
+      "coAuthors": [
+        "안경득"
+      ],
+      "role": "first",
+      "doi": "10.14245/ns.2347366.683",
+      "doiUrl": "https://doi.org/10.14245/ns.2347366.683"
+    },
+    {
+      "id": "32d908af",
+      "title": "Multi-pose-based CNN model for diagnosis of patients with central lumbar spinal stenosis",
+      "shortTitle": "Multi-pose-based CNN model for diagnosis of patients…",
+      "journal": "Sci Rep",
+      "year": 2024,
+      "date": "2024-01-02",
+      "firstAuthor": [],
+      "corresponding": [
+        "이창현"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.1038/s41598-023-50885-9",
+      "doiUrl": "https://doi.org/10.1038/s41598-023-50885-9"
+    },
+    {
+      "id": "32d908af",
+      "title": "The iterative implementation of a comprehensive ERAS protocol in all spinal surgery in Korea: primary spinal tumors vs degenerative spinal diseases",
+      "shortTitle": "The iterative implementation of a comprehensive ERAS…",
+      "journal": "JNS spine",
+      "year": 2023,
+      "date": "2023-12-08",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "정천기"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.3171/2023.10.Spine23512",
+      "doiUrl": "https://doi.org/10.3171/2023.10.Spine23512"
+    },
+    {
+      "id": "32d908af",
+      "title": "Future of Endoscopic Spine Surgery: Insights from Cutting-Edge Technology in the Industrial Field",
+      "shortTitle": "Future of Endoscopic Spine Surgery",
+      "journal": "Engineering (MDPI)",
+      "year": 2023,
+      "date": "2023-12-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "최일"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.3390/bioengineering10121363",
+      "doiUrl": "https://doi.org/10.3390/bioengineering10121363"
+    },
+    {
+      "id": "32d908af",
+      "title": "Surgical treatment of spondylolisthesis by OLIF and transpedicular screw fixation: conventional double vs navigation-assisted single lateral position",
+      "shortTitle": "Surgical treatment of spondylolisthesis by OLIF and…",
+      "journal": "PLOS One",
+      "year": 2023,
+      "date": "2023-09-01",
+      "firstAuthor": [
+        "한정훈"
+      ],
+      "corresponding": [
+        "김치헌"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.1371/journal.pone.0291114",
+      "doiUrl": "https://doi.org/10.1371/journal.pone.0291114"
+    },
+    {
+      "id": "32d908af",
+      "title": "Impact of C3 laminectomy on cervical sagittal alignment in cervical laminoplasty: a prospective RCT",
+      "shortTitle": "Impact of C3 laminectomy on cervical sagittal…",
+      "journal": "TSJ",
+      "year": 2023,
+      "date": "2023-07-19",
+      "firstAuthor": [
+        "김준회"
+      ],
+      "corresponding": [
+        "정천기"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.1016/j.spinee.2023.07.001",
+      "doiUrl": "https://doi.org/10.1016/j.spinee.2023.07.001"
+    },
+    {
+      "id": "32d908af",
+      "title": "Is laminectomy necessary for C1-C2 epidural schwannomas?",
+      "shortTitle": "Is laminectomy necessary for C1-C2 epidural…",
+      "journal": "Acta Neuro",
+      "year": 2023,
+      "date": "2023-07-04",
+      "firstAuthor": [
+        "김태신"
+      ],
+      "corresponding": [
+        "정천기"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.1007/s00701-023-05707-2",
+      "doiUrl": "https://doi.org/10.1007/s00701-023-05707-2"
+    },
+    {
+      "id": "32d908af",
+      "title": "The Optimal Time between Embolization and Surgery for Hypervascular Spinal Metastatic Tumors: A Systematic Review and Meta-Analysis",
+      "shortTitle": "The Optimal Time between Embolization and Surgery for…",
+      "journal": "JKNS",
+      "year": 2023,
+      "date": "2023-06-15",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "이창현"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.3340/jkns.2022.0204",
+      "doiUrl": "https://doi.org/10.3340/jkns.2022.0204"
+    },
+    {
+      "id": "32d908af",
+      "title": "Nationwide sample data analysis of additional surgery rate after anterior or posterior cervical spinal surgery",
+      "shortTitle": "Nationwide sample data analysis of additional surgery…",
+      "journal": "Sci Rep",
+      "year": 2023,
+      "date": "2023-04-18",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "김치헌"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.1038/s41598-023-33588-z",
+      "doiUrl": "https://doi.org/10.1038/s41598-023-33588-z"
+    },
+    {
+      "id": "32d908af",
+      "title": "A cost-utility analysis between decompression only and fusion surgery for elderly patients with lumbar spinal stenosis and sagittal imbalance",
+      "shortTitle": "A cost-utility analysis between decompression only and…",
+      "journal": "Sci Rep",
+      "year": 2022,
+      "date": "2022-11-27",
+      "firstAuthor": [
+        "원영일"
+      ],
+      "corresponding": [
+        "김치헌"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.1038/s41598-022-24784-4",
+      "doiUrl": "https://doi.org/10.1038/s41598-022-24784-4"
+    },
+    {
+      "id": "32d908af",
+      "title": "Microsurgical Resection of a Spinal Cord Hemangioblastoma With Ventral Pial Attachment Through a Posterior Approach: 2-Dimensional Operative Video",
+      "shortTitle": "Microsurgical Resection of a Spinal Cord…",
+      "journal": "ONS",
+      "year": 2022,
+      "date": "2022-09-16",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "정천기"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.1227/ons.0000000000000389",
+      "doiUrl": "https://doi.org/10.1227/ons.0000000000000389"
+    },
+    {
+      "id": "32d908af",
+      "title": "Factors Associated With Perioperative Hospital Acquired Pressure Injury in Spine Surgery in the Prone Position",
+      "shortTitle": "Factors Associated With Perioperative Hospital…",
+      "journal": "JNA",
+      "year": 2022,
+      "date": "2022-08-25",
+      "firstAuthor": [
+        "최승은"
+      ],
+      "corresponding": [
+        "박희평"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.1097/ANA.0000000000000867",
+      "doiUrl": "https://doi.org/10.1097/ANA.0000000000000867"
+    },
+    {
+      "id": "32d908af",
+      "title": "Validity of MRI in the primary spinal cord tumors in routine clinical setting",
+      "shortTitle": "Validity of MRI in the primary spinal cord tumors in…",
+      "journal": "Sci Rep",
+      "year": 2022,
+      "date": "2022-06-16",
+      "firstAuthor": [
+        "원영일"
+      ],
+      "corresponding": [
+        "정천기"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.1038/s41598-022-13881-z",
+      "doiUrl": "https://doi.org/10.1038/s41598-022-13881-z"
+    },
+    {
+      "id": "32d908af",
+      "title": "Genetic Odyssey to Ossification of the Posterior Longitudinal Ligament in the Cervical Spine: A Systematic Review",
+      "shortTitle": "Genetic Odyssey to Ossification of the Posterior…",
+      "journal": "Neurospine",
+      "year": 2022,
+      "date": "2022-06-01",
+      "firstAuthor": [
+        "원영일"
+      ],
+      "corresponding": [
+        "이창현"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.14245/ns.2244038.019",
+      "doiUrl": "https://doi.org/10.14245/ns.2244038.019"
+    },
+    {
+      "id": "32d908af",
+      "title": "Mechanical Failure After Total En Bloc Spondylectomy and Salvage Surgery",
+      "shortTitle": "Mechanical Failure After Total En Bloc Spondylectomy…",
+      "journal": "Neurospine",
+      "year": 2022,
+      "date": "2022-03-01",
+      "firstAuthor": [
+        "권신원"
+      ],
+      "corresponding": [
+        "김치헌"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.14245/ns.2244092.046",
+      "doiUrl": "https://doi.org/10.14245/ns.2244092.046"
+    },
+    {
+      "id": "32d908af",
+      "title": "Narrative Review of Uniportal, Transforaminal Endoscopic Lumbar Discectomy",
+      "shortTitle": "Narrative Review of Uniportal, Transforaminal…",
+      "journal": "Int J Pain",
+      "year": 2022,
+      "date": "2022-01-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "김치헌"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.56718/ijp.22-003",
+      "doiUrl": "https://doi.org/10.56718/ijp.22-003"
+    },
+    {
+      "id": "32d908af",
+      "title": "Interlaminar Endoscopic Lumbar Discectomy: A Narrative Review",
+      "shortTitle": "Interlaminar Endoscopic Lumbar Discectomy",
+      "journal": "IJSS",
+      "year": 2021,
+      "date": "2021-12-01",
+      "firstAuthor": [
+        "원영일"
+      ],
+      "corresponding": [
+        "김치헌"
+      ],
+      "coAuthors": [
+        "여운탁"
+      ],
+      "role": "coauthor",
+      "doi": "10.14444/8163",
+      "doiUrl": "https://doi.org/10.14444/8163"
+    },
+    {
+      "id": "32d908af",
+      "title": "Nationwide Results of COVID-19 Contact Tracing in South Korea: Individual Participant Data From an Epidemiological Survey",
+      "shortTitle": "Nationwide Results of COVID-19 Contact Tracing in…",
+      "journal": "JMIR Med Inform",
+      "year": 2020,
+      "date": "2020-08-25",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "연동건"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.2196/20992",
+      "doiUrl": "https://doi.org/10.2196/20992"
+    },
+    {
+      "id": "32d908af",
+      "title": "Spinal Cord Subependymoma Surgery: A Multi-Institutional Experience",
+      "shortTitle": "Spinal Cord Subependymoma Surgery",
+      "journal": "JKNS",
+      "year": 2018,
+      "date": "2018-03-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "정천기"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.3340/jkns.2017.0405.001",
+      "doiUrl": "https://doi.org/10.3340/jkns.2017.0405.001"
+    },
+    {
+      "id": "32d908af",
+      "title": "Surgical Outcome of Adult Idiopathic Chiari Malformation Type 1",
+      "shortTitle": "Surgical Outcome of Adult Idiopathic Chiari…",
+      "journal": "JKNS",
+      "year": 2016,
+      "date": "2016-09-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "김치헌"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.3340/jkns.2016.59.5.512",
+      "doiUrl": "https://doi.org/10.3340/jkns.2016.59.5.512"
+    },
+    {
+      "id": "32d908af",
+      "title": "Primary Spinal Cord Oligodendroglioma with Postoperative Adjuvant Radiotherapy: A Case Report",
+      "shortTitle": "Primary Spinal Cord Oligodendroglioma with…",
+      "journal": "KJS",
+      "year": 2015,
+      "date": "2015-09-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "정천기"
+      ],
+      "coAuthors": [],
+      "role": "first",
+      "doi": "10.14245/kjs.2015.12.3.160",
+      "doiUrl": "https://doi.org/10.14245/kjs.2015.12.3.160"
+    }
+  ]
+}

@@ -1,4 +1,27 @@
-import type { Marker, TermPage } from "../components/desk-hero/types";
+import type { Marker, PubItem, TermPage } from "../components/desk-hero/types";
+import publicationsData from "./publications.json";
+
+// ─── Publications (auto-generated from Notion 연구DB) ─────────────
+
+interface RawPublication {
+  id: string;
+  title: string;
+  shortTitle: string;
+  journal: string;
+  year: number;
+  date: string;
+  role: PubItem["role"];
+  doi: string;
+  doiUrl: string;
+}
+
+const PUBLICATIONS: PubItem[] = (publicationsData as { publications: RawPublication[] }).publications.map((p) => ({
+  title: p.shortTitle || p.title,
+  journal: p.journal,
+  year: p.year,
+  role: p.role,
+  url: p.doiUrl,
+}));
 
 // ─── External links ──────────────────────────────────────────────
 
@@ -108,8 +131,10 @@ export const PAGES: Record<string, TermPage> = {
       "",
       "KNS ········· Board Certified",
       "KSNS ········ Lifetime Member",
-      "KOMISS ······ Academic Committee",
-      "KOSESS ······ Education Committee",
+      "KOMISS ······ Scientific Secretary",
+      "             & Edu Mgmt Vice Chair",
+      "KOSESS ······ Education Secretary",
+      "WUBES ······· Auditor",
       "Neurospine ·· Editorial Board",
       "NASS ········ Member",
       "KASS ········ Member",
@@ -277,40 +302,13 @@ export const PAGES: Record<string, TermPage> = {
     command: "cat research/publications/all.md",
     lines: [
       "",
-      "# Publications (29)",
+      `# Publications (${PUBLICATIONS.length})`,
       "━━━━━━━━━━━━━━━━━━━",
       "",
-      "UBE Cervical Schwannoma · JMISST 2026",
-      "Indigo Carmine in UBE · JMISST 2025",
-      "Pharmacologic Tx in SCI · KJ Neurotrauma 2025",
-      "VCF Prediction Foundation Model · Sci Rep 2024",
-      "AP vs Lateral DL for VCF · Sci Rep 2024",
-      "Schwannoma Classification MRI · Neurospine 2024",
-      "DL Whole-Spine Landmarks · Bioeng 2024",
-      "Multi-Pose CNN for Stenosis · Sci Rep 2024",
-      "DL Thoracolumbar Fx · Neurospine 2024",
-      "Lumbar Surgery COVID Trends · PLoS One 2024",
-      "ERAS in All Spine Surgery · JNS Spine 2023",
-      "Future of Endoscopic Spine · Bioeng 2023",
-      "OLIF Double vs Nav Single · PLoS One 2023",
-      "C3 Laminectomy Laminoplasty RCT · Spine J 2023",
-      "C1-C2 Epidural Schwannomas · Acta Neurochir 2023",
-      "Embolization Timing for Mets · JKNS 2023",
-      "Cervical Reoperation Rate · Sci Rep 2023",
-      "Decompression vs Fusion LSS · Sci Rep 2022",
-      "Genetic Odyssey to OPLL · Neurospine 2022",
-      "Pressure Injury Prone Surgery · JNA 2022",
-      "MRI in Spinal Cord Tumors · Sci Rep 2022",
-      "En Bloc Spondylectomy Failure · Neurospine 2022",
-      "Hemangioblastoma Resection · Oper Neurosurg 2022",
-      "Endoscopic Lumbar Discectomy · IJP 2022",
-      "Interlaminar Endoscopic Discectomy · IJSS 2021",
-      "COVID-19 Contact Tracing · JMIR 2020",
-      "Spinal Cord Subependymoma · JKNS 2018",
-      "Chiari Malformation Type 1 · JKNS 2016",
-      "Spinal Cord Oligodendroglioma · KJ Spine 2015",
+      "Click any paper to open DOI",
       "",
     ],
+    publications: PUBLICATIONS,
     links: [
       { label: "Google Scholar →", url: SOCIAL_LINKS.scholar },
       { label: "ResearchGate →", url: SOCIAL_LINKS.researchgate },
@@ -456,8 +454,10 @@ export const PAGES: Record<string, TermPage> = {
       "━━━━━━━━━━━━━━━━━━━━━━━━━━━",
       "",
       "Editorial Board Member, Neurospine (IF 3.6)",
-      "Academic Committee, KOMISS",
-      "Education Committee, KOSESS",
+      "Scientific Secretary, KOMISS",
+      "Education Management Vice Chair, KOMISS",
+      "Education Secretary, KOSESS",
+      "Auditor, WUBES",
       "Computation Committee, KSNS",
       "Academic Committee, KNDCRS",
       "",
@@ -466,6 +466,7 @@ export const PAGES: Record<string, TermPage> = {
       { label: "Neurospine", pageKey: "roles_neurospine" },
       { label: "KOMISS (Korean Minimally Invasive Spine Society)", pageKey: "roles_komiss" },
       { label: "KOSESS (Korean Research Society of Endoscopic Spine Surgery)", pageKey: "roles_kosess" },
+      { label: "WUBES (World UBE Society)", pageKey: "roles_wubes" },
       { label: "KSNS (Korean Spinal Neurosurgery Society)", pageKey: "roles_ksns" },
       { label: "KNDCRS (Korean Neurosurgical Digital Convergence Research Society)", pageKey: "roles_kndcrs" },
     ],
@@ -492,8 +493,9 @@ export const PAGES: Record<string, TermPage> = {
     command: "cat roles/komiss.md",
     lines: [
       "",
-      "# Academic Committee",
-      "━━━━━━━━━━━━━━━━━━━━",
+      "# Scientific Secretary",
+      "# Education Management Vice Chair",
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
       "",
       "KOMISS",
       "Korean Minimally Invasive",
@@ -505,12 +507,25 @@ export const PAGES: Record<string, TermPage> = {
     command: "cat roles/kosess.md",
     lines: [
       "",
-      "# Education Committee",
+      "# Education Secretary",
       "━━━━━━━━━━━━━━━━━━━━━",
       "",
       "KOSESS",
       "Korean Research Society of",
       "Endoscopic Spine Surgery",
+      "",
+    ],
+  },
+  roles_wubes: {
+    command: "cat roles/wubes.md",
+    lines: [
+      "",
+      "# Auditor",
+      "━━━━━━━━━",
+      "",
+      "WUBES",
+      "World Unilateral Biportal",
+      "Endoscopy Society",
       "",
     ],
   },

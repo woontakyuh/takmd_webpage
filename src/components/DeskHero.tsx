@@ -150,7 +150,7 @@ export default function DeskHero() {
               Woon Tak Yuh, MD
             </div>
             <div className="font-mono text-white/70 text-[10px] mt-0.5 tracking-wider" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>
-              Spine Surgeon · AI Researcher
+              Endoscopic Spine Surgeon & Educator · AI Researcher
             </div>
           </motion.div>
         </div>
@@ -307,7 +307,7 @@ export default function DeskHero() {
               className="font-mono text-white/70 mt-1 tracking-wider"
               style={{ fontSize: "min(1.2vw, 12px)", textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}
             >
-              Spine Surgeon · AI Researcher
+              Endoscopic Spine Surgeon & Educator · AI Researcher
             </div>
           </motion.div>
         </div>

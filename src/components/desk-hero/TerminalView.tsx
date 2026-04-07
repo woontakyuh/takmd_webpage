@@ -157,6 +157,46 @@ export function TerminalView({
           </motion.div>
         )}
 
+        {typingDone && page.publications && (
+          <motion.div
+            className="flex flex-col gap-0 mt-1 pointer-events-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {page.publications.map((pub, idx) => {
+              const roleLabel =
+                pub.role === "first" ? "1st" :
+                pub.role === "corresponding" ? "corresp" :
+                pub.role === "coauthor" ? "co" : "";
+              return (
+                <a
+                  key={idx}
+                  href={pub.url || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${mobile ? "text-[12px] py-1.5" : "text-[min(1.05vw,10.5px)] py-0.5"} px-1 rounded transition-colors flex items-baseline gap-2 leading-snug`}
+                  style={{ color: `rgba(${accentRgb},0.85)` }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = `rgba(${accentRgb},0.1)`;
+                    e.currentTarget.style.color = accentColor;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = `rgba(${accentRgb},0.85)`;
+                  }}
+                >
+                  <span style={{ color: `rgba(${accentRgb},0.5)`, minWidth: mobile ? "60px" : "52px", flexShrink: 0 }}>
+                    {pub.year} {roleLabel && `· ${roleLabel}`}
+                  </span>
+                  <span className="flex-1">
+                    {pub.title} <span style={{ color: `rgba(${accentRgb},0.55)` }}>· {pub.journal}</span>
+                  </span>
+                </a>
+              );
+            })}
+          </motion.div>
+        )}
+
         {typingDone && page.subPages && (
           <motion.div
             className="flex flex-col gap-1.5 mt-3 pointer-events-auto"
@@ -181,7 +221,7 @@ export function TerminalView({
                   e.currentTarget.style.borderColor = `rgba(${accentRgb},0.25)`;
                 }}
               >
-                \u2192 {sp.label}
+                → {sp.label}
               </button>
             ))}
           </motion.div>
