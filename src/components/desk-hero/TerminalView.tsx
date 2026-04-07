@@ -3,18 +3,19 @@ import { motion } from "framer-motion";
 import type { HotspotId } from "./types";
 import { PAGES } from "../../data/terminal-pages";
 
-function TypewriterText({ text, speed = 25 }: { text: string; speed?: number }) {
-  const [len, setLen] = useState(0);
+function TypewriterText({ text, speed = 25, instant = false }: { text: string; speed?: number; instant?: boolean }) {
+  const [len, setLen] = useState(instant ? text.length : 0);
 
   useEffect(() => {
-    setLen(0);
-  }, [text]);
+    setLen(instant ? text.length : 0);
+  }, [text, instant]);
 
   useEffect(() => {
+    if (instant) return;
     if (len >= text.length) return;
     const t = setTimeout(() => setLen((l) => l + 1), speed);
     return () => clearTimeout(t);
-  }, [len, text, speed]);
+  }, [len, text, speed, instant]);
 
   return <>{text.slice(0, len)}</>;
 }
@@ -25,6 +26,8 @@ interface TerminalViewProps {
   mobile?: boolean;
   accentColor?: string;
   accentRgb?: string;
+  /** When true, skip typewriter animation and render all content immediately */
+  instant?: boolean;
 }
 
 export function TerminalView({
@@ -33,24 +36,31 @@ export function TerminalView({
   mobile = false,
   accentColor = "#4ade80",
   accentRgb = "74,222,128",
+  instant = false,
 }: TerminalViewProps) {
   const [pageStack, setPageStack] = useState<string[]>([rootPageKey]);
-  const [typingDone, setTypingDone] = useState(false);
+  const [typingDone, setTypingDone] = useState(instant);
   const [bodyText, setBodyText] = useState("");
   const pageKey = pageStack[pageStack.length - 1];
   const page = PAGES[pageKey];
   const allText = page.lines.join("\n");
 
   useEffect(() => {
-    setBodyText("");
-    setTypingDone(false);
-  }, [pageKey]);
+    if (instant) {
+      setBodyText(allText);
+      setTypingDone(true);
+    } else {
+      setBodyText("");
+      setTypingDone(false);
+    }
+  }, [pageKey, instant, allText]);
 
   useEffect(() => {
     setPageStack([rootPageKey]);
   }, [rootPageKey]);
 
   useEffect(() => {
+    if (instant) return;
     if (bodyText.length >= allText.length) {
       setTypingDone(true);
       return;
@@ -60,7 +70,7 @@ export function TerminalView({
       10,
     );
     return () => clearTimeout(t);
-  }, [bodyText, allText]);
+  }, [bodyText, allText, instant]);
 
   const goBack = () => {
     if (pageStack.length > 1) setPageStack((s) => s.slice(0, -1));
@@ -107,7 +117,7 @@ export function TerminalView({
       <div className={`shrink-0 leading-relaxed z-20 ${mobile ? "px-4 text-sm" : "px-[6%] text-[min(1.3vw,13px)]"}`}>
         <span style={{ color: dimColor }}>~</span>
         <span style={{ color: subtleColor }}> $ </span>
-        <TypewriterText text={page.command} speed={25} />
+        <TypewriterText text={page.command} speed={25} instant={instant} />
       </div>
 
       {/* Body */}

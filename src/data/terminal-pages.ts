@@ -54,11 +54,16 @@ function buildYearLines(year: number): string[] {
     "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
     "",
   ];
+  const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  const fmtDate = (iso: string): string => {
+    if (iso.length < 10) return "";
+    const [y, m, d] = iso.substring(0, 10).split("-");
+    return `${d} ${MONTHS[parseInt(m, 10) - 1]} ${y}`;
+  };
   for (const p of items) {
-    // Month.Day format: "06.27"
-    const md = p.date.length >= 10 ? p.date.slice(5, 10).replace("-", ".") : "";
+    const dateStr = fmtDate(p.date);
     const locLabel = p.place ? `, ${p.place.split(",")[0].trim()}` : "";
-    lines.push(`${md} ${p.name}${locLabel}`);
+    lines.push(`${dateStr}  ${p.name}${locLabel}`);
     for (const topic of p.topics) {
       lines.push(`  → ${topic}`);
     }

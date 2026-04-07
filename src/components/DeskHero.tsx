@@ -173,6 +173,7 @@ export default function DeskHero() {
                 mobile
                 accentColor={accentColor}
                 accentRgb={accentRgb}
+                instant
               />
             </motion.div>
           )}
@@ -266,6 +267,7 @@ export default function DeskHero() {
                     onClose={() => { setLocked(null); setHovered(null); }}
                     accentColor={accentColor}
                     accentRgb={accentRgb}
+                    instant={!!locked}
                   />
                 </motion.div>
               )}
