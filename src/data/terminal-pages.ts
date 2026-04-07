@@ -1,5 +1,6 @@
 import type { Marker, PubItem, TermPage } from "../components/desk-hero/types";
 import publicationsData from "./publications.json";
+import presentationsData from "./presentations.json";
 
 // ─── Publications (auto-generated from Notion 연구DB) ─────────────
 
@@ -21,6 +22,67 @@ const PUBLICATIONS: PubItem[] = (publicationsData as { publications: RawPublicat
   year: p.year,
   role: p.role,
   url: p.doiUrl,
+}));
+
+// ─── Presentations (auto-generated from Notion Schedule DB) ──────
+
+interface RawPresentation {
+  id: string;
+  date: string;   // YYYY-MM-DD
+  year: number;
+  name: string;
+  place: string;
+  societies: string[];
+  categories: string[];
+  topics: string[];
+  url: string;
+}
+
+const PRESENTATIONS: RawPresentation[] = (presentationsData as { presentations: RawPresentation[] }).presentations;
+
+/** All years with at least one presentation, sorted desc */
+const PRESENTATION_YEARS = Array.from(new Set(PRESENTATIONS.map((p) => p.year))).sort((a, b) => b - a);
+
+/** Build terminal lines for a single year's presentations */
+function buildYearLines(year: number): string[] {
+  const items = PRESENTATIONS.filter((p) => p.year === year);
+  const isUpcoming = year >= new Date().getFullYear();
+  const title = isUpcoming ? `# ${year} Presentations` : `# ${year} Presentations`;
+  const lines: string[] = [
+    "",
+    title,
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+    "",
+  ];
+  for (const p of items) {
+    // Month.Day format: "06.27"
+    const md = p.date.length >= 10 ? p.date.slice(5, 10).replace("-", ".") : "";
+    const locLabel = p.place ? `, ${p.place.split(",")[0].trim()}` : "";
+    lines.push(`${md} ${p.name}${locLabel}`);
+    for (const topic of p.topics) {
+      lines.push(`  → ${topic}`);
+    }
+    lines.push("");
+  }
+  return lines;
+}
+
+/** Build the schedule_YYYY pages record */
+function buildSchedulePages(): Record<string, TermPage> {
+  const pages: Record<string, TermPage> = {};
+  for (const y of PRESENTATION_YEARS) {
+    pages[`schedule_${y}`] = {
+      command: `cat schedule/${y}.md`,
+      lines: buildYearLines(y),
+    };
+  }
+  return pages;
+}
+
+const SCHEDULE_PAGES = buildSchedulePages();
+const SCHEDULE_SUBPAGES = PRESENTATION_YEARS.map((y) => ({
+  label: String(y),
+  pageKey: `schedule_${y}`,
 }));
 
 // ─── External links ──────────────────────────────────────────────
@@ -556,7 +618,7 @@ export const PAGES: Record<string, TermPage> = {
     ],
   },
 
-  // ─ Schedule ─
+  // ─ Schedule (2023+ auto-generated from Notion Schedule DB) ─
   schedule: {
     command: "cat schedule/overview.md",
     lines: [
@@ -564,128 +626,18 @@ export const PAGES: Record<string, TermPage> = {
       "# Presentations & Lectures",
       "━━━━━━━━━━━━━━━━━━━━━━━━━━",
       "",
+      `${PRESENTATIONS.length} presentations since 2023`,
+      "",
       "Browse by year.",
       "",
     ],
     subPages: [
-      { label: "2026", pageKey: "schedule_2026" },
-      { label: "2025", pageKey: "schedule_2025" },
-      { label: "2024", pageKey: "schedule_2024" },
-      { label: "2023", pageKey: "schedule_2023" },
+      ...SCHEDULE_SUBPAGES,
       { label: "2022", pageKey: "schedule_2022" },
       { label: "2021", pageKey: "schedule_2021" },
     ],
   },
-  schedule_2026: {
-    command: "cat schedule/2026.md",
-    lines: [
-      "",
-      "# 2026 Upcoming",
-      "━━━━━━━━━━━━━━━━",
-      "",
-      "Feb 26  Spine Summit",
-      "Mar 14  경추-부울경 합동 심포지엄",
-      "Mar 28  KOMISS 대만 워크샵",
-      "Apr 04  WUBES 2026",
-      "May 08  WCMISST",
-      "Jul 09  KASS 2026",
-      "",
-    ],
-  },
-  schedule_2025: {
-    command: "cat schedule/2025.md",
-    lines: [
-      "",
-      "# 2025 Upcoming",
-      "━━━━━━━━━━━━━━━━",
-      "",
-      "Jan 18  NT Focus",
-      "  → Potential Pharmacological Treatment of Spinal Cord Injury",
-      "Feb 23  KOSESS 임원진",
-      "Mar 15  Geriatric Neurosurgery Society",
-      "  → ERAS in Geriatric Population",
-      "Mar 28  손상 임원진 워크샵",
-      "May 03  Neurospine",
-      "May 04  UBE Dummy 1",
-      "May 24  KOMISS",
-      "May 31  신경손상학회",
-      "Jun 15  UBE Dummy 2",
-      "Jul 10  KASS 2025",
-      "Aug 23  KOSESS",
-      "Sep 04  ASIA Spine & KSNS",
-      "Sep 14  나누리 22주년 심포지엄",
-      "  → ERAS in Spine Surgery",
-      "Oct 16  KNS",
-      "Nov 07  ThaiSMISST",
-      "  → UBE High Cervical Dumbbell Schwannoma Removal",
-      "Nov 28  KOMISS",
-      "Dec 13  Neurospine Symposium",
-      "Dec 20  Animal Workshop",
-      "",
-    ],
-  },
-  schedule_2024: {
-    command: "cat schedule/2024.md",
-    lines: [
-      "",
-      "# 2024 Presentations & Lectures",
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-      "",
-      "── Invited Lectures ──────",
-      "12.28 Neurospine Symposium",
-      "  → AI Tools for Spinal Imaging and Diagnosis",
-      "12.08 World MISS 2024",
-      "  → The Developmental Status of Spinal Endoscopic Tools: Scopes, Surgical Instruments and Navigation Systems",
-      "12.04 Chonnam Univ. Hospital CDW Symposium",
-      "  → Deep Learning Applications in Spinal Diagnostics: From Fracture Quantification to Collapse Progression Prediction",
-      "10.13 Korean Pain Research Society",
-      "  → Lumbar Spinal Pain을 유발하는 질환의 최신 수술 지견: Percutaneous Surgery (PELD, UBE, Endofusion)",
-      "10.11 Hwaseong Community Health Lecture",
-      "  → 퇴행성 척추질환의 적절한 관리, 진단 치료",
-      "09.27 Neurotrauma Symposium",
-      "  → How to Manage CNCP (Chronic Non Cancer Pain) in Elderly",
-      "04.26 Vietnam Endoscopic Spine Surgery Symposium",
-      "  → Introduction to UBE Surgery - Pearls and Pitfalls",
-      "03.23 KOSESS-KSNS Honam Joint Symposium",
-      "  → Endoscopic Surgery in Infectious Spondylo-Discitis",
-      "",
-      "── Oral Presentations ────",
-      "11.23 KOSASS",
-      "  → UBE Removal of a Cervical Extradural Schwannoma at C1-C2 Level",
-      "10.12 KOMISS-KOSESS Summit",
-      "  → Delayed Spinous Process Fracture After Endoscopic ULBD Surgery",
-      "07.11 KASS 2024, Park City, UT, USA",
-      "  → Deep Learning-Assisted Quantitative Measurement of Thoracolumbar Fracture Features on Lateral Radiographs",
-      "04.06 WUBES 2024 Annual Meeting",
-      "  → The Revisit of Intraoperative Indigo Carmine in UBE Surgery for Protecting Neural Injury",
-      "03.22 KOSASS Case Conference",
-      "  → Deep Learning-Assisted Quantitative Measurement of Thoracolumbar Fracture Features on Lateral Radiographs",
-      "",
-    ],
-  },
-  schedule_2023: {
-    command: "cat schedule/2023.md",
-    lines: [
-      "",
-      "# 2023 Presentations & Lectures",
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-      "",
-      "── Invited Lectures ──────",
-      "12.02 5th Biospine Annual Meeting",
-      "  → Automated Deep Learning System for Quantitative Measurement of Vertebral Body Compression and Kyphotic Angle in Thoracolumbar Fracture Patients using Radiography",
-      "09.09 15th IANR 2023 Korea",
-      "  → Trends in Lumbar Spinal Surgery During the COVID-19 Pandemic in a National Health Insurance System",
-      "",
-      "── Oral Presentations ────",
-      "08.16 ISASS AP 2023",
-      "  → The Comprehensive ERAS Protocol in Spinal Surgery: A Comparative Analysis of Clinical Outcomes and Medical Costs between Primary Spinal Tumors and Degenerative Spinal Diseases",
-      "07.15 12th Adult Spinal Deformity Symposium",
-      "  → Surgery for Kyphotic Deformity After TL Junctional Fracture in Severe Osteoporotic Patient",
-      "07.10 KNDCRS-Basic Science Joint Meeting",
-      "  → Trends in Lumbar Spinal Surgery During the COVID-19 Pandemic in a National Health Insurance System",
-      "",
-    ],
-  },
+  ...SCHEDULE_PAGES,
   schedule_2022: {
     command: "cat schedule/2022.md",
     lines: [

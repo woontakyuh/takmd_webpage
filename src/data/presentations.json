@@ -1,0 +1,749 @@
+{
+  "generatedAt": "2026-04-07T05:53:35.395Z",
+  "count": 43,
+  "presentations": [
+    {
+      "id": "33b908af25b980699b05c85e9c87f69f",
+      "date": "2026-06-27",
+      "year": 2026,
+      "name": "Busan-Ulsan-Gyeongnam Spine Symposium",
+      "place": "Haeundae Paik Hospital, Busan",
+      "societies": [
+        "부울경"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "AI-Powered Surgical Workflow: Planning & Intraoperative Analytics"
+      ],
+      "url": ""
+    },
+    {
+      "id": "320908af25b980f38995e684de308401",
+      "date": "2026-06-06",
+      "year": 2026,
+      "name": "KNS Basic & Digital Convergence Research Joint Meeting",
+      "place": "Yonsei ABMRC, Seoul",
+      "societies": [
+        "대신디융",
+        "기초연구회"
+      ],
+      "categories": [
+        "Spine",
+        "AI"
+      ],
+      "topics": [
+        "Research Methodology in Neurosurgery Using Claude AI"
+      ],
+      "url": ""
+    },
+    {
+      "id": "33a908af25b980849210fec32e7391fd",
+      "date": "2026-05-29",
+      "year": 2026,
+      "name": "KOMISS Spring Symposium & Cadaver Workshop",
+      "place": "Seoul St. Mary's Hospital",
+      "societies": [
+        "KOMISS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "AI-enhanced surgical workflow: LLMs and Agent system in MISS"
+      ],
+      "url": "https://komiss.org/workshop/202601"
+    },
+    {
+      "id": "2c7908af25b980ecabfaea73c5b098fd",
+      "date": "2026-05-08",
+      "year": 2026,
+      "name": "WCMISST",
+      "place": "LA, CA, US",
+      "societies": [
+        "KOMISS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "UBE cervical dumbbell schwannoma"
+      ],
+      "url": "https://wcmisst2026.org/"
+    },
+    {
+      "id": "2c7908af25b98068a470e39388a403e4",
+      "date": "2026-04-04",
+      "year": 2026,
+      "name": "2026 WUBES meeting",
+      "place": "",
+      "societies": [
+        "WUBES"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "UBE multilevel decomp in DCM, structural mistmatch concept"
+      ],
+      "url": ""
+    },
+    {
+      "id": "2cb908af25b980b08e5de837952f7e16",
+      "date": "2026-03-28",
+      "year": 2026,
+      "name": "KOMISS Executive Workshop",
+      "place": "Taiwan",
+      "societies": [
+        "KOMISS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "UBE cervical dumbbell schwannoma"
+      ],
+      "url": ""
+    },
+    {
+      "id": "2c7908af25b980edbfc6df234f22a8f1",
+      "date": "2026-02-26",
+      "year": 2026,
+      "name": "Spine Summit",
+      "place": "Phoenix, AZ, USA",
+      "societies": [
+        "Spine Summit",
+        "CNS",
+        "AANS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Cadaver Instructor"
+      ],
+      "url": ""
+    },
+    {
+      "id": "255908af25b9803990dac9fda2be6d71",
+      "date": "2025-11-28",
+      "year": 2025,
+      "name": "KOMISS Annual Meeting",
+      "place": "Hyatt Incheon",
+      "societies": [
+        "KOMISS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Recovery after UBE Fusion: ERAS Implementation A to Z"
+      ],
+      "url": ""
+    },
+    {
+      "id": "256908af25b98023b8beeb0cc3d039cc",
+      "date": "2025-11-06",
+      "year": 2025,
+      "name": "ThaiSMISST 2025",
+      "place": "Krungsri River Hotel, Bangkok, Thailand",
+      "societies": [
+        "ThaiSMISST"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Endoscopic Resection of High Cervical Dumbbell Tumors - Surgical Tactics and Technical Nuance"
+      ],
+      "url": "https://www.thaismisst.com/"
+    },
+    {
+      "id": "28f908af25b9800ebe70dc0ae420adbb",
+      "date": "2025-10-16",
+      "year": 2025,
+      "name": "KNS 2025",
+      "place": "",
+      "societies": [
+        "KNS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Generative AI in Neurosurgical General Care“AI, Our Daily Colleague”"
+      ],
+      "url": ""
+    },
+    {
+      "id": "1ec908af25b98051904fe502642a6389",
+      "date": "2025-09-14",
+      "year": 2025,
+      "name": "Nanoori 22nd Anniversary Symposium",
+      "place": "Grand Walkerhill Seoul",
+      "societies": [
+        "나누리"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Establishing an ERAS Program in a Specialized Spine and Joint Hospital: Real-world Experience and Lessons Learned"
+      ],
+      "url": ""
+    },
+    {
+      "id": "1b3908af25b980ac808fe3d0081e2cf2",
+      "date": "2025-09-04",
+      "year": 2025,
+      "name": "ASIA Spine 2025",
+      "place": "Lotte Hotel Busan",
+      "societies": [
+        "ASIA spine",
+        "KSNS",
+        "NSC"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Improving Medication Adherence in Spine Patients: Solving the Tolerability Gap with Mirogabalin (Taleaje®)"
+      ],
+      "url": ""
+    },
+    {
+      "id": "1d1908af25b9805d9696fb9ba4ccc593",
+      "date": "2025-08-23",
+      "year": 2025,
+      "name": "KOSESS Annual Meeting",
+      "place": "Seoul St. Mary's Hospital",
+      "societies": [
+        "KOSESS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Residual Stenosis Even After Optimal UBE Lumbar ULBD surgery: The Role of Lamina-Ventral Distance (LVD) and Ventral Epidural Fat",
+        "Endoscopic Resection of High Cervical Dumbbell Tumors - Surgical Tactics and Technical Nuance"
+      ],
+      "url": ""
+    },
+    {
+      "id": "1d4908af25b9800ebf57cd2ce51d47d5",
+      "date": "2025-07-10",
+      "year": 2025,
+      "name": "KASS 2025",
+      "place": "Huntington Beach",
+      "societies": [
+        "KASS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Surgical Tactics of Unilateral Biportal Endoscopy for Cervical Extradural and Dumbbell Schwannomas"
+      ],
+      "url": ""
+    },
+    {
+      "id": "98c8dae0d19747b7b73236ee82850497",
+      "date": "2025-06-15",
+      "year": 2025,
+      "name": "The 2th Dummy Workshop for ESS beginner",
+      "place": "Hallym Dongtan Sacred Heart Hospital",
+      "societies": [
+        "Dummy"
+      ],
+      "categories": [
+        "Workshop"
+      ],
+      "topics": [
+        "Introduction to UBE for beginners."
+      ],
+      "url": ""
+    },
+    {
+      "id": "1d7908af25b9809c8f30db60b1f2f982",
+      "date": "2025-05-23",
+      "year": 2025,
+      "name": "2025 KOMISS advanced course",
+      "place": "",
+      "societies": [
+        "KOMISS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Residual Stenosis (RS) After the Optimal UBE Lumbar ULBD surgery: The Impact of Ventral Epidural Fat"
+      ],
+      "url": "https://komiss.org/workshop/202501"
+    },
+    {
+      "id": "18f908af25b980cbbc62f8a899f130dd",
+      "date": "2025-05-03",
+      "year": 2025,
+      "name": "Neurospine Symposium",
+      "place": "Samsung Medical Center, Seoul",
+      "societies": [
+        "Neurospine symposium"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Strategies for Integrating LLM into the Peer-Review Process"
+      ],
+      "url": ""
+    },
+    {
+      "id": "1c7908af25b9803da586eb0303433cdf",
+      "date": "2025-04-11",
+      "year": 2025,
+      "name": "1st Gyeonggi-South Spine Symposium",
+      "place": "Suwon Tuntun Hospital",
+      "societies": [
+        "경기남부"
+      ],
+      "categories": [
+        "Conf"
+      ],
+      "topics": [
+        "A Man with Acute Back Pain & Hepatitis: Psoas abscess"
+      ],
+      "url": ""
+    },
+    {
+      "id": "18f908af25b980fdbc6dfa5830dc13bc",
+      "date": "2025-03-15",
+      "year": 2025,
+      "name": "Korean Society of Geriatric Neurosurgery Annual Meeting",
+      "place": "Chungnam National University Hospital",
+      "societies": [
+        "대한노인신경외과학회"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "ERAS Protocol in Geriatric Spine Surgery: Evidence and Real-World Implementation"
+      ],
+      "url": ""
+    },
+    {
+      "id": "18c908af25b980b6b436e189b233b958",
+      "date": "2025-02-22",
+      "year": 2025,
+      "name": "KOSESS Executive Workshop",
+      "place": "Yutop Marina Hotel, Yeosu",
+      "societies": [
+        "KOSESS"
+      ],
+      "categories": [
+        "Workshop"
+      ],
+      "topics": [
+        "Journey to the World of Whiskey"
+      ],
+      "url": ""
+    },
+    {
+      "id": "196908af25b9805e8c2ae499e35c9ec6",
+      "date": "2025-02-13",
+      "year": 2025,
+      "name": "UBE Training for Hospital Staff",
+      "place": "",
+      "societies": [
+        "직원교육"
+      ],
+      "categories": [
+        "Davos"
+      ],
+      "topics": [
+        "Introduction to UBE surgery"
+      ],
+      "url": ""
+    },
+    {
+      "id": "11f908af25b9803ab955ce75d0ec24dd",
+      "date": "2025-01-18",
+      "year": 2025,
+      "name": "NeuroTrauma focus",
+      "place": "",
+      "societies": [
+        "대한신경손상학회"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Potential Pharmacological Therapies for Spinal Cord Injury"
+      ],
+      "url": ""
+    },
+    {
+      "id": "102908af25b9804697f7efecc8d30705",
+      "date": "2024-12-28",
+      "year": 2024,
+      "name": "7th Neurospine Symposium",
+      "place": "Busan",
+      "societies": [
+        "Neurospine symposium"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "AI Tools for Spinal Imaging and Diagnosis"
+      ],
+      "url": ""
+    },
+    {
+      "id": "102908af25b980889c8ec4de9cba0ff1",
+      "date": "2024-12-06",
+      "year": 2024,
+      "name": "World MISS 2024",
+      "place": "Daejeon Convention Center",
+      "societies": [
+        "KOMISS",
+        "KOSESS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "The Developmental Status of Spinal Endoscopic Tools: Scopes, Surgical Instruments, and Navigation",
+        "UBE removal of extradural schwannoma at the C1-C2 level"
+      ],
+      "url": "https://worldmiss2024.org/"
+    },
+    {
+      "id": "11f908af25b98034891bf2e5fb7a03eb",
+      "date": "2024-12-04",
+      "year": 2024,
+      "name": "Chonnam National University Hospital CDW Symposium",
+      "place": "ACC Design Hotel, Gwangju",
+      "societies": [
+        "전남대 CDW 구축 심포지엄"
+      ],
+      "categories": [
+        "AI"
+      ],
+      "topics": [
+        "AI & Big Data Research in Spine"
+      ],
+      "url": ""
+    },
+    {
+      "id": "102908af25b980f28aebc180ff17fce2",
+      "date": "2024-11-23",
+      "year": 2024,
+      "name": "KOSASS annual meeting",
+      "place": "Chung-Ang University Hospital, Seoul",
+      "societies": [
+        "KOSASS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "UBE removal of extradural schwannoma at the C1-C2 level"
+      ],
+      "url": ""
+    },
+    {
+      "id": "0293e8b4b4f645a18e682c6d3b8cd0fa",
+      "date": "2024-10-17",
+      "year": 2024,
+      "name": "Korean Neurosurgical Society Autumn Congress",
+      "place": "Grand InterContinental Seoul Parnas",
+      "societies": [
+        "KNS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "The iterative implementation of a comprehensive enhanced recovery after surgery protocol in all spinal surgery in Korea: a comparative analysis of clinical outcomes and medical costs between primary spinal tumors and degenerative spinal diseases"
+      ],
+      "url": "https://www.kns-neurosurgery.or.kr/"
+    },
+    {
+      "id": "f111de50f02041d3a12562e16564aec7",
+      "date": "2024-10-13",
+      "year": 2024,
+      "name": "Korean Pain Research Society Autumn Meeting",
+      "place": "Samsung Medical Center, Seoul",
+      "societies": [
+        "대한통증연구회"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Percutaneous Surgery for Lumbar Spinal Pain"
+      ],
+      "url": ""
+    },
+    {
+      "id": "102908af25b980cea1a4e7e6cff069cc",
+      "date": "2024-10-12",
+      "year": 2024,
+      "name": "2024 KOMISS-KOSESS summit",
+      "place": "Ramada by Wyndham, Jeju",
+      "societies": [
+        "KOMISS",
+        "KOSESS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Spinous fracture after UBE ULBD"
+      ],
+      "url": ""
+    },
+    {
+      "id": "103908af25b980799418f7a1823be5ca",
+      "date": "2024-10-11",
+      "year": 2024,
+      "name": "Dongtan Community Health Lecture",
+      "place": "Dongtan, Hwaseong",
+      "societies": [
+        "동탄 나래울 사회복지관"
+      ],
+      "categories": [
+        "Public"
+      ],
+      "topics": [
+        "Appropriate Management of Degenerative Spine Disease"
+      ],
+      "url": ""
+    },
+    {
+      "id": "274a821021524c4483884bdb02f27ef4",
+      "date": "2024-09-27",
+      "year": 2024,
+      "name": "Neurotrauma Symposium",
+      "place": "Courtyard by Marriott, Sejong",
+      "societies": [
+        "Neurotrauma"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "How to manage moderate to severe CNCP in elderly with Norpan(buprenorphine) patch"
+      ],
+      "url": ""
+    },
+    {
+      "id": "8a4b9ae2d33a4ac4b100a8a9b5ea84ad",
+      "date": "2024-07-11",
+      "year": 2024,
+      "name": "KASS 19th Annual  Meeting",
+      "place": "Park City, UT",
+      "societies": [
+        "KASS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Deep Learning-Assisted Quantitative Measurement of Thoracolumbar Fracture Features on Lateral Radiographs"
+      ],
+      "url": ""
+    },
+    {
+      "id": "30a187e7899343bb8d82a4dbca123a0f",
+      "date": "2024-04-26",
+      "year": 2024,
+      "name": "Vietnam UBE conference",
+      "place": "online lecture",
+      "societies": [
+        "Endovision"
+      ],
+      "categories": [
+        "Webinar"
+      ],
+      "topics": [
+        "Introduction to UBE surgery: Pearls and Pitfalls"
+      ],
+      "url": ""
+    },
+    {
+      "id": "27430d4ec2244f40be22306f22496cc7",
+      "date": "2024-04-06",
+      "year": 2024,
+      "name": "WUBES 2024",
+      "place": "",
+      "societies": [
+        "WUBES"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "The revisit of intraoperative indigocarmine in UBE surgery for protecting neural injury"
+      ],
+      "url": ""
+    },
+    {
+      "id": "7ea88ad92b0a4c14b79756209200ee77",
+      "date": "2024-03-23",
+      "year": 2024,
+      "name": "KOSESS-KSNS Honam Joint Symposium",
+      "place": "Jeonbuk National University, Jeonju",
+      "societies": [
+        "KOSESS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Endoscopic spine surgery in infective spondylo-discitis"
+      ],
+      "url": ""
+    },
+    {
+      "id": "351ef2aeb87643f29560ad6c85b2ee73",
+      "date": "2024-03-22",
+      "year": 2024,
+      "name": "MASS-KOSASS Symposium",
+      "place": "Courtyard Marriott, Suwon",
+      "societies": [
+        "KOSASS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Deep Learning-assisted quantitative measurement of thoracolumbar fracture features on lateral radiographs"
+      ],
+      "url": ""
+    },
+    {
+      "id": "dc090fa45c914d6d8ce17b7da6ae65fb",
+      "date": "2023-12-02",
+      "year": 2023,
+      "name": "5th Biospine Annual Meeting",
+      "place": "Chung-Ang University Hospital, Seoul",
+      "societies": [
+        "Biospine"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Automated Deep Learning System for Quantitative Measurement of Vertebral Body Compression and Kyphotic Angle in Thoracolumbar Fracture"
+      ],
+      "url": ""
+    },
+    {
+      "id": "ed8f7a1c23f14c3b92c4fa6233b6bf5a",
+      "date": "2023-10-05",
+      "year": 2023,
+      "name": "Taleaje Lecture - Neuropathic Pain in Spine Patients",
+      "place": "Online Webinar",
+      "societies": [
+        "Daichi-Sankyo"
+      ],
+      "categories": [
+        "제약"
+      ],
+      "topics": [
+        "The ERAS Protocol in Spinal Surgery: A Comparative Analysis of Clinical Outcomes and Medical Costs between Primary Spinal Tumors and Degenerative Spinal Diseases"
+      ],
+      "url": ""
+    },
+    {
+      "id": "e1936819e8bb45dcb6e208b3234fa86a",
+      "date": "2023-09-14",
+      "year": 2023,
+      "name": "Chodang Pharm Lecture - Neuropathic Pain",
+      "place": "",
+      "societies": [
+        "초당제약"
+      ],
+      "categories": [
+        "제약"
+      ],
+      "topics": [
+        "Indomethacin cream application in spine patients"
+      ],
+      "url": ""
+    },
+    {
+      "id": "c1a9ca6bcc514a5eaac0eb90ab562154",
+      "date": "2023-09-07",
+      "year": 2023,
+      "name": "15th IANR 2023 Korea",
+      "place": "CHA Bio Complex, Seongnam",
+      "societies": [
+        "IANR",
+        "기초연구회"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Trends in Lumbar Spinal Surgery During the COVID-19 Pandemic in a National Health Insurance System"
+      ],
+      "url": ""
+    },
+    {
+      "id": "9afe8f99c2bc4996bcd8e9ac33839fc2",
+      "date": "2023-08-16",
+      "year": 2023,
+      "name": "ISASS AP 2023",
+      "place": "",
+      "societies": [
+        "ISASS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "The Comprehensive ERAS Protocol in Spinal Surgery : A Comparative Analysis of Clinical Outcomes and Medical Costs between Primary Spinal Tumors and Degenerative Spinal Diseases"
+      ],
+      "url": ""
+    },
+    {
+      "id": "6db71765822740afb41919396b988343",
+      "date": "2023-07-15",
+      "year": 2023,
+      "name": "12th Adult Spinal Deformity Symposium",
+      "place": "Seoul National University Hospital",
+      "societies": [
+        "성인척추변형심포지엄"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Surgery for Kyphotic Deformity After TL Junctional Fracture in Severe Osteoporotic Patient"
+      ],
+      "url": ""
+    },
+    {
+      "id": "e5b64ecc9b8c4160806b6066c5384844",
+      "date": "2023-06-10",
+      "year": 2023,
+      "name": "2023 KNS Digital Convergence & Basic Research Joint Meeting",
+      "place": "Samsung Medical Center, Seoul",
+      "societies": [
+        "대신디융"
+      ],
+      "categories": [
+        "Spine",
+        "AI"
+      ],
+      "topics": [
+        "Surgery for Kyphotic Deformity After TL Junctional Fracture in Severe Osteoporotic Patient"
+      ],
+      "url": ""
+    }
+  ]
+}

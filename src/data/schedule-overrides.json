@@ -1,0 +1,121 @@
+{
+  "_comment": "Manual English overrides for Korean presentation entries. Keyed by YYYY-MM-DD. Each override may specify name, place, and/or topics (full array to replace).",
+
+  "2026-06-27": {
+    "name": "Busan-Ulsan-Gyeongnam Spine Symposium",
+    "place": "Haeundae Paik Hospital, Busan"
+  },
+  "2026-06-06": {
+    "name": "KNS Basic & Digital Convergence Research Joint Meeting",
+    "place": "Yonsei ABMRC, Seoul",
+    "topics": ["Research Methodology in Neurosurgery Using Claude AI"]
+  },
+  "2026-05-29": {
+    "name": "KOMISS Spring Symposium & Cadaver Workshop",
+    "place": "Seoul St. Mary's Hospital"
+  },
+  "2026-03-28": {
+    "name": "KOMISS Executive Workshop",
+    "place": "Taiwan"
+  },
+  "2025-11-28": {
+    "name": "KOMISS Annual Meeting",
+    "place": "Hyatt Incheon"
+  },
+  "2025-09-14": {
+    "name": "Nanoori 22nd Anniversary Symposium",
+    "place": "Grand Walkerhill Seoul"
+  },
+  "2025-09-04": {
+    "place": "Lotte Hotel Busan"
+  },
+  "2025-08-23": {
+    "name": "KOSESS Annual Meeting",
+    "place": "Seoul St. Mary's Hospital"
+  },
+  "2025-06-15": {
+    "place": "Hallym Dongtan Sacred Heart Hospital"
+  },
+  "2025-05-03": {
+    "place": "Samsung Medical Center, Seoul"
+  },
+  "2025-04-11": {
+    "name": "1st Gyeonggi-South Spine Symposium",
+    "place": "Suwon Tuntun Hospital"
+  },
+  "2025-03-15": {
+    "name": "Korean Society of Geriatric Neurosurgery Annual Meeting",
+    "place": "Chungnam National University Hospital"
+  },
+  "2025-02-22": {
+    "name": "KOSESS Executive Workshop",
+    "place": "Yutop Marina Hotel, Yeosu"
+  },
+  "2025-02-13": {
+    "name": "UBE Training for Hospital Staff"
+  },
+  "2024-12-28": {
+    "place": "Busan"
+  },
+  "2024-12-06": {
+    "place": "Daejeon Convention Center"
+  },
+  "2024-12-04": {
+    "name": "Chonnam National University Hospital CDW Symposium",
+    "place": "ACC Design Hotel, Gwangju",
+    "topics": ["AI & Big Data Research in Spine"]
+  },
+  "2024-11-23": {
+    "place": "Chung-Ang University Hospital, Seoul"
+  },
+  "2024-10-17": {
+    "name": "Korean Neurosurgical Society Autumn Congress",
+    "place": "Grand InterContinental Seoul Parnas"
+  },
+  "2024-10-13": {
+    "name": "Korean Pain Research Society Autumn Meeting",
+    "place": "Samsung Medical Center, Seoul"
+  },
+  "2024-10-12": {
+    "place": "Ramada by Wyndham, Jeju"
+  },
+  "2024-10-11": {
+    "name": "Dongtan Community Health Lecture",
+    "place": "Dongtan, Hwaseong",
+    "topics": ["Appropriate Management of Degenerative Spine Disease"]
+  },
+  "2024-09-27": {
+    "name": "Neurotrauma Symposium",
+    "place": "Courtyard by Marriott, Sejong"
+  },
+  "2024-03-23": {
+    "name": "KOSESS-KSNS Honam Joint Symposium",
+    "place": "Jeonbuk National University, Jeonju"
+  },
+  "2024-03-22": {
+    "name": "MASS-KOSASS Symposium",
+    "place": "Courtyard Marriott, Suwon"
+  },
+  "2023-12-02": {
+    "name": "5th Biospine Annual Meeting",
+    "place": "Chung-Ang University Hospital, Seoul"
+  },
+  "2023-10-05": {
+    "name": "Taleaje Lecture - Neuropathic Pain in Spine Patients",
+    "place": "Online Webinar"
+  },
+  "2023-09-14": {
+    "name": "Chodang Pharm Lecture - Neuropathic Pain"
+  },
+  "2023-09-07": {
+    "place": "CHA Bio Complex, Seongnam"
+  },
+  "2023-07-15": {
+    "name": "12th Adult Spinal Deformity Symposium",
+    "place": "Seoul National University Hospital"
+  },
+  "2023-06-10": {
+    "name": "2023 KNS Digital Convergence & Basic Research Joint Meeting",
+    "place": "Samsung Medical Center, Seoul"
+  }
+}
