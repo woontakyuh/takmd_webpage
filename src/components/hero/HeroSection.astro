@@ -1,0 +1,50 @@
+---
+import InteractiveDots from "./InteractiveDots";
+---
+
+<section class="relative w-full h-screen overflow-hidden bg-black">
+  <!-- Hero Image (LCP — no lazy loading) -->
+  <img
+    src="/hero-desk.webp"
+    alt="Surgeon's desk"
+    class="absolute inset-0 w-full h-full object-cover"
+    fetchpriority="high"
+    decoding="async"
+  />
+
+  <!-- Dark gradient overlay for text readability -->
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/40 pointer-events-none"
+  >
+  </div>
+
+  <!-- Credential Bar -->
+  <div
+    class="absolute top-0 left-0 right-0 z-30 bg-black/40 backdrop-blur-sm py-2.5"
+  >
+    <p
+      class="text-center text-white/70 text-[11px] sm:text-xs tracking-[0.2em] uppercase font-light"
+    >
+      Surgeon-Scientist &middot; UBE Specialist &middot; AI-Clinical Innovation
+    </p>
+  </div>
+
+  <!-- Interactive overlays (dots, terminal, calendar, journal) -->
+  <InteractiveDots client:load />
+
+  <!-- Positioning text (bottom-left) -->
+  <div class="absolute bottom-10 left-8 sm:left-14 z-20 pointer-events-none">
+    <h1
+      class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2 tracking-tight"
+    >
+      Woon Tak Yuh, MD
+    </h1>
+    <p class="text-sm sm:text-base lg:text-lg text-white/75 max-w-lg leading-relaxed">
+      A surgeon-scientist bridging endoscopic spine surgery and AI-driven
+      clinical innovation
+    </p>
+    <p class="text-xs sm:text-sm text-white/45 mt-2">
+      Director, Spine Endoscopy Center at Davos Hospital
+    </p>
+  </div>
+</section>

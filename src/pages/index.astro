@@ -1,26 +1,194 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import DeskHero from '../components/DeskHero';
+import Layout from "../layouts/Layout.astro";
+import HeroSection from "../components/hero/HeroSection.astro";
+import Card from "../components/Card.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import publicationsData from "../data/publications.json";
+import presentationsData from "../data/presentations.json";
+import surgeryData from "../data/surgery-data.json";
+
+const recentPublications = [...(publicationsData.publications ?? [])]
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .slice(0, 3);
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const upcomingPresentations = [...(presentationsData.presentations ?? [])]
+  .filter((talk) => new Date(talk.date) >= today)
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  .slice(0, 3);
+
+const fallbackPresentations = [...(presentationsData.presentations ?? [])]
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  .slice(0, 3);
+
+const featuredPresentations = upcomingPresentations.length > 0 ? upcomingPresentations : fallbackPresentations;
+
+const stats = [
+  {
+    value: String(surgeryData.overallStats.totalCases),
+    label: "Total spine cases",
+  },
+  {
+    value: String(publicationsData.count),
+    label: "Publications",
+  },
+  {
+    value: String(presentationsData.count),
+    label: "Presentations",
+  },
+  {
+    value: "15+",
+    label: "Countries trained",
+  },
+];
+
+const focusAreas = [
+  {
+    title: "UBE / Endoscopic Spine Surgery",
+    description: "Clinical work, operative refinement, and outcome-led practice built around minimally invasive endoscopic techniques.",
+    href: "/ube",
+    tags: ["UBE", "MIS", "Tumor"],
+  },
+  {
+    title: "Global Surgical Education",
+    description: "Training programs, workshops, and faculty activity designed for safe adoption of the technique.",
+    href: "/education",
+    tags: ["Faculty", "Workshop", "Training"],
+  },
+  {
+    title: "AI in Clinical Practice",
+    description: "Practical AI workflow work: imaging, documentation, and clinical systems that actually help the desk and OR.",
+    href: "/ai",
+    tags: ["Workflow", "Automation", "AI"],
+  },
+  {
+    title: "Research & Publications",
+    description: "Selected papers, outputs, and a clean path into the current publication record.",
+    href: "/research",
+    tags: ["Publications", "Scholar", "Evidence"],
+  },
+];
 ---
 
-<Layout hideNav hideFooter>
-  <DeskHero client:load />
+<Layout
+  title="Woon Tak Yuh, MD — Spine Surgeon, Educator & AI Researcher"
+  description="TakMD.com is the living brand hub for Woon Tak Yuh, MD: spine surgery, education, clinical AI, research, and professional contact."
+>
+  <main>
+    <HeroSection />
 
-  <!-- SSG content for SEO crawlers — visually hidden -->
-  <div class="sr-only">
-    <h1>Woon Tak Yuh, MD</h1>
-    <p>Spine Surgeon & AI Researcher | Director, Spine Endoscopy Center at Davos Hospital</p>
-    <p>Specializing in UBE (Unilateral Biportal Endoscopy), minimally invasive spine surgery, and spinal tumor surgery. 500+ cases, 700+ levels treated.</p>
-    <p>50+ publications, h-index 11. AI research in spinal imaging diagnostics.</p>
-    <p>International UBE Training Center: 80+ surgeons trained from 15+ countries.</p>
-    <nav>
-      <a href="/ube">UBE Surgery</a>
-      <a href="/education">Surgical Education</a>
-      <a href="/ai">AI in Clinical Practice</a>
-      <a href="/research">Research & Publications</a>
-      <a href="/media">Media</a>
-      <a href="/knowledge">Knowledge Base</a>
-      <a href="/contact">Contact</a>
-    </nav>
-  </div>
+    <section class="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-text-muted)]">What this site is now</p>
+          <h2 class="mt-3 text-3xl font-bold tracking-tight text-[var(--color-text)] sm:text-4xl">
+            A living profile, not an old-school personal homepage.
+          </h2>
+          <p class="mt-4 max-w-2xl text-base leading-relaxed text-[var(--color-text-secondary)]">
+            The homepage now opens with a stronger visual, then immediately answers the practical questions:
+            what you do, what you’re building, and where the work is showing up.
+          </p>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.map((stat) => (
+            <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+              <p class="text-3xl font-bold tracking-tight text-[var(--color-text)]">{stat.value}</p>
+              <p class="mt-1 text-sm text-[var(--color-text-secondary)]">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-10 grid gap-4 lg:grid-cols-2">
+        {focusAreas.map((item) => (
+          <Card title={item.title} description={item.description} href={item.href} tags={item.tags} />
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <SectionHeader
+        icon="📚"
+        title="Selected publications"
+        description="Recent work and representative outputs, pulled from the live publication record."
+        href="/research"
+        linkText="Open research page ->"
+      />
+      <div class="grid gap-4 md:grid-cols-3">
+        {recentPublications.map((pub) => (
+          <article class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-border-hover)]">
+            <p class="text-xs uppercase tracking-[0.2em] text-[var(--color-text-muted)]">{pub.journal} · {pub.year}</p>
+            <h3 class="mt-3 text-base font-semibold leading-snug text-[var(--color-text)]">{pub.shortTitle || pub.title}</h3>
+            <p class="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+              {pub.role === "first" ? "First-author output" : pub.role === "corresponding" ? "Corresponding-author output" : "Collaborative publication"}
+            </p>
+            <a href={pub.doiUrl} target="_blank" rel="noreferrer" class="mt-4 inline-flex text-sm font-medium text-[var(--color-link)] transition hover:text-[var(--color-text)]">
+              DOI ->
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="border-y border-[var(--color-border-strong)] bg-[var(--color-bg)]">
+      <div class="mx-auto grid w-full max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <div>
+          <SectionHeader
+            icon="🎤"
+            title="Selected upcoming / recent talks"
+            description="A live snapshot of the speaking calendar."
+            href="/education"
+            linkText="Open education page ->"
+          />
+          <p class="max-w-xl text-sm leading-relaxed text-[var(--color-text-secondary)]">
+            The site now reads like a current profile: what I do, what I’m building, and where the work is showing up.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          {featuredPresentations.map((talk) => (
+            <article class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+              <div class="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+                <span>{talk.date}</span>
+                <span>•</span>
+                <span>{talk.place || "TBA"}</span>
+              </div>
+              <h3 class="mt-3 text-base font-semibold text-[var(--color-text)]">{talk.name}</h3>
+              <p class="mt-2 text-sm text-[var(--color-text-secondary)]">{talk.topics.join(" · ")}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+      <div class="grid gap-4 rounded-[2rem] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6 md:grid-cols-3 md:p-8">
+        <div>
+          <p class="text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">Fast paths</p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--color-text-secondary)]">
+            <a class="block hover:text-[var(--color-text)]" href="/dashboard">Dashboard →</a>
+            <a class="block hover:text-[var(--color-text)]" href="/knowledge">Knowledge base →</a>
+            <a class="block hover:text-[var(--color-text)]" href="/media">Media →</a>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">Profile links</p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--color-text-secondary)]">
+            <a class="block hover:text-[var(--color-text)]" href="https://scholar.google.com/citations?user=tbTBemUAAAAJ&hl=ko&oi=ao" target="_blank" rel="noreferrer">Google Scholar →</a>
+            <a class="block hover:text-[var(--color-text)]" href="https://www.linkedin.com/in/woon-tak-yuh-03420311b/" target="_blank" rel="noreferrer">LinkedIn →</a>
+            <a class="block hover:text-[var(--color-text)]" href="mailto:woontak.yuh@gmail.com">Email →</a>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">Brand note</p>
+          <p class="mt-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+            Old personal-site energy is out. This is now a living hub: clinical anchor, education engine, research record, and practical contact surface.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>
