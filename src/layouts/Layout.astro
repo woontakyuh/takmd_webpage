@@ -7,6 +7,7 @@ interface Props {
   description?: string;
   hideNav?: boolean;
   hideFooter?: boolean;
+  bodyClass?: string;
 }
 
 const {
@@ -14,6 +15,7 @@ const {
   description = "TakMD.com is the living brand hub for Woon Tak Yuh, MD: spine surgery, education, clinical AI, research, and professional contact.",
   hideNav = false,
   hideFooter = false,
+  bodyClass = '',
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
@@ -33,12 +35,12 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL.href} />
-    <meta property="og:image" content="https://takmd.com/desk-setup.webp" />
+    <meta property="og:image" content="https://takmd.com/hero-desk.webp" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="https://takmd.com/desk-setup.webp" />
+    <meta name="twitter:image" content="https://takmd.com/hero-desk.webp" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/legacy.css" />
@@ -68,7 +70,7 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
       ]
     })} />
   </head>
-  <body class="min-h-screen">
+  <body class={`min-h-screen ${bodyClass}`.trim()}>
     {!hideNav && <Nav />}
     <slot />
     {!hideFooter && <Footer />}

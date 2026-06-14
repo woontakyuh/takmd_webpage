@@ -7,15 +7,15 @@
   --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 
   /* Dark theme base */
-  --color-bg: #09090b;
-  --color-fg: #18181b;
-  --color-fg-lifted: #1c1c1e;
-  --color-border: #27272a;
-  --color-border-dark: #3f3f46;
-  --color-text-primary: #fafafa;
-  --color-text-secondary: #a1a1aa;
-  --color-text-tertiary: #71717a;
-  --color-accent: #0d9488;
+  --color-bg: #070708;
+  --color-fg: #111114;
+  --color-fg-lifted: #17171b;
+  --color-border: #27272f;
+  --color-border-dark: #3d3d47;
+  --color-text-primary: #f5f1ea;
+  --color-text-secondary: #bab4ab;
+  --color-text-tertiary: #81808a;
+  --color-accent: #14b8a6;
 
   /* Missing variables used by Nav/Footer/Cards/Pages */
   --color-text: #fafafa;
@@ -59,11 +59,46 @@
     color: var(--color-text-primary);
     @apply font-sans antialiased;
     @apply text-[15px] leading-relaxed;
+    background-image:
+      radial-gradient(circle at top left, rgba(20, 184, 166, 0.09), transparent 28%),
+      radial-gradient(circle at 85% 0%, rgba(168, 85, 247, 0.06), transparent 24%),
+      linear-gradient(180deg, #09090b 0%, #070708 100%);
   }
 
-  ::selection {
-    @apply bg-teal-900 text-teal-100;
+  body.home-magazine {
+    --color-bg: #f4f0e8;
+    --color-fg: #fbf8f2;
+    --color-fg-lifted: #ffffff;
+    --color-border: rgba(53, 41, 28, 0.12);
+    --color-border-dark: rgba(53, 41, 28, 0.2);
+    --color-text-primary: #1d1a16;
+    --color-text-secondary: #5f574f;
+    --color-text-tertiary: #8b8177;
+    --color-text: #17130f;
+    --color-text-muted: #7d7367;
+    --color-link: #7a5b3d;
+    --color-surface: #f8f4ee;
+    --color-surface-alt: #f2ebe2;
+    --color-border-strong: rgba(53, 41, 28, 0.18);
+    --color-border-hover: rgba(53, 41, 28, 0.28);
+    --color-accent-soft: rgba(122, 91, 61, 0.08);
+    --color-accent: #7a5b3d;
+    background-image:
+      radial-gradient(circle at top left, rgba(122, 91, 61, 0.1), transparent 30%),
+      radial-gradient(circle at 80% 0%, rgba(20, 184, 166, 0.06), transparent 26%),
+      linear-gradient(180deg, #faf6ef 0%, #f4f0e8 100%);
   }
+
+  .home-magazine header {
+    background: rgba(244, 240, 232, 0.78) !important;
+    backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid rgba(53, 41, 28, 0.14) !important;
+  }
+
+  .home-magazine footer {
+    background: transparent !important;
+  }
+
 }
 
 @layer components {
