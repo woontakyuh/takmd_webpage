@@ -1,48 +1,29 @@
 ---
-import DeskHero from '../components/DeskHero';
+import DeskScene from '../components/desk-scene/DeskScene';
 import Layout from '../layouts/Layout.astro';
 import presentationsData from '../data/presentations.json';
 import publicationsData from '../data/publications.json';
 import surgeryData from '../data/surgery-data.json';
 
-const publications = publicationsData.publications;
-const presentations = presentationsData.presentations;
 const cases = surgeryData.cases;
 
 const metrics = {
   publications: publicationsData.count,
-  firstAuthor: publications.filter((publication) => publication.role === 'first').length,
   presentations: presentationsData.count,
   cases: cases.length,
   latestCase: cases.at(-1)?.opDate ?? 'TBA',
-  trainingCountries: '15+',
 };
-
-const publicationPreviews = publications.slice(0, 5).map((publication) => ({
-  title: publication.shortTitle || publication.title,
-  journal: publication.journal,
-  year: publication.year,
-  role: publication.role,
-  url: publication.doiUrl,
-}));
-
-const presentationPreviews = presentations.slice(0, 5).map((presentation) => ({
-  date: presentation.date,
-  name: presentation.name,
-  place: presentation.place,
-  topic: presentation.topics[0] ?? '',
-}));
 ---
 
 <Layout
   title="TakMD - Woon Tak Yuh, MD"
-  description="Interactive deskterior homepage for Woon Tak Yuh, MD: spine surgery, education, research, clinical AI workflow, and living CV."
+  description="Interactive 3D desk homepage for Woon Tak Yuh, MD: spine surgery, education, research, clinical AI workflow, and living CV."
   hideNav
   hideFooter
-  bodyClass="bg-[#f4efe5]"
+  bodyClass="bg-[#0d1018]"
 >
   <main id="main-content">
-    <DeskHero client:load metrics={metrics} publications={publicationPreviews} presentations={presentationPreviews} />
+    <DeskScene client:only="react" metrics={metrics} />
 
     <noscript>
       <section class="min-h-screen bg-[#03060b] px-6 py-16 text-white">
