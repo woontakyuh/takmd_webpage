@@ -54,7 +54,7 @@ export function ClockFace({ position, rotation }: { position: [number, number, n
 
   return (
     <mesh position={position} rotation={rotation}>
-      <planeGeometry args={[0.15, 0.092]} />
+      <planeGeometry args={[0.13, 0.08]} />
       <meshStandardMaterial ref={materialRef} map={texture} roughness={0.4} emissive="#ffffff" emissiveMap={texture} emissiveIntensity={0.35} />
     </mesh>
   );

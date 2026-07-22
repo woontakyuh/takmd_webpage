@@ -31,6 +31,7 @@ export const deskObjects: DeskObject[] = [
       'Degenerative and tumor pathology, registry-backed outcomes.',
     ],
     glb: '/models/spine.glb',
+    glbFit: 0.42,
     position: [-0.82, DESK_TOP_Y, -0.58],
     rotation: [0, 0.4, 0],
     fallback: {
@@ -54,6 +55,7 @@ export const deskObjects: DeskObject[] = [
       'Endoscopic spine surgery · imaging & deep learning · ERAS.',
     ],
     glb: '/models/journals.glb',
+    glbFit: 0.32,
     position: [0.78, DESK_TOP_Y, -0.62],
     rotation: [0, -0.18, 0],
     fallback: {
@@ -77,7 +79,9 @@ export const deskObjects: DeskObject[] = [
       'Endoscopic spine education across 15+ countries.',
     ],
     glb: '/models/globe.glb',
-    position: [-1.02, DESK_TOP_Y, -0.82],
+    glbFit: 0.34,
+    position: [-1.04, DESK_TOP_Y, -0.86],
+    rotation: [0, -0.35, 0],
     fallback: {
       parts: [
         { kind: 'sphere', size: [0.13, 0, 0], position: [0, 0.21, 0], color: '#5d7a86', roughness: 0.6 },
@@ -99,7 +103,8 @@ export const deskObjects: DeskObject[] = [
       'Clinical reasoning meets machine learning.',
     ],
     glb: '/models/brain.glb',
-    position: [1.02, DESK_TOP_Y, -0.82],
+    glbFit: 0.28,
+    position: [1.08, DESK_TOP_Y, -0.88],
     rotation: [0, -0.35, 0],
     fallback: {
       parts: [
@@ -122,6 +127,7 @@ export const deskObjects: DeskObject[] = [
       'Clinical AI workflow — from encounter to reusable knowledge.',
     ],
     glb: '/models/keyboard.glb',
+    glbFit: 0.44,
     position: [0, DESK_TOP_Y, -0.28],
     fallback: {
       parts: [
@@ -142,6 +148,7 @@ export const deskObjects: DeskObject[] = [
       'Discipline transfers: position before submission.',
     ],
     glb: '/models/belt.glb',
+    glbFit: 0.22,
     position: [0.62, DESK_TOP_Y, -0.22],
     rotation: [0, 0.5, 0],
     fallback: {
@@ -165,6 +172,7 @@ export const deskObjects: DeskObject[] = [
       'Fastest route: LinkedIn or the contact page.',
     ],
     glb: '/models/card.glb',
+    glbFit: 0.15,
     position: [-0.56, DESK_TOP_Y, -0.24],
     rotation: [0, 0.25, 0],
     fallback: {
@@ -182,6 +190,7 @@ export const deskObjects: DeskObject[] = [
     command: 'date',
     terminalLines: [], // dynamic — filled with visitor-local date/time at hover time
     glb: '/models/clock.glb',
+    glbFit: 0.2,
     position: [-0.38, DESK_TOP_Y, -0.68],
     rotation: [0, 0.18, 0],
     fallback: {

@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { ClockFace } from './ClockFace';
 import { ACCENT, DESK_TOP_Y, PALETTE, deskObjects } from './config';
 import { DeskObjectMesh } from './DeskObjectMesh';
+import { FittedGlb } from './FittedGlb';
 import { Terminal } from './Terminal';
 import { useSun } from './useSun';
 import type { SunState } from './sun';
@@ -219,6 +220,30 @@ function DeskProps({ lampOn }: { lampOn: number }) {
   );
 }
 
+// Personal deco objects (non-interactive) — Higgsfield GLBs of Tak's real desk items
+function DecoGlbProps() {
+  return (
+    <group>
+      {/* Mac mini beside the monitor stand */}
+      <group position={[0.34, DESK_TOP_Y, -0.8]} rotation={[0, -0.2, 0]}>
+        <FittedGlb url="/models/computer.glb" fit={0.2} fallback={null} />
+      </group>
+      {/* VW microbus with surfboard, parked by the monitor */}
+      <group position={[-0.13, DESK_TOP_Y, -0.8]} rotation={[0, 0.55, 0]}>
+        <FittedGlb url="/models/vwbus.glb" fit={0.17} fallback={null} />
+      </group>
+      {/* die-cast fire truck near the keyboard */}
+      <group position={[-0.36, DESK_TOP_Y, -0.35]} rotation={[0, -0.45, 0]}>
+        <FittedGlb url="/models/firetruck.glb" fit={0.13} fallback={null} />
+      </group>
+      {/* Bing surfboard leaning against the bookshelf's left edge */}
+      <group position={[1.0, 0, -2.14]} rotation={[0, 0.25, -0.09]}>
+        <FittedGlb url="/models/surfboard.glb" fit={1.35} fallback={null} />
+      </group>
+    </group>
+  );
+}
+
 function Monitor({
   metrics,
   active,
@@ -426,6 +451,7 @@ export function Scene({ metrics, hoveredId, onHover, onActivate, zoomTarget, red
       <Lights sun={sun} />
       <Room />
       <Desk />
+      <DecoGlbProps />
       <Monitor metrics={metrics} active={activeObject} reducedMotion={reducedMotion} daylight={sun.daylight} />
       {deskObjects.map((object) => (
         <DeskObjectMesh
@@ -440,12 +466,12 @@ export function Scene({ metrics, hoveredId, onHover, onActivate, zoomTarget, red
           }}
         />
       ))}
-      {/* live clock face on the clock object's front */}
+      {/* live clock face overlaid on the flip-clock GLB's blank cards */}
       <group
         position={deskObjects.find((o) => o.id === 'clock')!.position}
         rotation={deskObjects.find((o) => o.id === 'clock')!.rotation}
       >
-        <ClockFace position={[0, 0.052, 0.026]} />
+        <ClockFace position={[0, 0.104, 0.055]} />
       </group>
     </Selection>
   );

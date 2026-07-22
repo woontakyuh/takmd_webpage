@@ -16,6 +16,7 @@ export type DeskObject = {
   id: string;
   label: string;
   glb?: string; // '/models/spine.glb' — loaded when present, primitive fallback otherwise
+  glbFit?: number; // target size of the GLB's largest dimension in world units (default 0.3)
   fallback: PrimitiveSpec;
   position: [number, number, number];
   rotation?: [number, number, number];

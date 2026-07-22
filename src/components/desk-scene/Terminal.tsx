@@ -32,12 +32,13 @@ function Typewriter({ text, reducedMotion }: { text: string; reducedMotion: bool
       return;
     }
     setCount(0);
-    let i = 0;
+    // elapsed-time based so typing speed survives main-thread throttling
+    const start = performance.now();
     const id = window.setInterval(() => {
-      i += 1;
-      setCount(i);
-      if (i >= text.length) window.clearInterval(id);
-    }, TYPE_MS);
+      const chars = Math.min(text.length, Math.floor((performance.now() - start) / TYPE_MS));
+      setCount(chars);
+      if (chars >= text.length) window.clearInterval(id);
+    }, 40);
     return () => window.clearInterval(id);
   }, [text, reducedMotion]);
   return <>{text.slice(0, count)}</>;

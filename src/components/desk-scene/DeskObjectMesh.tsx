@@ -1,24 +1,8 @@
 import { animated, useSpring } from '@react-spring/three';
 import { Select } from '@react-three/postprocessing';
-import { useGLTF } from '@react-three/drei';
-import { Component, Suspense, type ReactNode } from 'react';
+import { FittedGlb } from './FittedGlb';
 import { Primitive } from './Primitive';
 import type { DeskObject } from './types';
-
-class GlbBoundary extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-  render() {
-    return this.state.failed ? this.props.fallback : this.props.children;
-  }
-}
-
-function Glb({ url }: { url: string }) {
-  const { scene } = useGLTF(url);
-  return <primitive object={scene} />;
-}
 
 type Props = {
   object: DeskObject;
@@ -42,11 +26,7 @@ export function DeskObjectMesh({ object, hovered, reducedMotion, onHover, onActi
       <Select enabled={hovered}>
         <animated.group position-y={lift} rotation-y={spin}>
           {object.glb ? (
-            <GlbBoundary fallback={fallback}>
-              <Suspense fallback={fallback}>
-                <Glb url={object.glb} />
-              </Suspense>
-            </GlbBoundary>
+            <FittedGlb url={object.glb} fit={object.glbFit ?? 0.3} fallback={fallback} />
           ) : (
             fallback
           )}
