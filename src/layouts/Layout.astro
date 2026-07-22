@@ -35,12 +35,12 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL.href} />
-    <meta property="og:image" content="https://takmd.com/hero-desk.webp" />
+    <meta property="og:image" content="https://takmd.com/hero-desk-neutral.webp" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="https://takmd.com/hero-desk.webp" />
+    <meta name="twitter:image" content="https://takmd.com/hero-desk-neutral.webp" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/legacy.css" />
@@ -71,6 +71,7 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
     })} />
   </head>
   <body class={`min-h-screen ${bodyClass}`.trim()}>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     {!hideNav && <Nav />}
     <slot />
     {!hideFooter && <Footer />}

@@ -5,19 +5,20 @@ interface Props {
   href?: string;
   linkText?: string;
   icon?: string;
+  eyebrow?: string;
 }
 
-const { title, description, href, linkText = 'View all ->', icon = '🔎' } = Astro.props;
+const { title, description, href, linkText = 'View all', eyebrow = 'Section' } = Astro.props;
 ---
 
-<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-  <div>
-    <p class="text-xl" aria-hidden="true">{icon}</p>
-    <h2 class="mt-2 text-2xl font-bold text-[var(--color-text)]">{title}</h2>
-    {description && <p class="mt-1 text-sm text-[var(--color-text-secondary)]">{description}</p>}
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+  <div class="max-w-2xl">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2 class="mt-3 font-serif text-3xl tracking-[-0.035em] text-[var(--color-text)] sm:text-4xl">{title}</h2>
+    {description && <p class="mt-3 text-sm leading-6 text-[var(--color-text-secondary)] sm:text-base">{description}</p>}
   </div>
   {href && (
-    <a href={href} class="mt-1 text-sm font-medium text-[var(--color-link)] transition-colors hover:text-[var(--color-text)]">
+    <a href={href} class="text-link">
       {linkText}
     </a>
   )}

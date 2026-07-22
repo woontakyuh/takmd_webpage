@@ -1,0 +1,282 @@
+---
+import SectionHeader from '../components/SectionHeader.astro';
+import Layout from '../layouts/Layout.astro';
+import presentationsData from '../data/presentations.json';
+import publicationsData from '../data/publications.json';
+import surgeryData from '../data/surgery-data.json';
+
+const publications = publicationsData.publications;
+const presentations = presentationsData.presentations;
+const cases = surgeryData.cases;
+const latestPublications = publications.slice(0, 8);
+const latestPresentations = presentations.slice(0, 10);
+const latestCase = cases.at(-1);
+const firstAuthorCount = publications.filter((publication) => publication.role === 'first').length;
+const correspondingCount = publications.filter((publication) => publication.role === 'corresponding').length;
+const coauthorCount = publications.filter((publication) => publication.role === 'coauthor').length;
+
+const publicationYears = Array.from(new Set(publications.map((publication) => publication.year))).sort((a, b) => b - a);
+const presentationYears = Array.from(new Set(presentations.map((presentation) => presentation.year))).sort((a, b) => b - a);
+
+const currentRoles = [
+  'Director, Center for Endoscopic Spine Surgery, Davos Hospital',
+  'Editorial Board Member, Neurospine',
+  'Scientific Secretary and Education Management Vice Chair, KOMISS',
+  'Education Secretary, KOSESS',
+  'Auditor, WUBES',
+  'Computation Committee, KSNS',
+  'Academic Committee, KNDCRS',
+];
+
+const career = [
+  { year: '2025-', text: 'Director, Davos Hospital' },
+  { year: '2025', text: 'AO Spine Fellowship, Keio University' },
+  { year: '2024', text: 'WSO Mission, Dominican Republic' },
+  { year: '2023-2025', text: 'Assistant Professor, Hallym University' },
+  { year: '2021-2022', text: 'Spine Fellowship, Seoul National University Hospital' },
+  { year: '2019-2021', text: 'Director, Korean Military Academy' },
+  { year: '2017', text: 'Board Certified Neurosurgeon' },
+  { year: '2013-2017', text: 'Neurosurgery Residency, Seoul National University Hospital' },
+  { year: '2012-2013', text: 'Internship, Seoul National University Hospital' },
+  { year: '2006-2012', text: 'Medical School, Keimyung University' },
+];
+
+const educationPrograms = [
+  {
+    title: 'International UBE Training Center',
+    meta: '2024-current',
+    description: 'Hands-on endoscopic spine training with live surgery observation for 80+ surgeons from 15+ countries.',
+  },
+  {
+    title: 'ESS Workshop for Beginners',
+    meta: '2025-current',
+    description: 'Government-funded national project with Incheon Technopark and Hayan Co., Ltd. for domestic surgeons in Korea.',
+  },
+  {
+    title: 'Cadaver, live animal, and dummy workshops',
+    meta: 'Ongoing',
+    description: 'Progressive skill acquisition format for portal orientation, anatomy, tissue handling, and full procedural sequence.',
+  },
+];
+
+const awards = [
+  { year: '2025', text: 'Best Research Award, KOSESS' },
+  { year: '2024', text: 'Best Paper Award, Korean Neurosurgical Society' },
+  { year: '2024', text: 'Most Cited Paper, Neurospine Congress' },
+];
+---
+
+<Layout
+  title="Living CV - Woon Tak Yuh, MD"
+  description="A Notion-synced living CV for Woon Tak Yuh, MD: publications, presentations, education, roles, awards, affiliations, and clinical registry signal."
+>
+  <main id="main-content">
+    <section class="page-shell page-section">
+      <div class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
+        <div>
+          <p class="eyebrow">Living CV</p>
+          <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
+            A professional record that keeps breathing.
+          </h1>
+        </div>
+        <div class="data-card">
+          <p class="text-lg leading-8 text-[var(--color-text-secondary)]">
+            This page turns the existing Notion-derived JSON into a public CV surface: publications, presentations, clinical case signal, education, roles, and awards.
+          </p>
+          <p class="mt-4 text-sm text-[var(--color-text-muted)]">
+            Last publication sync: {new Date(publicationsData.generatedAt).toLocaleDateString('en-CA')} · Last presentation sync: {new Date(presentationsData.generatedAt).toLocaleDateString('en-CA')}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-shell pb-12 sm:pb-16">
+      <div class="grid gap-3 md:grid-cols-4">
+        <article class="data-card">
+          <p class="metric-number">{publicationsData.count}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Publications</p>
+          <p class="mt-1 text-xs text-[var(--color-text-secondary)]">{firstAuthorCount} first, {correspondingCount} corresponding, {coauthorCount} coauthor</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{presentationsData.count}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Presentations</p>
+          <p class="mt-1 text-xs text-[var(--color-text-secondary)]">{presentationYears.at(-1)}-{presentationYears[0]}</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{cases.length.toLocaleString()}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Clinical cases</p>
+          <p class="mt-1 text-xs text-[var(--color-text-secondary)]">Registry latest {latestCase?.opDate}</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">80+</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Surgeons trained</p>
+          <p class="mt-1 text-xs text-[var(--color-text-secondary)]">Across 15+ countries</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader eyebrow="Current Roles" title="Current appointments and society work" />
+      <div class="grid gap-4 md:grid-cols-2">
+        {currentRoles.map((role) => (
+          <article class="data-card">
+            <p class="text-base font-semibold leading-7 text-[var(--color-text)]">{role}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <SectionHeader
+            eyebrow="Publications"
+            title="Research output"
+            description="A year-organized publication record synced from the existing publications JSON."
+            href="/research"
+            linkText="Research page"
+          />
+          <div class="grid gap-3 sm:grid-cols-3">
+            <div class="soft-panel">
+              <p class="metric-number text-3xl sm:text-4xl">{firstAuthorCount}</p>
+              <p class="mt-2 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">First author</p>
+            </div>
+            <div class="soft-panel">
+              <p class="metric-number text-3xl sm:text-4xl">{correspondingCount}</p>
+              <p class="mt-2 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Corresponding</p>
+            </div>
+            <div class="soft-panel">
+              <p class="metric-number text-3xl sm:text-4xl">{coauthorCount}</p>
+              <p class="mt-2 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Coauthor</p>
+            </div>
+          </div>
+          <div class="mt-5 flex flex-wrap gap-2">
+            {publicationYears.map((year) => (
+              <span class="tag">{year}</span>
+            ))}
+          </div>
+        </div>
+
+        <div class="data-card">
+          <p class="record-kicker">Recent publications</p>
+          <div class="record-list mt-3">
+            {latestPublications.map((publication) => (
+              <article class="record-item">
+                <div>
+                  <p class="record-kicker">{publication.year}</p>
+                  <p class="mt-1 text-xs text-[var(--color-text-muted)]">{publication.journal}</p>
+                </div>
+                <div>
+                  <h3 class="text-base font-semibold leading-7 text-[var(--color-text)]">
+                    <a href={publication.doiUrl} target="_blank" rel="noreferrer" class="hover:underline">
+                      {publication.title}
+                    </a>
+                  </h3>
+                  <div class="mt-2 flex flex-wrap gap-2">
+                    <span class:list={['tag', publication.role === 'first' ? 'tag-current' : publication.role === 'corresponding' ? 'tag-research' : '']}>
+                      {publication.role}
+                    </span>
+                    {publication.doi && <span class="tag">DOI {publication.doi}</span>}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-shell page-section">
+      <SectionHeader
+        eyebrow="Presentations"
+        title="Talks, workshops, and teaching appearances"
+        description="Presentations are grouped by schedule year and pulled from the same Notion-fed presentation JSON used elsewhere on the site."
+      />
+      <div class="grid gap-6 lg:grid-cols-[0.32fr_0.68fr]">
+        <div class="data-card">
+          <p class="record-kicker">Years represented</p>
+          <div class="mt-5 flex flex-wrap gap-2">
+            {presentationYears.map((year) => (
+              <span class="tag">{year}</span>
+            ))}
+          </div>
+        </div>
+        <div class="data-card">
+          <p class="record-kicker">Latest schedule entries</p>
+          <div class="record-list mt-3">
+            {latestPresentations.map((presentation) => (
+              <article class="record-item">
+                <div>
+                  <p class="record-kicker">{presentation.date}</p>
+                  <p class="mt-1 text-xs text-[var(--color-text-muted)]">{presentation.place || 'Location TBA'}</p>
+                </div>
+                <div>
+                  <h3 class="text-base font-semibold leading-7 text-[var(--color-text)]">
+                    {presentation.url ? (
+                      <a href={presentation.url} target="_blank" rel="noreferrer" class="hover:underline">
+                        {presentation.name}
+                      </a>
+                    ) : (
+                      presentation.name
+                    )}
+                  </h3>
+                  <p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{presentation.topics[0]}</p>
+                  <div class="mt-2 flex flex-wrap gap-2">
+                    {presentation.categories.map((category) => (
+                      <span class="tag">{category}</span>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div class="data-card">
+          <SectionHeader eyebrow="Career" title="Timeline" />
+          <div class="timeline-list">
+            {career.map((item) => (
+              <article class="timeline-item">
+                <p class="record-kicker">{item.year}</p>
+                <p class="text-base font-semibold leading-7 text-[var(--color-text)]">{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="data-card">
+            <SectionHeader eyebrow="Education" title="Teaching programs" href="/education" linkText="Education page" />
+            <div class="record-list">
+              {educationPrograms.map((program) => (
+                <article class="record-item">
+                  <p class="record-kicker">{program.meta}</p>
+                  <div>
+                    <h3 class="text-base font-semibold text-[var(--color-text)]">{program.title}</h3>
+                    <p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{program.description}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div class="data-card">
+            <SectionHeader eyebrow="Awards" title="Recognition" />
+            <div class="record-list">
+              {awards.map((award) => (
+                <article class="record-item">
+                  <p class="record-kicker">{award.year}</p>
+                  <p class="text-base font-semibold leading-7 text-[var(--color-text)]">{award.text}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

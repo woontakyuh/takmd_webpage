@@ -1,57 +1,131 @@
 ---
-import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import Layout from '../layouts/Layout.astro';
+import publicationsData from '../data/publications.json';
+
+const publications = publicationsData.publications;
+const recentPublications = publications.slice(0, 8);
+const firstAuthorCount = publications.filter((publication) => publication.role === 'first').length;
+const correspondingCount = publications.filter((publication) => publication.role === 'corresponding').length;
+const aiPublications = publications.filter((publication) =>
+  /deep learning|ai|model|radiograph|cnn|foundation/i.test(publication.title),
+);
+
+const researchLanes = [
+  {
+    title: 'Endoscopic spine surgery',
+    description: 'UBE technique, technical notes, learning curves, tumor applications, and practical surgical decision-making.',
+    tags: ['UBE', 'MISS'],
+  },
+  {
+    title: 'Clinical AI and imaging',
+    description: 'Deep learning work around vertebral fracture detection, radiographic measurement, and clinical prediction.',
+    tags: ['AI', 'Imaging'],
+  },
+  {
+    title: 'Outcomes and pathways',
+    description: 'ERAS implementation, national sample data, cost utility, and recovery-focused spine surgery research.',
+    tags: ['Outcomes', 'Registry'],
+  },
+  {
+    title: 'Spinal tumor care',
+    description: 'Research and operative video work around primary spinal tumors, metastasis, and schwannoma surgery.',
+    tags: ['Tumor', 'Neurosurgery'],
+  },
+];
 ---
 
-<Layout title="Research - takmd" description="Selected publications and research interests in spine surgery and AI.">
-  <section class="page-shell py-14">
-    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">Research</h1>
-    <div class="mt-8 grid max-w-3xl grid-cols-3 gap-4">
-      <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-        <p class="text-3xl font-semibold text-[var(--color-link)]">29</p>
-        <p class="mt-1 text-sm text-[var(--color-text-secondary)]">Publications</p>
+<Layout title="Research - Woon Tak Yuh, MD" description="Publication record and research themes in spine surgery, endoscopic technique, outcomes, and clinical AI.">
+  <main id="main-content">
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div>
+          <p class="eyebrow">Research</p>
+          <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
+            Publications with a clinical spine center of gravity.
+          </h1>
+        </div>
+        <p class="lede">
+          The research surface pulls from the existing publications JSON and emphasizes the work most relevant to UBE, outcomes, spinal tumor care, and practical AI in spine surgery.
+        </p>
       </div>
-      <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-        <p class="text-3xl font-semibold text-[var(--color-link)]">15</p>
-        <p class="mt-1 text-sm text-[var(--color-text-secondary)]">First Author</p>
+    </section>
+
+    <section class="page-shell pb-12 sm:pb-16">
+      <div class="grid gap-3 md:grid-cols-4">
+        <article class="data-card">
+          <p class="metric-number">{publicationsData.count}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Publications</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{firstAuthorCount}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">First author</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{correspondingCount}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Corresponding author</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{aiPublications.length}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">AI-adjacent papers</p>
+        </article>
       </div>
-      <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-        <p class="text-3xl font-semibold text-[var(--color-link)]">11</p>
-        <p class="mt-1 text-sm text-[var(--color-text-secondary)]">h-index</p>
+    </section>
+
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader
+        eyebrow="Themes"
+        title="Research lanes"
+        description="A cleaner organizing frame for a record that spans surgical technique, education, outcomes, tumor care, and computational work."
+      />
+      <div class="grid gap-4 md:grid-cols-2">
+        {researchLanes.map((lane) => (
+          <Card title={lane.title} description={lane.description} tags={lane.tags} />
+        ))}
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="page-shell pb-10">
-    <SectionHeader icon="📄" title="Selected Publications" />
-    <div class="grid gap-4 md:grid-cols-2">
-      <Card title="Deep Learning for Vertebral Fracture Detection" description="Imaging-focused AI model development and validation." tags={['AI/ML', 'Imaging']} />
-      <Card title="UBE Learning Curve Analysis" description="Competency progression analysis for endoscopic spine trainees." tags={['UBE', 'Education']} />
-      <Card title="ERAS Protocol for Spine Surgery" description="Clinical pathway optimization and recovery outcome measurements." tags={['Clinical', 'Outcomes']} />
-      <Card title="Endoscopic Techniques for Spinal Tumors" description="Technical adaptation and safety considerations in tumor surgery." tags={['Surgery', 'Oncology']} />
-    </div>
-    <a href="https://scholar.google.com/citations?user=tbTBemUAAAAJ&hl=ko&oi=ao" target="_blank" rel="noreferrer" class="mt-5 inline-flex text-sm font-medium text-[var(--color-link)] hover:text-[var(--color-text)]">
-      View full publication list on Google Scholar ->
-    </a>
-  </section>
-
-  <section class="page-shell pb-10">
-    <SectionHeader icon="🔬" title="Research Interests" />
-    <ul class="list-disc space-y-2 pl-5 text-[var(--color-text-secondary)]">
-      <li>Endoscopic spine surgery</li>
-      <li>Clinical AI & deep learning</li>
-      <li>Spinal tumor surgery</li>
-      <li>Surgical outcome analysis</li>
-      <li>Education methodology</li>
-    </ul>
-  </section>
-
-  <section class="page-shell pb-16">
-    <SectionHeader icon="🧪" title="Projects" />
-    <p class="max-w-3xl text-[var(--color-text-secondary)]">
-      Current exploratory work focuses on the UBE x AI interface, with emphasis on workflow standardization,
-      structured data capture, and practical translational utility.
-    </p>
-  </section>
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.35fr_0.65fr]">
+        <div>
+          <SectionHeader
+            eyebrow="Publication Record"
+            title="Recent papers"
+            description="Latest entries from the Notion-derived publication data."
+            href="/cv"
+            linkText="Full CV"
+          />
+          <a href="https://scholar.google.com/citations?user=tbTBemUAAAAJ&hl=ko&oi=ao" target="_blank" rel="noreferrer" class="button-secondary">
+            Google Scholar
+          </a>
+        </div>
+        <div class="data-card">
+          <div class="record-list">
+            {recentPublications.map((publication) => (
+              <article class="record-item">
+                <div>
+                  <p class="record-kicker">{publication.year}</p>
+                  <p class="mt-1 text-xs text-[var(--color-text-muted)]">{publication.journal}</p>
+                </div>
+                <div>
+                  <h2 class="text-base font-semibold leading-7 text-[var(--color-text)]">
+                    <a href={publication.doiUrl} target="_blank" rel="noreferrer" class="hover:underline">
+                      {publication.title}
+                    </a>
+                  </h2>
+                  <div class="mt-2 flex flex-wrap gap-2">
+                    <span class:list={['tag', publication.role === 'first' ? 'tag-current' : publication.role === 'corresponding' ? 'tag-research' : '']}>
+                      {publication.role}
+                    </span>
+                    <span class="tag">{publication.doi}</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>

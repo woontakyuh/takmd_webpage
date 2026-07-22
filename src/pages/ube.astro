@@ -1,56 +1,118 @@
 ---
-import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import Layout from '../layouts/Layout.astro';
+import surgeryData from '../data/surgery-data.json';
+
+const cases = surgeryData.cases;
+const latestCase = cases.at(-1);
+const ubeCount = surgeryData.categoryCounts['UBE'] ?? 0;
+const fullEndoCount = surgeryData.categoryCounts['Full-endo'] ?? 0;
+const ulbdCount = surgeryData.categoryCounts['ULBD'] ?? 0;
+
+const principles = [
+  {
+    title: 'Anchor-based orientation',
+    description: 'Landmarks and decompression targets are used as repeatable anchors so difficult cases stay legible under endoscopy.',
+    tags: ['Orientation'],
+  },
+  {
+    title: 'Small portal, broad view',
+    description: 'The value is not only a smaller incision. It is the ability to maintain a stable field with precise tissue handling.',
+    tags: ['Technique'],
+  },
+  {
+    title: 'Clear hemostasis strategy',
+    description: 'Saline irrigation, radiofrequency control, and staged progression keep visualization reliable around neural structures.',
+    tags: ['Safety'],
+  },
+  {
+    title: 'Registry-aware practice',
+    description: 'Case structure, outcomes, and complications are treated as part of the surgical system, not an afterthought.',
+    tags: ['Outcomes'],
+  },
+];
 ---
 
-<Layout title="UBE - takmd" description="Unilateral Biportal Endoscopy philosophy, learning resources, and advanced concepts.">
-  <section class="page-shell py-14">
-    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">Unilateral Biportal Endoscopy</h1>
-  </section>
+<Layout title="UBE - Woon Tak Yuh, MD" description="Unilateral Biportal Endoscopy philosophy, training principles, and clinical registry signal.">
+  <main id="main-content">
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div>
+          <p class="eyebrow">UBE Surgery</p>
+          <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
+            Endoscopic spine surgery as disciplined visibility.
+          </h1>
+        </div>
+        <p class="lede">
+          UBE is presented here as a technical philosophy: minimal tissue disruption, clear visualization, stable landmarks, and outcomes that can be tracked.
+        </p>
+      </div>
+    </section>
 
-  <section class="page-shell pb-10">
-    <SectionHeader icon="🩺" title="Philosophy of UBE" />
-    <div class="space-y-4 text-[var(--color-text-secondary)]">
-      <p>
-        UBE is grounded in minimal tissue disruption while preserving a broad and stable endoscopic field. The approach
-        prioritizes deliberate decompression through small portals instead of large exposures.
+    <section class="page-shell pb-12 sm:pb-16">
+      <div class="grid gap-3 md:grid-cols-4">
+        <article class="data-card">
+          <p class="metric-number">{cases.length.toLocaleString()}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Registry cases</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{ubeCount}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">UBE-coded cases</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{fullEndoCount}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Full-endoscopic cases</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{ulbdCount}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">ULBD cases</p>
+        </article>
+      </div>
+      <p class="mt-3 text-sm text-[var(--color-text-muted)]">
+        Latest registry entry: {latestCase?.opDate}. Dashboard remains separate for deeper data exploration.
       </p>
-      <p>
-        Continuous saline irrigation supports clear visualization and steady hemostasis, allowing precise work around neural
-        elements. This visibility changes decision quality during critical steps.
-      </p>
-      <p>
-        The objective is not simply smaller incisions, but reproducible outcomes through measured instrument control,
-        anatomic respect, and efficient recovery pathways.
-      </p>
-    </div>
-  </section>
+    </section>
 
-  <section class="page-shell pb-10">
-    <SectionHeader icon="🧭" title="Anchor-based Surgical Thinking" />
-    <p class="max-w-3xl text-[var(--color-text-secondary)]">
-      Anchor points are defined landmarks that guide orientation, decompression depth, and trajectory. This framework reduces
-      uncertainty and improves consistency across straightforward and complex cases.
-    </p>
-  </section>
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader
+        eyebrow="Principles"
+        title="How I frame UBE"
+        description="A surgical page should teach the reader how the surgeon thinks, not only what the technique is called."
+      />
+      <div class="grid gap-4 md:grid-cols-2">
+        {principles.map((principle) => (
+          <Card title={principle.title} description={principle.description} tags={principle.tags} />
+        ))}
+      </div>
+    </section>
 
-  <section class="page-shell pb-10">
-    <SectionHeader icon="🎬" title="Educational Playlists" description="Curated procedural and concept-focused videos" />
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Card title="Foundational UBE Cases" description="Coming soon" />
-      <Card title="Advanced Decompression" description="Coming soon" />
-      <Card title="Fusion and Revision Cases" description="Coming soon" />
-    </div>
-  </section>
-
-  <section class="page-shell pb-16">
-    <SectionHeader icon="⚠️" title="Common Pitfalls & Advanced Concepts" />
-    <ul class="list-disc space-y-2 pl-5 text-[var(--color-text-secondary)]">
-      <li>Portal misalignment and unstable instrument trajectory</li>
-      <li>Inadequate contralateral decompression despite acceptable ipsilateral view</li>
-      <li>Bleeding control strategy before deep progression</li>
-      <li>Safe expansion from focal decompression to broader bilateral goals</li>
-    </ul>
-  </section>
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.4fr_0.6fr]">
+        <div>
+          <SectionHeader
+            eyebrow="Learning Frame"
+            title="Common pitfalls"
+            description="The educational value of a UBE page is in making invisible decision points visible."
+            href="/education"
+            linkText="Training page"
+          />
+        </div>
+        <div class="data-card">
+          <div class="record-list">
+            {[
+              'Portal misalignment and unstable instrument trajectory',
+              'Contralateral decompression that appears adequate from the ipsilateral view but remains insufficient',
+              'Bleeding strategy that is delayed until visualization is already poor',
+              'Escalating from focal decompression to broader bilateral goals without resetting landmarks',
+            ].map((pitfall) => (
+              <article class="py-5">
+                <p class="text-base font-semibold leading-7 text-[var(--color-text)]">{pitfall}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>

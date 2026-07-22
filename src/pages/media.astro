@@ -1,36 +1,62 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 import TagChip from '../components/TagChip.astro';
+import Layout from '../layouts/Layout.astro';
 
 const mediaEntries = (await getCollection('media', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
+const mediaTypes = Array.from(new Set(mediaEntries.map((entry) => entry.data.mediaType)));
 ---
 
-<Layout title="Media - takmd" description="Media archive including videos, talks, vlogs, and reviews.">
-  <section class="page-shell py-14">
-    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">Media</h1>
-    <div class="mt-6 flex flex-wrap gap-2">
-      <TagChip label="All" color="border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] text-[var(--color-link)]" />
-      <TagChip label="Videos" />
-      <TagChip label="Talks" />
-      <TagChip label="Vlogs" />
-      <TagChip label="Reviews" />
-    </div>
-  </section>
+<Layout title="Media - Woon Tak Yuh, MD" description="Media archive for talks, workshop notes, videos, and professional field documentation.">
+  <main id="main-content">
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div>
+          <p class="eyebrow">Media</p>
+          <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
+            Talks, workshops, and visible field notes.
+          </h1>
+        </div>
+        <p class="lede">
+          A quieter archive for public-facing media: lectures, workshop documentation, video notes, and selected professional appearances.
+        </p>
+      </div>
+      <div class="mt-8 flex flex-wrap gap-2">
+        <TagChip label="All" color="tag-current" />
+        {mediaTypes.map((type) => (
+          <TagChip label={type} />
+        ))}
+      </div>
+    </section>
 
-  <section class="page-shell pb-16">
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {mediaEntries.map((entry) => (
-        <Card
-          title={entry.data.title}
-          description={entry.data.description}
-          href={entry.data.url ?? '/media'}
-          tags={[entry.data.mediaType, ...entry.data.tags]}
-        />
-      ))}
-    </div>
-  </section>
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader
+        eyebrow="Archive"
+        title="Selected entries"
+        description="These entries are content-driven, so the section can grow without changing the page design."
+      />
+      {mediaEntries.length > 0 ? (
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {mediaEntries.map((entry) => (
+            <Card
+              title={entry.data.title}
+              description={entry.data.description}
+              href={entry.data.url ?? '/media'}
+              tags={Array.from(new Set([entry.data.mediaType, ...entry.data.tags]))}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="soft-panel">
+          <p class="text-sm leading-6 text-[var(--color-text-secondary)]">
+            Media entries are ready to appear once the content collection is populated.
+          </p>
+        </div>
+      )}
+    </section>
+  </main>
 </Layout>

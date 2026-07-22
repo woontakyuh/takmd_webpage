@@ -7,6 +7,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "fetch:publications": "bun run scripts/fetch-publications.ts",
+    "fetch:presentations": "bun run scripts/fetch-schedule.ts",
+    "fetch:surgery": "bun run scripts/fetch-notion-data.ts",
+    "fetch:data": "bun run fetch:publications && bun run fetch:presentations && bun run fetch:surgery",
     "deploy": "bun run build && wrangler pages deploy dist"
   },
   "dependencies": {

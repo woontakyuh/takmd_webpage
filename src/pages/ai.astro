@@ -1,49 +1,115 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import Layout from '../layouts/Layout.astro';
+import presentationsData from '../data/presentations.json';
+import publicationsData from '../data/publications.json';
+
+const aiPresentations = presentationsData.presentations.filter((presentation) =>
+  /AI|Claude|LLM|Agent|Digital|workflow/i.test(`${presentation.name} ${presentation.topics.join(' ')}`),
+);
+const aiPublications = publicationsData.publications.filter((publication) =>
+  /deep learning|AI|model|radiograph|CNN|foundation/i.test(publication.title),
+);
+
+const workflows = [
+  {
+    title: 'Documentation continuity',
+    description: 'Voice capture and structured drafting reduce repetitive writing while keeping surgeon review as the final clinical checkpoint.',
+    tags: ['Documentation'],
+  },
+  {
+    title: 'Registry-ready data',
+    description: 'Case fields, outcome measures, and schedule metadata are shaped for later audit, dashboarding, and publication pipelines.',
+    tags: ['Notion', 'Registry'],
+  },
+  {
+    title: 'Decision support checklists',
+    description: 'Prompted review supports indication, risk, and follow-up thinking without turning judgment over to the model.',
+    tags: ['Safety'],
+  },
+  {
+    title: 'Research acceleration',
+    description: 'LLMs help organize protocols, literature, and analysis plans so clinical questions move faster from observation to manuscript.',
+    tags: ['Research'],
+  },
+];
 ---
 
-<Layout title="AI - takmd" description="AI integration in clinical spine surgery practice.">
-  <section class="page-shell py-14">
-    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">AI Integration in Clinical Spine Practice</h1>
-    <p class="mt-4 text-base text-[var(--color-link)]">AI assists cognition, not replaces surgeons.</p>
-  </section>
+<Layout title="Clinical AI - Woon Tak Yuh, MD" description="Practical AI workflows for spine surgery documentation, registries, research, and clinical reasoning.">
+  <main id="main-content">
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div>
+          <p class="eyebrow">Clinical AI</p>
+          <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
+            AI as clinical infrastructure, not decoration.
+          </h1>
+        </div>
+        <p class="lede">
+          The AI page avoids gadget theater. It focuses on practical augmentation: notes, registries, checklists, research workflows, and structured professional records.
+        </p>
+      </div>
+    </section>
 
-  <section class="page-shell space-y-8 pb-16">
-    <div>
-      <SectionHeader icon="🧠" title="Workflow Augmentation" />
-      <p class="max-w-3xl text-[var(--color-text-secondary)]">
-        AI supports preoperative and postoperative workflow continuity by reducing repetitive synthesis tasks and helping
-        maintain structured clinical context across encounters.
-      </p>
-    </div>
+    <section class="page-shell pb-12 sm:pb-16">
+      <div class="grid gap-3 md:grid-cols-3">
+        <article class="data-card">
+          <p class="metric-number">{aiPresentations.length}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">AI-related talks</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{aiPublications.length}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">AI-adjacent papers</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">4</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Workflow layers</p>
+        </article>
+      </div>
+    </section>
 
-    <div>
-      <SectionHeader icon="🗂️" title="Documentation Assist" />
-      <p class="max-w-3xl text-[var(--color-text-secondary)]">
-        Voice-to-structured note pipelines reduce documentation burden while preserving surgeon review at every stage of
-        final clinical communication.
-      </p>
-    </div>
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader
+        eyebrow="Operating Model"
+        title="Where AI belongs in the clinical workflow"
+        description="The guiding constraint is simple: AI can structure, summarize, and surface patterns, but the physician remains responsible for interpretation and action."
+      />
+      <div class="grid gap-4 md:grid-cols-2">
+        {workflows.map((workflow) => (
+          <Card title={workflow.title} description={workflow.description} tags={workflow.tags} />
+        ))}
+      </div>
+    </section>
 
-    <div>
-      <SectionHeader icon="📊" title="Registry Structuring" />
-      <p class="max-w-3xl text-[var(--color-text-secondary)]">
-        Standardized fields and consistent tagging support prospective data quality and simplify later analysis for quality
-        improvement and publication-ready registries.
-      </p>
-    </div>
-
-    <div>
-      <SectionHeader icon="✅" title="Decision Checklist Support" />
-      <p class="max-w-3xl text-[var(--color-text-secondary)]">
-        Prompt-driven checklists offer cognitive safety rails around indications, contraindications, and expected outcomes,
-        while final decisions remain physician-led.
-      </p>
-    </div>
-
-    <a href="/ai-workflow" class="inline-flex text-sm font-medium text-[var(--color-link)] transition-colors hover:text-[var(--color-text)]">
-      See the detailed workflow ->
-    </a>
-  </section>
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.35fr_0.65fr]">
+        <div>
+          <SectionHeader
+            eyebrow="Schedule Signal"
+            title="Recent AI-related presentations"
+            description="Schedule records that explicitly mention AI, LLMs, Claude, agents, digital convergence, or workflow."
+            href="/ai-workflow"
+            linkText="Detailed workflow"
+          />
+        </div>
+        <div class="data-card">
+          <div class="record-list">
+            {aiPresentations.slice(0, 6).map((presentation) => (
+              <article class="record-item">
+                <div>
+                  <p class="record-kicker">{presentation.date}</p>
+                  <p class="mt-1 text-xs text-[var(--color-text-muted)]">{presentation.place || 'Location TBA'}</p>
+                </div>
+                <div>
+                  <h2 class="text-base font-semibold leading-7 text-[var(--color-text)]">{presentation.name}</h2>
+                  <p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{presentation.topics[0]}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>

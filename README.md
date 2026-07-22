@@ -1,43 +1,51 @@
-# Astro Starter Kit: Minimal
+# TakMD.com
+
+Public branding site and living CV for Woon Tak Yuh, MD.
+
+The redesigned site uses an interactive deskterior homepage: Woon Tak Yuh's working desk becomes the navigation surface, while `/cv` remains the Notion-synced living record. Subpages expand the desk objects into UBE, education, clinical AI, research, media, knowledge, and contact surfaces.
+
+## Commands
 
 ```sh
-bun create astro@latest -- --template minimal
+bun install
+bun run dev
+bun run build
+bun run preview
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Data Refresh
 
-## 🚀 Project Structure
+The public CV data is generated at build time from Notion-backed scripts:
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+bun run fetch:publications
+bun run fetch:presentations
+bun run fetch:surgery
+bun run fetch:data
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+These commands require `NOTION_TOKEN`, either in the environment or in `~/.journal_alert_env`.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Generated files:
 
-Any static assets, like images, can be placed in the `public/` directory.
+- `src/data/publications.json`
+- `src/data/presentations.json`
+- `src/data/surgery-data.json`
 
-## 🧞 Commands
+## Public Routes
 
-All commands are run from the root of the project, from a terminal:
+- `/`: interactive deskterior brand homepage
+- `/cv`: living CV
+- `/ube`: UBE surgery philosophy and registry signal
+- `/education`: surgical education programs
+- `/ai`: practical clinical AI work
+- `/ai-workflow`: detailed workflow map
+- `/research`: publication themes and recent papers
+- `/media`: public media archive
+- `/knowledge`: short professional notes
+- `/contact`: verified contact paths
+- `/dashboard`: separate surgery-data dashboard
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+## Design System
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+See `DESIGN.md` for the deskterior direction, tokens, component principles, and anti-slop guardrails.
