@@ -29,20 +29,22 @@ const APPS: AppDef[] = [
   { id: 'media', title: 'Media', kind: 'browser', src: '/media' },
 ];
 
-// dock hotspots over the real dock in desktop.png (capture px, center x / width 54, y 1009..1063)
+// dock hotspots over the real dock in desktop.png / macos2 capture (capture px, center x / width 54)
 const DOCK: { id: string; label: string; cx: number; app?: string }[] = [
-  { id: 'finder', label: 'Finder', cx: 610 },
-  { id: 'mail', label: 'Mail — Contact', cx: 671, app: 'contact' },
-  { id: 'safari', label: 'takmd.com — UBE', cx: 733, app: 'ube' },
-  { id: 'calendar', label: 'Calendar — Education', cx: 793, app: 'education' },
-  { id: 'notion', label: 'Notion — Living CV', cx: 855, app: 'cv' },
-  { id: 'mail2', label: 'Research', cx: 915, app: 'research' },
-  { id: 'terminal', label: 'Terminal', cx: 976, app: 'terminal' },
-  { id: 'launchpad', label: 'Clinical AI', cx: 1037, app: 'ai' },
-  { id: 'settings', label: 'Surgery Dashboard', cx: 1098, app: 'dashboard' },
-  { id: 'folder-a', label: 'Media', cx: 1187, app: 'media' },
-  { id: 'folder-b', label: 'Downloads', cx: 1248 },
-  { id: 'trash', label: 'Trash', cx: 1310 },
+  { id: 'finder', label: 'Finder', cx: 555 },
+  { id: 'mail', label: 'Mail — Contact', cx: 610, app: 'contact' },
+  { id: 'chrome', label: 'Chrome — UBE Surgery', cx: 671, app: 'ube' },
+  { id: 'calendar', label: 'Calendar — Education', cx: 733, app: 'education' },
+  { id: 'notion', label: 'Notion — Living CV', cx: 794, app: 'cv' },
+  { id: 'contacts', label: 'Contacts — Contact', cx: 855, app: 'contact' },
+  { id: 'photos', label: 'Photos — Media', cx: 919, app: 'media' },
+  { id: 'arrow', label: 'Research', cx: 977, app: 'research' },
+  { id: 'terminal', label: 'Terminal', cx: 1038, app: 'terminal' },
+  { id: 'launchpad', label: 'Clinical AI', cx: 1099, app: 'ai' },
+  { id: 'settings', label: 'Surgery Dashboard', cx: 1160, app: 'dashboard' },
+  { id: 'folder-a', label: 'Applications', cx: 1245 },
+  { id: 'folder-b', label: 'Downloads', cx: 1305 },
+  { id: 'trash', label: 'Trash', cx: 1368 },
 ];
 
 type Win = { appId: string; x: number; y: number; w: number; h: number; z: number; maxed: boolean };
