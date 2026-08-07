@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ACCENT, deskObjects } from './config';
-import { Scene } from './Scene';
+import { RoomScene } from './RoomScene';
 import type { DeskObject, SceneMetrics } from './types';
 
 function supportsWebGL(): boolean {
@@ -90,15 +90,12 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
       <Canvas
         shadows
         dpr={isMobile ? 1 : [1, 2]}
-        camera={{ fov: 48, near: 0.1, far: 30, position: [0, 1.15, 1.02] }}
+        camera={{ fov: 24, near: 0.5, far: 120, position: [-18.9, 13.6, 18.9] }}
         gl={{ antialias: true }}
       >
         <Suspense fallback={null}>
-          <Scene
+          <RoomScene
             metrics={metrics}
-            hoveredId={hoveredId}
-            onHover={(id) => !screenFocus && setHoveredId(id)}
-            onActivate={activate}
             launchApp={launchApp}
             screenFocus={screenFocus}
             onScreenZoomed={() => setOsOpen(true)}
@@ -111,6 +108,16 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
           />
         </Suspense>
       </Canvas>
+
+      <a
+        className="ds-credit"
+        href="https://github.com/brunosimon/my-room-in-3d"
+        target="_blank"
+        rel="noreferrer"
+        hidden={screenFocus}
+      >
+        room by Bruno Simon
+      </a>
 
       {/* keyboard / screen-reader navigation mirroring the 3D objects */}
       <nav className="ds-a11y-nav" aria-label="Desk sections" hidden={screenFocus}>
@@ -177,6 +184,9 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
         .ds-fallback h1 { font-size: 2rem; margin: 0.8rem 0; }
         .ds-fallback ul { margin-top: 1rem; display: grid; gap: 0.5rem; }
         .ds-fallback a { color: ${ACCENT}; }
+        .ds-credit { position: absolute; right: 14px; bottom: 12px; font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+          font-size: 10px; color: rgba(230,224,210,0.4); text-decoration: none; }
+        .ds-credit:hover { color: ${ACCENT}; }
       `}</style>
     </div>
   );
