@@ -422,7 +422,14 @@ export function RoomScene({
       ))}
       {osPlane && (
         <group position={osPlane.position} quaternion={osPlane.quaternion}>
-          <Html transform position={[0, 0, 0.001]} scale={osPlane.scale} zIndexRange={[10, 0]}>
+          {/* idle: per-pixel occlusion so the mic arm / sofa can pass in front of the screen;
+              focused: normal DOM layer so the OS is fully interactive */}
+          <Html
+            transform
+            position={[0, 0, 0.001]}
+            scale={osPlane.scale}
+            occlude={osActive ? undefined : 'blending'}
+          >
             <div style={{ width: OS_W, height: OS_H, position: 'relative', overflow: 'hidden' }}>
               <MonitorOS
                 metrics={metrics}
@@ -434,6 +441,21 @@ export function RoomScene({
               />
             </div>
           </Html>
+          {/* wake collider: while idle the DOM sits behind the canvas, so clicks land here */}
+          {!osActive && (
+            <mesh
+              position={[0, 0, 0.002]}
+              visible={false}
+              onClick={(e) => {
+                e.stopPropagation();
+                onMonitorClick();
+              }}
+              onPointerOver={() => (document.body.style.cursor = 'pointer')}
+              onPointerOut={() => (document.body.style.cursor = '')}
+            >
+              <planeGeometry args={[osPlane.width, osPlane.height]} />
+            </mesh>
+          )}
         </group>
       )}
     </>

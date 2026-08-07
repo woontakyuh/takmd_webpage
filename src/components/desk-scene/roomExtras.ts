@@ -12,7 +12,8 @@ export type RoomExtra = {
 export const roomExtras: RoomExtra[] = [
   // Tak's anatomical spine model, left end of the desk
   { glb: '/models/spine.glb', position: [-2.2, 2.57, -4.0], rotation: [0, 0.5, 0], fit: 1.1 },
-  // more ideas — uncomment and tune positions with ?dbg=1:
-  // { glb: '/models/surfboard.glb', position: [3.6, 0, -3.4], rotation: [0, -0.4, -0.08], fit: 4.2 },
-  // { glb: '/models/vwbus.glb', position: [-4.4, 5.3, -0.4], rotation: [0, 0.8, 0], fit: 0.7 },
+  // journal stack on the coffee table
+  { glb: '/models/journals.glb', position: [0.55, 0.99, 1.15], rotation: [0, 0.45, 0], fit: 0.85 },
+  // Bing surfboard leaning on the left wall, next to the guitar
+  { glb: '/models/surfboard.glb', position: [-4.55, 0, -2.05], rotation: [0, 0.5, 0.13], fit: 4.4 },
 ];
