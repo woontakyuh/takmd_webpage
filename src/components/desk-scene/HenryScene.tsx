@@ -156,7 +156,7 @@ export function HenryScene({
           <planeGeometry args={[SCREEN_W, SCREEN_H]} />
           <meshBasicMaterial color="#050506" />
         </mesh>
-        <Html transform position={[0, 0, 1]} scale={OS_SCALE} occlude={osActive ? undefined : 'blending'}>
+        <Html transform position={[0, 0, 1]} scale={OS_SCALE} zIndexRange={osActive ? [10, 0] : [-1, -10]}>
           <div style={{ width: OS_W, height: OS_H, position: 'relative', overflow: 'hidden' }}>
             <MonitorOS
               metrics={metrics}
@@ -168,6 +168,12 @@ export function HenryScene({
             />
           </div>
         </Html>
+        {!osActive && (
+          <mesh position={[0, 0, 0.5]} renderOrder={-100}>
+            <planeGeometry args={[OS_PLANE_W, OS_PLANE_H]} />
+            <meshBasicMaterial color="black" opacity={0} blending={THREE.NoBlending} />
+          </mesh>
+        )}
         {!osActive && (
           <mesh
             position={[0, 0, 2]}

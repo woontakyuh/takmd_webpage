@@ -429,14 +429,10 @@ export function RoomScene({
       ))}
       {osPlane && (
         <group position={osPlane.position} quaternion={osPlane.quaternion}>
-          {/* idle: per-pixel occlusion so the mic arm / sofa can pass in front of the screen;
-              focused: normal DOM layer so the OS is fully interactive */}
-          <Html
-            transform
-            position={[0, 0, 0.001]}
-            scale={osPlane.scale}
-            occlude={osActive ? undefined : 'blending'}
-          >
+          {/* idle: the OS DOM sits BEHIND the canvas and a zero-alpha punch mesh cuts a
+              depth-tested hole for it — real occlusion without killing canvas events.
+              focused: normal DOM layer on top so the OS is fully interactive */}
+          <Html transform position={[0, 0, 0.001]} scale={osPlane.scale} zIndexRange={osActive ? [10, 0] : [-1, -10]}>
             <div style={{ width: OS_W, height: OS_H, position: 'relative', overflow: 'hidden' }}>
               <MonitorOS
                 metrics={metrics}
@@ -448,6 +444,12 @@ export function RoomScene({
               />
             </div>
           </Html>
+          {!osActive && (
+            <mesh position={[0, 0, 0.0005]} renderOrder={-100}>
+              <planeGeometry args={[osPlane.width, osPlane.height]} />
+              <meshBasicMaterial color="black" opacity={0} blending={THREE.NoBlending} />
+            </mesh>
+          )}
           {/* wake collider: while idle the DOM sits behind the canvas, so clicks land here */}
           {!osActive && (
             <mesh
