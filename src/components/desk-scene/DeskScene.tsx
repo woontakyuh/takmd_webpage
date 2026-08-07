@@ -51,8 +51,7 @@ function StaticFallback() {
 export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
   const [webgl, setWebgl] = useState<boolean | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [zoomTarget, setZoomTarget] = useState<DeskObject | null>(null);
-  const [fading, setFading] = useState(false);
+  const [launchApp, setLaunchApp] = useState<{ id: string; seq: number } | null>(null);
   const [screenFocus, setScreenFocus] = useState(false);
   const [osOpen, setOsOpen] = useState(false);
   const [osSkin, setOsSkin] = useState<OsSkin>(() => {
@@ -60,8 +59,6 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
     return new URLSearchParams(window.location.search).get('os') === 'mac' ? 'mac' : 'tak';
   });
   const reducedMotion = usePrefersReducedMotion();
-  const fadeTimer = useRef<number>(0);
-  const navTimer = useRef<number>(0);
 
   const isMobile = useMemo(() => {
     if (typeof window === 'undefined') return false;
@@ -70,25 +67,10 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
 
   useEffect(() => {
     setWebgl(supportsWebGL());
-    return () => {
-      window.clearTimeout(fadeTimer.current);
-      window.clearTimeout(navTimer.current);
-    };
   }, []);
 
-  const navigate = (object: DeskObject) => {
-    if (!object.route) return;
-    if (object.external) {
-      window.open(object.route, '_blank', 'noopener');
-      setZoomTarget(null);
-      setFading(false);
-      return;
-    }
-    window.location.href = object.route;
-  };
-
   const focusScreen = () => {
-    if (screenFocus || zoomTarget) return;
+    if (screenFocus) return;
     setHoveredId(null);
     setScreenFocus(true);
   };
@@ -98,17 +80,11 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
     setScreenFocus(false);
   };
 
+  // full diegetic: objects don't navigate — they open their app on the monitor
   const activate = (object: DeskObject) => {
-    if (!object.route) return; // functional objects (clock) don't navigate
-    if (reducedMotion) {
-      navigate(object);
-      return;
-    }
-    setZoomTarget(object);
-    window.clearTimeout(fadeTimer.current);
-    window.clearTimeout(navTimer.current);
-    fadeTimer.current = window.setTimeout(() => setFading(true), 550);
-    navTimer.current = window.setTimeout(() => navigate(object), 900);
+    if (!object.app) return; // functional objects (clock) do nothing on click
+    setLaunchApp((prev) => ({ id: object.app!, seq: (prev?.seq ?? 0) + 1 }));
+    focusScreen();
   };
 
   if (webgl === null) return <div className="ds-shell" aria-hidden="true" />;
@@ -126,9 +102,9 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
           <Scene
             metrics={metrics}
             hoveredId={hoveredId}
-            onHover={(id) => !zoomTarget && !screenFocus && setHoveredId(id)}
+            onHover={(id) => !screenFocus && setHoveredId(id)}
             onActivate={activate}
-            zoomTarget={zoomTarget}
+            launchApp={launchApp}
             screenFocus={screenFocus}
             onScreenZoomed={() => setOsOpen(true)}
             onMonitorClick={focusScreen}
@@ -177,7 +153,6 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
         </ul>
       </nav>
 
-      <div className={`ds-fade${fading ? ' ds-fade-on' : ''}`} aria-hidden="true" />
 
       <style>{`
         .ds-shell { position: relative; width: 100%; height: 100vh; height: 100dvh; background: #0d1018; overflow: hidden; }

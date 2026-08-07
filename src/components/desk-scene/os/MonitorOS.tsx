@@ -38,12 +38,14 @@ export function MonitorOS({
   onSkinChange,
   onExit,
   reducedMotion,
+  launchApp,
 }: {
   metrics: SceneMetrics;
   skin: OsSkin;
   onSkinChange: (skin: OsSkin) => void;
   onExit: () => void;
   reducedMotion: boolean;
+  launchApp?: { id: string; seq: number } | null;
 }) {
   const [wins, setWins] = useState<Win[]>([
     { appId: 'terminal', x: 60, y: 70, w: 660, h: 420, z: ++zCounter },
@@ -66,6 +68,12 @@ export function MonitorOS({
       window.removeEventListener('keydown', onKey);
     };
   }, [onExit]);
+
+  // desk objects request their app here (spine → ube, journals → cv, …)
+  useEffect(() => {
+    if (launchApp && APPS.some((a) => a.id === launchApp.id)) openApp(launchApp.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [launchApp?.seq]);
 
   const openApp = (appId: string) => {
     setWins((prev) => {

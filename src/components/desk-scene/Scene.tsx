@@ -15,7 +15,6 @@ import type { DeskObject, SceneMetrics } from './types';
 
 const CAMERA_POS = new THREE.Vector3(0, 1.15, 1.02);
 const CAMERA_LOOK = new THREE.Vector3(0, 1.12, -0.78);
-const ZOOM_MS = 750;
 const SCREEN_ZOOM_MS = 950;
 
 // pseudo desk-object so the terminal can react to monitor hover
@@ -269,6 +268,7 @@ function Monitor({
   osSkin,
   onSkinChange,
   onExit,
+  launchApp,
 }: {
   metrics: SceneMetrics;
   active: DeskObject | null;
@@ -280,6 +280,7 @@ function Monitor({
   osSkin: OsSkin;
   onSkinChange: (skin: OsSkin) => void;
   onExit: () => void;
+  launchApp: { id: string; seq: number } | null;
 }) {
   const [cx, cy, cz] = MONITOR.center;
   return (
@@ -322,6 +323,7 @@ function Monitor({
               onSkinChange={onSkinChange}
               onExit={onExit}
               reducedMotion={reducedMotion}
+              launchApp={launchApp}
             />
           </div>
         </Html>
@@ -415,7 +417,7 @@ export type SceneProps = {
   hoveredId: string | null;
   onHover: (id: string | null) => void;
   onActivate: (object: DeskObject) => void;
-  zoomTarget: DeskObject | null;
+  launchApp: { id: string; seq: number } | null;
   screenFocus: boolean;
   onScreenZoomed: () => void;
   onMonitorClick: () => void;
@@ -433,7 +435,7 @@ export function Scene({
   hoveredId,
   onHover,
   onActivate,
-  zoomTarget,
+  launchApp,
   screenFocus,
   onScreenZoomed,
   onMonitorClick,
@@ -448,8 +450,6 @@ export function Scene({
   const { camera, size } = useThree();
   const sun = useSun();
   const pointer = useRef({ x: 0, y: 0 });
-  const zoomStart = useRef<number | null>(null);
-  const zoomFrom = useRef(new THREE.Vector3());
   const lookCurrent = useRef(CAMERA_LOOK.clone());
   const basePos = useRef(CAMERA_POS.clone());
   const screenAnim = useRef<{ phase: 'in' | 'out'; start: number | null; from: THREE.Vector3; lookFrom: THREE.Vector3; notified: boolean } | null>(null);
@@ -471,13 +471,6 @@ export function Scene({
       document.body.style.cursor = '';
     };
   }, [hoveredId]);
-
-  useEffect(() => {
-    if (zoomTarget) {
-      zoomStart.current = null; // armed; timestamp set on next frame
-      zoomFrom.current.copy(camera.position);
-    }
-  }, [zoomTarget, camera]);
 
   useEffect(() => {
     if (screenFocus) {
@@ -521,20 +514,6 @@ export function Scene({
         }
         if (anim.phase === 'out') screenAnim.current = null;
       }
-      return;
-    }
-    if (zoomTarget) {
-      if (reducedMotion) return; // parent navigates immediately
-      if (zoomStart.current === null) zoomStart.current = state.clock.elapsedTime;
-      const t = Math.min(1, (state.clock.elapsedTime - zoomStart.current) / (ZOOM_MS / 1000));
-      const e = 1 - Math.pow(1 - t, 3); // ease-out cubic
-      const objPos = new THREE.Vector3(...zoomTarget.position).add(
-        new THREE.Vector3(...(zoomTarget.hitOffset ?? [0, 0.1, 0])),
-      );
-      const dest = objPos.clone().add(objPos.clone().sub(zoomFrom.current).normalize().multiplyScalar(-0.45));
-      camera.position.lerpVectors(zoomFrom.current, dest, e);
-      lookCurrent.current.lerp(objPos, e);
-      camera.lookAt(lookCurrent.current);
       return;
     }
     // idle: micro parallax
@@ -583,6 +562,7 @@ export function Scene({
         osSkin={osSkin}
         onSkinChange={onSkinChange}
         onExit={onOsExit}
+        launchApp={launchApp}
       />
       {deskObjects.map((object) => (
         <DeskObjectMesh

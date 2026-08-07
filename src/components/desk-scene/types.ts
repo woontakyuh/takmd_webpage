@@ -21,8 +21,9 @@ export type DeskObject = {
   position: [number, number, number];
   rotation?: [number, number, number];
   scale?: number;
-  route?: string; // absent = functional object (no navigation)
+  route?: string; // legacy fallback route (used by the no-WebGL static list)
   external?: boolean;
+  app?: string; // TakOS app id opened on the monitor when this object is clicked
   command: string; // terminal command line shown on hover, e.g. 'open spine.md'
   terminalLines: string[];
   hitSize: [number, number, number]; // invisible collider box (slightly larger than mesh)

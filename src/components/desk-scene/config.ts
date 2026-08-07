@@ -22,6 +22,7 @@ export const PALETTE = {
 export const deskObjects: DeskObject[] = [
   {
     id: 'spine',
+    app: 'ube',
     label: 'Spine model & endoscope — clinical practice',
     route: '/ube',
     command: 'open spine.md',
@@ -47,6 +48,7 @@ export const deskObjects: DeskObject[] = [
   },
   {
     id: 'journals',
+    app: 'cv',
     label: 'Journal stack — publication record',
     route: '/cv',
     command: 'open publications.log',
@@ -71,6 +73,7 @@ export const deskObjects: DeskObject[] = [
   },
   {
     id: 'globe',
+    app: 'education',
     label: 'Globe — international teaching & talks',
     route: '/education',
     command: 'open faculty.map',
@@ -95,6 +98,7 @@ export const deskObjects: DeskObject[] = [
   },
   {
     id: 'brain',
+    app: 'research',
     label: 'Brain model & philosophy books — research',
     route: '/research',
     command: 'open research.md',
@@ -119,6 +123,7 @@ export const deskObjects: DeskObject[] = [
   },
   {
     id: 'keyboard',
+    app: 'ai',
     label: 'Keyboard — projects & clinical AI workflow',
     route: '/ai',
     command: 'open projects.sh',
@@ -140,6 +145,7 @@ export const deskObjects: DeskObject[] = [
   },
   {
     id: 'belt',
+    app: 'terminal',
     label: 'Jiu-jitsu belt — personal',
     // TODO: no /about page exists yet — leave route empty until one is added
     command: 'cat personal.txt',
@@ -163,6 +169,7 @@ export const deskObjects: DeskObject[] = [
   },
   {
     id: 'card',
+    app: 'contact',
     label: 'Business card — contact',
     // TODO: replace with the external Blinq URL (external: true) once provided
     route: '/contact',
