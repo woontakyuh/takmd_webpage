@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Terminal } from '../Terminal';
+import { MailApp } from './apps/MailApp';
 import type { SceneMetrics } from '../types';
 
 // logical screen resolution of the monitor plane — matches a typical viewport at full zoom
@@ -13,7 +14,7 @@ const CS = SX; // chrome-slice display scale (slices are 1x captures)
 type AppDef = {
   id: string;
   title: string;
-  kind: 'terminal' | 'browser';
+  kind: 'terminal' | 'browser' | 'mail';
   src?: string;
 };
 
@@ -26,7 +27,7 @@ const APPS: AppDef[] = [
   { id: 'ai', title: 'Clinical AI', kind: 'browser', src: '/ai' },
   { id: 'dashboard', title: 'Surgery Dashboard', kind: 'browser', src: '/dashboard' },
   { id: 'education', title: 'Education', kind: 'browser', src: '/education' },
-  { id: 'contact', title: 'Contact', kind: 'browser', src: '/contact' },
+  { id: 'contact', title: 'Mail', kind: 'mail' },
   { id: 'media', title: 'Media', kind: 'browser', src: '/media' },
 ];
 
@@ -123,8 +124,9 @@ export function MonitorOS({
 
   const app = activeApp ? APPS.find((a) => a.id === activeApp)! : null;
   const isTerm = app?.kind === 'terminal';
-  const winW = maxed ? OS_W : isTerm ? 780 : 1190;
-  const winH = maxed ? OS_H - MENUBAR_H : isTerm ? 520 : DOCK_TOP - MENUBAR_H - 26;
+  const isMail = app?.kind === 'mail';
+  const winW = maxed ? OS_W : isTerm ? 780 : isMail ? 1010 : 1190;
+  const winH = maxed ? OS_H - MENUBAR_H : isTerm ? 520 : isMail ? 600 : DOCK_TOP - MENUBAR_H - 26;
   const defaultPos = { x: (OS_W - winW) / 2, y: MENUBAR_H + 14 };
   const pos = maxed ? { x: 0, y: MENUBAR_H } : (winPos ?? defaultPos);
 
@@ -167,7 +169,7 @@ export function MonitorOS({
           className={`mos-win${isTerm ? ' mos-win-term' : ''}`}
           style={{ left: pos.x, top: pos.y, width: winW, height: winH }}
         >
-          {app.kind === 'browser' ? (
+          {app.kind === 'mail' ? null : app.kind === 'browser' ? (
             <div
               className="mos-chrometop"
               onPointerDown={onDragStart}
@@ -217,6 +219,12 @@ export function MonitorOS({
                 />
               ))}
             {isTerm && <Terminal metrics={metrics} active={null} reducedMotion={reducedMotion} />}
+            {isMail && (
+              <MailApp
+                onClose={closeActive}
+                onDragBar={{ onPointerDown: onDragStart, onPointerMove: onDragMove, onPointerUp: onDragEnd }}
+              />
+            )}
           </div>
         </section>
       )}

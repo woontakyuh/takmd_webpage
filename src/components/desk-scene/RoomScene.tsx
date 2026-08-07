@@ -182,6 +182,19 @@ export function RoomScene({
   const sun = useSun();
   const material = useBakedMaterial(1 - sun.daylight);
 
+  // soft radial-gradient texture for fake contact shadows under added objects
+  const blobShadow = useMemo(() => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 128;
+    const ctx = c.getContext('2d')!;
+    const g = ctx.createRadialGradient(64, 64, 6, 64, 64, 64);
+    g.addColorStop(0, 'rgba(0,0,0,0.42)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 128, 128);
+    return new THREE.CanvasTexture(c);
+  }, []);
+
   const room = useGLTF('/room/roomModel.glb');
   const pcScreen = useGLTF('/room/pcScreenModel.glb');
   const macScreen = useGLTF('/room/macScreenModel.glb');
@@ -389,9 +402,22 @@ export function RoomScene({
       <primitive object={topChair.scene} />
       <primitive object={pcScreen.scene} />
       <primitive object={macScreen.scene} />
+      {roomExtras.length > 0 && (
+        <>
+          {/* these lights only reach the added GLBs — the baked room's ShaderMaterial ignores them */}
+          <ambientLight intensity={0.35 + sun.daylight * 0.5} color={sun.daylight > 0.5 ? '#fff6ea' : '#ffd9b0'} />
+          <directionalLight position={[4, 9, 5]} intensity={0.7 + sun.daylight * 0.9} color="#fff2dd" />
+          <directionalLight position={[-6, 4, -2]} intensity={0.35} color="#ff9db0" />
+        </>
+      )}
       {roomExtras.map((extra, i) => (
         <group key={i} position={extra.position} rotation={extra.rotation}>
           <FittedGlb url={extra.glb} fit={extra.fit} fallback={null} />
+          {/* soft fake contact shadow */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.015, 0]}>
+            <planeGeometry args={[extra.fit * 1.1, extra.fit * 1.1]} />
+            <meshBasicMaterial map={blobShadow} transparent depthWrite={false} />
+          </mesh>
         </group>
       ))}
       {osPlane && (
