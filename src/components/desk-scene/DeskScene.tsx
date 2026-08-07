@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ACCENT, deskObjects } from './config';
+import { MonitorOS, type OsSkin } from './os/MonitorOS';
 import { Scene } from './Scene';
 import type { DeskObject, SceneMetrics } from './types';
 
@@ -52,6 +53,12 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [zoomTarget, setZoomTarget] = useState<DeskObject | null>(null);
   const [fading, setFading] = useState(false);
+  const [screenFocus, setScreenFocus] = useState(false);
+  const [osOpen, setOsOpen] = useState(false);
+  const [osSkin, setOsSkin] = useState<OsSkin>(() => {
+    if (typeof window === 'undefined') return 'tak';
+    return new URLSearchParams(window.location.search).get('os') === 'mac' ? 'mac' : 'tak';
+  });
   const reducedMotion = usePrefersReducedMotion();
   const fadeTimer = useRef<number>(0);
   const navTimer = useRef<number>(0);
@@ -78,6 +85,17 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
       return;
     }
     window.location.href = object.route;
+  };
+
+  const focusScreen = () => {
+    if (screenFocus || zoomTarget) return;
+    setHoveredId(null);
+    setScreenFocus(true);
+  };
+
+  const exitScreen = () => {
+    setOsOpen(false);
+    setScreenFocus(false);
   };
 
   const activate = (object: DeskObject) => {
@@ -108,19 +126,45 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
           <Scene
             metrics={metrics}
             hoveredId={hoveredId}
-            onHover={(id) => !zoomTarget && setHoveredId(id)}
+            onHover={(id) => !zoomTarget && !screenFocus && setHoveredId(id)}
             onActivate={activate}
             zoomTarget={zoomTarget}
+            screenFocus={screenFocus}
+            onScreenZoomed={() => setOsOpen(true)}
+            onMonitorClick={focusScreen}
             reducedMotion={reducedMotion}
-            parallax={!isMobile}
+            parallax={!isMobile && !screenFocus}
             effects={!isMobile}
           />
         </Suspense>
       </Canvas>
 
+      {osOpen && (
+        <MonitorOS
+          metrics={metrics}
+          skin={osSkin}
+          onSkinChange={setOsSkin}
+          onExit={exitScreen}
+          reducedMotion={reducedMotion}
+        />
+      )}
+
       {/* keyboard / screen-reader navigation mirroring the 3D objects */}
       <nav className="ds-a11y-nav" aria-label="Desk sections">
         <ul>
+          <li>
+            <button
+              type="button"
+              aria-label="Monitor — open TakOS full screen"
+              onFocus={() => setHoveredId('monitor')}
+              onBlur={() => setHoveredId((current) => (current === 'monitor' ? null : current))}
+              onMouseEnter={() => setHoveredId('monitor')}
+              onMouseLeave={() => setHoveredId((current) => (current === 'monitor' ? null : current))}
+              onClick={focusScreen}
+            >
+              monitor
+            </button>
+          </li>
           {deskObjects.map((object) => (
             <li key={object.id}>
               <button

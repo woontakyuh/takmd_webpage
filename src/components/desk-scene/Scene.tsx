@@ -15,6 +15,14 @@ import type { DeskObject, SceneMetrics } from './types';
 const CAMERA_POS = new THREE.Vector3(0, 1.15, 1.02);
 const CAMERA_LOOK = new THREE.Vector3(0, 1.12, -0.78);
 const ZOOM_MS = 750;
+const SCREEN_ZOOM_MS = 950;
+
+// pseudo desk-object so the terminal can react to monitor hover
+const MONITOR_HINT = {
+  id: 'monitor',
+  command: 'takos --wake',
+  terminalLines: ['Wake the screen into full TakOS.', 'Every section opens here, as an app.'],
+} as unknown as DeskObject;
 
 const MONITOR = { center: [0, 1.16, -0.78] as const, screenW: 0.78, screenH: 0.44 };
 // drei Html transform: 620px DOM at scale 0.1 measures 1.565 world units → scale for target width
@@ -249,11 +257,15 @@ function Monitor({
   active,
   reducedMotion,
   daylight,
+  onHover,
+  onClick,
 }: {
   metrics: SceneMetrics;
   active: DeskObject | null;
   reducedMotion: boolean;
   daylight: number;
+  onHover: (id: string | null) => void;
+  onClick: () => void;
 }) {
   const [cx, cy, cz] = MONITOR.center;
   return (
@@ -277,15 +289,19 @@ function Monitor({
         <planeGeometry args={[MONITOR.screenW, MONITOR.screenH]} />
         <meshStandardMaterial color="#101216" roughness={0.35} emissive="#1c2026" emissiveIntensity={0.6} />
       </mesh>
-      {/* terminal — flat DOM overlay, viewed dead-on so there is no distortion */}
-      <Html
-        transform
-        position={[0, 0, 0.026]}
-        scale={TERMINAL_SCALE}
-        style={{ pointerEvents: 'none', filter: `brightness(${0.94 + daylight * 0.08})` }}
-        zIndexRange={[10, 0]}
-      >
-        <Terminal metrics={metrics} active={active} reducedMotion={reducedMotion} />
+      {/* terminal — flat DOM overlay, viewed dead-on so there is no distortion.
+          click/hover live on the DOM itself (drei Html's inner wrapper swallows canvas raycasts) */}
+      <Html transform position={[0, 0, 0.026]} scale={TERMINAL_SCALE} zIndexRange={[10, 0]}>
+        <div
+          style={{ cursor: 'pointer', filter: `brightness(${0.94 + daylight * 0.08})` }}
+          onMouseEnter={() => onHover('monitor')}
+          onMouseLeave={() => onHover(null)}
+          onClick={onClick}
+          role="button"
+          aria-label="Open TakOS full screen"
+        >
+          <Terminal metrics={metrics} active={active} reducedMotion={reducedMotion} />
+        </div>
       </Html>
     </group>
   );
@@ -364,12 +380,27 @@ export type SceneProps = {
   onHover: (id: string | null) => void;
   onActivate: (object: DeskObject) => void;
   zoomTarget: DeskObject | null;
+  screenFocus: boolean;
+  onScreenZoomed: () => void;
+  onMonitorClick: () => void;
   reducedMotion: boolean;
   parallax: boolean;
   effects: boolean;
 };
 
-export function Scene({ metrics, hoveredId, onHover, onActivate, zoomTarget, reducedMotion, parallax, effects }: SceneProps) {
+export function Scene({
+  metrics,
+  hoveredId,
+  onHover,
+  onActivate,
+  zoomTarget,
+  screenFocus,
+  onScreenZoomed,
+  onMonitorClick,
+  reducedMotion,
+  parallax,
+  effects,
+}: SceneProps) {
   const { camera, size } = useThree();
   const sun = useSun();
   const pointer = useRef({ x: 0, y: 0 });
@@ -377,6 +408,7 @@ export function Scene({ metrics, hoveredId, onHover, onActivate, zoomTarget, red
   const zoomFrom = useRef(new THREE.Vector3());
   const lookCurrent = useRef(CAMERA_LOOK.clone());
   const basePos = useRef(CAMERA_POS.clone());
+  const screenAnim = useRef<{ phase: 'in' | 'out'; start: number | null; from: THREE.Vector3; lookFrom: THREE.Vector3; notified: boolean } | null>(null);
 
   // narrow viewports pull the camera back and widen the fov so the monitor stays framed
   useEffect(() => {
@@ -403,7 +435,50 @@ export function Scene({ metrics, hoveredId, onHover, onActivate, zoomTarget, red
     }
   }, [zoomTarget, camera]);
 
+  useEffect(() => {
+    if (screenFocus) {
+      if (reducedMotion) {
+        onScreenZoomed();
+        return;
+      }
+      screenAnim.current = { phase: 'in', start: null, from: camera.position.clone(), lookFrom: lookCurrent.current.clone(), notified: false };
+    } else if (screenAnim.current) {
+      screenAnim.current = { phase: 'out', start: null, from: camera.position.clone(), lookFrom: lookCurrent.current.clone(), notified: true };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screenFocus]);
+
   useFrame((state, delta) => {
+    // monitor screen focus animation takes priority over everything
+    if (screenAnim.current) {
+      const anim = screenAnim.current;
+      if (anim.start === null) anim.start = state.clock.elapsedTime;
+      const t = Math.min(1, (state.clock.elapsedTime - anim.start) / (SCREEN_ZOOM_MS / 1000));
+      const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; // ease-in-out cubic
+      const [mx, my, mz] = MONITOR.center;
+      const persp = camera as THREE.PerspectiveCamera;
+      const halfV = THREE.MathUtils.degToRad(persp.fov / 2);
+      const halfH = Math.atan(Math.tan(halfV) * (state.size.width / state.size.height));
+      const dist = Math.max(
+        MONITOR.screenW / 0.94 / (2 * Math.tan(halfH)),
+        MONITOR.screenH / 0.94 / (2 * Math.tan(halfV)),
+      );
+      const screenPos = new THREE.Vector3(mx, my, mz + 0.03 + dist);
+      const screenLook = new THREE.Vector3(mx, my, mz);
+      const toPos = anim.phase === 'in' ? screenPos : basePos.current;
+      const toLook = anim.phase === 'in' ? screenLook : CAMERA_LOOK;
+      camera.position.lerpVectors(anim.from, toPos, e);
+      lookCurrent.current.lerpVectors(anim.lookFrom, toLook, e);
+      camera.lookAt(lookCurrent.current);
+      if (t >= 1) {
+        if (anim.phase === 'in' && !anim.notified) {
+          anim.notified = true;
+          onScreenZoomed();
+        }
+        if (anim.phase === 'out') screenAnim.current = null;
+      }
+      return;
+    }
     if (zoomTarget) {
       if (reducedMotion) return; // parent navigates immediately
       if (zoomStart.current === null) zoomStart.current = state.clock.elapsedTime;
@@ -432,7 +507,8 @@ export function Scene({ metrics, hoveredId, onHover, onActivate, zoomTarget, red
     camera.lookAt(lookCurrent.current);
   });
 
-  const activeObject = deskObjects.find((o) => o.id === hoveredId) ?? null;
+  const activeObject =
+    deskObjects.find((o) => o.id === hoveredId) ?? (hoveredId === 'monitor' ? MONITOR_HINT : null);
 
   return (
     <Selection>
@@ -452,7 +528,14 @@ export function Scene({ metrics, hoveredId, onHover, onActivate, zoomTarget, red
       <Room />
       <Desk />
       <DecoGlbProps />
-      <Monitor metrics={metrics} active={activeObject} reducedMotion={reducedMotion} daylight={sun.daylight} />
+      <Monitor
+        metrics={metrics}
+        active={activeObject}
+        reducedMotion={reducedMotion}
+        daylight={sun.daylight}
+        onHover={onHover}
+        onClick={onMonitorClick}
+      />
       {deskObjects.map((object) => (
         <DeskObjectMesh
           key={object.id}
