@@ -3,7 +3,9 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { EffectComposer, Vignette } from '@react-three/postprocessing';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { FittedGlb } from './FittedGlb';
 import { MonitorOS, OS_W, OS_H } from './os/MonitorOS';
+import { roomExtras } from './roomExtras';
 import { useSun } from './useSun';
 import type { SceneMetrics } from './types';
 
@@ -183,12 +185,15 @@ export function RoomScene({
   const room = useGLTF('/room/roomModel.glb');
   const pcScreen = useGLTF('/room/pcScreenModel.glb');
   const macScreen = useGLTF('/room/macScreenModel.glb');
+  const topChair = useGLTF('/room/topChairModel.glb');
 
   useMemo(() => {
-    room.scene.traverse((c) => {
-      if ((c as THREE.Mesh).isMesh) (c as THREE.Mesh).material = material;
-    });
-  }, [room.scene, material]);
+    for (const scene of [room.scene, topChair.scene]) {
+      scene.traverse((c) => {
+        if ((c as THREE.Mesh).isMesh) (c as THREE.Mesh).material = material;
+      });
+    }
+  }, [room.scene, topChair.scene, material]);
 
   // measure both candidate screens, mount the OS on the one closest to the OS aspect
   const surfaces = useMemo(() => {
@@ -241,10 +246,64 @@ export function RoomScene({
     }
   }, [pcScreen.scene, macScreen.scene]);
 
-  const pointer = useRef({ x: 0, y: 0 });
   const lookCurrent = useRef(CAMERA_LOOK.clone());
   const basePos = useRef(CAMERA_POS.clone());
   const screenAnim = useRef<{ phase: 'in' | 'out'; start: number | null; from: THREE.Vector3; lookFrom: THREE.Vector3; notified: boolean } | null>(null);
+
+  // free navigation (Bruno-style): drag to orbit within limits, wheel to zoom
+  const nav = useRef({
+    target: new THREE.Spherical(CAMERA_RADIUS, CAMERA_PHI, CAMERA_THETA),
+    smoothed: new THREE.Spherical(CAMERA_RADIUS, CAMERA_PHI, CAMERA_THETA),
+    dragging: false,
+    lastX: 0,
+    lastY: 0,
+  });
+  const { gl } = useThree();
+  const focusRef = useRef(screenFocus);
+  focusRef.current = screenFocus;
+
+  useEffect(() => {
+    const el = gl.domElement;
+    const down = (e: PointerEvent) => {
+      if (focusRef.current) return;
+      nav.current.dragging = true;
+      nav.current.lastX = e.clientX;
+      nav.current.lastY = e.clientY;
+      el.style.cursor = 'grabbing';
+    };
+    const move = (e: PointerEvent) => {
+      if (!nav.current.dragging || focusRef.current) return;
+      const dx = e.clientX - nav.current.lastX;
+      const dy = e.clientY - nav.current.lastY;
+      nav.current.lastX = e.clientX;
+      nav.current.lastY = e.clientY;
+      const s = nav.current.target;
+      s.theta = THREE.MathUtils.clamp(s.theta - dx * 0.004, -Math.PI * 0.5, 0);
+      s.phi = THREE.MathUtils.clamp(s.phi - dy * 0.003, 0.15, Math.PI * 0.5);
+    };
+    const up = () => {
+      nav.current.dragging = false;
+      el.style.cursor = 'grab';
+    };
+    const wheel = (e: WheelEvent) => {
+      if (focusRef.current) return;
+      e.preventDefault();
+      const s = nav.current.target;
+      s.radius = THREE.MathUtils.clamp(s.radius + e.deltaY * 0.02, 12, 45);
+    };
+    el.style.cursor = 'grab';
+    el.addEventListener('pointerdown', down);
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    el.addEventListener('wheel', wheel, { passive: false });
+    return () => {
+      el.removeEventListener('pointerdown', down);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      el.removeEventListener('wheel', wheel);
+      el.style.cursor = '';
+    };
+  }, [gl]);
 
   useEffect(() => {
     const aspect = size.width / size.height;
@@ -297,17 +356,19 @@ export function RoomScene({
       }
       return;
     }
-    if (parallax && !reducedMotion) {
-      pointer.current.x = THREE.MathUtils.damp(pointer.current.x, state.pointer.x, 3, delta);
-      pointer.current.y = THREE.MathUtils.damp(pointer.current.y, state.pointer.y, 3, delta);
-    }
-    camera.position.set(
-      basePos.current.x + pointer.current.x * 0.6,
-      basePos.current.y + pointer.current.y * 0.4,
-      basePos.current.z,
-    );
+    // orbit navigation with smoothing
+    const n = nav.current;
+    const damp = reducedMotion ? 1 : Math.min(1, 5 * delta);
+    n.smoothed.radius += (n.target.radius - n.smoothed.radius) * damp;
+    n.smoothed.phi += (n.target.phi - n.smoothed.phi) * damp;
+    n.smoothed.theta += (n.target.theta - n.smoothed.theta) * damp;
+    basePos.current.setFromSpherical(n.smoothed);
+    camera.position.copy(basePos.current);
     lookCurrent.current.lerp(CAMERA_LOOK, Math.min(1, 4 * delta));
     camera.lookAt(lookCurrent.current);
+    // subtle chair swivel (rotate the chair node in place, like Bruno's TopChair)
+    const chairNode = topChair.scene.children[0];
+    if (chairNode) chairNode.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.5;
   });
 
   return (
@@ -317,9 +378,22 @@ export function RoomScene({
           <Vignette eskil={false} offset={0.12} darkness={0.5} />
         </EffectComposer>
       )}
-      <primitive object={room.scene} />
+      <primitive
+        object={room.scene}
+        onClick={(e: { point: THREE.Vector3 }) => {
+          if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('dbg'))
+            // eslint-disable-next-line no-console
+            console.log('[room] click', e.point.toArray().map((v) => +v.toFixed(2)));
+        }}
+      />
+      <primitive object={topChair.scene} />
       <primitive object={pcScreen.scene} />
       <primitive object={macScreen.scene} />
+      {roomExtras.map((extra, i) => (
+        <group key={i} position={extra.position} rotation={extra.rotation}>
+          <FittedGlb url={extra.glb} fit={extra.fit} fallback={null} />
+        </group>
+      ))}
       {osPlane && (
         <group position={osPlane.position} quaternion={osPlane.quaternion}>
           <Html transform position={[0, 0, 0.001]} scale={osPlane.scale} zIndexRange={[10, 0]}>
