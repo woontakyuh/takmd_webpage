@@ -166,6 +166,11 @@ export type RoomSceneProps = {
   effects: boolean;
 };
 
+const smoothstep = (a: number, b: number, x: number) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+
 export function RoomScene({
   metrics,
   launchApp,
@@ -180,7 +185,26 @@ export function RoomScene({
 }: RoomSceneProps) {
   const { camera, size } = useThree();
   const sun = useSun();
-  const material = useBakedMaterial(1 - sun.daylight);
+  // continuous dawn/dusk: full night below -6°, full day above 20° sun altitude
+  const nightMix = 1 - smoothstep(-6, 20, sun.altitude);
+  const material = useBakedMaterial(nightMix);
+  // fake sun shaft through the window, strongest at low-morning/afternoon sun
+  const shaft = smoothstep(4, 14, sun.altitude) * (1 - smoothstep(35, 55, sun.altitude));
+
+  // warm linear gradient for the window sun shaft
+  const shaftTex = useMemo(() => {
+    const c = document.createElement('canvas');
+    c.width = 256;
+    c.height = 64;
+    const ctx = c.getContext('2d')!;
+    const g = ctx.createLinearGradient(0, 0, 256, 0);
+    g.addColorStop(0, 'rgba(255, 210, 140, 0)');
+    g.addColorStop(0.45, 'rgba(255, 210, 140, 0.28)');
+    g.addColorStop(1, 'rgba(255, 214, 150, 0.85)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 256, 64);
+    return new THREE.CanvasTexture(c);
+  }, []);
 
   // soft radial-gradient texture for fake contact shadows under added objects
   const blobShadow = useMemo(() => {
@@ -402,6 +426,37 @@ export function RoomScene({
       <primitive object={topChair.scene} />
       <primitive object={pcScreen.scene} />
       <primitive object={macScreen.scene} />
+      {shaft > 0.01 && (
+        <group>
+          {/* beam sheets from the window (right wall) down into the room */}
+          {[-3.15, -2.75, -2.35].map((z, i) => (
+            <group key={z} position={[3.0, 2.05, z]} rotation={[0, 0.1, 0.62]}>
+              <mesh>
+                <planeGeometry args={[7.2, 2.4]} />
+                <meshBasicMaterial
+                  map={shaftTex}
+                  transparent
+                  opacity={shaft * (i === 1 ? 0.9 : 0.45)}
+                  blending={THREE.AdditiveBlending}
+                  depthWrite={false}
+                  side={THREE.DoubleSide}
+                />
+              </mesh>
+            </group>
+          ))}
+          {/* warm light pool where the beam lands on the floor */}
+          <mesh rotation={[-Math.PI / 2, 0, 0.35]} position={[1.6, 0.025, -2.7]}>
+            <circleGeometry args={[1.6, 32]} />
+            <meshBasicMaterial
+              color="#ffd9a0"
+              transparent
+              opacity={shaft * 0.22}
+              blending={THREE.AdditiveBlending}
+              depthWrite={false}
+            />
+          </mesh>
+        </group>
+      )}
       {roomExtras.length > 0 && (
         <>
           {/* these lights only reach the added GLBs — the baked room's ShaderMaterial ignores them */}
