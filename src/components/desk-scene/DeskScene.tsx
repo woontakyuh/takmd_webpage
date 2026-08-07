@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ACCENT, deskObjects } from './config';
+import { HenryScene } from './HenryScene';
 import { RoomScene } from './RoomScene';
 import type { DeskObject, SceneMetrics } from './types';
 
@@ -47,7 +48,7 @@ function StaticFallback() {
   );
 }
 
-export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
+export default function DeskScene({ metrics, scene = 'bruno' }: { metrics: SceneMetrics; scene?: 'bruno' | 'henry' }) {
   const [webgl, setWebgl] = useState<boolean | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [launchApp, setLaunchApp] = useState<{ id: string; seq: number } | null>(null);
@@ -90,33 +91,56 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
       <Canvas
         shadows
         dpr={isMobile ? 1 : [1, 2]}
-        camera={{ fov: 24, near: 0.5, far: 120, position: [-18.9, 13.6, 18.9] }}
+        camera={
+          scene === 'henry'
+            ? { fov: 35, near: 10, far: 900000, position: [-20000, 12000, 20000] }
+            : { fov: 24, near: 0.5, far: 120, position: [-18.9, 13.6, 18.9] }
+        }
         gl={{ antialias: true }}
       >
         <Suspense fallback={null}>
-          <RoomScene
-            metrics={metrics}
-            launchApp={launchApp}
-            screenFocus={screenFocus}
-            onScreenZoomed={() => setOsOpen(true)}
-            onMonitorClick={focusScreen}
-            osActive={osOpen}
-            onOsExit={exitScreen}
-            reducedMotion={reducedMotion}
-            parallax={!isMobile && !screenFocus}
-            effects={!isMobile}
-          />
+          {scene === 'henry' ? (
+            <HenryScene
+              metrics={metrics}
+              launchApp={launchApp}
+              screenFocus={screenFocus}
+              onScreenZoomed={() => setOsOpen(true)}
+              onMonitorClick={focusScreen}
+              osActive={osOpen}
+              onOsExit={exitScreen}
+              reducedMotion={reducedMotion}
+              parallax={!isMobile && !screenFocus}
+              effects={!isMobile}
+            />
+          ) : (
+            <RoomScene
+              metrics={metrics}
+              launchApp={launchApp}
+              screenFocus={screenFocus}
+              onScreenZoomed={() => setOsOpen(true)}
+              onMonitorClick={focusScreen}
+              osActive={osOpen}
+              onOsExit={exitScreen}
+              reducedMotion={reducedMotion}
+              parallax={!isMobile && !screenFocus}
+              effects={!isMobile}
+            />
+          )}
         </Suspense>
       </Canvas>
 
       <a
         className="ds-credit"
-        href="https://github.com/brunosimon/my-room-in-3d"
+        href={
+          scene === 'henry'
+            ? 'https://github.com/henryjeff/portfolio-website'
+            : 'https://github.com/brunosimon/my-room-in-3d'
+        }
         target="_blank"
         rel="noreferrer"
         hidden={screenFocus}
       >
-        room by Bruno Simon
+        {scene === 'henry' ? 'scene by Henry Heffernan' : 'room by Bruno Simon'}
       </a>
 
       {/* keyboard / screen-reader navigation mirroring the 3D objects */}
