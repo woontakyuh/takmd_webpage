@@ -1,7 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ACCENT, deskObjects } from './config';
-import type { OsSkin } from './os/MonitorOS';
 import { Scene } from './Scene';
 import type { DeskObject, SceneMetrics } from './types';
 
@@ -54,10 +53,6 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
   const [launchApp, setLaunchApp] = useState<{ id: string; seq: number } | null>(null);
   const [screenFocus, setScreenFocus] = useState(false);
   const [osOpen, setOsOpen] = useState(false);
-  const [osSkin, setOsSkin] = useState<OsSkin>(() => {
-    if (typeof window === 'undefined') return 'tak';
-    return new URLSearchParams(window.location.search).get('os') === 'mac' ? 'mac' : 'tak';
-  });
   const reducedMotion = usePrefersReducedMotion();
 
   const isMobile = useMemo(() => {
@@ -109,8 +104,6 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
             onScreenZoomed={() => setOsOpen(true)}
             onMonitorClick={focusScreen}
             osActive={osOpen}
-            osSkin={osSkin}
-            onSkinChange={setOsSkin}
             onOsExit={exitScreen}
             reducedMotion={reducedMotion}
             parallax={!isMobile && !screenFocus}

@@ -45,6 +45,12 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/legacy.css" />
 
+    <script is:inline>
+      // TakOS embed mode: pages opened inside the desk-scene monitor hide site chrome
+      if (new URLSearchParams(window.location.search).has('embed'))
+        document.documentElement.classList.add('embed-frame');
+    </script>
+
     <title>{title}</title>
 
     <script type="application/ld+json" set:html={JSON.stringify({
@@ -80,4 +86,11 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
 
 <style is:global>
   @import "../styles/global.css";
+
+  /* TakOS embed mode — page content only, no site chrome */
+  html.embed-frame body > header,
+  html.embed-frame body > footer,
+  html.embed-frame .skip-link {
+    display: none !important;
+  }
 </style>

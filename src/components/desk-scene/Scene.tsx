@@ -7,7 +7,7 @@ import { ClockFace } from './ClockFace';
 import { ACCENT, DESK_TOP_Y, PALETTE, deskObjects } from './config';
 import { DeskObjectMesh } from './DeskObjectMesh';
 import { FittedGlb } from './FittedGlb';
-import { MonitorOS, type OsSkin } from './os/MonitorOS';
+import { MonitorOS, OS_W, OS_H } from './os/MonitorOS';
 import { Terminal } from './Terminal';
 import { useSun } from './useSun';
 import type { SunState } from './sun';
@@ -28,9 +28,6 @@ const MONITOR = { center: [0, 1.16, -0.78] as const, screenW: 0.78, screenH: 0.4
 // drei Html transform: 620px DOM at scale 0.1 measures 1.565 world units → px-per-unit ≈ 39.6
 const screenScaleFor = (pxWidth: number) => (MONITOR.screenW * 39.6) / pxWidth;
 const TERMINAL_SCALE = screenScaleFor(620);
-// full-diegetic OS resolution on the screen plane (same 1.773 aspect as the screen)
-export const OS_W = 1280;
-export const OS_H = 722;
 const OS_SCALE = screenScaleFor(OS_W);
 
 function WindowSky({ colors }: { colors: [string, string] }) {
@@ -265,8 +262,6 @@ function Monitor({
   onHover,
   onClick,
   osActive,
-  osSkin,
-  onSkinChange,
   onExit,
   launchApp,
 }: {
@@ -277,8 +272,6 @@ function Monitor({
   onHover: (id: string | null) => void;
   onClick: () => void;
   osActive: boolean;
-  osSkin: OsSkin;
-  onSkinChange: (skin: OsSkin) => void;
   onExit: () => void;
   launchApp: { id: string; seq: number } | null;
 }) {
@@ -317,14 +310,7 @@ function Monitor({
               filter: `brightness(${0.96 + daylight * 0.06})`,
             }}
           >
-            <MonitorOS
-              metrics={metrics}
-              skin={osSkin}
-              onSkinChange={onSkinChange}
-              onExit={onExit}
-              reducedMotion={reducedMotion}
-              launchApp={launchApp}
-            />
+            <MonitorOS metrics={metrics} onExit={onExit} reducedMotion={reducedMotion} launchApp={launchApp} />
           </div>
         </Html>
       ) : (
@@ -422,8 +408,6 @@ export type SceneProps = {
   onScreenZoomed: () => void;
   onMonitorClick: () => void;
   osActive: boolean;
-  osSkin: OsSkin;
-  onSkinChange: (skin: OsSkin) => void;
   onOsExit: () => void;
   reducedMotion: boolean;
   parallax: boolean;
@@ -440,8 +424,6 @@ export function Scene({
   onScreenZoomed,
   onMonitorClick,
   osActive,
-  osSkin,
-  onSkinChange,
   onOsExit,
   reducedMotion,
   parallax,
@@ -496,9 +478,10 @@ export function Scene({
       const persp = camera as THREE.PerspectiveCamera;
       const halfV = THREE.MathUtils.degToRad(persp.fov / 2);
       const halfH = Math.atan(Math.tan(halfV) * (state.size.width / state.size.height));
+      // farther seat than a full-screen fill: the whole monitor and desk edge stay in shot
       const dist = Math.max(
-        MONITOR.screenW / 0.92 / (2 * Math.tan(halfH)),
-        MONITOR.screenH / 0.92 / (2 * Math.tan(halfV)),
+        MONITOR.screenW / 0.72 / (2 * Math.tan(halfH)),
+        MONITOR.screenH / 0.72 / (2 * Math.tan(halfV)),
       );
       const screenPos = new THREE.Vector3(mx, my, mz + 0.03 + dist);
       const screenLook = new THREE.Vector3(mx, my, mz);
@@ -559,8 +542,6 @@ export function Scene({
         onHover={onHover}
         onClick={onMonitorClick}
         osActive={osActive}
-        osSkin={osSkin}
-        onSkinChange={onSkinChange}
         onExit={onOsExit}
         launchApp={launchApp}
       />
