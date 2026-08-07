@@ -7,6 +7,7 @@ import { ClockFace } from './ClockFace';
 import { ACCENT, DESK_TOP_Y, PALETTE, deskObjects } from './config';
 import { DeskObjectMesh } from './DeskObjectMesh';
 import { FittedGlb } from './FittedGlb';
+import { MonitorOS, type OsSkin } from './os/MonitorOS';
 import { Terminal } from './Terminal';
 import { useSun } from './useSun';
 import type { SunState } from './sun';
@@ -25,8 +26,13 @@ const MONITOR_HINT = {
 } as unknown as DeskObject;
 
 const MONITOR = { center: [0, 1.16, -0.78] as const, screenW: 0.78, screenH: 0.44 };
-// drei Html transform: 620px DOM at scale 0.1 measures 1.565 world units → scale for target width
-const TERMINAL_SCALE = MONITOR.screenW / 15.65;
+// drei Html transform: 620px DOM at scale 0.1 measures 1.565 world units → px-per-unit ≈ 39.6
+const screenScaleFor = (pxWidth: number) => (MONITOR.screenW * 39.6) / pxWidth;
+const TERMINAL_SCALE = screenScaleFor(620);
+// full-diegetic OS resolution on the screen plane (same 1.773 aspect as the screen)
+export const OS_W = 1280;
+export const OS_H = 722;
+const OS_SCALE = screenScaleFor(OS_W);
 
 function WindowSky({ colors }: { colors: [string, string] }) {
   const texture = useMemo(() => {
@@ -259,6 +265,10 @@ function Monitor({
   daylight,
   onHover,
   onClick,
+  osActive,
+  osSkin,
+  onSkinChange,
+  onExit,
 }: {
   metrics: SceneMetrics;
   active: DeskObject | null;
@@ -266,6 +276,10 @@ function Monitor({
   daylight: number;
   onHover: (id: string | null) => void;
   onClick: () => void;
+  osActive: boolean;
+  osSkin: OsSkin;
+  onSkinChange: (skin: OsSkin) => void;
+  onExit: () => void;
 }) {
   const [cx, cy, cz] = MONITOR.center;
   return (
@@ -289,20 +303,42 @@ function Monitor({
         <planeGeometry args={[MONITOR.screenW, MONITOR.screenH]} />
         <meshStandardMaterial color="#101216" roughness={0.35} emissive="#1c2026" emissiveIntensity={0.6} />
       </mesh>
-      {/* terminal — flat DOM overlay, viewed dead-on so there is no distortion.
+      {/* screen content lives ON the monitor plane, always — full diegetic.
           click/hover live on the DOM itself (drei Html's inner wrapper swallows canvas raycasts) */}
-      <Html transform position={[0, 0, 0.026]} scale={TERMINAL_SCALE} zIndexRange={[10, 0]}>
-        <div
-          style={{ cursor: 'pointer', filter: `brightness(${0.94 + daylight * 0.08})` }}
-          onMouseEnter={() => onHover('monitor')}
-          onMouseLeave={() => onHover(null)}
-          onClick={onClick}
-          role="button"
-          aria-label="Open TakOS full screen"
-        >
-          <Terminal metrics={metrics} active={active} reducedMotion={reducedMotion} />
-        </div>
-      </Html>
+      {osActive ? (
+        <Html transform position={[0, 0, 0.026]} scale={OS_SCALE} zIndexRange={[10, 0]}>
+          <div
+            style={{
+              width: OS_W,
+              height: OS_H,
+              position: 'relative',
+              overflow: 'hidden',
+              filter: `brightness(${0.96 + daylight * 0.06})`,
+            }}
+          >
+            <MonitorOS
+              metrics={metrics}
+              skin={osSkin}
+              onSkinChange={onSkinChange}
+              onExit={onExit}
+              reducedMotion={reducedMotion}
+            />
+          </div>
+        </Html>
+      ) : (
+        <Html transform position={[0, 0, 0.026]} scale={TERMINAL_SCALE} zIndexRange={[10, 0]}>
+          <div
+            style={{ cursor: 'pointer', filter: `brightness(${0.94 + daylight * 0.08})` }}
+            onMouseEnter={() => onHover('monitor')}
+            onMouseLeave={() => onHover(null)}
+            onClick={onClick}
+            role="button"
+            aria-label="Sit down at the monitor"
+          >
+            <Terminal metrics={metrics} active={active} reducedMotion={reducedMotion} />
+          </div>
+        </Html>
+      )}
     </group>
   );
 }
@@ -383,6 +419,10 @@ export type SceneProps = {
   screenFocus: boolean;
   onScreenZoomed: () => void;
   onMonitorClick: () => void;
+  osActive: boolean;
+  osSkin: OsSkin;
+  onSkinChange: (skin: OsSkin) => void;
+  onOsExit: () => void;
   reducedMotion: boolean;
   parallax: boolean;
   effects: boolean;
@@ -397,6 +437,10 @@ export function Scene({
   screenFocus,
   onScreenZoomed,
   onMonitorClick,
+  osActive,
+  osSkin,
+  onSkinChange,
+  onOsExit,
   reducedMotion,
   parallax,
   effects,
@@ -460,8 +504,8 @@ export function Scene({
       const halfV = THREE.MathUtils.degToRad(persp.fov / 2);
       const halfH = Math.atan(Math.tan(halfV) * (state.size.width / state.size.height));
       const dist = Math.max(
-        MONITOR.screenW / 0.94 / (2 * Math.tan(halfH)),
-        MONITOR.screenH / 0.94 / (2 * Math.tan(halfV)),
+        MONITOR.screenW / 0.92 / (2 * Math.tan(halfH)),
+        MONITOR.screenH / 0.92 / (2 * Math.tan(halfV)),
       );
       const screenPos = new THREE.Vector3(mx, my, mz + 0.03 + dist);
       const screenLook = new THREE.Vector3(mx, my, mz);
@@ -535,6 +579,10 @@ export function Scene({
         daylight={sun.daylight}
         onHover={onHover}
         onClick={onMonitorClick}
+        osActive={osActive}
+        osSkin={osSkin}
+        onSkinChange={onSkinChange}
+        onExit={onOsExit}
       />
       {deskObjects.map((object) => (
         <DeskObjectMesh

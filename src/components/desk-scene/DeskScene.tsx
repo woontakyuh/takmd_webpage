@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ACCENT, deskObjects } from './config';
-import { MonitorOS, type OsSkin } from './os/MonitorOS';
+import type { OsSkin } from './os/MonitorOS';
 import { Scene } from './Scene';
 import type { DeskObject, SceneMetrics } from './types';
 
@@ -132,6 +132,10 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
             screenFocus={screenFocus}
             onScreenZoomed={() => setOsOpen(true)}
             onMonitorClick={focusScreen}
+            osActive={osOpen}
+            osSkin={osSkin}
+            onSkinChange={setOsSkin}
+            onOsExit={exitScreen}
             reducedMotion={reducedMotion}
             parallax={!isMobile && !screenFocus}
             effects={!isMobile}
@@ -139,18 +143,8 @@ export default function DeskScene({ metrics }: { metrics: SceneMetrics }) {
         </Suspense>
       </Canvas>
 
-      {osOpen && (
-        <MonitorOS
-          metrics={metrics}
-          skin={osSkin}
-          onSkinChange={setOsSkin}
-          onExit={exitScreen}
-          reducedMotion={reducedMotion}
-        />
-      )}
-
       {/* keyboard / screen-reader navigation mirroring the 3D objects */}
-      <nav className="ds-a11y-nav" aria-label="Desk sections">
+      <nav className="ds-a11y-nav" aria-label="Desk sections" hidden={screenFocus}>
         <ul>
           <li>
             <button

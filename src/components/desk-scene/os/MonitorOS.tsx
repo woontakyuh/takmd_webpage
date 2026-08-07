@@ -28,6 +28,10 @@ type Win = { appId: string; x: number; y: number; w: number; h: number; z: numbe
 
 let zCounter = 10;
 
+// logical screen resolution — must match OS_W/OS_H in Scene.tsx
+const ROOT_W = 1280;
+const ROOT_H = 722;
+
 export function MonitorOS({
   metrics,
   skin,
@@ -42,10 +46,11 @@ export function MonitorOS({
   reducedMotion: boolean;
 }) {
   const [wins, setWins] = useState<Win[]>([
-    { appId: 'terminal', x: 80, y: 90, w: 680, h: 430, z: ++zCounter },
+    { appId: 'terminal', x: 60, y: 70, w: 660, h: 420, z: ++zCounter },
   ]);
   const [visible, setVisible] = useState(false);
-  const dragRef = useRef<{ appId: string; dx: number; dy: number } | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ appId: string; dx: number; dy: number; scale: number; left: number; top: number } | null>(null);
   const [clock, setClock] = useState(() => new Date());
 
   useEffect(() => {
@@ -72,10 +77,10 @@ export function MonitorOS({
         ...prev,
         {
           appId,
-          x: 120 + n * 36,
-          y: 60 + n * 28,
-          w: isWide ? Math.min(980, window.innerWidth - 260) : 680,
-          h: isWide ? Math.min(640, window.innerHeight - 220) : 430,
+          x: Math.min(90 + n * 34, ROOT_W - 700),
+          y: Math.min(50 + n * 26, 160),
+          w: isWide ? 920 : 660,
+          h: isWide ? 560 : 420,
           z: ++zCounter,
         },
       ];
@@ -86,18 +91,33 @@ export function MonitorOS({
   const focusApp = (appId: string) =>
     setWins((prev) => prev.map((w) => (w.appId === appId ? { ...w, z: ++zCounter } : w)));
 
+  // the OS lives inside a CSS3D-transformed plane — convert viewport px to local px
+  const localPoint = (e: React.PointerEvent, d: { scale: number; left: number; top: number }) => ({
+    x: (e.clientX - d.left) / d.scale,
+    y: (e.clientY - d.top) / d.scale,
+  });
+
   const onDragStart = (e: React.PointerEvent, win: Win) => {
-    dragRef.current = { appId: win.appId, dx: e.clientX - win.x, dy: e.clientY - win.y };
+    const rect = rootRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const scale = rect.width / ROOT_W;
+    const p = { x: (e.clientX - rect.left) / scale, y: (e.clientY - rect.top) / scale };
+    dragRef.current = { appId: win.appId, dx: p.x - win.x, dy: p.y - win.y, scale, left: rect.left, top: rect.top };
     focusApp(win.appId);
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
   const onDragMove = (e: React.PointerEvent) => {
     const d = dragRef.current;
     if (!d) return;
+    const p = localPoint(e, d);
     setWins((prev) =>
       prev.map((w) =>
         w.appId === d.appId
-          ? { ...w, x: Math.max(-w.w + 120, e.clientX - d.dx), y: Math.max(skin === 'mac' ? 28 : 34, e.clientY - d.dy) }
+          ? {
+              ...w,
+              x: Math.min(ROOT_W - 140, Math.max(-w.w + 140, p.x - d.dx)),
+              y: Math.min(ROOT_H - 80, Math.max(30, p.y - d.dy)),
+            }
           : w,
       ),
     );
@@ -109,7 +129,7 @@ export function MonitorOS({
   const mac = skin === 'mac';
 
   return (
-    <div className={`os-root ${mac ? 'os-mac' : 'os-tak'} ${visible ? 'os-on' : ''}`} data-reduced={reducedMotion}>
+    <div ref={rootRef} className={`os-root ${mac ? 'os-mac' : 'os-tak'} ${visible ? 'os-on' : ''}`} data-reduced={reducedMotion}>
       {/* top bar */}
       <header className="os-bar">
         {mac ? (
@@ -198,7 +218,7 @@ export function MonitorOS({
       </nav>
 
       <style>{`
-        .os-root { position: fixed; inset: 0; z-index: 60; opacity: 0; transition: opacity 0.35s ease; overflow: hidden;
+        .os-root { position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s ease; overflow: hidden;
           font-family: ${'"'}JetBrains Mono Variable${'"'}, ui-monospace, monospace; }
         .os-root[data-reduced="true"] { transition: none; }
         .os-on { opacity: 1; }
