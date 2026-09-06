@@ -1,47 +1,33 @@
 ---
-import DeskScene from '../components/desk-scene/DeskScene';
+import { StudioExperience } from '../components/studio/StudioExperience';
+import '../components/studio/studio.css';
 import Layout from '../layouts/Layout.astro';
-import presentationsData from '../data/presentations.json';
 import publicationsData from '../data/publications.json';
-import surgeryData from '../data/surgery-data.json';
+import presentationsData from '../data/presentations.json';
 
-const cases = surgeryData.cases;
-
-const metrics = {
-  publications: publicationsData.count,
-  presentations: presentationsData.count,
-  cases: cases.length,
-  latestCase: cases.at(-1)?.opDate ?? 'TBA',
-};
+const publications = publicationsData.publications.map(p => ({
+  id: p.doiUrl || p.title, title: p.title, journal: p.journal, year: p.year, role: p.role, doiUrl: p.doiUrl,
+}));
+const presentations = presentationsData.presentations.map(p => ({
+  id: p.id, title: p.name, date: p.date, venue: p.place, topic: p.topics.join(' · '),
+}));
+const updatedAt = publicationsData.generatedAt.slice(0, 10);
+const presentationsUpdatedAt = presentationsData.generatedAt.slice(0, 10);
 ---
 
 <Layout
-  title="TakMD - Woon Tak Yuh, MD"
-  description="Interactive 3D desk homepage for Woon Tak Yuh, MD: spine surgery, education, research, clinical AI workflow, and living CV."
+  title="TakMD — The Office of Woon Tak Yuh, MD"
+  description="Step inside the office of Woon Tak Yuh, MD. Explore endoscopic spine surgery, published research, teaching and clinical AI."
   hideNav
   hideFooter
-  bodyClass="bg-[#0d1018]"
 >
   <main id="main-content">
-    <DeskScene client:only="react" metrics={metrics} />
-
-    <noscript>
-      <section class="min-h-screen bg-[#03060b] px-6 py-16 text-white">
-        <div class="mx-auto max-w-3xl">
-          <p class="eyebrow text-white/45">Woon Tak Yuh, MD</p>
-          <h1 class="mt-5 text-5xl font-semibold tracking-[-0.06em]">Spine surgeon, educator, clinical AI builder.</h1>
-          <p class="mt-5 text-lg leading-8 text-white/65">
-            Enable JavaScript to use the interactive desk. The living CV and public routes remain available below.
-          </p>
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a href="/cv" class="button-primary">Living CV</a>
-            <a href="/ube" class="button-secondary">UBE</a>
-            <a href="/education" class="button-secondary">Education</a>
-            <a href="/ai" class="button-secondary">AI</a>
-            <a href="/research" class="button-secondary">Research</a>
-          </div>
-        </div>
-      </section>
-    </noscript>
+    <StudioExperience client:load publications={publications} presentations={presentations} updatedAt={updatedAt} presentationsUpdatedAt={presentationsUpdatedAt} />
+    <noscript><div class="studio-noscript">Explore the studio collection: <a href="/ube">Clinical practice</a> · <a href="/research">Research</a> · <a href="/education">Education</a> · <a href="/ai">Clinical AI</a> · <a href="/cv">Living CV</a></div></noscript>
   </main>
 </Layout>
+
+<style>
+  .studio-noscript { position: fixed; bottom: 0; inset-inline: 0; z-index: 10; padding: 16px; background: #f8f6f0; color: #202d2a; font-size: 14px; }
+  .studio-noscript a { text-decoration: underline; }
+</style>

@@ -45,6 +45,13 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/legacy.css" />
 
+    <script>
+      if (import.meta.env.DEV && new URLSearchParams(window.location.search).has('inspect')) {
+        void import('react-grab');
+        void import('react-scan').then(({ scan }) => scan({ enabled: true }));
+      }
+    </script>
+
     <script is:inline>
       // TakOS embed mode: pages opened inside the desk-scene monitor hide site chrome
       if (new URLSearchParams(window.location.search).has('embed'))

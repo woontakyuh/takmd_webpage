@@ -34,5 +34,4 @@ export type SceneMetrics = {
   publications: number;
   presentations: number;
   cases: number;
-  latestCase: string;
 };

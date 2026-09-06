@@ -1,0 +1,37 @@
+[
+  {
+    "id": "33b908af25b980699b05c85e9c87f69f",
+    "slides": [
+      {
+        "src": "/studio/talks/2026-06-27-ai-augmented-spine/slide-01.jpg",
+        "caption": "Title slide: My AI-Augmented Spine Practice"
+      },
+      {
+        "src": "/studio/talks/2026-06-27-ai-augmented-spine/slide-03.jpg",
+        "caption": "Introduction: surgeon perspective and scope of the AI workflow talk"
+      },
+      {
+        "src": "/studio/talks/2026-06-27-ai-augmented-spine/slide-05.jpg",
+        "caption": "Concept slide: traditional clinical and research workflow bottlenecks"
+      }
+    ]
+  },
+  {
+    "id": "18f908af25b980cbbc62f8a899f130dd",
+    "slides": [
+      {
+        "src": "/studio/talks/2025-05-03-llm-peer-review/slide-01.jpg",
+        "caption": "Title slide: Strategies for Integrating LLM into the Peer-Review Process"
+      }
+    ]
+  },
+  {
+    "id": "28f908af25b9800ebe70dc0ae420adbb",
+    "slides": [
+      {
+        "src": "/studio/talks/2025-10-16-kns-ai-colleague/slide-01.jpg",
+        "caption": "Title slide: Generative AI in Neurosurgical General Care — AI, Our Daily Colleague"
+      }
+    ]
+  }
+]

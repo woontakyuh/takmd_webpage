@@ -1,0 +1,35 @@
+.reader-back { display: inline-flex; align-items: center; min-height: 44px; border: 0; background: none; padding: 8px 0; margin: 0 0 24px; color: var(--studio-teal); font-size: 12px; }
+.reader-detail-title { font: 400 30px/1.22 Georgia,serif; letter-spacing: -.035em; margin: 16px 0; overflow-wrap: anywhere; }
+.reader-filter { display: flex; align-items: center; gap: 12px; margin: 20px 0; font-size: 11px; }
+.reader-filter select { min-height: 44px; border: 1px solid var(--studio-line); padding: 8px; background: transparent; color: var(--studio-ink); }
+.reader-filter > span { margin-left: auto; color: var(--studio-muted); }
+.reader-record-button { display: flex; position: relative; flex-direction: column; align-items: stretch; gap: 10px; text-align: left; width: 100%; padding: 24px 0; border: 0; border-top: 1px solid var(--studio-line); background: transparent; color: var(--studio-ink); transition: color var(--studio-micro); }
+.reader-record-button:hover { color: var(--studio-teal); }
+.reader-record-button strong { font-size: 15px; line-height: 1.6; font-weight: 600; padding-right: 20px; }
+.reader-record-button > span:not(.studio-kicker):not(.studio-paper-meta):not(.reader-row-arrow) { color: var(--studio-muted); font-size: 12px; line-height: 1.7; }
+.reader-row-arrow { position: absolute; right: 0; bottom: 24px; color: var(--studio-clay); }
+.project-card strong { font: 400 27px/1.2 Georgia,serif; letter-spacing: -.025em; margin: 8px 0; }
+.reader-record { padding: 28px 22px; border: 1px solid var(--studio-line); align-self: start; background: var(--studio-paper); }
+.reader-record p { font-size: 12px; line-height: 1.8; color: var(--studio-muted); }
+.talk-slide { margin: 0 0 16px; background: var(--studio-paper); padding: 10px; animation: folio-leaf var(--studio-panel) var(--studio-ease) both; }
+.talk-slide img { display: block; width: 100%; height: auto; }
+.talk-slide figcaption { font-size: 10px; line-height: 1.6; color: var(--studio-muted); margin: 10px 0 0; }
+.slide-strip { display: flex; gap: 8px; margin: 16px 0; }
+.slide-strip button { flex: 0 1 100px; min-width: 44px; min-height: 44px; padding: 4px; background: transparent; border: 1px solid var(--studio-line); color: var(--studio-muted); }
+.slide-strip button[aria-pressed='true'] { border-color: var(--studio-clay); background: var(--studio-paper); color: var(--studio-ink); }
+.slide-strip img { display: block; width: 100%; height: auto; }
+.slide-strip span { display: block; font: 10px monospace; padding: 6px 0 2px; }
+.paper-detail, .clinical-detail, .workflow-steps details { width: 100%; border-top: 1px solid var(--studio-line); }
+.paper-detail { margin-top: 20px; }
+.paper-detail summary, .clinical-detail summary, .workflow-steps summary { min-height: 52px; padding: 16px 0; cursor: pointer; font-size: 12px; }
+.paper-detail dl { display: grid; grid-template-columns: 100px 1fr; gap: 12px; margin: 8px 0 24px; font-size: 11px; }
+.paper-detail dt { color: var(--studio-muted); }
+.paper-detail dd { margin: 0; }
+.clinical-detail > p, .workflow-steps p { color: var(--studio-muted); font-size: 12px; line-height: 1.85; margin: 0 0 24px; }
+.workflow-steps summary span { color: var(--studio-clay); font: 10px monospace; margin: 0 14px 0 6px; }
+.studio-dialog[data-expanded='true'] .talk-slide { max-width: 820px; margin-inline: auto; }
+@media (max-width: 759px) { .reader-detail-title { font-size: 26px; } .reader-record-button strong { font-size: 14px; } }
+
+.reader-preview-filter { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; margin: 0 0 20px; padding: 8px 14px; border: 1px solid var(--studio-line); background: transparent; color: var(--studio-muted); font-size: 11px; }
+.reader-preview-filter[aria-pressed='true'] { border-color: var(--studio-teal); background: var(--studio-paper); color: var(--studio-teal); }
+.reader-preview-filter span { font: 10px monospace; }

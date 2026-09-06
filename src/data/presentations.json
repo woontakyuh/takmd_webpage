@@ -1,7 +1,139 @@
 {
-  "generatedAt": "2026-04-07T05:53:35.395Z",
-  "count": 43,
+  "generatedAt": "2026-09-06T00:07:24.532Z",
+  "count": 56,
   "presentations": [
+    {
+      "id": "3c5908af25b981e5b940f4e8ce3d83d1",
+      "date": "2026-11-27",
+      "year": 2026,
+      "name": "World Spine Congress 2026 — KOMISS Session",
+      "place": "Hall 4, Songdo Convensia, Incheon, South Korea",
+      "societies": [
+        "WSC",
+        "KOMISS"
+      ],
+      "categories": [
+        "Conference",
+        "Lecture",
+        "Spine",
+        "내시경학회"
+      ],
+      "topics": [
+        "The KOMISS Registry: Current Status, Research Directions, and Its Role in Advancing JMISS and Minimally Invasive Spine Surgery"
+      ],
+      "url": ""
+    },
+    {
+      "id": "3d1908af25b981118be9c8e11ae1851f",
+      "date": "2026-11-21",
+      "year": 2026,
+      "name": "TSMISS 2026 — KOMISS Invitation Session",
+      "place": "",
+      "societies": [
+        "KOMISS",
+        "TSMISS 2026"
+      ],
+      "categories": [
+        "Conference",
+        "Lecture",
+        "Spine"
+      ],
+      "topics": [
+        "Building the K-Spinoscopy Framework: Integrating the KOMISS Registry with AI Applications"
+      ],
+      "url": ""
+    },
+    {
+      "id": "3c7908af25b9818aaa7bf4d0178103cd",
+      "date": "2026-10-31",
+      "year": 2026,
+      "name": "KOMISS–KOSESS Summit 2026",
+      "place": "Shangria Beach Hotel, Mokpo",
+      "societies": [
+        "KOMISS",
+        "KOSESS"
+      ],
+      "categories": [
+        "Conf",
+        "AI",
+        "Lecture"
+      ],
+      "topics": [
+        "AI for the Spine Surgeon's Clinical Practice: Core Concepts and Current Trends"
+      ],
+      "url": ""
+    },
+    {
+      "id": "3d3908af25b981babd62fd1428145fca",
+      "date": "2026-10-16",
+      "year": 2026,
+      "name": "KNS 2026 — Digital Convergence Luncheon Seminar",
+      "place": "Grand InterContinental Seoul Parnas",
+      "societies": [
+        "KNS",
+        "대신디융"
+      ],
+      "categories": [
+        "Conference",
+        "AI",
+        "Lecture"
+      ],
+      "topics": [
+        "Methodological Framework for Neurosurgical Research Using Claude AI"
+      ],
+      "url": ""
+    },
+    {
+      "id": "2cb908af25b9809983b8fb9c1525158c",
+      "date": "2026-08-29",
+      "year": 2026,
+      "name": "KOSESS 2026 Annual Meeting",
+      "place": "Seoul St. Mary's Hospital",
+      "societies": [
+        "KOSESS"
+      ],
+      "categories": [
+        "Spine",
+        "Conference",
+        "Lecture"
+      ],
+      "topics": [
+        "Four Birds, One Scope — Endoscopic Debridement and Percutaneous Fixation for Infected Osteoporotic Spine"
+      ],
+      "url": ""
+    },
+    {
+      "id": "22d908af25b980db8fcbfc369cfd8fdb",
+      "date": "2026-07-09",
+      "year": 2026,
+      "name": "KASS 2026",
+      "place": "Sheraton Maui Resort & Spa, Maui, Hawaii",
+      "societies": [
+        "KASS"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "Precision Biportal Endoscopic Lumbar Decompression: Right-Sided Approach Mastery and Level-Adaptive Decision-Making Strategies"
+      ],
+      "url": ""
+    },
+    {
+      "id": "37b908af25b980e2bcaaf32b9487ba87",
+      "date": "2026-07-02",
+      "year": 2026,
+      "name": "Corporate AI Lecture",
+      "place": "Seongsu-dong, Seoul",
+      "societies": [],
+      "categories": [
+        "AI"
+      ],
+      "topics": [
+        "AI Lecture"
+      ],
+      "url": ""
+    },
     {
       "id": "33b908af25b980699b05c85e9c87f69f",
       "date": "2026-06-27",
@@ -15,7 +147,24 @@
         "Spine"
       ],
       "topics": [
-        "AI-Powered Surgical Workflow: Planning & Intraoperative Analytics"
+        "My AI-Augmented Spine Practice: Toward a Seamless Cover-to-Cover Workflow"
+      ],
+      "url": ""
+    },
+    {
+      "id": "2cb908af25b980109844ffc70fdc874a",
+      "date": "2026-06-13",
+      "year": 2026,
+      "name": "10th Neurospine Symposium",
+      "place": "St. Vincent's Hospital, Suwon",
+      "societies": [
+        "Neurospine symposium"
+      ],
+      "categories": [
+        "Spine"
+      ],
+      "topics": [
+        "AI-Assisted Manuscript Peer Review, Statistical Review, and Error Analysis"
       ],
       "url": ""
     },
@@ -35,6 +184,23 @@
       ],
       "topics": [
         "Research Methodology in Neurosurgery Using Claude AI"
+      ],
+      "url": ""
+    },
+    {
+      "id": "375908af25b9809bace8c400da57f817",
+      "date": "2026-06-04",
+      "year": 2026,
+      "name": "Wills Memorial Hospital AI Workflow Lecture",
+      "place": "Wills Memorial Hospital, Suwon",
+      "societies": [
+        "윌스기념병원"
+      ],
+      "categories": [
+        "Conf"
+      ],
+      "topics": [
+        "AI-assisted Surgical Workflow"
       ],
       "url": ""
     },
@@ -60,17 +226,33 @@
       "date": "2026-05-08",
       "year": 2026,
       "name": "WCMISST",
-      "place": "LA, CA, US",
+      "place": "Hyatt Regency LAX International Airport, Los Angeles, CA, USA",
       "societies": [
-        "KOMISS"
+        "KOMISS",
+        "WCMISST"
       ],
       "categories": [
         "Spine"
       ],
       "topics": [
-        "UBE cervical dumbbell schwannoma"
+        "Breaking Barriers: Feasibility and Safety of Endoscopic Resection for Spinal Tumors"
       ],
       "url": "https://wcmisst2026.org/"
+    },
+    {
+      "id": "34b908af25b980b2bb93dd3427b6b2fa",
+      "date": "2026-04-29",
+      "year": 2026,
+      "name": "MediGate Key Opinion Leader Interview",
+      "place": "Davos Hospital",
+      "societies": [
+        "Neurogait"
+      ],
+      "categories": [
+        "회의"
+      ],
+      "topics": [],
+      "url": ""
     },
     {
       "id": "2c7908af25b98068a470e39388a403e4",
@@ -158,6 +340,41 @@
         "Endoscopic Resection of High Cervical Dumbbell Tumors - Surgical Tactics and Technical Nuance"
       ],
       "url": "https://www.thaismisst.com/"
+    },
+    {
+      "id": "3d3908af25b981d69c30c5f757620bd6",
+      "date": "2025-11-05",
+      "year": 2025,
+      "name": "Gyeonggi-South Spine Case Conference",
+      "place": "",
+      "societies": [
+        "경기남부"
+      ],
+      "categories": [
+        "Conf",
+        "Lecture"
+      ],
+      "topics": [
+        "A Traveler's Guide to Duty-Free Whisky"
+      ],
+      "url": ""
+    },
+    {
+      "id": "3d3908af25b981339107f10f65b0e4e5",
+      "date": "2025-10-24",
+      "year": 2025,
+      "name": "Naseron ERAS Lecture",
+      "place": "",
+      "societies": [],
+      "categories": [
+        "Lecture",
+        "Spine",
+        "제약"
+      ],
+      "topics": [
+        "PONV Management with Naseron for ERAS in Spine Surgery"
+      ],
+      "url": ""
     },
     {
       "id": "28f908af25b9800ebe70dc0ae420adbb",
@@ -265,11 +482,29 @@
       "url": ""
     },
     {
-      "id": "1d7908af25b9809c8f30db60b1f2f982",
-      "date": "2025-05-23",
+      "id": "3d3908af25b9817ca18ef15eb9cadba9",
+      "date": "2025-06-04",
       "year": 2025,
-      "name": "2025 KOMISS advanced course",
-      "place": "",
+      "name": "2nd Gyeonggi-South Spine Case Conference",
+      "place": "Tuntun Hospital, Suwon",
+      "societies": [
+        "경기남부"
+      ],
+      "categories": [
+        "Conference",
+        "Spine"
+      ],
+      "topics": [
+        "Discussed Cases Update"
+      ],
+      "url": ""
+    },
+    {
+      "id": "1d7908af25b9809c8f30db60b1f2f982",
+      "date": "2025-05-24",
+      "year": 2025,
+      "name": "KOMISS Advanced Spinal Course Symposium",
+      "place": "Seoul St. Mary's Hospital",
       "societies": [
         "KOMISS"
       ],

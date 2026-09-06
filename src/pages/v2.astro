@@ -3,15 +3,12 @@ import DeskScene from '../components/desk-scene/DeskScene';
 import Layout from '../layouts/Layout.astro';
 import presentationsData from '../data/presentations.json';
 import publicationsData from '../data/publications.json';
-import surgeryData from '../data/surgery-data.json';
-
-const cases = surgeryData.cases;
+import surgerySummary from '../data/public-surgery-summary.json';
 
 const metrics = {
   publications: publicationsData.count,
   presentations: presentationsData.count,
-  cases: cases.length,
-  latestCase: cases.at(-1)?.opDate ?? 'TBA',
+  cases: surgerySummary.totalCases,
 };
 ---
 

@@ -4,14 +4,18 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && bun run check:public",
+    "check": "astro check",
+    "check:public": "node scripts/check-public-build.mjs",
+    "test:public": "node scripts/test-public-build.mjs",
+    "check:react": "react-doctor --no-telemetry --no-supply-chain",
     "preview": "astro preview",
     "astro": "astro",
     "fetch:publications": "bun run scripts/fetch-publications.ts",
     "fetch:presentations": "bun run scripts/fetch-schedule.ts",
     "fetch:surgery": "bun run scripts/fetch-notion-data.ts",
     "fetch:data": "bun run fetch:publications && bun run fetch:presentations && bun run fetch:surgery",
-    "deploy": "bun run build && wrangler pages deploy dist"
+    "deploy": "bun run build && bunx wrangler@4.129.0 pages deploy dist --project-name takmdwebpage --branch main"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
@@ -34,11 +38,18 @@
     "tailwindcss": "^4.1.18",
     "three": "^0.185.1"
   },
+  "overrides": {
+    "vite": "6.4.3"
+  },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@types/suncalc": "^1.9.2",
     "@types/three": "^0.185.1",
+    "react-doctor": "0.9.13",
+    "react-grab": "0.2.0",
+    "react-scan": "0.5.7",
     "sharp": "^0.34.5",
-    "typescript": "~5.9"
+    "typescript": "~5.9",
+    "vite": "6.4.3"
   }
 }

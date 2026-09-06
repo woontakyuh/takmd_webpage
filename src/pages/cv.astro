@@ -3,14 +3,12 @@ import SectionHeader from '../components/SectionHeader.astro';
 import Layout from '../layouts/Layout.astro';
 import presentationsData from '../data/presentations.json';
 import publicationsData from '../data/publications.json';
-import surgeryData from '../data/surgery-data.json';
+import surgerySummary from '../data/public-surgery-summary.json';
 
 const publications = publicationsData.publications;
 const presentations = presentationsData.presentations;
-const cases = surgeryData.cases;
 const latestPublications = publications.slice(0, 8);
 const latestPresentations = presentations.slice(0, 10);
-const latestCase = cases.at(-1);
 const firstAuthorCount = publications.filter((publication) => publication.role === 'first').length;
 const correspondingCount = publications.filter((publication) => publication.role === 'corresponding').length;
 const coauthorCount = publications.filter((publication) => publication.role === 'coauthor').length;
@@ -103,9 +101,8 @@ const awards = [
           <p class="mt-1 text-xs text-[var(--color-text-secondary)]">{presentationYears.at(-1)}-{presentationYears[0]}</p>
         </article>
         <article class="data-card">
-          <p class="metric-number">{cases.length.toLocaleString()}</p>
+          <p class="metric-number">{surgerySummary.totalCases.toLocaleString()}</p>
           <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Clinical cases</p>
-          <p class="mt-1 text-xs text-[var(--color-text-secondary)]">Registry latest {latestCase?.opDate}</p>
         </article>
         <article class="data-card">
           <p class="metric-number">80+</p>

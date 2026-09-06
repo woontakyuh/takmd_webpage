@@ -1,3 +1,5 @@
+import { fileURLToPath } from "node:url";
+
 /**
  * Build-time script: Fetches all Published papers from Notion "연구DB",
  * sorts by publication date desc, and writes publications.json for the site.
@@ -130,7 +132,8 @@ function transformPage(page: NotionPage): Publication | null {
     id: page.id.replace(/-/g, "").substring(0, 8),
     title,
     shortTitle: manualShort || shortenTitle(title),
-    journal: getSelect(p["Target J"]),
+    // The Notion journal category abbreviates this verified Bioengineering record.
+    journal: doi === "10.3390/bioengineering10121363" ? "Bioengineering" : getSelect(p["Target J"]),
     year: parseInt(pubDate.substring(0, 4), 10),
     date: pubDate,
     firstAuthor,
@@ -209,7 +212,7 @@ async function main() {
 
   const fs = await import("fs");
   const path = await import("path");
-  const outDir = path.join(import.meta.dir, "..", "src", "data");
+  const outDir = fileURLToPath(new URL("../src/data/", import.meta.url));
   fs.mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, "publications.json");
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2));

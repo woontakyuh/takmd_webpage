@@ -1,18 +1,58 @@
 {
   "_comment": "Manual English overrides for Korean presentation entries. Keyed by YYYY-MM-DD. Each override may specify name, place, and/or topics (full array to replace).",
 
+  "2026-11-27": {
+    "name": "World Spine Congress 2026 — KOMISS Session"
+  },
+  "2026-11-21": {
+    "name": "TSMISS 2026 — KOMISS Invitation Session",
+    "place": ""
+  },
+  "2026-10-31": {
+    "name": "KOMISS–KOSESS Summit 2026",
+    "place": "Shangria Beach Hotel, Mokpo",
+    "topics": ["AI for the Spine Surgeon's Clinical Practice: Core Concepts and Current Trends"]
+  },
+  "2026-10-16": {
+    "name": "KNS 2026 — Digital Convergence Luncheon Seminar"
+  },
+  "2026-08-29": {
+    "name": "KOSESS 2026 Annual Meeting",
+    "place": "Seoul St. Mary's Hospital"
+  },
+  "2026-07-09": {
+    "place": "Sheraton Maui Resort & Spa, Maui, Hawaii",
+    "topics": ["Precision Biportal Endoscopic Lumbar Decompression: Right-Sided Approach Mastery and Level-Adaptive Decision-Making Strategies"]
+  },
+  "2026-07-02": {
+    "name": "Corporate AI Lecture",
+    "place": "Seongsu-dong, Seoul"
+  },
   "2026-06-27": {
     "name": "Busan-Ulsan-Gyeongnam Spine Symposium",
     "place": "Haeundae Paik Hospital, Busan"
+  },
+  "2026-06-13": {
+    "name": "10th Neurospine Symposium",
+    "place": "St. Vincent's Hospital, Suwon",
+    "topics": ["AI-Assisted Manuscript Peer Review, Statistical Review, and Error Analysis"]
   },
   "2026-06-06": {
     "name": "KNS Basic & Digital Convergence Research Joint Meeting",
     "place": "Yonsei ABMRC, Seoul",
     "topics": ["Research Methodology in Neurosurgery Using Claude AI"]
   },
+  "2026-06-04": {
+    "name": "Wills Memorial Hospital AI Workflow Lecture",
+    "place": "Wills Memorial Hospital, Suwon"
+  },
   "2026-05-29": {
     "name": "KOMISS Spring Symposium & Cadaver Workshop",
     "place": "Seoul St. Mary's Hospital"
+  },
+  "2026-04-29": {
+    "name": "MediGate Key Opinion Leader Interview",
+    "place": "Davos Hospital"
   },
   "2026-03-28": {
     "name": "KOMISS Executive Workshop",
@@ -21,6 +61,13 @@
   "2025-11-28": {
     "name": "KOMISS Annual Meeting",
     "place": "Hyatt Incheon"
+  },
+  "2025-11-05": {
+    "name": "Gyeonggi-South Spine Case Conference",
+    "topics": ["A Traveler's Guide to Duty-Free Whisky"]
+  },
+  "2025-10-24": {
+    "topics": ["PONV Management with Naseron for ERAS in Spine Surgery"]
   },
   "2025-09-14": {
     "name": "Nanoori 22nd Anniversary Symposium",
@@ -35,6 +82,14 @@
   },
   "2025-06-15": {
     "place": "Hallym Dongtan Sacred Heart Hospital"
+  },
+  "2025-06-04": {
+    "name": "2nd Gyeonggi-South Spine Case Conference",
+    "place": "Tuntun Hospital, Suwon"
+  },
+  "2025-05-24": {
+    "name": "KOMISS Advanced Spinal Course Symposium",
+    "place": "Seoul St. Mary's Hospital"
   },
   "2025-05-03": {
     "place": "Samsung Medical Center, Seoul"
