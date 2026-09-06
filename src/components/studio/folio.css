@@ -15,6 +15,21 @@
 .folio-context { display: flex; align-items: flex-start; flex-direction: column; padding-top: 16px; }
 .folio-context h3 { font: 400 clamp(24px,2.5vw,32px)/1.22 Georgia,serif; letter-spacing: -.035em; margin: 16px 0 20px; text-wrap: pretty; }
 .folio-byline { font-size: 11px; line-height: 1.75; color: var(--studio-muted); }
+.folio-citation { margin: 8px 0 16px; color: var(--studio-muted); font-size: 10px; line-height: 1.7; }
+.folio-identifiers { display: grid; grid-template-columns: max-content minmax(0,1fr); gap: 6px 12px; width: 100%; margin: 8px 0 20px; font-size: 10px; line-height: 1.6; }
+.folio-identifiers dt { color: var(--studio-muted); }
+.folio-identifiers dd { min-width: 0; overflow-wrap: anywhere; }
+.folio-identifiers a { text-decoration: underline; text-underline-offset: 3px; }
+.folio-abstract { width: 100%; border-top: 1px solid var(--studio-line); padding-top: 16px; }
+.folio-abstract h4 { margin: 0 0 10px; font: 11px monospace; text-transform: uppercase; letter-spacing: .08em; }
+.folio-abstract-copy { max-height: 240px; padding-right: 8px; overflow-y: auto; }
+.folio-abstract-copy section + section { margin-top: 12px; }
+.folio-abstract h5 { margin: 0 0 4px; font: 10px monospace; text-transform: uppercase; letter-spacing: .06em; }
+.folio-abstract p { margin: 0; color: var(--studio-ink); font-size: 12px; line-height: 1.75; }
+.folio-abstract .folio-abstract-missing { color: var(--studio-muted); font-style: italic; }
+.folio-abstract small { display: block; margin-top: 8px; color: var(--studio-muted); font-size: 9px; }
+.folio-access { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin: 0 0 20px; }
+.folio-access small { max-width: 42ch; color: var(--studio-muted); font-size: 9px; line-height: 1.55; }
 .folio-description { font-size: 12px; line-height: 1.8; margin: 24px 0 16px; max-width: 32ch; }
 .folio-turn-link { display: flex; align-items: center; gap: 24px; border: 0; border-bottom: 1px solid var(--studio-clay); padding: 8px 0; min-height: 44px; background: transparent; color: var(--studio-ink); font-size: 12px; margin: 0 0 8px; }
 .folio-turn-link span { color: var(--studio-clay); transition: transform var(--studio-micro); }
