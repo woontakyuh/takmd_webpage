@@ -1,6 +1,4 @@
-import { useTexture } from '@react-three/drei';
-import { SRGBColorSpace } from 'three';
-import { FOLIO_ASSETS } from '../collection';
+import { talkMedia } from '../collection';
 import type { StudioSceneProps } from '../types';
 import { Interactive } from './Interactive';
 import { MonitorArm } from './MonitorArm';
@@ -13,10 +11,10 @@ type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMo
 export function Displays({ selected, onSelect, reducedMotion, night, presentations, collection }: DisplaysProps) {
   const monitor = useWorkstationTexture(collection.project);
   const today = new Date().toISOString().slice(0, 10);
-  const talk = collection.presentation ?? presentations.filter(item => item.date <= today).toSorted((a, b) => b.date.localeCompare(a.date))[0];
-  const board = useDocumentTexture({ image: collection.talkSlide?.src ?? null, title: talk?.topic || talk?.title || 'Talks & teaching', eyebrow: collection.presentation ? `${talk.date} / ${talk.date > today ? 'UPCOMING' : 'TALKS & TEACHING'}` : 'TALKS & TEACHING / FROM THE OFFICE', detail: talk ? `${talk.title} / ${talk.venue}` : 'Select a presentation to explore the work.', dark: true });
-  const gallery = useTexture(FOLIO_ASSETS.figure);
-  gallery.colorSpace = SRGBColorSpace;
+  const featured = presentations.filter(item => item.date <= today && talkMedia.some(media => media.id === item.id)).toSorted((a, b) => b.date.localeCompare(a.date))[0];
+  const talk = collection.presentation ?? featured;
+  const cover = collection.presentation ? collection.talkSlide?.src : talkMedia.find(media => media.id === featured?.id)?.slides[0]?.src;
+  const board = useDocumentTexture({ image: cover ?? null, title: talk?.topic || talk?.title || 'Talks & teaching', eyebrow: collection.presentation ? `${talk.date} / ${talk.date > today ? 'UPCOMING' : 'TALKS & TEACHING'}` : 'TALKS & TEACHING / FROM THE OFFICE', detail: talk ? `${talk.title} / ${talk.venue}` : 'Select a presentation to explore the work.', dark: true });
   return (
     <group>
       <Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
@@ -32,11 +30,6 @@ export function Displays({ selected, onSelect, reducedMotion, night, presentatio
       <Interactive id="education" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.gallery.position} rotation={ROOM.gallery.rotation}>
         <Block size={[1.55, 0.96, 0.035]} color={PALETTE.walnutDark} radius={0.015} roughness={0.72} />
         <mesh position={[0, 0, 0.021]}><planeGeometry args={[1.49, 0.88]} /><meshStandardMaterial map={board} roughness={0.91} /></mesh>
-        <group position={[-1.01, -0.26, 0.045]} rotation={[0, 0, -0.06]}>
-          <Block size={[0.43, 0.58, 0.008]} color={PALETTE.paperLight} radius={0.002} />
-          <mesh position={[0, 0, 0.006]}><planeGeometry args={[0.39, 0.54]} /><meshStandardMaterial map={gallery} roughness={0.95} /></mesh>
-          <Block size={[0.12, 0.035, 0.018]} position={[0, 0.29, 0.016]} color={PALETTE.steel} radius={0.004} metalness={0.8} />
-        </group>
       </Interactive>
     </group>
   );

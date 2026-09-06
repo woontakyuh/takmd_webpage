@@ -17,6 +17,42 @@
     ]
   },
   {
+    "id": "320908af25b980f38995e684de308401",
+    "slides": [
+      {
+        "src": "/studio/talks/2026-06-06-claude-ai-research/slide-01.jpg",
+        "caption": "Title slide: Research Methodology in Neurosurgery Using Claude AI"
+      }
+    ]
+  },
+  {
+    "id": "33a908af25b980849210fec32e7391fd",
+    "slides": [
+      {
+        "src": "/studio/talks/2026-05-29-komiss-ai-workflow/slide-01.jpg",
+        "caption": "Title slide: AI-Enhanced Surgical Workflow: LLMs and Agentic System in MISS"
+      }
+    ]
+  },
+  {
+    "id": "2c7908af25b980ecabfaea73c5b098fd",
+    "slides": [
+      {
+        "src": "/studio/talks/2026-05-08-wcmisst/slide-01.jpg",
+        "caption": "Title slide: Breaking Barriers: Feasibility and Safety of Endoscopic Resection for Spinal Tumors"
+      }
+    ]
+  },
+  {
+    "id": "22d908af25b980db8fcbfc369cfd8fdb",
+    "slides": [
+      {
+        "src": "/studio/talks/2026-07-09-kass-ube/slide-01.jpg",
+        "caption": "Title slide: Right-Sided Approach Mastery and Level-Adaptive Decision-Making Strategies"
+      }
+    ]
+  },
+  {
     "id": "18f908af25b980cbbc62f8a899f130dd",
     "slides": [
       {
