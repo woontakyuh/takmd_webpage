@@ -21,8 +21,8 @@ export function WindowSky({ colors }: { readonly colors: readonly [string, strin
     texture.needsUpdate = true;
   }, [top, bottom, texture]);
   useEffect(() => () => texture.dispose(), [texture]);
-  return <mesh position={[-2.445, 1.45, -0.35]} rotation={[0, Math.PI / 2, 0]}>
-    <planeGeometry args={[2, 1.55]} />
+  return <mesh position={[-2.445, 1.45, -0.55]} rotation={[0, Math.PI / 2, 0]}>
+    <planeGeometry args={[2.4, 1.55]} />
     <meshBasicMaterial map={texture} toneMapped={false} />
   </mesh>;
 }

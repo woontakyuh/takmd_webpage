@@ -10,11 +10,13 @@ const Scene = lazy(async () => {
   const module = await import('./StudioScene');
   return { default: module.StudioScene };
 });
-const exhibits: readonly { readonly id: ExhibitId; readonly label: string; readonly detail: string }[] = [
-  { id: 'spine', label: 'The spine', detail: 'Clinical practice' },
-  { id: 'research', label: 'On the desk', detail: 'Papers & ideas' },
-  { id: 'education', label: 'Talks', detail: 'Teaching & conferences' },
-  { id: 'ai', label: 'The workstation', detail: 'Clinical AI' },
+const exhibits: readonly { readonly id: ExhibitId; readonly label: string; readonly compactLabel: string; readonly detail: string }[] = [
+  { id: 'spine', label: 'The spine', compactLabel: 'Practice', detail: 'Clinical practice' },
+  { id: 'research', label: 'On the desk', compactLabel: 'Papers', detail: 'Papers & ideas' },
+  { id: 'education', label: 'Talks', compactLabel: 'Talks', detail: 'Teaching & conferences' },
+  { id: 'ai', label: 'The workstation', compactLabel: 'AI', detail: 'Clinical AI' },
+  { id: 'bjj', label: 'On the mat', compactLabel: 'Jiu-jitsu', detail: 'Jiu-jitsu' },
+  { id: 'surfing', label: 'By the sea', compactLabel: 'Surfing', detail: 'Surfing' },
 ];
 class SceneBoundary extends Component<{ readonly children: ReactNode }, { readonly failed: boolean }> {
   state = { failed: false };
@@ -102,7 +104,7 @@ export function StudioExperience(content: StudioContent) {
       <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>The practice</button><button onClick={() => goToView(2)}>The desk</button></div>
       <footer className="studio-stage-footer">
         <p id="office-help" className="office-help">{ready ? compact ? 'Drag to explore · Pinch to zoom · Tap an object' : 'Drag to explore · Scroll to zoom · Click an object' : 'The office is opening…'}<span className="studio-sr-only">Focus the scene and use arrow keys to rotate; plus and minus to zoom.</span></p>
-        <nav className="studio-exhibits" aria-label="Office collection">{exhibits.map(item => <button id={`studio-exhibit-${item.id}`} key={item.id} aria-pressed={selected === item.id} onClick={() => open(item.id)}><OfficeIcon name={item.id} /><span>{item.label}<small>{item.detail}</small></span></button>)}</nav>
+        <nav className="studio-exhibits" aria-label="Office collection">{exhibits.map(item => <button id={`studio-exhibit-${item.id}`} key={item.id} aria-label={`${item.label} ${item.detail}`} aria-pressed={selected === item.id} onClick={() => open(item.id)}><OfficeIcon name={item.id} /><span><span className="exhibit-full-label">{item.label}</span><span className="exhibit-compact-label">{item.compactLabel}</span><small>{item.detail}</small></span></button>)}</nav>
         <a className="office-index" href="#office-reading">Browse the work <span aria-hidden="true">↓</span></a>
       </footer>
     </section>
@@ -110,7 +112,7 @@ export function StudioExperience(content: StudioContent) {
       <div className="studio-notes-heading"><p className="studio-kicker">From the desk</p><h2 id="studio-notes-heading">Practice shapes<br /><em>the questions.</em></h2><a className="studio-text-link" href="/research">Research archive ↗</a></div>
       <div className="studio-notes-list">{content.publications.slice(0, 3).map(p => <a key={`${p.doiUrl}-${p.title}`} href={p.doiUrl || '/research'} target={p.doiUrl ? '_blank' : undefined} rel={p.doiUrl ? 'noreferrer' : undefined}><span className="studio-meta">{p.journal} / {p.year}</span><h3>{p.title}</h3><span className="studio-notes-arrow" aria-hidden="true">↗</span></a>)}</div>
     </section>
-    <footer className="studio-end"><span>Woon Tak Yuh, MD.</span><nav aria-label="Browse all work"><a href="/cv">Living CV</a><a href="/research">Research</a><a href="/education">Education</a><a href="/contact">Contact ↗</a></nav></footer>
+    <footer className="studio-end"><span>Woon Tak Yuh, MD.</span><nav aria-label="Browse all work"><a href="/cv">Living CV</a><a href="/research">Research</a><a href="/education">Education</a><a href="/jiu-jitsu">Jiu-jitsu</a><a href="/surfing">Surfing</a><a href="/contact">Contact ↗</a></nav></footer>
     <ReadingPanel {...content} selected={selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onProject={setProject} onClose={close} />
   </div>;
 }

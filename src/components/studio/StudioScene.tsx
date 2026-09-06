@@ -10,6 +10,7 @@ import { Folio } from './scene/Folio';
 import { Displays } from './scene/Displays';
 import { CalendarClock } from './scene/CalendarClock';
 import { OfficeLounge } from './scene/OfficeLounge';
+import { PersonalCorner } from './scene/PersonalCorner';
 import { PALETTE, TOUR } from './scene/config';
 
 export function StudioScene(props: StudioSceneProps) {
@@ -29,6 +30,7 @@ export function StudioScene(props: StudioSceneProps) {
       <Architecture night={props.night} sky={sun.windowSky} />
       <Furniture lamp={sun.lamp} />
       <OfficeLounge />
+      <PersonalCorner {...props} />
       <CalendarClock reducedMotion={props.reducedMotion} />
       <Greenery />
       <SpineExhibit {...props} />

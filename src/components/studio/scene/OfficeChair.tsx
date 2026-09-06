@@ -1,53 +1,90 @@
-import { PALETTE } from './config';
-import { Block, Rod } from './Primitives';
+import { useGLTF, useTexture } from '@react-three/drei';
+import { useEffect, useMemo } from 'react';
+import { Box3, Mesh, MeshStandardMaterial, NoColorSpace, SRGBColorSpace, Vector3 } from 'three';
+import type { Material } from 'three';
 
-const STAR_ANGLES = [0, 1.257, 2.513, 3.77, 5.027] as const;
+const MODEL_URL = '/models/office-chair/chair.glb' as const;
+const TARGET_HEIGHT = 1.02;
 
 export function OfficeChair() {
+  const { scene } = useGLTF(MODEL_URL);
+  const sourceTextures = useTexture({
+    baseColor: '/models/office-chair/base-color.webp',
+    metallic: '/models/office-chair/metallic.png',
+    normal: '/models/office-chair/normal.png',
+    roughness: '/models/office-chair/roughness.jpg',
+  });
+  const textures = useMemo(() => {
+    const baseColor = sourceTextures.baseColor.clone();
+    const metallic = sourceTextures.metallic.clone();
+    const normal = sourceTextures.normal.clone();
+    const roughness = sourceTextures.roughness.clone();
+    baseColor.colorSpace = SRGBColorSpace;
+    for (const texture of [baseColor, metallic, normal, roughness]) {
+      texture.flipY = false;
+      texture.anisotropy = 4;
+      texture.needsUpdate = true;
+    }
+    metallic.colorSpace = NoColorSpace;
+    normal.colorSpace = NoColorSpace;
+    roughness.colorSpace = NoColorSpace;
+    return { baseColor, metallic, normal, roughness };
+  }, [
+    sourceTextures.baseColor,
+    sourceTextures.metallic,
+    sourceTextures.normal,
+    sourceTextures.roughness,
+  ]);
+  const fitted = useMemo(() => {
+    const model = scene.clone(true);
+    model.traverse((child) => {
+      if (!(child instanceof Mesh)) return;
+      child.geometry = child.geometry.clone();
+      const hasMaterialArray = Array.isArray(child.material);
+      const sourceMaterials: Material[] = hasMaterialArray ? child.material : [child.material];
+      const materials = sourceMaterials.map((sourceMaterial) => {
+        const material = sourceMaterial.clone();
+        if (material instanceof MeshStandardMaterial) {
+          material.map = textures.baseColor;
+          material.metalnessMap = textures.metallic;
+          material.normalMap = textures.normal;
+          material.roughnessMap = textures.roughness;
+          material.metalness = 0.82;
+          material.roughness = 0.72;
+          material.normalScale.set(0.58, 0.58);
+        }
+        return material;
+      });
+      child.material = hasMaterialArray ? materials : (materials[0] ?? child.material);
+      child.castShadow = true;
+      child.receiveShadow = true;
+    });
+    const bounds = new Box3().setFromObject(model);
+    const size = bounds.getSize(new Vector3());
+    const center = bounds.getCenter(new Vector3());
+    const scale = TARGET_HEIGHT / Math.max(size.y, 0.000_001);
+    return {
+      model,
+      offset: [-center.x * scale, -bounds.min.y * scale, -center.z * scale] as const,
+      scale,
+    };
+  }, [scene, textures]);
+
+  useEffect(() => () => {
+    fitted.model.traverse((child) => {
+      if (!(child instanceof Mesh)) return;
+      child.geometry.dispose();
+      if (Array.isArray(child.material)) child.material.forEach((material) => material.dispose());
+      else child.material.dispose();
+    });
+    Object.values(textures).forEach((texture) => texture.dispose());
+  }, [fitted, textures]);
+
   return (
-    <group>
-      <mesh position={[0, 0.28, 0]} castShadow receiveShadow>
-        <cylinderGeometry args={[0.035, 0.05, 0.36, 20]} />
-        <meshStandardMaterial color={PALETTE.ink} metalness={0.72} roughness={0.38} />
-      </mesh>
-      {STAR_ANGLES.map((angle) => {
-        const x = Math.sin(angle) * 0.35;
-        const z = Math.cos(angle) * 0.35;
-        return (
-          <group key={angle}>
-            <Rod from={[0, 0.2, 0]} to={[x, 0.1, z]} radius={0.018} endRadius={0.014}
-              color={PALETTE.steel} metalness={0.7} />
-            <mesh position={[x, 0.075, z]} rotation={[0, angle, 0]} castShadow>
-              <torusGeometry args={[0.035, 0.012, 8, 16]} />
-              <meshStandardMaterial color={PALETTE.ink} roughness={0.52} />
-            </mesh>
-          </group>
-        );
-      })}
-      <Block size={[0.58, 0.09, 0.53]} position={[0, 0.46, -0.015]}
-        color={PALETTE.linen} radius={0.024} roughness={0.95} />
-      <Block size={[0.5, 0.035, 0.42]} position={[0, 0.515, -0.04]}
-        color={PALETTE.teal} radius={0.022} roughness={0.98} />
-      <Rod from={[0, 0.46, 0.19]} to={[0, 0.82, 0.23]} radius={0.025}
-        color={PALETTE.ink} metalness={0.55} />
-      <Block size={[0.5, 0.51, 0.07]} position={[0, 0.825, 0.245]} rotation={[-0.1, 0, 0]}
-        color={PALETTE.linen} radius={0.028} roughness={0.94} />
-      <Block size={[0.43, 0.43, 0.012]} position={[0, 0.825, 0.202]} rotation={[-0.1, 0, 0]}
-        color={PALETTE.teal} radius={0.022} roughness={0.98} />
-      {[-0.17, 0, 0.17].map((x) => (
-        <Rod key={x} from={[x, 0.62, 0.194]} to={[x, 1.02, 0.235]} radius={0.0022}
-          color={PALETTE.tealLight} />
-      ))}
-      <Block size={[0.39, 0.16, 0.075]} position={[0, 1.11, 0.29]} rotation={[-0.1, 0, 0]}
-        color={PALETTE.linen} radius={0.03} roughness={0.94} />
-      {[-0.34, 0.34].map((x) => (
-        <group key={x}>
-          <Rod from={[x * 0.76, 0.49, 0.08]} to={[x * 0.82, 0.72, 0.06]} radius={0.018}
-            color={PALETTE.ink} metalness={0.55} />
-          <Block size={[0.08, 0.035, 0.31]} position={[x * 0.82, 0.73, -0.02]}
-            color={PALETTE.ink} radius={0.015} roughness={0.7} />
-        </group>
-      ))}
+    <group position={[...fitted.offset]} scale={fitted.scale}>
+      <primitive object={fitted.model} dispose={null} />
     </group>
   );
 }
+
+useGLTF.preload(MODEL_URL);

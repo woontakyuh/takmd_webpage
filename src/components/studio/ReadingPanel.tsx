@@ -4,12 +4,15 @@ import { TeachingReader } from './TeachingReader';
 import { ProjectReader } from './ProjectReader';
 import { ResearchFolio } from './ResearchFolio';
 import { OfficeIcon } from './OfficeIcon';
+import { PersonalReader } from './PersonalReader';
 
 const titles = {
   spine: 'Precision, in practice.',
   research: 'The research folio.',
   education: 'Knowledge, shared.',
   ai: 'A work in progress.',
+  bjj: 'Jiu-jitsu.',
+  surfing: 'Surfing.',
 } as const;
 
 type Props = StudioContent & {
@@ -83,6 +86,7 @@ export function ReadingPanel({ selected, publications, presentations, updatedAt,
         </>}
         {selected === 'education' && <TeachingReader presentations={presentations} selected={collection.presentation} onSelect={id => { onTalk(id); resetScroll(); }} slideIndex={talkSlideIndex} onSlide={onTalkSlide} updatedAt={presentationsUpdatedAt} />}
         {selected === 'ai' && <ProjectReader selected={collection.project} onSelect={id => { onProject(id); resetScroll(); }} publications={publications} onPaper={id => { onPaper(id); resetScroll(); }} />}
+        {(selected === 'bjj' || selected === 'surfing') && <PersonalReader interest={selected} />}
       </>}
     </dialog>
   );

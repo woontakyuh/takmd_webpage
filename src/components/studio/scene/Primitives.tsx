@@ -1,6 +1,6 @@
-import { RoundedBox } from '@react-three/drei';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Quaternion, Vector3 } from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import type { Texture } from 'three';
 import type { Point } from './config';
 
@@ -17,11 +17,13 @@ type BlockProps = {
 
 export function Block({ size, position = [0, 0, 0], rotation = [0, 0, 0], color,
   radius = 0.035, roughness = 0.65, metalness = 0, texture }: BlockProps) {
+  const [width, height, depth] = size;
+  const geometry = useMemo(() => new RoundedBoxGeometry(width, height, depth, 3, radius), [width, height, depth, radius]);
+  useEffect(() => () => geometry.dispose(), [geometry]);
   return (
-    <RoundedBox args={[...size]} position={[...position]} rotation={[...rotation]}
-      radius={radius} smoothness={3} bevelSegments={3} castShadow receiveShadow>
+    <mesh geometry={geometry} position={[...position]} rotation={[...rotation]} castShadow receiveShadow>
       <meshStandardMaterial color={color} roughness={roughness} metalness={metalness} map={texture ?? null} />
-    </RoundedBox>
+    </mesh>
   );
 }
 

@@ -31,7 +31,11 @@ export function CalendarClock({ reducedMotion }: { readonly reducedMotion: boole
 
   useEffect(() => () => texture.dispose(), [texture]);
 
-  return <group position={[...ROOM.clock.position]} rotation={[-0.1, ROOM.clock.rotation, 0]} scale={ROOM.clock.scale}>
+  return <group position={[...ROOM.clock.position]} rotation={[0, ROOM.clock.rotation, 0]} scale={ROOM.clock.scale}>
+    <Block size={[0.34, 0.035, 0.035]} position={[0, 0.13, -0.067]}
+      color={PALETTE.steel} radius={0.006} metalness={0.64} roughness={0.4} />
+    {[-0.14, 0.14].map(x => <Block key={x} size={[0.035, 0.16, 0.055]} position={[x, 0.13, -0.073]}
+      color={PALETTE.steel} radius={0.006} metalness={0.64} roughness={0.4} />)}
     <Block size={[0.46, 0.26, 0.095]} position={[0, 0.135, 0]} color={PALETTE.paper}
       radius={0.019} metalness={0.08} roughness={0.65} />
     <Block size={[0.447, 0.238, 0.014]} position={[0, 0.135, -0.048]} color={PALETTE.ink}
@@ -48,7 +52,5 @@ export function CalendarClock({ reducedMotion }: { readonly reducedMotion: boole
       <planeGeometry args={[0.408, 0.051]} />
       <meshStandardMaterial map={texture} roughness={0.92} />
     </mesh>
-    {[-0.17, 0.17].map(x => <Block key={x} size={[0.045, 0.012, 0.075]} position={[x, 0, 0]}
-      color={PALETTE.steel} radius={0.004} metalness={0.6} />)}
   </group>;
 }

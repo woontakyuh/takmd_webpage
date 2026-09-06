@@ -208,7 +208,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   return (
     <OrbitControls ref={controls} makeDefault enablePan={false} enableDamping={!reducedMotion}
-      dampingFactor={0.08} minDistance={1.65} maxDistance={compact ? 13 : 9.5}
+      dampingFactor={0.08} minDistance={1.65} maxDistance={13}
       minPolarAngle={0.3} maxPolarAngle={1.45}
       onStart={() => { if (!selected && !transition.current) userMoved.current = true; }} />
   );

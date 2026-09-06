@@ -1,7 +1,7 @@
 import type { RefObject } from 'react';
 import type { OfficeLight } from './localTime';
 
-export type ExhibitId = 'spine' | 'research' | 'education' | 'ai';
+export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing';
 
 export type Publication = {
   readonly id: string;

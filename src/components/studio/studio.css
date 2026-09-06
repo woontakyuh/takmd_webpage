@@ -49,7 +49,8 @@
 .office-help { color: var(--studio-muted); font-size: 10px; max-width: 160px; line-height: 1.8; margin: 0; }
 .office-index { justify-self: end; display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 11px; }
 .office-index:hover { text-decoration: underline; text-underline-offset: 4px; }
-.studio-exhibits { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); background: var(--studio-light); border: 1px solid var(--studio-line); border-radius: 4px; padding: 6px; box-shadow: 0 6px 24px #202d2a09; }
+.studio-exhibits { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); background: var(--studio-light); border: 1px solid var(--studio-line); border-radius: 4px; padding: 6px; box-shadow: 0 6px 24px #202d2a09; }
+.exhibit-compact-label { display: none; }
 .studio-exhibits button { display: flex; align-items: center; gap: 12px; padding: 12px 18px; min-height: 58px; color: var(--studio-ink); background: transparent; border: 0; text-align: left; font-size: 12px; transition: background var(--studio-micro); }
 .studio-exhibits button + button { border-left: 1px solid var(--studio-line); }
 .studio-exhibits button small { display: block; margin-top: 2px; font-size: 9px; color: var(--studio-muted); }
@@ -73,7 +74,7 @@
 .studio-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 .studio[data-night='true'] .studio-stage { --studio-paper: #31473e; --studio-ink: #f8f6f0; --studio-muted: #cbcdc3; --studio-line: #769b8850; --studio-light: #26342f; --studio-clay: #ffe0ac; --studio-teal: #769b88; background: #182824; }
 @media (max-width: 1200px) { .studio-exhibits button { padding: 12px; gap: 8px; } .office-help { max-width: 130px; } .studio-stage-footer { gap: 16px; } }
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
   .studio-stage-footer { grid-template-columns: 1fr; justify-items: center; gap: 12px; }
   .office-help { max-width: none; order: 2; }
   .office-index { display: none; }
@@ -100,6 +101,8 @@
   .studio-exhibits { width: 100%; padding: 4px; }
   .studio-exhibits button { flex-direction: column; justify-content: center; text-align: center; gap: 5px; padding: 8px 3px; font-size: 10px; min-height: 62px; }
   .studio-exhibits button small { display: none; }
+  .exhibit-full-label { display: none; }
+  .exhibit-compact-label { display: inline; }
   .office-help { font-size: 9px; }
   .studio-notes { grid-template-columns: 1fr; gap: 32px; padding: 56px 24px; }
   .studio-end { flex-direction: column; align-items: flex-start; padding: 24px; gap: 12px; }

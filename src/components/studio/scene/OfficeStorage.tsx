@@ -1,5 +1,5 @@
 import type { Texture } from 'three';
-import { PALETTE } from './config';
+import { PALETTE, ROOM } from './config';
 import { Block, Rod } from './Primitives';
 
 const SHELF_LEVELS = [0.08, 0.55, 1.02, 1.49, 1.96, 2.38] as const;
@@ -10,7 +10,7 @@ type OfficeStorageProps = { readonly wood: Texture; readonly lamp: number };
 export function OfficeStorage({ wood, lamp }: OfficeStorageProps) {
   return (
     <group>
-      <group position={[-1.46, 0, 1.72]} rotation={[0, Math.PI, 0]}>
+      <group position={[-1.46, 0, 2.92]} rotation={[0, Math.PI, 0]}>
         <Block size={[1.18, 2.42, 0.08]} position={[0, 1.21, -0.16]}
           color={PALETTE.walnutDark} texture={wood} radius={0.012} roughness={0.66} />
         {[-0.59, 0.59].map((x) => (
@@ -20,6 +20,13 @@ export function OfficeStorage({ wood, lamp }: OfficeStorageProps) {
         {SHELF_LEVELS.map((level) => (
           <Block key={level} size={[1.18, 0.045, 0.4]} position={[0, level, 0]}
             color={PALETTE.walnut} texture={wood} radius={0.01} roughness={0.64} />
+        ))}
+        {SHELF_LEVELS.slice(1, -1).map((level) => (
+          <mesh key={`light-${level}`} position={[0, level - 0.035, 0.19]}>
+            <boxGeometry args={[1.04, 0.012, 0.018]} />
+            <meshStandardMaterial color={PALETTE.sun} emissive={PALETTE.sun}
+              emissiveIntensity={0.2 + lamp * 0.55} roughness={0.7} />
+          </mesh>
         ))}
         <BookRow position={[-0.18, 1.07, 0.07]} count={7} />
         <BookRow position={[-0.28, 1.54, 0.07]} count={6} />
@@ -46,27 +53,29 @@ export function OfficeStorage({ wood, lamp }: OfficeStorageProps) {
         </group>
       </group>
 
-      <group position={[-1.63, 0, -0.62]}>
-        <Block size={[1.18, 0.06, 0.52]} position={[0, 0.65, 0]}
+      <group position={[...ROOM.credenza.position]}>
+        <Block size={[ROOM.credenza.depth, 0.06, ROOM.credenza.width]}
+          position={[0, ROOM.credenza.height - 0.03, 0]}
           color={PALETTE.walnut} texture={wood} radius={0.018} roughness={0.6} />
-        <Block size={[1.12, 0.53, 0.47]} position={[0, 0.375, 0]}
+        <Block size={[ROOM.credenza.depth - 0.05, 0.57, ROOM.credenza.width - 0.06]}
+          position={[0, 0.405, 0]}
           color={PALETTE.walnutDark} texture={wood} radius={0.018} roughness={0.68} />
-        {[-0.28, 0.28].map((x) => (
-          <group key={x} position={[x, 0.39, 0.245]}>
-            <Block size={[0.52, 0.45, 0.025]} color={PALETTE.walnut} texture={wood}
+        {[-0.39, 0.39].map((z) => (
+          <group key={z} position={[0.207, 0.405, z]}>
+            <Block size={[0.025, 0.5, 0.72]} color={PALETTE.walnut} texture={wood}
               radius={0.012} roughness={0.64} />
-            <Block size={[0.12, 0.012, 0.012]} position={[0, 0.11, 0.018]}
+            <Block size={[0.012, 0.12, 0.1]} position={[0.018, 0.08, z < 0 ? 0.29 : -0.29]}
               color={PALETTE.steel} radius={0.004} metalness={0.7} />
           </group>
         ))}
-        {[-0.48, 0.48].map((x) => (
-          <Block key={x} size={[0.045, 0.11, 0.045]} position={[x, 0.07, 0]}
-            color={PALETTE.ink} radius={0.008} metalness={0.55} />
+        {[-0.13, 0.13].flatMap((x) => [-0.67, 0.67].map((z) => (
+          <Block key={`${x}-${z}`} size={[0.035, 0.12, 0.035]} position={[x, 0.06, z]}
+            color={PALETTE.ink} radius={0.006} metalness={0.55} />
+        )))}
+        {[-0.52, 0, 0.52].map((z) => (
+          <Block key={z} size={[0.01, 0.49, 0.018]} position={[0.223, 0.405, z]}
+            color={PALETTE.walnutDark} radius={0.003} roughness={0.76} />
         ))}
-        <mesh position={[0, 0.69, 0]} castShadow>
-          <cylinderGeometry args={[0.16, 0.18, 0.025, 32]} />
-          <meshStandardMaterial color={PALETTE.steel} metalness={0.65} roughness={0.42} />
-        </mesh>
         <TaskLamp lamp={lamp} />
       </group>
     </group>
@@ -117,7 +126,7 @@ function Book({ width, height, position, rotation, color }: BookProps) {
 
 function TaskLamp({ lamp }: { readonly lamp: number }) {
   return (
-    <group position={[0.43, 0.69, -0.04]}>
+    <group position={[0.1, 0.745, -0.58]} rotation={[0, 0.35, 0]}>
       <mesh castShadow><cylinderGeometry args={[0.09, 0.1, 0.022, 28]} />
         <meshStandardMaterial color={PALETTE.ink} metalness={0.62} roughness={0.36} /></mesh>
       <Rod from={[0, 0.015, 0]} to={[0.03, 0.34, 0]} radius={0.011} color={PALETTE.ink} metalness={0.68} />

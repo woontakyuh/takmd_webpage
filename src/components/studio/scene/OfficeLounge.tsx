@@ -3,8 +3,9 @@ import { PALETTE } from './config';
 import { Block, Rod } from './Primitives';
 import { usePrintedTexture } from './Textures';
 
-const SOFA_POSITION = [0.9, 0, 1.4] as const;
-const TABLE_POSITION = [1.15, 0, 0.5] as const;
+const SOFA_POSITION = [0.9, 0, 2.6] as const;
+const TABLE_POSITION = [1.15, 0, 1.7] as const;
+const RUG_POSITION = [0.72, 0.02, 2.08] as const;
 const SOFA_LEG_OFFSETS = [
   [-0.22, -0.62],
   [-0.22, 0.62],
@@ -24,6 +25,10 @@ export function OfficeLounge() {
 
   return (
     <group>
+      <Block size={[2.95, 0.018, 2.05]} position={[...RUG_POSITION]}
+        color={PALETTE.bone} texture={linen} radius={0.045} roughness={1} />
+      <Block size={[2.73, 0.005, 1.83]} position={[RUG_POSITION[0], 0.031, RUG_POSITION[2]]}
+        color={PALETTE.paper} texture={linen} radius={0.035} roughness={1} />
       <Sofa linen={linen} />
       <CoffeeTable wood={wood} linen={linen} />
     </group>
