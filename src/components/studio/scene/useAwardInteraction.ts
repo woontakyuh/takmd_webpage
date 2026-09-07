@@ -1,8 +1,9 @@
 import { useCursor } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
 import type { MeshPhysicalMaterial } from 'three';
+import { scheduleSceneSingleAction } from './sceneGesture';
 
 const CLICK_THRESHOLD = 5;
 const SHIMMER_SECONDS = 1.8;
@@ -22,6 +23,7 @@ function modified(event: Pick<MouseEvent, 'shiftKey' | 'ctrlKey' | 'metaKey' | '
 }
 
 export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSelect }: Options) {
+  const canvas = useThree(state => state.gl.domElement);
   const material = useRef<MeshPhysicalMaterial>(null);
   const gesture = useRef<Gesture | null>(null);
   const shimmer = useRef(0);
@@ -93,8 +95,11 @@ export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSele
         if (!start || start.focused !== focused || event.button !== 0 || !event.isPrimary || modified(event)
           || event.pointerId !== start.pointerId
           || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= CLICK_THRESHOLD) return;
-        if (!focused) onSelect();
-        else if (start.inset && event.object.name === AWARD_INSET_NAME) window.open(channelUrl, '_blank', 'noopener,noreferrer');
+        if (!focused) {
+          scheduleSceneSingleAction(canvas, onSelect);
+        } else if (start.inset && event.object.name === AWARD_INSET_NAME) {
+          scheduleSceneSingleAction(canvas, () => window.open(channelUrl, '_blank', 'noopener,noreferrer'));
+        }
       },
       onClick: (event: ThreeEvent<MouseEvent>) => event.stopPropagation(),
     },

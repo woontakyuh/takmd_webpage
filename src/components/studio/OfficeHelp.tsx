@@ -12,7 +12,7 @@ export function OfficeHelp({ ready, explored, compact }: Props) {
   }, [ready, explored]);
   const gestures = compact
     ? [['One finger', 'Rotate'], ['Two fingers', 'Move'], ['Pinch', 'Zoom']]
-    : [['Drag', 'Rotate'], ['Shift + drag', 'Move'], ['Scroll', 'Zoom']];
+    : [['Drag', 'Rotate'], ['Double-click', 'Inspect / return'], ['Scroll', 'Zoom']];
 
   return <div className="office-help" id="office-help">
     <button className="office-help-toggle" aria-expanded={open} aria-controls="office-gesture-hint"
@@ -23,6 +23,6 @@ export function OfficeHelp({ ready, explored, compact }: Props) {
       <div>{gestures.map(([gesture, action]) => <span key={action}><kbd>{gesture}</kbd><span>{action}</span></span>)}</div>
       <p>{compact ? 'Tap an object to discover its story.' : 'Click an object to discover its story.'}</p>
     </div>
-    <span className="studio-sr-only">Focus the scene: arrow keys rotate, Shift plus arrow keys pan, and plus or minus zoom. Right-drag also pans. Touch: one finger rotates; two fingers pan or pinch to zoom.</span>
+    <span className="studio-sr-only">Focus the scene: arrow keys rotate, Shift plus arrow keys pan, and plus or minus zoom. Double-click a room surface to inspect it, then double-click again to return. Right-drag also pans. Touch: one finger rotates; two fingers pan or pinch to zoom.</span>
   </div>;
 }

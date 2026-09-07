@@ -1,12 +1,13 @@
 import { OrbitControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { PerspectiveCamera, Vector3 } from 'three';
-import type { Camera } from 'three';
+import { Mesh, PerspectiveCamera, Vector2, Vector3 } from 'three';
+import type { Camera, Object3D } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import type { StudioSceneProps } from '../types';
 import { FOCUS, focusFov, MOBILE_FOCUS, MOBILE_TOUR, MOTION, SIDE_READER_SPACE, TOUR } from './config';
 import type { CameraPose } from './config';
+import { cancelSceneSingleAction, zoomPoseForPoint } from './sceneGesture';
 
 type CameraRigProps = Pick<StudioSceneProps,
   'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady'>;
@@ -16,7 +17,7 @@ type SavedPose = {
   readonly target: Vector3;
 };
 
-type TransitionKind = 'focus' | 'guide' | 'return';
+type TransitionKind = 'focus' | 'guide' | 'return' | 'inspect' | 'restore-inspection';
 type Transition = {
   readonly kind: TransitionKind;
   readonly position: Vector3;
@@ -64,10 +65,11 @@ function isFormTarget(target: EventTarget | null): boolean {
 }
 
 export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady }: CameraRigProps) {
-  const { camera, size, gl, setFrameloop } = useThree();
+  const { camera, size, gl, raycaster, scene, setFrameloop } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const transition = useRef<Transition | null>(null);
   const savedFreePose = useRef<SavedPose | null>(null);
+  const inspectionReturnPose = useRef<SavedPose | null>(null);
   const activeView = useRef<0 | 1 | 2>(viewCommand.view);
   const lastViewSequence = useRef(viewCommand.sequence);
   const previousSelected = useRef(selected);
@@ -75,7 +77,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   const ready = useRef(false);
   const targetFov = useRef(42);
   const initialPose = useRef((compact ? MOBILE_TOUR : TOUR)[viewCommand.view]);
-  const scratch = useMemo(() => ({ position: new Vector3(), target: new Vector3() }), []);
+  const scratch = useMemo(() => ({ pointer: new Vector2(), position: new Vector3(), target: new Vector3() }), []);
 
   const finishTransition = useCallback((value: Transition, orbit: OrbitControlsImpl) => {
     camera.position.copy(value.position);
@@ -83,11 +85,13 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     if (camera instanceof PerspectiveCamera) { camera.fov = targetFov.current; camera.updateProjectionMatrix(); }
     if (value.kind === 'focus') applyOrbitLimits(orbit, true);
     if (value.kind === 'return') applyOrbitLimits(orbit, false);
+    if (value.kind === 'inspect' || value.kind === 'restore-inspection') applyOrbitLimits(orbit, selected !== null);
     orbit.update();
     transition.current = null;
     if (value.kind === 'return') savedFreePose.current = null;
+    if (value.kind === 'restore-inspection') inspectionReturnPose.current = null;
     orbit.enabled = true;
-  }, [camera]);
+  }, [camera, selected]);
 
   useLayoutEffect(() => {
     const orbit = controls.current;
@@ -108,7 +112,63 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   useEffect(() => {
     const orbit = controls.current;
+    if (!orbit) return;
+    const handleDoubleClick = (event: MouseEvent) => {
+      if (event.button !== 0 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) return;
+      cancelSceneSingleAction(gl.domElement);
+      event.preventDefault();
+      event.stopPropagation();
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      const saved = inspectionReturnPose.current;
+      if (saved) {
+        transition.current = {
+          kind: 'restore-inspection',
+          position: saved.position.clone(),
+          target: saved.target.clone(),
+        };
+        return;
+      }
+      const bounds = gl.domElement.getBoundingClientRect();
+      scratch.pointer.set(
+        ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
+        -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
+      );
+      raycaster.setFromCamera(scratch.pointer, camera);
+      const hit = raycaster.intersectObjects(scene.children, true).find(({ object }) => {
+        let current: Object3D | null = object;
+        while (current) {
+          if (!current.visible) return false;
+          current = current.parent;
+        }
+        if (!(object instanceof Mesh)) return true;
+        return Array.isArray(object.material)
+          ? object.material.some(material => material.colorWrite)
+          : object.material.colorWrite;
+      });
+      if (!hit) {
+        orbit.enabled = true;
+        return;
+      }
+      inspectionReturnPose.current = {
+        position: camera.position.clone(),
+        target: orbit.target.clone(),
+      };
+      const pose = zoomPoseForPoint(camera.position, hit.point);
+      transition.current = { kind: 'inspect', position: pose.position, target: pose.target };
+      userMoved.current = true;
+    };
+    gl.domElement.addEventListener('dblclick', handleDoubleClick, true);
+    return () => {
+      cancelSceneSingleAction(gl.domElement);
+      gl.domElement.removeEventListener('dblclick', handleDoubleClick, true);
+    };
+  }, [camera, gl, raycaster, scene, scratch]);
+
+  useEffect(() => {
+    const orbit = controls.current;
     if (!orbit || previousSelected.current === selected) return;
+    inspectionReturnPose.current = null;
     if (selected) {
       if (!previousSelected.current) {
         savedFreePose.current = {
@@ -137,6 +197,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   useEffect(() => {
     const orbit = controls.current;
     if (!orbit || viewCommand.sequence === lastViewSequence.current) return;
+    inspectionReturnPose.current = null;
     lastViewSequence.current = viewCommand.sequence;
     activeView.current = viewCommand.view;
     userMoved.current = false;
@@ -149,6 +210,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   useEffect(() => {
     const orbit = controls.current;
     if (!orbit) return;
+    if (inspectionReturnPose.current) return;
     if (selected) {
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);

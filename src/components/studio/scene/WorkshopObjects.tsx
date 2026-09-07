@@ -1,4 +1,5 @@
 import { Html, useCursor, useGLTF } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Box3, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import type { Material } from 'three';
@@ -8,6 +9,7 @@ import { BiportalEndoscope } from './BiportalEndoscope';
 import { PigPlush } from './PigPlush';
 import { INTERIOR, PALETTE, ROOM } from './config';
 import type { Point } from './config';
+import { scheduleSceneSingleAction } from './sceneGesture';
 
 const CLICK_DRAG_THRESHOLD = 5;
 const CABINET_TOP = ROOM.credenza.position[1] + ROOM.credenza.height;
@@ -20,6 +22,7 @@ type WorkshopLinkProps = {
 };
 
 function WorkshopLink({ label, position, route, children }: WorkshopLinkProps) {
+  const canvas = useThree(state => state.gl.domElement);
   const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
   useCursor(hovered);
@@ -45,7 +48,7 @@ function WorkshopLink({ label, position, route, children }: WorkshopLinkProps) {
         pointerStart.current = null;
         if (!start || event.delta >= CLICK_DRAG_THRESHOLD
           || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= CLICK_DRAG_THRESHOLD) return;
-        window.location.assign(route);
+        scheduleSceneSingleAction(canvas, () => window.location.assign(route));
       }}
     >
       {children}

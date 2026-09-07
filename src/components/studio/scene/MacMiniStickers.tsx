@@ -3,6 +3,7 @@ import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import { SRGBColorSpace } from 'three';
 import codexPetUrl from '../../../assets/studio/codex-pet.png?url';
+import { scheduleSceneSingleAction } from './sceneGesture';
 
 export function MacMiniStickers({ onClaudeSticker }: { readonly onClaudeSticker: () => void }) {
   const { gl } = useThree();
@@ -36,7 +37,7 @@ export function MacMiniStickers({ onClaudeSticker }: { readonly onClaudeSticker:
         pointerStart.current = null;
         if (!start || event.delta >= 5 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey
           || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 5) return;
-        onClaudeSticker();
+        scheduleSceneSingleAction(gl.domElement, onClaudeSticker);
       }}>
       <planeGeometry args={[0.028, 0.02128]} />
       <meshBasicMaterial map={textures[0]} transparent alphaTest={0.3} toneMapped={false} />

@@ -1,4 +1,4 @@
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils } from 'three';
@@ -11,6 +11,7 @@ import { Interactive } from './Interactive';
 import { Block } from './Primitives';
 import { usePrintedTexture } from './Textures';
 import { MOTION, PALETTE, ROOM } from './config';
+import { scheduleSceneSingleAction } from './sceneGesture';
 
 type FolioProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onPaperStep' | 'night' | 'reducedMotion' | 'progress' | 'collection'>;
 
@@ -37,6 +38,7 @@ function paperFromCollection(collection: OfficeCollection): FolioPaper {
 const CLICK_DRAG_THRESHOLD = 5;
 
 export function Folio({ selected, onSelect, onPaperStep, night, reducedMotion, progress, collection }: FolioProps) {
+  const canvas = useThree(state => state.gl.domElement);
   const cover = useRef<Group>(null);
   const leaf = useRef<Group>(null);
   const leafSequence = useRef<number | null>(null);
@@ -68,7 +70,7 @@ export function Folio({ selected, onSelect, onPaperStep, night, reducedMotion, p
     if (event.button !== 0 || !event.isPrimary || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey
       || !start || event.pointerId !== start.pointerId || direction !== start.direction
       || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= CLICK_DRAG_THRESHOLD) return;
-    onPaperStep(direction);
+    scheduleSceneSingleAction(canvas, () => onPaperStep(direction));
   };
 
   useEffect(() => {
