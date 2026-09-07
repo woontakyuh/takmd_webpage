@@ -6,7 +6,7 @@ import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
 import { RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 
 const COAT_URL = '/models/garments/physician-coat.glb' as const;
-const GI_URL = '/models/garments/control-gi.glb?v=20260907-usa-direct' as const;
+const GI_URL = '/models/garments/control-gi.glb?v=20260907-usa-aligned' as const;
 const ASSEMBLY_HEIGHT = 0.9;
 // Measured inner hook crowns in the original GLBs; their shoulder planes are YZ.
 const HOOK_CONTACT = {

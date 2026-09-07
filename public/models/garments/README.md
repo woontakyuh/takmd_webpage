@@ -12,6 +12,6 @@ These assets were generated for this project from authorized references; no thir
 On 2026-09-07, the final `N` in the generated sleeve lettering was corrected directly to `A`. The small source relief region was remeshed and its UVs reassigned to the original navy embroidery and clean cloth texels. The model retains one mesh, one primitive and one material, with no added panel, decal or belt correction. The original embedded textures are byte-for-byte unchanged. Original triangles outside the local lettering repair region, including U/S, the belt, hanger and hook, retain their source attributes.
 
 - Original gi SHA-256: `e66e1fa2fe2bccdc8387748bf05b8c1664c06f22e0c38afef5ae56e88b80bb52`
-- Direct USA correction SHA-256: `44fd3c168b6233e1bfe04ef6d4011343447923fad95b5fdcda5252511e98b3a5`
+- Aligned USA correction SHA-256: `bee2beb10cbcf0363f146a3a8d474722a8fcba01079621b07fc4f7234e975242`
 
-The one-off authoring script and same-light before/after evidence are retained in the local reference archive at `docs/redesign/gi-lettering-direct-2026-09-07/`. The exported GLB is self-contained and adds 281,652 bytes to the source asset.
+The A was subsequently raised 4 mm along the sleeve to align it with the original U/S, preserving its size and outline. Authoring evidence is retained in `docs/redesign/gi-lettering-direct-2026-09-07/` and `docs/redesign/gi-alignment-2026-09-07/`. The exported GLB is self-contained and adds 285,324 bytes to the source asset.
