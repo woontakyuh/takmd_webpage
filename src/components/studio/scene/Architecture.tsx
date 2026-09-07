@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { Group } from 'three';
-import { INTERIOR, PALETTE, ROOM } from './config';
+import { INTERIOR, ROOM } from './config';
 import { Block } from './Primitives';
 import { WindowBay } from './WindowBay';
 import { MicrocementFloor } from './MicrocementFloor';
@@ -41,10 +41,6 @@ export function Architecture({ night, sky }: { readonly night: boolean; readonly
           color={INTERIOR.ivory} radius={0.004} />
         <Block size={[width, 0.05, 0.13]} position={[0, height - 0.097, farZ - 0.03]}
           color={INTERIOR.plaster} radius={0.004} />
-        <mesh position={[0, height - 0.13, farZ - 0.073]}>
-          <boxGeometry args={[width - 0.18, 0.012, 0.025]} />
-          <meshStandardMaterial color={PALETTE.sun} emissive={PALETTE.sun} emissiveIntensity={night ? 1.8 : 0.35} />
-        </mesh>
       </CutawayWall>
       <CutawayWall axis="x" boundary={leftX + 0.08}>
         {LEFT_WALLS.map((wall, index) => <Block key={index} {...wall}

@@ -1,5 +1,10 @@
 import type { ExhibitId } from '../types';
 
+export const LIGHTING = {
+  finish: '#30332E', reflector: '#F4EBDD', warm: '#FFD29A',
+  amber: '#FFB96C', warmWhite: '#FFE2B9', cable: '#262925',
+} as const;
+
 export const PALETTE = {
   paper: '#EAE8E1', paperLight: '#F8F6F0', plaster: '#DCD8CC', ink: '#202D2A',
   muted: '#5C655F', teal: '#355A50', tealLight: '#769B88', clay: '#AC5737',
