@@ -1,4 +1,5 @@
 export const PERSONAL_LINKS = {
+  hospital: 'https://www.davoshospital.co.kr/',
   instagram: 'https://www.instagram.com/tak_md/',
   youtube: 'https://www.youtube.com/@tak_md/shorts',
   linkedin: 'https://www.linkedin.com/in/woon-tak-yuh-03420311b/',

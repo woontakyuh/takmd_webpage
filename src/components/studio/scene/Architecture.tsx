@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import type { Group } from 'three';
 import { INTERIOR, PALETTE, ROOM } from './config';
 import { Block } from './Primitives';
-import { useInteriorMaterial } from './InteriorMaterials';
 import { WindowBay } from './WindowBay';
 import { MicrocementFloor } from './MicrocementFloor';
 
@@ -27,7 +26,6 @@ const SHADOW_ENCLOSURE: readonly { readonly size: readonly [number, number, numb
 ];
 
 export function Architecture({ night, sky }: { readonly night: boolean; readonly sky: readonly [string, string] }) {
-  const oak = useInteriorMaterial('oak');
   return (
     <group>
       {SHADOW_ENCLOSURE.map((surface, index) => <mesh key={index} position={[...surface.position]} castShadow>
@@ -39,10 +37,6 @@ export function Architecture({ night, sky }: { readonly night: boolean; readonly
         <Block {...FAR_WALL} color={INTERIOR.ivory} radius={0.012} roughness={0.96} />
         <Block size={[width, 0.13, 0.12]} position={[0, 0.075, farZ - 0.05]}
           color={INTERIOR.plaster} radius={0.005} />
-        {[-1.18, 1.18].map(x => <Block key={x} size={[0.022, 2.12, 0.027]}
-          position={[x, 1.65, farZ - 0.064]} color={INTERIOR.plaster} radius={0.003} />)}
-        {[0.59, 2.71].map(y => <Block key={y} size={[2.38, 0.022, 0.027]}
-          position={[0, y, farZ - 0.064]} color={INTERIOR.plaster} radius={0.003} />)}
         <Block size={[width, 0.075, 0.22]} position={[0, height - 0.035, farZ - 0.06]}
           color={INTERIOR.ivory} radius={0.004} />
         <Block size={[width, 0.05, 0.13]} position={[0, height - 0.097, farZ - 0.03]}
@@ -58,10 +52,6 @@ export function Architecture({ night, sky }: { readonly night: boolean; readonly
         <Block size={[0.12, 0.13, depth]} position={[leftX + 0.04, 0.075, 0]} color={INTERIOR.plaster} radius={0.005} />
         <Block size={[0.22, 0.075, depth]} position={[leftX + 0.05, height - 0.035, 0]} color={INTERIOR.ivory} radius={0.004} />
         <Block size={[0.13, 0.05, depth]} position={[leftX + 0.03, height - 0.097, 0]} color={INTERIOR.plaster} radius={0.004} />
-        <Block size={[0.035, 2.52, 1.54]} position={[leftX + 0.063, 1.32, ROOM.wardrobe.position[2]]}
-          color="#ffffff" material={oak} roughness={0.84} radius={0.008} />
-        <Block size={[0.43, 0.035, 1.56]} position={[leftX + 0.245, 2.15, ROOM.wardrobe.position[2]]}
-          color="#ffffff" material={oak} roughness={0.8} radius={0.008} />
         <WindowBay night={night} sky={sky} />
       </CutawayWall>
     </group>

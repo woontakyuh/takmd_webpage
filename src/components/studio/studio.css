@@ -39,14 +39,17 @@
 .studio-tools button:hover { background: var(--studio-paper); }
 .office-local-time { position: absolute; top: 54px; right: 0; padding: 6px 8px; border-radius: 3px; background: var(--studio-light); text-align: right; color: var(--studio-muted); font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .office-local-time small { display: block; margin-top: 3px; font-size: 10px; }
-.office-title { position: absolute; left: 32px; bottom: 152px; z-index: 2; pointer-events: none; }
+.office-bottom { position: absolute; z-index: 4; bottom: 28px; left: 32px; right: 32px; display: grid; gap: 20px; pointer-events: none; }
+.office-summary { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px 20px; }
+.office-title { pointer-events: none; }
+.office-title .studio-kicker { margin: 0; }
 .office-title .studio-kicker { font-size: 9px; color: var(--studio-muted); }
 .office-title h2 { margin: 6px 0 0; font: italic 38px/1.1 Georgia,serif; letter-spacing: -.05em; }
-.office-guided { position: absolute; right: 32px; bottom: 150px; display: flex; align-items: center; gap: 14px; z-index: 3; font-size: 11px; }
+.office-guided { display: flex; align-items: center; gap: 14px; font-size: 11px; pointer-events: auto; }
 .office-guided > span { color: var(--studio-muted); }
 .office-guided button { min-height: 44px; background: none; border: 0; border-bottom: 1px solid var(--studio-line); color: var(--studio-ink); padding: 8px 0; }
 .office-guided button:hover { border-color: var(--studio-ink); }
-.studio-stage-footer { position: absolute; z-index: 4; bottom: 28px; left: 32px; right: 32px; display: grid; grid-template-columns: minmax(100px,1fr) minmax(0,1000px) minmax(100px,1fr); gap: 24px; align-items: center; }
+.studio-stage-footer { display: grid; grid-template-columns: minmax(100px,1fr) minmax(0,1000px) minmax(100px,1fr); gap: 24px; align-items: center; pointer-events: auto; }
 .office-help { color: var(--studio-muted); font-size: 11px; }
 .office-help-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 6px 0; border: 0; background: transparent; color: inherit; font-size: 11px; }
 .office-help-toggle > span { display: grid; place-items: center; width: 18px; height: 18px; border: 1px solid var(--studio-line); border-radius: 50%; }
@@ -99,7 +102,6 @@
   .studio-stage-footer { grid-template-columns: minmax(0,1fr); justify-items: center; gap: 12px; }
   .office-help { max-width: none; order: 2; }
   .office-index { display: none; }
-  .office-title, .office-guided { bottom: 160px; }
   .office-guided > span { display: none; }
   .studio-exhibit { flex-direction: column; justify-content: flex-start; text-align: center; gap: 8px; padding: 8px; min-height: 88px; }
   .studio-exhibit small { display: none; }
@@ -118,14 +120,15 @@
   .studio-tools { top: 92px; right: 18px; gap: 6px; }
   .studio-tools button { padding: 8px 10px; }
   .studio-tools button span { display: none; }
-  .office-title { left: 18px; bottom: 164px; }
+  .office-bottom { bottom: 18px; left: 12px; right: 12px; gap: 14px; }
+  .office-summary { padding: 0 6px; gap: 8px 12px; }
   .office-title h2 { font-size: 28px; }
   .office-title .studio-kicker { font-size: 8px; }
-  .office-guided { right: 18px; bottom: 160px; gap: 12px; font-size: 10px; }
-  .studio-stage-footer { bottom: 18px; left: 12px; right: 12px; gap: 10px; }
+  .office-guided { gap: 12px; font-size: 10px; }
+  .studio-stage-footer { gap: 10px; }
   .studio-exhibits { grid-template-columns: repeat(7,112px); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: var(--studio-muted) var(--studio-light); }
   .studio-exhibit { scroll-snap-align: start; }
-  .office-collection-hint { display: block; margin: 0; position: absolute; right: 0; bottom: calc(100% + 4px); color: var(--studio-muted); background: var(--studio-paper); font-size: 11px; }
+  .office-collection-hint { display: block; margin: 0 0 4px; text-align: right; color: var(--studio-muted); font-size: 11px; }
   .office-social-links { right: 16px; bottom: 176px; }
   .office-help { font-size: 11px; }
   .office-gesture-hint { bottom: calc(100% + 32px); }

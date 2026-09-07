@@ -333,6 +333,10 @@ The owner approved the recommended walnut Bodil Kjær Office Desk and pure-white
 
 The window lowboard uses four 750 mm modules, 350 mm depth and height center spacings, 23 mm chrome ball joints and 19 mm chrome tubes, thin white sheet-metal panels, four drop-down door fronts with near-flush round coin locks, and dark leveling feet. Its overall dimensions are 3023 × 373 × 390 mm at [-2.42, 0.0185, 0.55], with the finished top at 0.4085 m. Sources: https://jp.shop.usm.com/collections/lowboard and USM Home Work Beyond product catalog. Lower the anatomy model and workshop objects to the new top and retarget anatomy close-up; retain their scale and interactions. Existing bookcases remain pending the owner's separate Vitsœ 606 selection. This supersedes section 35's preservation of desk and cabinet dimensions. The free camera's maximum distance becomes 15 m to accommodate the full portrait overview; close zoom remains unchanged.
 
+### Wider wardrobe and physician identity
+
+The owner requested the wider HAY Loop Stand Wardrobe: 130 × 60 × 150 cm, retaining the white 3 cm square steel frame and three legs. Rotate the frame 180 degrees and space the garments 60 cm apart, with the gi toward the window and the physician coat toward the surfboard; keep garment fronts facing the room and their original 90 cm scale. Move the rack 20 cm toward the window to clear the surfboard. This supersedes the narrow Hall specification above. Fit the official Davos Hospital circular emblem to the coat's wearer-left upper sleeve as a matte, surface-following decal; provenance is recorded with the image. A single coat click opens https://www.davoshospital.co.kr/ in a new tab, with an equivalent keyboard-accessible link. The Royal System selection and final TV-wall arrangement are recorded below.
+
 
 ## 38. Workstation set back
 
@@ -342,3 +346,50 @@ The owner asked for the desk and chair to move back together so they occupy less
 ## 39. Seamless warm greige microcement
 
 The owner approved removing the rug and using a light warm grey with a little beige, almost matte. Keep the existing floor plane/finished height 0.0185 m and room footprint; no grout lines, large mottles or concrete cracks. Use INTERIOR.microcement (#D5D2CA), roughness 0.86 and a single subtle, non-repeating procedural surface map with very shallow bump. Walls stay lighter/warmer. Remove rug geometry/material loads and lower the sofa, lounge/ottoman, coffee table and office chair by 16.5 mm to the finished floor. Preserve their material colors, particularly the current light-wood Noguchi base; black was discussed only, not selected.
+
+
+## 40. Connected Royal-inspired TV wall
+
+Replace the closed bookcases with light-wood wall rails and shelves inspired by Poul Cadovius's Royal System. Each side is now one generous custom 1.12 m bay centered at X ±1.72 m, leaving 36 cm between the TV edge and inner rail. These side widths are a visual customization, not official dk3 80 cm modules. Use four left shelves, three right shelves, one drawer cabinet and one sliding-door cabinet, with two custom 1.16 m open shelves joining the inner cabinet edges beneath the TV with 6 mm construction seams. Keep the lower top at 0.82 m and the award shelf at 1.3025 m. The centered award pose [1.72, 1.3025, 3.09] leaves about 89 mm in front and 93 mm behind its full body and support footprint.
+
+The TV and clock are raised 25 cm: centers 1.90 m and 2.68 m. Desktop/mobile Talks cameras follow. A single short central rail ends at 0.996 m, just above the shelf hangers, while the side inner rails are shared. The old TV mouldings and invented oak backing/upper shelf behind the garment rack are removed. Reference: https://dk3.dk/royal_system_kollektion.
+
+## 41. Surface double-click navigation
+
+A primary unmodified desktop double-click on a visible scene surface approaches that hit along the viewing ray. A second double-click restores the previous camera and target. Selecting an exhibit or guided view cancels temporary inspection. Briefly arbitrate single-click actions to prevent a double-click also opening a reader, photo, hospital or YouTube link. Preserve orbit, pan, wheel zoom, touch drag/pinch and keyboard alternatives. Explain the gesture in the discreet Controls help.
+
+## 42. Bare desk and coordinated light wood
+
+Remove the leather desk mat and ground the keyboard, MX Master 4 and Mac mini on the tabletop at 0.7735 m. The owner's final preference supersedes the earlier dark walnut trial: use a slightly deeper beige wood target (#B6A184), coordinated with the existing Noguchi and Eames wood. Desk and Royal shelf textures have different source colors, so compensate their material tints separately while preserving grain, roughness and normal maps. The planter stand follows the same light-wood target. Keep the Bodil geometry and brushed steel frame.
+
+Restore the previous monitor and monitor arm after the stand display trial. Preserve the CV texture and reader, and return the Mac mini to its former position. Mobile guided-view buttons sit 36 CSS pixels higher to clear the collection swipe hint.
+
+Seat the MX Master thumb wheel in a real aperture through its side shell and thumb shelf, with an integrated grey rim and an 18-degree axle. Only about 1.9 mm of the roller arc projects from the housing. Keep the original mouse silhouette, scale and interaction; this remains a reference-based reconstruction rather than official CAD.
+
+## 43. Garments, window and raised USM
+
+Replace the standalone HAY frame with a 130 cm wall-mounted wardrobe and shelving system coordinated with the Royal TV wall. Two 34 × 19 mm wood uprights have real 40 mm wall standoffs; thin shelves at local heights 1.80 and 2.15 m use stainless tension brackets. Keep the clothes rail at its existing 1.485 m center height so the garment hooks remain seated. The shelving ends 150 mm before the window and clears the board. This is a Royal-inspired custom configuration, not an official product module.
+
+The gi is on the surfboard side and the physician coat on the window side; reverse both garments' facing directions so the real Davos Hospital left-sleeve emblem is exposed. The coat opens the hospital website, with an accessible link alternative. Repair the gi's malformed raised sleeve lettering as a curved USA cloth patch and remove the stray white belt texture island while retaining the three rank stripes, original texture bytes and garment dimensions.
+
+The BJJ focus cameras approach from the room side of the turned garment, keeping its front belt and wearer-left sleeve visible.
+
+Split the existing window opening into two broad panes using one central mullion. Preserve the opening dimensions and curtains. Raise the single-tier USM lowboard to 55 cm overall with 19 mm chrome legs, short leveling stems and dark glides. Move objects on its top upward by the same 16 cm. Keep the room dimensions unchanged.
+
+## 44. Textured indoor palm
+
+Use AllQuad's textured Dypsis lutescens foliage, licensed CC BY 4.0, replacing the initial procedural approximation. Remove the original pot and fit the foliage to the authored white cylinder and light-wood stand, about 2.05 m overall. The model uses photographic leaf color/normal/roughness maps with alpha-tested depth-writing foliage, four total draws and about 25k triangles including the planter. Local files, original attribution and pinned redistribution source are under public/models/plant-dypsis; credit the artist on /credits. World position [-1.90, 0.0185, 2.32] clears walls and furniture.
+
+## 45. Physical supports and glass
+
+Tilt the actual 9 ft 6 in longboard toward the left wall with X rotation -0.12 and origin X -2.382 m; retain floor cradle contact and about 25 mm hull clearance from the wall. The photo frame has a connected hinge, broad rear easel and grounded rubber foot; both the frame's lower edge and the rear foot meet the desk.
+
+The KOSESS award's single silver rear prop follows the supplied rear photographs: approximately 7 mm diameter, dense longitudinal grooves, a black collar, rounded metal tip and socket attachment. Preserve the rough satin plaque and continuous mirror-badge hover glow. Ground the support from its actual vertices and center the complete footprint on the shelf.
+
+The Noguchi tabletop uses a continuous reflective dielectric face with angle-dependent opacity, visible front thickness and front-sided edge geometry so the rear rim no longer reads as an equally dark outline. This is a lightweight glass approximation without a transmission framebuffer; retain existing real table geometry and pale wood.
+
+## 46. Clear navigation and lower evening light
+
+Place the office title, guided-view buttons and collection footer in one bottom flow layout. The title row stays above the collection as its height changes across viewport widths, with the mobile swipe hint taking its own space. Retain the original links, keyboard controls and selected-object behavior.
+
+Keep the beige material palette and reduce the lights that washed out every surface. Sky fill now fades with sun altitude from -6 to 32 degrees; lower the constant environment, ambient, hemisphere and frontal-fill floors. The overhead light is a modest warm pool rather than an increasingly bright white flood at night. Preserve local time, solar position, daylight/evening previews, the window sky and cached shadows. Verify noon, dusk and night separately so evening retains legible objects with lower overall brightness.

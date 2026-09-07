@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import type { StudioSceneProps } from '../types';
+import { PERSONAL_LINKS } from '../personal';
 import { DoctorCoat, JiuJitsuGi } from './Garment';
 import { GarmentRack, RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 import { Interactive } from './Interactive';
@@ -14,12 +15,13 @@ export function PersonalCorner({ selected, onSelect, reducedMotion }: PersonalCo
     <group>
       <group position={[...wardrobe.position]} rotation={[0, wardrobe.rotation, 0]}>
         <GarmentRack />
-        <Interactive id="spine" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
-          fixed position={[-0.12, wardrobe.height - RACK_RAIL_HALF_HEIGHT, 0]} rotation={0.08}>
+        <Interactive id="spine" name="Exhibit hospital" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
+          onActivate={() => window.open(PERSONAL_LINKS.hospital, '_blank', 'noopener,noreferrer')}
+          fixed position={[0.3, wardrobe.height - RACK_RAIL_HALF_HEIGHT, 0]} rotation={0.08}>
           <DoctorCoat />
         </Interactive>
         <Interactive id="bjj" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
-          fixed position={[0.12, wardrobe.height - RACK_RAIL_HALF_HEIGHT, 0]} rotation={-0.1}>
+          fixed position={[-0.3, wardrobe.height - RACK_RAIL_HALF_HEIGHT, 0]} rotation={-0.1}>
           <JiuJitsuGi />
         </Interactive>
       </group>

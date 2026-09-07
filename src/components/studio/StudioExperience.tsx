@@ -137,6 +137,7 @@ export function StudioExperience(content: StudioContent) {
         </Suspense>}</SceneBoundary>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
         <button className="office-secret-trigger" id="studio-exhibit-award" onClick={() => open('award')}>Inspect the gold award</button>
+        <a className="office-secret-trigger" href={PERSONAL_LINKS.hospital} target="_blank" rel="noopener noreferrer">Davos Hospital · physician coat (opens in a new tab)</a>
       </div>
       <header className="studio-header">
         <a className="studio-brand" href="/" aria-label="TakMD home"><span className="studio-brand-mark" aria-hidden="true">t.</span><div><h1>Woon Tak Yuh<span>, MD.</span></h1><span className="studio-brand-caption">Endoscopic spine surgery · Research · Teaching</span></div></a>
@@ -152,9 +153,12 @@ export function StudioExperience(content: StudioContent) {
         </button>
         <LocalClockReadout />
       </div>
-      <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>The office.</h2></div>
-      <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>The practice</button><button onClick={() => goToView(2)}>The desk</button><button id="studio-exhibit-family" onClick={() => open('family')}>Photo frame</button></div>
-      <footer className="studio-stage-footer">
+      <div className="office-bottom">
+        <div className="office-summary">
+          <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>The office.</h2></div>
+          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>The practice</button><button onClick={() => goToView(2)}>The desk</button><button id="studio-exhibit-family" onClick={() => open('family')}>Photo frame</button></div>
+        </div>
+        <footer className="studio-stage-footer">
         <OfficeHelp ready={ready} explored={explored} compact={compact} />
         <div className="studio-collection">
           <p id="office-collection-hint" className="office-collection-hint">Swipe to browse all seven <span aria-hidden="true">→</span></p>
@@ -170,7 +174,8 @@ export function StudioExperience(content: StudioContent) {
           </div>
         </div>
         <a className="office-index" href="#office-reading">Browse the work <span aria-hidden="true">↓</span></a>
-      </footer>
+        </footer>
+      </div>
     </section>
     <section id="office-reading" className="studio-notes" aria-labelledby="studio-notes-heading">
       <div className="studio-notes-heading"><p className="studio-kicker">From the desk</p><h2 id="studio-notes-heading">Practice shapes<br /><em>the questions.</em></h2><a className="studio-text-link" href="/research">Research archive ↗</a></div>

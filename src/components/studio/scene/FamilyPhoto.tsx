@@ -1,11 +1,23 @@
 import { useTexture } from '@react-three/drei';
 import { useEffect, useMemo, useState } from 'react';
-import { SRGBColorSpace } from 'three';
+import { SRGBColorSpace, Vector3 } from 'three';
 import type { StudioSceneProps } from '../types';
 import photos from '../../../data/photo-frame.json';
 import { profileImage } from '../../../data/cv';
 import { Interactive } from './Interactive';
 import { Block } from './Primitives';
+import { ROOM } from './config';
+
+const FRAME_TILT = -0.16;
+const FRAME_RADIUS = 0.0025;
+const FRAME_CENTER_Y = (0.095 - FRAME_RADIUS) * Math.cos(FRAME_TILT)
+  + (0.009 - FRAME_RADIUS) * Math.abs(Math.sin(FRAME_TILT)) + FRAME_RADIUS;
+const EASEL_HINGE = new Vector3(0, 0.038, -0.0115)
+  .applyAxisAngle(new Vector3(1, 0, 0), FRAME_TILT).add(new Vector3(0, FRAME_CENTER_Y, 0));
+const EASEL_FOOT = new Vector3(0, 0.003, -0.1);
+const EASEL_CENTER = EASEL_HINGE.clone().add(EASEL_FOOT).multiplyScalar(0.5);
+const EASEL_LENGTH = EASEL_HINGE.distanceTo(EASEL_FOOT);
+const EASEL_ANGLE = Math.atan2(EASEL_HINGE.z - EASEL_FOOT.z, EASEL_HINGE.y - EASEL_FOOT.y);
 
 function Photograph({ src }: { readonly src: string }) {
   const source = useTexture(src);
@@ -31,12 +43,23 @@ export function FamilyPhoto(props: Pick<StudioSceneProps, 'selected' | 'onSelect
     try { sessionStorage.setItem('takmd-frame-photo', selected); } catch { /* Photo selection remains available without storage. */ }
     return selected;
   });
-  return <Interactive id="family" {...props} position={[-0.72, 0.874, -0.23]}>
-    <group rotation={[-0.16, 0.13, 0]}>
+  return <Interactive id="family" {...props} position={[-0.72, 0.0185 + ROOM.desk.height, -0.23]} rotation={0.13}>
+    <group name="photo-frame-body" position={[0, FRAME_CENTER_Y, 0]} rotation={[FRAME_TILT, 0, 0]}>
       <Block size={[0.246, 0.19, 0.018]} color="#30332F" radius={0.0025} roughness={0.48} />
       <Block size={[0.23, 0.174, 0.001]} position={[0, 0, 0.0095]} color="#151815" radius={0.0004} />
       <Photograph src={photo} />
-      <Block size={[0.052, 0.139, 0.006]} position={[0, -0.018, -0.048]} rotation={[-0.42, 0, 0]} color="#30332F" radius={0.002} roughness={0.6} />
+    </group>
+    <group name="photo-frame-hinged-easel">
+      <mesh name="photo-frame-easel-hinge" position={EASEL_HINGE} rotation={[0, 0, Math.PI / 2]} castShadow>
+        <cylinderGeometry args={[0.0025, 0.0025, 0.047, 16]} />
+        <meshStandardMaterial color="#585953" metalness={0.7} roughness={0.52} />
+      </mesh>
+      <Block size={[0.045, EASEL_LENGTH, 0.003]} position={[EASEL_CENTER.x, EASEL_CENTER.y, EASEL_CENTER.z]}
+        rotation={[EASEL_ANGLE, 0, 0]} color="#30332F" radius={0.0008} roughness={0.86} />
+      <group name="photo-frame-easel-foot">
+        <Block size={[0.046, 0.003, 0.008]} position={[0, 0.0015, EASEL_FOOT.z]}
+          color="#252923" radius={0.0006} roughness={0.94} />
+      </group>
     </group>
   </Interactive>;
 }

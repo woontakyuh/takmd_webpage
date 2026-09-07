@@ -11,6 +11,7 @@ const USM = {
   bays: 4, moduleHeight: 0.35, ballRadius: 0.0115, tubeRadius: 0.0095,
   panelClearance: 0.021, sheet: 0.0012, returnDepth: 0.008,
   panelOutset: 0.0075, footRadius: 0.01, footHeight: 0.0065,
+  levelingStemHeight: 0.01, legCollarHeight: 0.003,
   lockRadius: 0.016, lockDrop: 0.047,
 } as const;
 
@@ -60,6 +61,8 @@ function createLowboardGeometry() {
   const top = height - USM.ballRadius;
   const bottom = top - USM.moduleHeight;
   const middle = (top + bottom) / 2;
+  const legBottom = USM.footHeight + USM.levelingStemHeight;
+  const legTop = bottom - 0.0065;
   const levels = [bottom, top] as const;
   const sides = [-halfDepth, halfDepth] as const;
   const stations = Array.from({ length: USM.bays + 1 }, (_, index) => -halfWidth + bayWidth * index);
@@ -73,7 +76,9 @@ function createLowboardGeometry() {
         chrome.push(new SphereGeometry(USM.ballRadius, 20, 12).translate(x, y, z));
       }
       chrome.push(tube(USM.moduleHeight - USM.ballRadius, [x, middle, z]));
-      chrome.push(tube(bottom - USM.footHeight, [x, (bottom + USM.footHeight) / 2, z], [0, 0, 0], 0.0035));
+      chrome.push(tube(legTop - legBottom, [x, (legTop + legBottom) / 2, z]));
+      chrome.push(tube(USM.levelingStemHeight, [x, USM.footHeight + USM.levelingStemHeight / 2, z], [0, 0, 0], 0.0035));
+      chrome.push(tube(USM.legCollarHeight, [x, legBottom + USM.legCollarHeight / 2, z], [0, 0, 0], USM.footRadius));
       dark.push(tube(USM.footHeight, [x, USM.footHeight / 2, z], [0, 0, 0], USM.footRadius));
       dark.push(tube(0.004, [x, USM.footHeight + 0.002, z], [0, 0, 0], 0.006));
     }

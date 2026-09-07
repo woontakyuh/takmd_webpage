@@ -4,7 +4,7 @@ import { Box3, Euler, Mesh, Vector3 } from 'three';
 import { PALETTE } from './config';
 
 const SURFBOARD_LENGTH = 2.8956;
-const SURFBOARD_LEAN = new Euler(0.12, 0, -0.015);
+const SURFBOARD_LEAN = new Euler(-0.12, 0, -0.015);
 const FINISHED_FLOOR_TOP = 0.0185;
 const FIN_CLEARANCE = 0.065;
 

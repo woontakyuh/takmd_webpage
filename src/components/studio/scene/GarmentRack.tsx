@@ -1,63 +1,90 @@
-import { useEffect, useMemo } from 'react';
-import { Matrix4 } from 'three';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { Block } from './Primitives';
-import { PALETTE, ROOM } from './config';
+import { Color } from 'three';
+import type { Texture } from 'three';
+import { Block, Rod } from './Primitives';
+import { usePrintedTexture } from './Textures';
+import { INTERIOR, PALETTE, ROOM } from './config';
 
 export const RACK_RAIL_HALF_HEIGHT = 0.015;
-const SECTION = RACK_RAIL_HALF_HEIGHT * 2;
-const EDGE_RADIUS = 0.0006;
-const FELT_HEIGHT = 0.003;
-const POWDER_COAT_ROUGHNESS = 0.58;
+const WOOD_BASE = new Color(PALETTE.paperLight);
+const WOOD_TINT = new Color(INTERIOR.lightWood).multiply(
+  new Color(1 / WOOD_BASE.r, 1 / WOOD_BASE.g, 1 / WOOD_BASE.b),
+);
+const WOOD_COLOR = `#${WOOD_TINT.getHexString()}`;
+const UPRIGHT_WIDTH = 0.034;
+const UPRIGHT_DEPTH = 0.019;
+const UPRIGHT_HEIGHT = 2;
+const UPRIGHT_CENTER_Y = 1.38;
+const MOUNTING_STANDOFF = 0.04;
+const SHELF_THICKNESS = 0.019;
+const SHELVES = [{ top: 1.8, depth: 0.36 }, { top: 2.15, depth: 0.3 }] as const;
 
-type LegProps = {
+type UprightProps = {
   readonly x: number;
-  readonly footZ: number;
-  readonly top: number;
+  readonly wallFaceZ: number;
+  readonly wood: Texture;
 };
 
-function SquareLeg({ x, footZ, top }: LegProps) {
-  const rise = top - FELT_HEIGHT;
-  const slope = -footZ / rise;
-  const cutDepth = SECTION * Math.hypot(1, slope);
-  const geometry = useMemo(() => {
-    const leg = new RoundedBoxGeometry(SECTION, rise, cutDepth, 3, EDGE_RADIUS);
-    // Horizontal mitres keep the felt contact flat and the tilted section 3 cm square.
-    leg.applyMatrix4(new Matrix4().set(
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, slope, 1, 0,
-      0, 0, 0, 1,
-    ));
-    return leg;
-  }, [cutDepth, rise, slope]);
-  useEffect(() => () => geometry.dispose(), [geometry]);
-
-  return (
-    <group>
-      <mesh geometry={geometry} position={[x, (top + FELT_HEIGHT) / 2, footZ / 2]} castShadow receiveShadow>
-        <meshStandardMaterial color={PALETTE.white} roughness={POWDER_COAT_ROUGHNESS} metalness={0.08} />
+function WallUpright({ x, wallFaceZ, wood }: UprightProps) {
+  const backZ = wallFaceZ - MOUNTING_STANDOFF;
+  const frontZ = backZ - UPRIGHT_DEPTH;
+  return <group name="royal-inspired-solid-wood-wall-upright">
+    <Block size={[UPRIGHT_WIDTH, UPRIGHT_HEIGHT, UPRIGHT_DEPTH]}
+      position={[x, UPRIGHT_CENTER_Y, backZ - UPRIGHT_DEPTH / 2]}
+      color={WOOD_COLOR} texture={wood} radius={0.004} roughness={0.58} />
+    {[0.46, 1.38, 2.3].map(y => <group key={y} name="wall-contact-standoff-and-fastener">
+      <Rod from={[x, y, backZ]} to={[x, y, wallFaceZ]} radius={0.006}
+        color={PALETTE.aluminiumEdge} metalness={1} />
+      <mesh position={[x, y, frontZ - 0.001]} rotation={[0, Math.PI, 0]}>
+        <circleGeometry args={[0.006, 16]} />
+        <meshStandardMaterial color={PALETTE.aluminiumEdge} roughness={0.28} metalness={1} />
       </mesh>
-      <Block size={[SECTION, FELT_HEIGHT, cutDepth]} position={[x, FELT_HEIGHT / 2, footZ]}
-        color={PALETTE.ink} radius={0.0004} roughness={0.94} />
-    </group>
-  );
+    </group>)}
+  </group>;
+}
+
+function ShelfHanger({ x, top, depth, railFrontZ }: {
+  readonly x: number; readonly top: number; readonly depth: number; readonly railFrontZ: number;
+}) {
+  const underside = top - SHELF_THICKNESS - 0.0045;
+  const backZ = railFrontZ - 0.002;
+  const frontZ = railFrontZ - depth + 0.025;
+  return <group name="stainless-shelf-tension-hanger">
+    <Rod from={[x, underside, backZ]} to={[x, underside, frontZ]} radius={0.0045}
+      color={PALETTE.aluminiumEdge} metalness={1} />
+    <Rod from={[x, top + 0.145, backZ]} to={[x, underside, frontZ + 0.012]} radius={0.004}
+      color={PALETTE.aluminiumEdge} metalness={1} />
+    <Rod from={[x, top + 0.018, backZ]} to={[x, top + 0.145, backZ]} radius={0.004}
+      color={PALETTE.aluminiumEdge} metalness={1} />
+  </group>;
 }
 
 export function GarmentRack() {
-  const { width, height, depth } = ROOM.wardrobe;
-  const postX = width / 2 - RACK_RAIL_HALF_HEIGHT;
+  const wood = usePrintedTexture('wood');
+  const { width, height, position } = ROOM.wardrobe;
+  const supportX = [-width / 2 + UPRIGHT_WIDTH / 2, width / 2 - UPRIGHT_WIDTH / 2];
+  const wallFaceZ = position[0] - (ROOM.architecture.leftX + 0.04);
+  const railFrontZ = wallFaceZ - MOUNTING_STANDOFF - UPRIGHT_DEPTH;
   const railY = height - RACK_RAIL_HALF_HEIGHT;
-  const approximateSlope = (depth / 2 - RACK_RAIL_HALF_HEIGHT) / (railY - FELT_HEIGHT);
-  const footZ = depth / 2 - RACK_RAIL_HALF_HEIGHT * Math.hypot(1, approximateSlope);
 
   return (
-    <group name="White HAY Loop Stand Hall · 45 × 150 × 39 cm">
-      <Block size={[width, SECTION, SECTION]} position={[0, railY, 0]} color={PALETTE.white}
-        radius={EDGE_RADIUS} roughness={POWDER_COAT_ROUGHNESS} metalness={0.08} />
-      <SquareLeg x={-postX} footZ={footZ} top={railY} />
-      <SquareLeg x={postX} footZ={footZ} top={railY} />
-      <SquareLeg x={0} footZ={-footZ} top={railY} />
+    <group name="Royal-inspired light-wood wall wardrobe with two shelves">
+      {supportX.map(x => <WallUpright key={x} x={x} wallFaceZ={wallFaceZ} wood={wood} />)}
+      {SHELVES.map(({ top, depth }) => <group key={top} name={`wardrobe-shelf-top-${top}`}>
+        <Block size={[width - UPRIGHT_WIDTH - 0.006, SHELF_THICKNESS, depth]}
+          position={[0, top - SHELF_THICKNESS / 2, railFrontZ - depth / 2]}
+          color={WOOD_COLOR} texture={wood} radius={0.004} roughness={0.5} />
+        {supportX.map(x => <ShelfHanger key={x} x={x} top={top} depth={depth} railFrontZ={railFrontZ} />)}
+      </group>)}
+      <Block size={[width, RACK_RAIL_HALF_HEIGHT * 2, RACK_RAIL_HALF_HEIGHT * 2]}
+        position={[0, railY, 0]} color={PALETTE.aluminiumEdge} radius={0.0006} roughness={0.3} metalness={1} />
+      {supportX.map(x => <group key={x} name="wall-supported-clothes-rail-bracket">
+        <Block size={[0.018, 0.17, 0.004]} position={[x, railY + 0.07, railFrontZ - 0.002]}
+          color={PALETTE.aluminiumEdge} radius={0.002} roughness={0.3} metalness={1} />
+        <Rod from={[x, railY, railFrontZ]} to={[x, railY, 0]} radius={0.006}
+          color={PALETTE.aluminiumEdge} metalness={1} />
+        <Rod from={[x, railY + 0.14, railFrontZ]} to={[x, railY, 0.025]} radius={0.0045}
+          color={PALETTE.aluminiumEdge} metalness={1} />
+      </group>)}
     </group>
   );
 }

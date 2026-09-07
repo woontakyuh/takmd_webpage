@@ -1,6 +1,6 @@
 import { useTexture } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
-import { CylinderGeometry, ExtrudeGeometry, Path, Quaternion, RepeatWrapping, Shape, ShapeGeometry, SRGBColorSpace, Vector3 } from 'three';
+import { ExtrudeGeometry, LatheGeometry, Path, Quaternion, RepeatWrapping, Shape, ShapeGeometry, SRGBColorSpace, Vector2, Vector3 } from 'three';
 import type { Texture } from 'three';
 import { GOLD_AWARD, PALETTE } from './config';
 import type { Point } from './config';
@@ -175,34 +175,54 @@ function BackPlate({ grain }: { readonly grain: Texture }) {
 
 function FlutedSupport({ originY }: { readonly originY: number }) {
   const support = useMemo(() => {
-    const start = new Vector3(0, -0.113 * FACE_SCALE[1], -AWARD.depth / 2 - 0.00045)
+    const start = new Vector3(0, -0.113 * FACE_SCALE[1], -AWARD.depth / 2 + 0.001)
       .applyAxisAngle(new Vector3(1, 0, 0), AWARD.lean);
     start.y += originY;
-    const end = new Vector3(0, 0.0025, -0.077);
-    const maximumRadius = 0.0022 * 1.045;
+    const end = new Vector3(0, 0.0035, -0.077);
+    const radius = 0.0035;
+    const createShaft = () => {
+      const direction = end.clone().sub(start), halfLength = direction.length() / 2;
+      const profile = [[0, -halfLength], [radius - 0.0005, -halfLength],
+        [radius, -halfLength + 0.0005], [radius, halfLength - 0.001],
+        [radius - 0.00008, halfLength - 0.00062], [radius - 0.00028, halfLength - 0.00025],
+        [radius - 0.00065, halfLength], [0, halfLength]];
+      const geometry = new LatheGeometry(profile.map(([x, y]) => new Vector2(x, y)), 192);
+      const positions = geometry.getAttribute('position');
+      for (let index = 0; index < positions.count; index++) {
+        const x = positions.getX(index), z = positions.getZ(index), radial = Math.hypot(x, z);
+        if (radial === 0) continue;
+        const tipFade = Math.min(1, (halfLength - positions.getY(index)) / 0.0007);
+        const groove = Math.max(0, Math.cos(Math.atan2(z, x) * 32)) ** 10 * 0.00016 * tipFade;
+        positions.setXYZ(index, x * (1 - groove / radial), positions.getY(index), z * (1 - groove / radial));
+      }
+      geometry.computeVertexNormals();
+      return { geometry, position: start.clone().add(end).multiplyScalar(0.5),
+        quaternion: new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), direction.normalize()) };
+    };
+    let shaft = createShaft();
+    const vertex = new Vector3();
     for (let step = 0; step < 4; step++) {
-      end.y = maximumRadius * Math.abs(start.z - end.z) / start.distanceTo(end);
+      const positions = shaft.geometry.getAttribute('position');
+      let lowest = Infinity;
+      for (let index = 0; index < positions.count; index++) {
+        vertex.fromBufferAttribute(positions, index).applyQuaternion(shaft.quaternion).add(shaft.position);
+        lowest = Math.min(lowest, vertex.y);
+      }
+      end.y -= lowest;
+      shaft.geometry.dispose();
+      shaft = createShaft();
     }
-    const direction = end.clone().sub(start);
-    const geometry = new CylinderGeometry(0.0022, 0.0022, direction.length(), 96);
-    const positions = geometry.getAttribute('position');
-    for (let index = 0; index < positions.count; index++) {
-      const x = positions.getX(index), z = positions.getZ(index);
-      const radius = Math.hypot(x, z);
-      if (radius === 0) continue;
-      const flute = 1 + Math.cos(Math.atan2(z, x) * 24) * 0.045;
-      positions.setXYZ(index, x * flute, positions.getY(index), z * flute);
-    }
-    geometry.computeVertexNormals();
-    return { geometry, position: start.clone().add(end).multiplyScalar(0.5),
-      collarFrom: start.clone().lerp(end, 0.324).toArray(), collarTo: start.clone().lerp(end, 0.36).toArray(),
-      quaternion: new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), direction.normalize()) };
+    const collarCenter = start.clone().lerp(end, 0.34), axis = end.clone().sub(start).normalize();
+    return { ...shaft, collarFrom: collarCenter.clone().addScaledVector(axis, -0.0009).toArray(),
+      collarTo: collarCenter.clone().addScaledVector(axis, 0.0009).toArray() };
   }, [originY]);
   useEffect(() => () => support.geometry.dispose(), [support]);
-  return <><mesh geometry={support.geometry} position={support.position} quaternion={support.quaternion} castShadow receiveShadow>
-    <meshStandardMaterial color={PALETTE.aluminiumEdge} metalness={0.85} roughness={0.28} />
+  return <><mesh name="Gold award grooved silver rear support" geometry={support.geometry}
+    position={support.position} quaternion={support.quaternion} castShadow receiveShadow>
+    <meshPhysicalMaterial color={PALETTE.aluminiumEdge} metalness={0.72} roughness={0.3}
+      anisotropy={0.65} anisotropyRotation={Math.PI / 2} envMapIntensity={1.5} />
   </mesh>
-    <Rod from={support.collarFrom} to={support.collarTo} radius={0.0027}
+    <Rod from={support.collarFrom} to={support.collarTo} radius={0.00415}
       color={PALETTE.graphite} metalness={0.25} />
   </>;
 }
