@@ -370,7 +370,7 @@ Seat the MX Master thumb wheel in a real aperture through its side shell and thu
 
 Replace the standalone HAY frame with a 130 cm wall-mounted wardrobe and shelving system coordinated with the Royal TV wall. Two 34 × 19 mm wood uprights have real 40 mm wall standoffs; thin shelves at local heights 1.80 and 2.15 m use stainless tension brackets. Keep the clothes rail at its existing 1.485 m center height so the garment hooks remain seated. The shelving ends 150 mm before the window and clears the board. This is a Royal-inspired custom configuration, not an official product module.
 
-The gi is on the surfboard side and the physician coat on the window side; reverse both garments' facing directions so the real Davos Hospital left-sleeve emblem is exposed. The coat opens the hospital website, with an accessible link alternative. Use the original gi asset unchanged. The owner rejected the added sleeve patch and belt repair; preserve the original model's complete geometry and textures without corrective overlays.
+The gi is on the surfboard side and the physician coat on the window side; reverse both garments' facing directions so the real Davos Hospital left-sleeve emblem is exposed. The coat opens the hospital website, with an accessible link alternative. Preserve the original gi, including its belt and fabric details, except for directly correcting the final sleeve letter from N to A. Keep U and S unchanged. The owner rejected an added sleeve patch and belt repair: the correction must be part of the original model's surface, with no rectangular panel, floating decal or separate material.
 
 The BJJ focus cameras approach from the room side of the turned garment, keeping its front belt and wearer-left sleeve visible.
 
