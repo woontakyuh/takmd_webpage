@@ -7,9 +7,11 @@ import type { Point } from './config';
 import { Block, Rod } from './Primitives';
 
 const AWARD = {
-  width: 0.2, height: 0.3, depth: 0.015, lean: -0.23,
+  width: 0.21, height: 0.297, depth: 0.015, lean: -0.23,
   clickThreshold: 5,
 } as const;
+const ARTWORK = { width: 0.2, height: 0.3 } as const;
+const FACE_SCALE = [AWARD.width / ARTWORK.width, AWARD.height / ARTWORK.height, 1] as const;
 
 type GoldAwardProps = {
   readonly channelUrl: string;
@@ -75,6 +77,16 @@ export function GoldAward({ channelUrl, position = [0, 0, 0], rotation = 0 }: Go
   }, [inkSource, logoSource, grainSource]);
   const { grain } = textures;
   const geometry = useMemo(awardGeometry, []);
+  const originY = useMemo(() => {
+    const vertices = geometry.body.getAttribute('position');
+    let lowest = Infinity;
+    for (let index = 0; index < vertices.count; index++) {
+      const y = vertices.getY(index) * FACE_SCALE[1] * Math.cos(AWARD.lean)
+        - vertices.getZ(index) * Math.sin(AWARD.lean);
+      lowest = Math.min(lowest, y);
+    }
+    return -lowest;
+  }, [geometry]);
   useCursor(hovered);
   useEffect(() => () => { Object.values(textures).forEach(texture => texture.dispose()); }, [textures]);
   useEffect(() => () => { Object.values(geometry).forEach((part) => part.dispose()); }, [geometry]);
@@ -92,28 +104,27 @@ export function GoldAward({ channelUrl, position = [0, 0, 0], rotation = 0 }: Go
         || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= AWARD.clickThreshold) return;
       window.open(channelUrl, '_blank', 'noopener,noreferrer');
     }}>
-    <group position={[0, AWARD.height / 2 * Math.cos(AWARD.lean) + AWARD.depth / 2 * Math.abs(Math.sin(AWARD.lean)), 0]}
-      rotation={[AWARD.lean, 0, 0]}>
-      <mesh geometry={geometry.body} castShadow receiveShadow>
-        <meshStandardMaterial attach="material-0" color={GOLD_AWARD.satin} metalness={0.42} roughness={0.52} envMapIntensity={1.1}
-          bumpMap={grain} bumpScale={0.000035} />
-        <meshStandardMaterial attach="material-1" color={GOLD_AWARD.edge} metalness={0.58} roughness={0.32} />
-      </mesh>
-      <mesh geometry={geometry.well} position={[0, 0, 0.003]} receiveShadow>
-        <meshPhysicalMaterial color={GOLD_AWARD.mirror} metalness={0.7} roughness={0.22} envMapIntensity={1.7}
-          clearcoat={0.5} clearcoatRoughness={0.12} />
-      </mesh>
-      <mesh geometry={geometry.badge} position={[-0.00065, 0.07565, 0.0034]} castShadow receiveShadow>
-        <meshStandardMaterial color={GOLD_AWARD.satin} metalness={0.76} roughness={0.43} />
-      </mesh>
-      <PhotoDecal texture={textures.logo} position={[-0.00065, 0.07565, 0.005]}
-        size={[296 / 1536 * AWARD.width, 356 / 2304 * AWARD.height]} />
-      <PhotoDecal texture={textures.ink} position={[0, 0, 0.00765]} size={[AWARD.width, AWARD.height]} ink />
-      <BackPlate grain={grain} />
+    <group position={[0, originY, 0]} rotation={[AWARD.lean, 0, 0]}>
+      <group scale={[...FACE_SCALE]}>
+        <mesh geometry={geometry.body} castShadow receiveShadow>
+          <meshStandardMaterial attach="material-0" color={GOLD_AWARD.satin} metalness={0.42} roughness={0.52} envMapIntensity={1.1}
+            bumpMap={grain} bumpScale={0.000035} />
+          <meshStandardMaterial attach="material-1" color={GOLD_AWARD.edge} metalness={0.58} roughness={0.32} />
+        </mesh>
+        <mesh geometry={geometry.well} position={[0, 0, 0.003]} receiveShadow>
+          <meshPhysicalMaterial color={GOLD_AWARD.mirror} metalness={0.7} roughness={0.22} envMapIntensity={1.7}
+            clearcoat={0.5} clearcoatRoughness={0.12} />
+        </mesh>
+        <mesh geometry={geometry.badge} position={[-0.00065, 0.07565, 0.0034]} castShadow receiveShadow>
+          <meshStandardMaterial color={GOLD_AWARD.satin} metalness={0.76} roughness={0.43} />
+        </mesh>
+        <PhotoDecal texture={textures.logo} position={[-0.00065, 0.07565, 0.005]}
+          size={[296 / 1536 * ARTWORK.width, 356 / 2304 * ARTWORK.height]} />
+        <PhotoDecal texture={textures.ink} position={[0, 0, 0.00765]} size={[ARTWORK.width, ARTWORK.height]} ink />
+        <BackPlate grain={grain} />
+      </group>
     </group>
-    <FlutedSupport />
-    <Rod from={[0, 0.0251, -0.0128]} to={[0, 0.0239, -0.0162]} radius={0.0027}
-      color={PALETTE.graphite} metalness={0.25} />
+    <FlutedSupport originY={originY} />
   </group>;
 }
 
@@ -153,10 +164,16 @@ function BackPlate({ grain }: { readonly grain: Texture }) {
   </>;
 }
 
-function FlutedSupport() {
+function FlutedSupport({ originY }: { readonly originY: number }) {
   const support = useMemo(() => {
-    const start = new Vector3(0, 0.036, 0.018);
+    const start = new Vector3(0, -0.113 * FACE_SCALE[1], -AWARD.depth / 2 - 0.00045)
+      .applyAxisAngle(new Vector3(1, 0, 0), AWARD.lean);
+    start.y += originY;
     const end = new Vector3(0, 0.0025, -0.077);
+    const maximumRadius = 0.0022 * 1.045;
+    for (let step = 0; step < 4; step++) {
+      end.y = maximumRadius * Math.abs(start.z - end.z) / start.distanceTo(end);
+    }
     const direction = end.clone().sub(start);
     const geometry = new CylinderGeometry(0.0022, 0.0022, direction.length(), 96);
     const positions = geometry.getAttribute('position');
@@ -169,10 +186,14 @@ function FlutedSupport() {
     }
     geometry.computeVertexNormals();
     return { geometry, position: start.clone().add(end).multiplyScalar(0.5),
+      collarFrom: start.clone().lerp(end, 0.324).toArray(), collarTo: start.clone().lerp(end, 0.36).toArray(),
       quaternion: new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), direction.normalize()) };
-  }, []);
+  }, [originY]);
   useEffect(() => () => support.geometry.dispose(), [support]);
-  return <mesh {...support} castShadow receiveShadow>
+  return <><mesh geometry={support.geometry} position={support.position} quaternion={support.quaternion} castShadow receiveShadow>
     <meshStandardMaterial color={PALETTE.aluminiumEdge} metalness={0.85} roughness={0.28} />
-  </mesh>;
+  </mesh>
+    <Rod from={support.collarFrom} to={support.collarTo} radius={0.0027}
+      color={PALETTE.graphite} metalness={0.25} />
+  </>;
 }

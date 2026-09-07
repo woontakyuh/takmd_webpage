@@ -37,7 +37,7 @@ export const ROOM = {
   monitor: { position: [-0.24, 0.785, -0.8], rotation: Math.PI - 0.08 },
   clock: { position: [0, 2.43, 3.283], rotation: Math.PI, scale: 1 },
   gallery: { position: [0, 1.65, 3.245], rotation: Math.PI },
-  chair: { position: [-0.2, 0, -2.19], rotation: Math.PI - 0.23 },
+  chair: { position: [-0.2, 0.035, -2.19], rotation: Math.PI - 0.23 },
   credenza: { position: [-2.46, 0, 0.65], width: 3.3, depth: 0.48, height: 0.74 },
   plant: { position: [-2.46, 0, 2.55] },
   wardrobe: { position: [-2.35, 0.0185, -2.15], rotation: Math.PI / 2, width: 0.99, height: 1.52, depth: 0.46 },
@@ -45,7 +45,7 @@ export const ROOM = {
 } as const;
 
 export const TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
-  { position: [4.8, 3.2, -6.65], target: [0, 1.03, 0], zoom: 1 },
+  { position: [4, 2.85, -5.65], target: [0, 0.95, -0.45], zoom: 1 },
   { position: [1.65, 1.75, -3.25], target: [-0.45, 1.15, 1.55], zoom: 1 },
   { position: [-1.75, 2.25, -3.2], target: [-0.05, 0.85, -1.0], zoom: 1 },
 ];
@@ -62,7 +62,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
 };
 
 export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
-  { position: [5.55, 3.85, -9.1], target: [0, 1, -0.15], zoom: 1 },
+  { position: [4.6, 3.3, -7.6], target: [0, 0.95, -0.35], zoom: 1 },
   { position: [3.0, 2.2, -4.3], target: [-0.35, 1.05, 1.1], zoom: 1 },
   { position: [-2.5, 2.9, -3.95], target: [-0.05, 0.85, -1.0], zoom: 1 },
 ];

@@ -1,4 +1,5 @@
 import { DoubleSide } from 'three';
+import { MacMiniStickers } from './MacMiniStickers';
 import { useEffect, useMemo } from 'react';
 import type { Point } from './config';
 import { PALETTE } from './config';
@@ -26,6 +27,7 @@ export function MacMini({ position }: MacMiniProps) {
       <MacMiniBase />
       <FrontPorts />
       <RearPorts />
+      <MacMiniStickers />
     </group>
   );
 }

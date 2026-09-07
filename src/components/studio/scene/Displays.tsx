@@ -25,7 +25,7 @@ export function Displays({ selected, onSelect, reducedMotion, night, presentatio
         <group position={[0, 0.37, 0]} rotation={[-0.04, 0, 0]}>
           <Block size={[MONITOR.width, MONITOR.height, 0.027]} radius={0.008} color={PALETTE.ink} roughness={0.3} metalness={0.25} />
           <Block size={[0.3, 0.26, 0.035]} position={[0, 0, -0.025]} color={PALETTE.ink} radius={0.028} />
-          <mesh position={[0, 0.004, 0.0145]}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshStandardMaterial map={monitor} emissiveMap={monitor} emissive={PALETTE.white} emissiveIntensity={night ? 0.8 : 0.28} roughness={0.3} /></mesh>
+          <mesh position={[0, 0.004, 0.0145]}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshBasicMaterial map={monitor} toneMapped={false} color={night ? PALETTE.paper : PALETTE.white} /></mesh>
           <mesh position={[0.332, -0.203, 0.015]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         </group>
       </Interactive>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FEATURED_DOI, FOLIO_ASSETS, mediaForPaper, orderedPapers } from './collection';
 import publicationDetails from '../../data/publication-details.json';
 import type { PaperMedia, Publication } from './types';
+import { ResearchProfile } from './ResearchProfile';
 
 type Props = {
   readonly publications: readonly Publication[];
@@ -53,6 +54,7 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
   const selectPaper = (paper: Publication | undefined) => { if (paper) { setArchive(false); setFigure(false); onPaper(paper.id); } };
 
   return <div className="research-folio" data-active-paper={publication?.id} data-direction={direction}>
+    <ResearchProfile />
     <nav className="folio-navigation" aria-label="Research views">
       <button aria-pressed={!archive} onClick={() => setArchive(false)}>On the desk <span>{String(index + 1).padStart(2, '0')}</span></button>
       <button aria-pressed={archive} onClick={() => setArchive(true)}>All publications <span>{publications.length}</span></button>

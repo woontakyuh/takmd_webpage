@@ -1,0 +1,65 @@
+.research-profile {
+  --research-ink: var(--studio-ink, var(--color-text));
+  --research-muted: var(--studio-muted, var(--color-text-secondary));
+  --research-line: var(--studio-line, var(--color-border));
+  --research-accent: var(--studio-teal, var(--color-accent));
+  color: var(--research-ink);
+  font-family: var(--studio-sans, var(--font-sans));
+  margin-bottom: 20px;
+  min-width: 0;
+}
+
+.research-profile__heading { margin-bottom: 16px; }
+.research-profile__eyebrow {
+  margin: 0 0 4px;
+  color: var(--research-muted);
+  font-size: 11px;
+  letter-spacing: .12em;
+  line-height: 1.65;
+  text-transform: uppercase;
+}
+.research-profile .research-profile__name {
+  margin: 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -.015em;
+  line-height: 1.65;
+}
+.research-profile__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 12px 0;
+  border-top: 1px solid var(--research-line);
+  border-bottom: 1px solid var(--research-line);
+}
+.research-profile__metric { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.research-profile__metric + .research-profile__metric { border-left: 1px solid var(--research-line); padding-left: 16px; }
+.research-profile__metric dt { color: var(--research-muted); font-size: 12px; line-height: 1.65; }
+.research-profile__metric dd {
+  order: -1;
+  margin: 0;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: -.015em;
+  line-height: 1.02;
+}
+.research-profile__source { display: flex; flex-wrap: wrap; gap: 0 12px; margin: 12px 0 0; color: var(--research-muted); font-size: 11px; line-height: 1.65; }
+.research-profile__source span { white-space: nowrap; }
+.research-profile__links { display: flex; flex-wrap: wrap; gap: 0 24px; }
+.research-profile .research-profile__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--research-accent);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--research-line);
+  text-underline-offset: 4px;
+}
+.research-profile .research-profile__links a:hover { text-decoration-color: currentColor; }
+.research-profile .research-profile__links a:focus-visible { outline: 2px solid var(--research-accent); outline-offset: 4px; }

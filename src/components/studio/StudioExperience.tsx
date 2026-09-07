@@ -11,15 +11,17 @@ const Scene = lazy(async () => {
   const module = await import('./StudioScene');
   return { default: module.StudioScene };
 });
-const exhibits: readonly { readonly id: ExhibitId; readonly label: string; readonly compactLabel: string; readonly detail: string }[] = [
-  { id: 'spine', label: 'The spine', compactLabel: 'Practice', detail: 'Clinical practice' },
-  { id: 'research', label: 'On the desk', compactLabel: 'Papers', detail: 'Papers & ideas' },
-  { id: 'education', label: 'Talks', compactLabel: 'Talks', detail: 'Teaching & conferences' },
-  { id: 'ai', label: 'The workstation', compactLabel: 'CV', detail: 'Living CV' },
-  { id: 'projects', label: 'AI projects', compactLabel: 'AI', detail: 'Builds, talks & papers' },
-  { id: 'bjj', label: 'On the mat', compactLabel: 'Jiu-jitsu', detail: 'Jiu-jitsu' },
-  { id: 'surfing', label: 'By the sea', compactLabel: 'Instagram', detail: 'Instagram · @tak_md ↗' },
+const exhibits: readonly { readonly id: ExhibitId; readonly label: string; readonly detail: string }[] = [
+  { id: 'ai', label: 'Profile', detail: 'Living CV' },
+  { id: 'spine', label: 'Practice', detail: 'Clinical spine surgery' },
+  { id: 'research', label: 'Research', detail: 'Papers & ideas' },
+  { id: 'education', label: 'Talks', detail: 'Conferences & lectures' },
 ];
+const socialLinks = [
+  { label: 'YouTube', detail: '@tak_md · Shorts', href: PERSONAL_LINKS.youtube },
+  { label: 'LinkedIn', detail: 'Woon Tak Yuh', href: PERSONAL_LINKS.linkedin },
+  { label: 'Instagram', detail: '@tak_md', href: PERSONAL_LINKS.instagram },
+] as const;
 class SceneBoundary extends Component<{ readonly children: ReactNode }, { readonly failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
@@ -40,6 +42,7 @@ export function StudioExperience(content: StudioContent) {
   const [compact, setCompact] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [paperId, setPaperId] = useState(() => orderedPapers(content.publications)[0]?.id ?? null);
+  const paperIdRef = useRef(paperId);
   const [paperTurn, setPaperTurn] = useState(0);
   const [paperDirection, setPaperDirection] = useState<1 | -1>(1);
   const [talkId, setTalkId] = useState<string | null>(null);
@@ -48,11 +51,23 @@ export function StudioExperience(content: StudioContent) {
   const presentation = content.presentations.find(talk => talk.id === talkId) ?? null;
   const slides = talkMedia.find(media => media.id === talkId)?.slides ?? [];
   const collection = { publication, paperMedia: mediaForPaper(publication), paperTurn, paperDirection, presentation, talkSlide: slides[talkSlideIndex] ?? null };
-  const selectPaper = (id: string) => {
+  const selectPaper = useCallback((id: string) => {
     const papers = orderedPapers(content.publications);
-    setPaperDirection(papers.findIndex(paper => paper.id === id) >= papers.findIndex(paper => paper.id === paperId) ? 1 : -1);
-    setPaperId(id); setPaperTurn(turn => turn + 1); setSelected('research');
-  };
+    const nextIndex = papers.findIndex(paper => paper.id === id);
+    const currentIndex = papers.findIndex(paper => paper.id === paperIdRef.current);
+    if (nextIndex < 0) return;
+    setSelected('research');
+    if (nextIndex === currentIndex) return;
+    paperIdRef.current = id;
+    setPaperDirection(nextIndex >= currentIndex ? 1 : -1);
+    setPaperId(id); setPaperTurn(turn => turn + 1);
+  }, [content.publications]);
+  const onPaperStep = useCallback((direction: 1 | -1) => {
+    const papers = orderedPapers(content.publications);
+    const index = papers.findIndex(paper => paper.id === paperIdRef.current);
+    const adjacent = index >= 0 ? papers[index + direction] : undefined;
+    if (adjacent) selectPaper(adjacent.id);
+  }, [content.publications, selectPaper]);
   const selectTalk = (id: string | null) => { setTalkId(id); setTalkSlideIndex(0); if (id) setSelected('education'); };
 
   useEffect(() => {
@@ -83,12 +98,13 @@ export function StudioExperience(content: StudioContent) {
     const exhibit = query.get('exhibit');
     if (exhibit === 'education') {
       const talk = content.presentations.find(item => item.id === query.get('talk'));
-      if (talk) { setTalkId(talk.id); open('education'); }
+      if (talk) setTalkId(talk.id);
+      open('education');
     } else if (exhibit === 'research') {
       const paper = content.publications.find(item => item.id === query.get('paper') || item.doiUrl === query.get('paper'));
-      if (paper) { setPaperId(paper.id); open('research'); }
+      if (paper) { selectPaper(paper.id); open('research'); }
     }
-  }, [content.presentations, content.publications, open]);
+  }, [content.presentations, content.publications, open, selectPaper]);
   const close = useCallback(() => {
     setSelected(null);
     requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
@@ -113,7 +129,7 @@ export function StudioExperience(content: StudioContent) {
         onPointerDown={() => setExplored(true)} onWheel={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <SceneBoundary>{mounted && lighting && <Suspense fallback={<div className="studio-loading" role="status">Opening the office…</div>}>
-          <Scene progress={progress} selected={selected} night={night} lighting={lighting} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onTalk={selectTalk} onReady={onReady} />
+          <Scene progress={progress} selected={selected} night={night} lighting={lighting} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onPaperStep={onPaperStep} onTalk={selectTalk} onReady={onReady} />
         </Suspense>}</SceneBoundary>
       </div>
       <header className="studio-header">
@@ -133,8 +149,20 @@ export function StudioExperience(content: StudioContent) {
       <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>The office.</h2></div>
       <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>The practice</button><button onClick={() => goToView(2)}>The desk</button><button id="studio-exhibit-family" onClick={() => open('family')}>Photo frame</button></div>
       <footer className="studio-stage-footer">
-        <p id="office-help" className="office-help">{ready ? selected ? compact ? 'Drag around the object · Pinch to zoom' : 'Drag around the object · Scroll to zoom' : compact ? 'Drag to explore · Pinch to zoom · Tap an object' : 'Drag to explore · Scroll to zoom · Click an object' : 'The office is opening…'}<span className="studio-sr-only">Focus the scene and use arrow keys to rotate; plus and minus to zoom. Right-drag or use two fingers to pan around the office.</span></p>
-        <nav className="studio-exhibits" aria-label="Office collection">{exhibits.map(item => <button id={`studio-exhibit-${item.id}`} key={item.id} aria-label={`${item.label} ${item.detail}`} aria-pressed={selected === item.id} onClick={() => open(item.id)}><OfficeIcon name={item.id} /><span><span className="exhibit-full-label">{item.label}</span><span className="exhibit-compact-label">{item.compactLabel}</span><small>{item.detail}</small></span></button>)}</nav>
+        <p id="office-help" className="office-help">{ready ? selected ? compact ? 'Drag around the object · Two fingers: pan / zoom' : 'Drag around the object · Shift + drag: pan · Scroll: zoom' : compact ? 'One finger: rotate · Two fingers: pan / zoom · Tap: open' : 'Drag: rotate · Shift + drag: pan · Scroll: zoom · Click: open' : 'The office is opening…'}<span className="studio-sr-only">Focus the scene: arrow keys rotate, Shift plus arrow keys pan, and plus or minus zoom. Right-drag also pans around the office.</span></p>
+        <div className="studio-collection">
+          <p id="office-collection-hint" className="office-collection-hint">Swipe to browse all seven <span aria-hidden="true">→</span></p>
+          <nav className="studio-exhibits" aria-label="Office collection" aria-describedby="office-collection-hint">
+            {exhibits.map(item => <button className="studio-exhibit" id={`studio-exhibit-${item.id}`} key={item.id} aria-label={`${item.label}: ${item.detail}`} aria-pressed={selected === item.id} onClick={() => open(item.id)}><OfficeIcon name={item.id === 'ai' ? 'cv' : item.id} /><span>{item.label}<small>{item.detail}</small></span></button>)}
+            <a className="studio-exhibit studio-exhibit-workshop" href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer" aria-label="Education: Workshops & training (opens in a new tab)"><OfficeIcon name="workshop" /><span>Education<small>Workshops & training ↗</small></span></a>
+            <button className="studio-exhibit" id="studio-exhibit-projects" aria-pressed={selected === 'projects'} onClick={() => open('projects')}><OfficeIcon name="projects" /><span>AI projects<small>Builds, talks & papers</small></span></button>
+            <button className="studio-exhibit" popoverTarget="office-social-links" aria-controls="office-social-links" aria-haspopup="dialog"><OfficeIcon name="social" /><span>Connect<small>YouTube & social</small></span></button>
+          </nav>
+          <div id="office-social-links" className="office-social-links" popover="auto" role="dialog" aria-label="Social media">
+            <div className="office-social-heading"><span>Social media</span><button popoverTarget="office-social-links" popoverTargetAction="hide" aria-label="Close social media links"><OfficeIcon name="close" /></button></div>
+            {socialLinks.map(link => <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer"><span>{link.label}<small>{link.detail}</small></span><span aria-hidden="true">↗</span></a>)}
+          </div>
+        </div>
         <a className="office-index" href="#office-reading">Browse the work <span aria-hidden="true">↓</span></a>
       </footer>
     </section>
@@ -142,7 +170,7 @@ export function StudioExperience(content: StudioContent) {
       <div className="studio-notes-heading"><p className="studio-kicker">From the desk</p><h2 id="studio-notes-heading">Practice shapes<br /><em>the questions.</em></h2><a className="studio-text-link" href="/research">Research archive ↗</a></div>
       <div className="studio-notes-list">{content.publications.slice(0, 3).map(p => <a key={`${p.doiUrl}-${p.title}`} href={p.doiUrl || '/research'} target={p.doiUrl ? '_blank' : undefined} rel={p.doiUrl ? 'noreferrer' : undefined}><span className="studio-meta">{p.journal} / {p.year}</span><h3>{p.title}</h3><span className="studio-notes-arrow" aria-hidden="true">↗</span></a>)}</div>
     </section>
-    <footer className="studio-end"><span>Woon Tak Yuh, MD.</span><nav aria-label="Browse all work"><a href="/cv">Living CV</a><a href="/research">Research</a><a href="/education">Education</a><a href="/jiu-jitsu">Jiu-jitsu</a><a href="/surfing">Surfing</a><a href={PERSONAL_LINKS.youtube} target="_blank" rel="noreferrer">YouTube ↗</a><a href="/contact">Contact ↗</a></nav></footer>
+    <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/credits">Scene credits</a></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer">Education<small>Workshops & training ↗</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
     <ReadingPanel {...content} selected={selected === 'family' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
   </div>;
 }

@@ -26,6 +26,7 @@ type Transition = {
 const CAMERA_TOLERANCE = 0.002;
 const KEY_ROTATION_STEP = 0.08;
 const KEY_ZOOM_SCALE = 1.12;
+const KEY_PAN_STEP = 0.04;
 const FREE_ORBIT_LIMITS = { minDistance: 0.35, maxDistance: 13, minPolarAngle: 0.3, maxPolarAngle: 1.45 } as const;
 const FOCUSED_ORBIT_LIMITS = { minDistance: 0.25, maxDistance: 5.5, minPolarAngle: 0.35, maxPolarAngle: 1.52 } as const;
 
@@ -186,7 +187,15 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!orbit.enabled || isFormTarget(event.target)) return;
       let handled = true;
-      switch (event.key) {
+      if (event.shiftKey && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+        if (!orbit.enablePan) return;
+        const horizontal = event.key === 'ArrowLeft' || event.key === 'ArrowRight';
+        const sign = event.key === 'ArrowLeft' || event.key === 'ArrowDown' ? -1 : 1;
+        const offset = new Vector3().setFromMatrixColumn(camera.matrix, horizontal ? 0 : 1)
+          .multiplyScalar(camera.position.distanceTo(orbit.target) * KEY_PAN_STEP * sign);
+        camera.position.add(offset);
+        orbit.target.add(offset);
+      } else switch (event.key) {
         case 'ArrowLeft': orbit.setAzimuthalAngle(orbit.getAzimuthalAngle() + KEY_ROTATION_STEP); break;
         case 'ArrowRight': orbit.setAzimuthalAngle(orbit.getAzimuthalAngle() - KEY_ROTATION_STEP); break;
         case 'ArrowUp': orbit.setPolarAngle(orbit.getPolarAngle() - KEY_ROTATION_STEP); break;
@@ -204,7 +213,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     };
     keyTarget.addEventListener('keydown', handleKeyDown);
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
-  }, [gl]);
+  }, [camera, gl]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;
@@ -233,7 +242,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   });
 
   return (
-    <OrbitControls ref={controls} makeDefault enablePan={!selected} zoomToCursor={!selected} enableDamping={!reducedMotion}
+    <OrbitControls ref={controls} makeDefault enablePan zoomToCursor={!selected} enableDamping={!reducedMotion}
       dampingFactor={0.08}
       onStart={() => { if (!selected && !transition.current) userMoved.current = true; }} />
   );

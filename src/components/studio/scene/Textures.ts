@@ -47,16 +47,17 @@ export function usePrintedTexture(surface: PrintedSurface) {
         case 'folio':
           context.fillStyle = PALETTE.teal;
           context.fillRect(44, 54, 36, 4);
+          context.font = '22px Arial';
+          context.fillText('Woon Tak Yuh, MD', 44, 78);
+          context.font = 'italic 54px Georgia';
+          context.fillText('Research', 42, 178);
+          context.fillText('& practice', 42, 238);
           context.font = '19px Arial';
-          context.fillText('WOON TAK YUH', 44, 78);
-          context.font = 'italic 58px Georgia';
-          context.fillText('Research', 42, 196);
-          context.font = '20px Arial';
-          context.fillText('Selected publications', 44, 276);
+          context.fillText('Spine surgery · Endoscopy · AI', 44, 322);
           context.fillStyle = PALETTE.clay;
           context.fillRect(44, 385, 424, 2);
           context.font = '15px Arial';
-          context.fillText('CLINICAL PRACTICE · EVIDENCE', 44, 420);
+          context.fillText('Selected peer-reviewed publications', 44, 420);
           break;
         case 'board':
         case 'gallery':

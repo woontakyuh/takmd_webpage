@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { useThree } from '@react-three/fiber';
 import { CanvasTexture, SRGBColorSpace } from 'three';
 import { academicInterests, activities, currentRoles, profileImage } from '../../../data/cv';
 import { PALETTE } from './config';
@@ -24,30 +25,35 @@ function wrapped(context: CanvasRenderingContext2D, text: string, x: number, y: 
 }
 
 export function useDocumentTexture({ image, title, eyebrow, detail, dark = false }: Surface) {
+  const anisotropy = useThree(state => Math.max(1, Math.min(16, state.gl.capabilities.getMaxAnisotropy())));
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
-    canvas.width = dark ? 1600 : 850;
-    canvas.height = dark ? 900 : 1200;
+    const width = dark ? 1600 : 850;
+    const height = dark ? 900 : 1200;
+    const scale = dark ? 1 : 1.5;
+    canvas.width = width * scale;
+    canvas.height = height * scale;
     const context = canvas.getContext('2d');
     if (context) {
+      context.scale(scale, scale);
       context.fillStyle = dark ? PALETTE.board : PALETTE.paperLight;
-      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.fillRect(0, 0, width, height);
       context.textBaseline = 'top';
       context.fillStyle = dark ? PALETTE.tealLight : PALETTE.clay;
       context.fillRect(70, 80, 80, 5);
       context.font = '24px Arial';
-      context.fillText(eyebrow, 70, 130, canvas.width - 140);
+      context.fillText(eyebrow, 70, 130, width - 140);
       context.fillStyle = dark ? PALETTE.paperLight : PALETTE.ink;
       context.font = dark ? '56px Georgia' : '46px Georgia';
-      wrapped(context, title, 70, 230, canvas.width - 140, dark ? 76 : 66, 7);
+      wrapped(context, title, 70, 230, width - 140, dark ? 76 : 66, 7);
       context.font = '26px Arial';
-      wrapped(context, detail, 70, canvas.height - 210, canvas.width - 140, 38, 4);
+      wrapped(context, detail, 70, height - 210, width - 140, 38, 4);
     }
     const result = new CanvasTexture(canvas);
     result.colorSpace = SRGBColorSpace;
-    result.anisotropy = 4;
+    result.anisotropy = dark ? Math.min(4, anisotropy) : anisotropy;
     return result;
-  }, [title, eyebrow, detail, dark]);
+  }, [title, eyebrow, detail, dark, anisotropy]);
   useEffect(() => {
     if (!image) return;
     let active = true;
@@ -58,6 +64,8 @@ export function useDocumentTexture({ image, title, eyebrow, detail, dark = false
       if (!(canvas instanceof HTMLCanvasElement)) return;
       const context = canvas.getContext('2d');
       if (!context) return;
+      context.resetTransform();
+      context.imageSmoothingQuality = 'high';
       context.fillStyle = dark ? PALETTE.board : PALETTE.paperLight;
       context.fillRect(0, 0, canvas.width, canvas.height);
       const scale = Math.min(canvas.width / source.naturalWidth, canvas.height / source.naturalHeight);
@@ -74,11 +82,13 @@ export function useDocumentTexture({ image, title, eyebrow, detail, dark = false
 }
 
 export function useWorkstationTexture() {
+  const anisotropy = useThree(state => Math.max(1, Math.min(16, state.gl.capabilities.getMaxAnisotropy())));
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
-    canvas.width = 1920; canvas.height = 1080;
+    canvas.width = 2560; canvas.height = 1440;
     const context = canvas.getContext('2d');
     if (context) {
+      context.scale(4 / 3, 4 / 3);
       context.fillStyle = PALETTE.paperLight; context.fillRect(0, 0, 1920, 1080);
       context.fillStyle = PALETTE.teal; context.fillRect(80, 66, 42, 3);
       context.font = '21px Arial'; context.fillText('LIVING CV  /  TAKMD', 142, 78);
@@ -109,9 +119,9 @@ export function useWorkstationTexture() {
       context.fillText('CAREER · EDUCATION · PUBLICATIONS · TEACHING', 80, 1055);
 
     }
-    const result = new CanvasTexture(canvas); result.colorSpace = SRGBColorSpace; result.anisotropy = 4;
+    const result = new CanvasTexture(canvas); result.colorSpace = SRGBColorSpace; result.anisotropy = anisotropy;
     return result;
-  }, []);
+  }, [anisotropy]);
   useEffect(() => {
     let active = true;
     const portrait = new Image();

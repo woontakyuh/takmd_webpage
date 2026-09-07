@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { AdaptiveQuality } from './scene/AdaptiveQuality';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { GoldAward } from './scene/GoldAward';
+import { OfficeGuide } from './scene/OfficeGuide';
 import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
 import { Architecture } from './scene/Architecture';
@@ -32,6 +33,7 @@ export function StudioScene(props: StudioSceneProps) {
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: 'none' }}>
       <Environment resolution={128} frames={1} environmentIntensity={0.45 + sun.daylight * 0.2}>
+        <color attach="background" args={[PALETTE.plaster]} />
         <Lightformer form="rect" color="#fff8ed" intensity={2} scale={[6, 3, 1]}
           position={[-4, 2.5, 0]} rotation={[0, Math.PI / 2, 0]} />
         <Lightformer form="rect" color="#ffffff" intensity={1.5} scale={[4, 4, 1]}
@@ -52,7 +54,8 @@ export function StudioScene(props: StudioSceneProps) {
       <Architecture night={props.night} sky={sun.windowSky} />
       <Furniture lamp={sun.lamp} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} />
       <OfficeLounge />
-      <GoldAward channelUrl={PERSONAL_LINKS.youtube} position={[-2.14, 1.3025, 2.985]} rotation={Math.PI} />
+      <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={[1.58, 1.3025, 2.985]} rotation={Math.PI} />
+      <OfficeGuide compact={props.compact} />
       <PersonalCorner {...props} />
       <CalendarClock reducedMotion={props.reducedMotion} />
       <Greenery />

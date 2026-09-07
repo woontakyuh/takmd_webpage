@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/Layout.astro';
+const models = [
+  {
+    title: 'Eames Soft Pad Executive Chair',
+    author: 'Laci Lacko (LaciViz)',
+    source: 'https://www.behance.net/gallery/72799495/Herman-Miller-FREE-3D-model',
+    note: 'Original chair by Laci Lacko. Geometry optimized and materials adapted for TakMD.',
+    license: 'https://www.laciviz.com/freebies.html',
+    licenseLabel: 'Free commercial and non-commercial use · Author’s terms',
+  },
+  {
+    title: 'Eames Lounge Chair & Ottoman',
+    author: 'alexshupp',
+    source: 'https://sketchfab.com/3d-models/herman-miller-eames-lounge-chair-d8a999565942444d844afd39dbaf5425',
+    note: 'Adapted with light oak, warm beige upholstery and polished aluminium, with geometry optimized for the interactive office.',
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    licenseLabel: 'Creative Commons Attribution 4.0',
+  },
+  {
+    title: 'Noguchi Coffee Table',
+    author: 'Flareworks Studio / Daniel Lee',
+    source: 'https://www.blendkit.com/asset-gallery-detail/499820e7-b642-4756-9042-73604627b3f1/',
+    note: 'Adapted with pale ash wood and lightweight transparent glass at the supplied reference dimensions.',
+    license: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    licenseLabel: 'Creative Commons Zero',
+  },
+];
+---
+<Layout title="Scene credits - Woon Tak Yuh, MD" description="Artists and sources behind the TakMD interactive office.">
+  <main id="main-content" class="page-shell page-section">
+    <p class="eyebrow">The office</p>
+    <h1 class="serif-display mt-5 text-5xl text-[var(--color-text)] sm:text-7xl">Scene credits</h1>
+    <p class="lede mt-5 max-w-2xl">The office brings together original work and furniture models by these artists.</p>
+    <div class="mt-12 grid gap-5 md:grid-cols-2">
+      {models.map(model => <article class="link-card">
+        <h2 class="text-xl font-semibold text-[var(--color-text)]">{model.title}</h2>
+        <p class="mt-3"><a href={model.source} target="_blank" rel="noreferrer" class="underline">{model.author} ↗</a></p>
+        <p class="mt-3 text-sm leading-6 text-[var(--color-text-secondary)]">{model.note}</p>
+        <a href={model.license} target="_blank" rel="noreferrer" class="mt-4 inline-block text-sm underline">{model.licenseLabel}</a>
+      </article>)}
+    </div>
+    <p class="mt-8 max-w-2xl text-sm leading-6 text-[var(--color-text-secondary)]">The Florence Knoll Relaxed two-seater and Logitech MX Master 4 are original visual models made from reference photographs. They are not official manufacturer CAD models.</p>
+    <a href="/" class="mt-10 inline-block underline">Return to the office ↗</a>
+  </main>
+</Layout>
