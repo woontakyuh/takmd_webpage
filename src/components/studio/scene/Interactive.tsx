@@ -15,19 +15,20 @@ type InteractiveProps = {
   readonly reducedMotion: boolean;
   readonly position: Point;
   readonly rotation?: number;
+  readonly fixed?: boolean;
   readonly children: ReactNode;
 };
 
 const CLICK_DRAG_THRESHOLD = 5;
 
-export function Interactive({ id, selected, onSelect, reducedMotion, position, rotation = 0, children }: InteractiveProps) {
+export function Interactive({ id, selected, onSelect, reducedMotion, position, rotation = 0, fixed = false, children }: InteractiveProps) {
   const group = useRef<Group>(null);
   const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
   useCursor(hovered);
   useFrame((_, delta) => {
     if (!group.current) return;
-    const lift = id !== 'ai' && id !== 'projects' && id !== 'family' && (hovered || selected === id) ? MOTION.hoverLift : 0;
+    const lift = !fixed && id !== 'ai' && id !== 'projects' && id !== 'family' && (hovered || selected === id) ? MOTION.hoverLift : 0;
     group.current.position.y = reducedMotion ? position[1] + lift
       : MathUtils.damp(group.current.position.y, position[1] + lift, MOTION.object, delta);
   });

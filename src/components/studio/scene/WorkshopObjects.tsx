@@ -3,7 +3,9 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Box3, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import type { Material } from 'three';
 import { workshops } from '../../../data/workshops';
-import { Block, Rod } from './Primitives';
+import { Block } from './Primitives';
+import { BiportalEndoscope } from './BiportalEndoscope';
+import { PigPlush } from './PigPlush';
 import { INTERIOR, PALETTE } from './config';
 import type { Point } from './config';
 
@@ -146,103 +148,7 @@ function EndoscopeTray() {
         color={PALETTE.aluminiumEdge} radius={0.016} roughness={0.32} metalness={0.72} />
       <Block size={[0.255, 0.012, 0.405]} position={[0, 0.021, 0]}
         color={PALETTE.paperLight} radius={0.012} roughness={0.88} />
-      <ScopeInstrument x={-0.064} />
-      <ForcepsInstrument x={0.064} />
-    </group>
-  );
-}
-
-function ScopeInstrument({ x }: { readonly x: number }) {
-  return (
-    <group>
-      <Rod from={[x, 0.04, -0.14]} to={[x, 0.04, 0.145]} radius={0.006}
-        color={PALETTE.aluminiumEdge} metalness={0.94} />
-      <mesh position={[x, 0.041, -0.16]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.018, 0.014, 0.04, 20]} />
-        <meshStandardMaterial color={PALETTE.graphite} metalness={0.6} roughness={0.28} />
-      </mesh>
-      <mesh position={[x, 0.041, 0.166]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.012, 0.017, 0.045, 20]} />
-        <meshStandardMaterial color={PALETTE.aluminium} metalness={0.92} roughness={0.2} />
-      </mesh>
-      <Rod from={[x, 0.047, 0.125]} to={[x + 0.047, 0.067, 0.105]} radius={0.005}
-        color={PALETTE.aluminiumEdge} metalness={0.94} />
-      <mesh position={[x + 0.055, 0.071, 0.101]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.012, 0.012, 0.025, 16]} />
-        <meshStandardMaterial color={PALETTE.graphite} metalness={0.35} roughness={0.45} />
-      </mesh>
-    </group>
-  );
-}
-
-function ForcepsInstrument({ x }: { readonly x: number }) {
-  return (
-    <group>
-      <Rod from={[x, 0.04, -0.125]} to={[x, 0.04, 0.135]} radius={0.005}
-        color={PALETTE.aluminiumEdge} metalness={0.95} />
-      <Rod from={[x, 0.04, 0.135]} to={[x - 0.018, 0.042, 0.165]} radius={0.0035}
-        color={PALETTE.aluminiumEdge} metalness={0.96} />
-      <Rod from={[x, 0.04, 0.135]} to={[x + 0.018, 0.042, 0.165]} radius={0.0035}
-        color={PALETTE.aluminiumEdge} metalness={0.96} />
-      {[-0.025, 0.025].map((offset) => (
-        <mesh key={offset} position={[x + offset, 0.043, -0.15]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-          <torusGeometry args={[0.018, 0.004, 10, 24]} />
-          <meshStandardMaterial color={PALETTE.aluminium} metalness={0.9} roughness={0.24} />
-        </mesh>
-      ))}
-      <Block size={[0.045, 0.024, 0.055]} position={[x, 0.045, -0.12]}
-        color={PALETTE.graphite} radius={0.007} roughness={0.34} metalness={0.58} />
-    </group>
-  );
-}
-
-function PigPlush() {
-  const cloth = { color: '#D99A9C', roughness: 0.96 } as const;
-  const detail = '#B66F76';
-  return (
-    <group rotation={[0, 0, 0]}>
-      <mesh position={[-0.025, 0.095, 0]} scale={[0.14, 0.105, 0.155]} castShadow receiveShadow>
-        <sphereGeometry args={[1, 28, 22]} />
-        <meshStandardMaterial {...cloth} />
-      </mesh>
-      <mesh position={[0.095, 0.115, 0]} scale={[0.095, 0.09, 0.105]} castShadow receiveShadow>
-        <sphereGeometry args={[1, 28, 22]} />
-        <meshStandardMaterial {...cloth} />
-      </mesh>
-      <mesh position={[0.174, 0.105, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.04, 0.047, 0.035, 24]} />
-        <meshStandardMaterial color="#E8B3AF" roughness={0.94} />
-      </mesh>
-      {[-0.023, 0.023].map((z) => (
-        <mesh key={`nostril-${z}`} position={[0.193, 0.108, z]} rotation={[0, 0, Math.PI / 2]}>
-          <circleGeometry args={[0.006, 12]} />
-          <meshStandardMaterial color={detail} roughness={0.9} />
-        </mesh>
-      ))}
-      {[-0.055, 0.055].map((z) => (
-        <group key={`ear-${z}`} position={[0.095, 0.195, z]} rotation={[0.08, 0, z < 0 ? -0.28 : 0.28]}>
-          <mesh scale={[0.035, 0.052, 0.018]} castShadow>
-            <coneGeometry args={[1, 1.5, 3]} />
-            <meshStandardMaterial {...cloth} />
-          </mesh>
-        </group>
-      ))}
-      {[-0.058, 0.058].map((z) => (
-        <mesh key={`eye-${z}`} position={[0.178, 0.153, z]} rotation={[0, Math.PI / 2, 0]}>
-          <circleGeometry args={[0.008, 14]} />
-          <meshStandardMaterial color={PALETTE.ink} roughness={0.72} />
-        </mesh>
-      ))}
-      {[-0.085, 0.085].flatMap((x) => [-0.095, 0.095].map((z) => (
-        <mesh key={`${x}-${z}`} position={[x, 0.035, z]} scale={[0.035, 0.04, 0.035]} castShadow>
-          <sphereGeometry args={[1, 18, 14]} />
-          <meshStandardMaterial {...cloth} />
-        </mesh>
-      )))}
-      <mesh position={[-0.031, 0.099, 0]} rotation={[0, Math.PI / 2, 0]} scale={[0.158, 0.11, 0.16]}>
-        <torusGeometry args={[0.98, 0.018, 8, 36]} />
-        <meshStandardMaterial color={detail} roughness={0.94} />
-      </mesh>
+      <BiportalEndoscope />
     </group>
   );
 }

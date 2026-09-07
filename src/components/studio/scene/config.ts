@@ -12,6 +12,8 @@ export const PALETTE = {
 
 export const CLOCK = { case: '#D9D2C3', back: '#353831', rim: '#B9B3A5', face: '#151916', card: '#202622', numeral: '#F4F0E7', label: '#AFAE9F' } as const;
 
+export const GOLD_AWARD = { satin: '#D6B77A', edge: '#C7A15A', mirror: '#D9AD4A', back: '#D6B77A' } as const;
+
 export const INTERIOR = {
   oak: '#A78A67', oakLight: '#C3AA85', oakShadow: '#6A513B', ivory: '#F1EDE4',
   plaster: '#E3DCD0', sand: '#D5C7B1', upholstery: '#D5C8B6', bronze: '#51493E',
@@ -38,7 +40,7 @@ export const ROOM = {
   chair: { position: [-0.2, 0, -2.19], rotation: Math.PI - 0.23 },
   credenza: { position: [-2.46, 0, 0.65], width: 3.3, depth: 0.48, height: 0.74 },
   plant: { position: [-2.46, 0, 2.55] },
-  wardrobe: { position: [-2.35, 0, -2.15], rotation: Math.PI / 2, width: 1.2, height: 1.7 },
+  wardrobe: { position: [-2.35, 0.0185, -2.15], rotation: Math.PI / 2, width: 0.99, height: 1.52, depth: 0.46 },
   surfboard: { position: [2.44, 0, 2.67], rotation: -0.55 - Math.PI / 2 },
 } as const;
 
@@ -55,7 +57,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   ai: { position: [-0.16, 1.255, -1.8], target: [-0.24, 1.155, -0.8], zoom: 1 },
   family: { position: [0.68, 1.16, -1.63], target: [0.67, 0.885, -0.87], zoom: 1 },
   projects: { position: [0.25, 1.35, -1.72], target: [-0.24, 0.815, -0.93], zoom: 1 },
-  bjj: { position: [-0.1, 1.7, -2.85], target: [-2.315, 0.95, -2.45], zoom: 1 },
+  bjj: { position: [-1.45, 1.65, -3.85], target: [-2.35, 1.04, -2.30], zoom: 1 },
   surfing: { position: [0.25, 1.8, 0.6], target: [2.44, 1.05, 2.67], zoom: 1 },
 };
 
@@ -72,7 +74,7 @@ export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   ai: FOCUS.ai,
   family: FOCUS.family,
   projects: { position: [0.45, 1.7, -2.1], target: [-0.24, 0.815, -0.93], zoom: 1 },
-  bjj: { position: [0.35, 2.05, -3.05], target: [-2.315, 0.95, -2.45], zoom: 1 },
+  bjj: { position: [-1.2, 1.9, -4.1], target: [-2.35, 1.04, -2.30], zoom: 1 },
   surfing: { position: [-0.1, 2.15, 0], target: [2.44, 1.05, 2.67], zoom: 1 },
 };
 

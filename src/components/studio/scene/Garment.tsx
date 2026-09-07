@@ -1,12 +1,16 @@
 import { useGLTF } from '@react-three/drei';
 import { useMemo } from 'react';
 import { Box3, Mesh, Vector3 } from 'three';
+import { RACK_TUBE_RADIUS } from './GarmentRack';
 
 const COAT_URL = '/models/garments/physician-coat.glb' as const;
 const GI_URL = '/models/garments/control-gi.glb' as const;
-const HANGER_TOP = 0.079;
 const ASSEMBLY_HEIGHT = 0.9;
-const FRONT_FACING_YAW = -Math.PI / 2;
+// Measured inner hook crowns in the original GLBs; their shoulder planes are YZ.
+const HOOK_CONTACT = {
+  [COAT_URL]: [-0.0137, 0.4852, 0.001],
+  [GI_URL]: [-0.0038, 0.486, -0.002],
+} as const;
 
 type GarmentUrl = typeof COAT_URL | typeof GI_URL;
 
@@ -26,20 +30,19 @@ function HangingGarment({ url }: HangingGarmentProps) {
 
     const bounds = new Box3().setFromObject(model);
     const size = bounds.getSize(new Vector3());
-    const center = bounds.getCenter(new Vector3());
     const scale = ASSEMBLY_HEIGHT / Math.max(size.y, 0.000_001);
-
+    const [hookX, hookY, hookZ] = HOOK_CONTACT[url];
     model.position.set(
-      -center.x,
-      HANGER_TOP / scale - bounds.max.y,
-      -center.z,
+      -hookX,
+      RACK_TUBE_RADIUS / scale - hookY,
+      -hookZ,
     );
 
     return { model, scale };
-  }, [scene]);
+  }, [scene, url]);
 
   return (
-    <group rotation={[0, FRONT_FACING_YAW, 0]} scale={fitted.scale}>
+    <group name={url === COAT_URL ? 'Hanging physician coat' : 'Hanging Control gi'} scale={fitted.scale}>
       <primitive object={fitted.model} dispose={null} />
     </group>
   );

@@ -4,6 +4,8 @@ import { PCFSoftShadowMap } from 'three';
 import { useCallback, useState } from 'react';
 import { AdaptiveQuality } from './scene/AdaptiveQuality';
 import { OfficeRenderer } from './scene/OfficeRenderer';
+import { GoldAward } from './scene/GoldAward';
+import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
 import { Architecture } from './scene/Architecture';
 import { CameraRig } from './scene/CameraRig';
@@ -50,6 +52,7 @@ export function StudioScene(props: StudioSceneProps) {
       <Architecture night={props.night} sky={sun.windowSky} />
       <Furniture lamp={sun.lamp} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} />
       <OfficeLounge />
+      <GoldAward channelUrl={PERSONAL_LINKS.youtube} position={[-2.14, 1.3025, 2.985]} rotation={Math.PI} />
       <PersonalCorner {...props} />
       <CalendarClock reducedMotion={props.reducedMotion} />
       <Greenery />

@@ -1,3 +1,8 @@
+export const PERSONAL_LINKS = {
+  instagram: 'https://www.instagram.com/tak_md/',
+  youtube: 'https://www.youtube.com/@tak_md',
+} as const;
+
 export const personalInterests = {
   bjj: {
     title: 'Jiu-jitsu.',
