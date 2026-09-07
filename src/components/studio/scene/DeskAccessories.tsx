@@ -5,6 +5,7 @@ import { Interactive } from './Interactive';
 import { MacMini } from './MacMini';
 import { WirelessKeyboard } from './WirelessKeyboard';
 import { MxMasterMouse } from './MxMasterMouse';
+import { ScreenBarHalo2Dial } from './ScreenBarHalo2';
 
 const DESK_TOP = 0.0185 + ROOM.desk.height;
 
@@ -14,6 +15,7 @@ export function DeskAccessories({ selected, onSelect, reducedMotion, onClaudeSti
       <FamilyPhoto selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} />
       <WirelessKeyboard position={[0.19, DESK_TOP, 0.1]} />
       <MxMasterMouse position={[0.48, DESK_TOP, 0.1]} />
+      <ScreenBarHalo2Dial position={[0.45, DESK_TOP, -0.105]} />
       <Interactive id="projects" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={[0.19, DESK_TOP, -0.17]}><MacMini position={[0, 0, 0]} onClaudeSticker={onClaudeSticker} /></Interactive>
     </group>
   );

@@ -8,12 +8,13 @@ import type { StudioSceneProps } from '../types';
 import { Interactive } from './Interactive';
 import { MonitorArm } from './MonitorArm';
 import { Block } from './Primitives';
+import { ScreenBarHalo2 } from './ScreenBarHalo2';
 import { useDocumentTexture, useWorkstationTexture } from './CollectionTextures';
 import { MONITOR, MOTION, PALETTE, ROOM } from './config';
 
-type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'night' | 'presentations' | 'collection' | 'onTalk'>;
+type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'night' | 'lighting' | 'presentations' | 'collection' | 'onTalk'>;
 
-export function Displays({ selected, onSelect, reducedMotion, night, presentations, collection, onTalk }: DisplaysProps) {
+export function Displays({ selected, onSelect, reducedMotion, night, lighting, presentations, collection, onTalk }: DisplaysProps) {
   const screenMaterial = useRef<MeshStandardMaterial>(null);
   const screenHovered = useRef(false);
   useFrame((_, delta) => {
@@ -39,6 +40,7 @@ export function Displays({ selected, onSelect, reducedMotion, night, presentatio
           <Block size={[0.3, 0.26, 0.035]} position={[0, 0, -0.025]} color={PALETTE.ink} radius={0.028} />
           <mesh position={[0, 0.004, 0.0145]}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshBasicMaterial map={monitor} toneMapped={false} color={night ? PALETTE.paper : PALETTE.white} /></mesh>
           <mesh position={[0.332, -0.203, 0.015]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
+          <ScreenBarHalo2 power={lighting.sun.lamp} />
         </group>
       </Interactive>
       <Interactive id="education" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.gallery.position} rotation={ROOM.gallery.rotation}
