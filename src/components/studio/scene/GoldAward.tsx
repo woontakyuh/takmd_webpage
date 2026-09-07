@@ -84,7 +84,7 @@ export function GoldAward({ channelUrl, focused, reducedMotion, onSelect, positi
       texture.needsUpdate = true;
     }
     grain.wrapS = grain.wrapT = RepeatWrapping;
-    grain.repeat.set(32, 32);
+    grain.repeat.set(12, 12);
     grain.anisotropy = 8;
     grain.needsUpdate = true;
     return { ink, logo, grain };

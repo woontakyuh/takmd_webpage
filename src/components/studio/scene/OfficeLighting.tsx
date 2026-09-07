@@ -4,7 +4,7 @@ import type { RectAreaLight } from 'three';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import { AJ_LAMP, AjLamp } from './AjLamp';
 import { Block } from './Primitives';
-import { LIGHTING, PALETTE, ROOM } from './config';
+import { LIGHTING, PALETTE } from './config';
 import type { Point } from './config';
 
 RectAreaLightUniformsLib.init();
@@ -15,11 +15,6 @@ export function OfficeLighting({ power }: { readonly power: number }) {
       <AjLamp variant="floor" powered={power} />
       <TaskLight name="Reading lamp pool" power={power} position={AJ_LAMP.floor.aperture}
         target={AJ_LAMP.floor.lightTarget} intensity={1.8} distance={3} angle={0.8} />
-    </group>
-    <group name="desk-lamp-placement" position={[-0.70, 0.0185 + ROOM.desk.height, -1.66]} rotation={[0, Math.PI / 2, 0]}>
-      <AjLamp variant="table" powered={power} />
-      <TaskLight name="Desk lamp pool" power={power} position={AJ_LAMP.table.aperture}
-        target={AJ_LAMP.table.lightTarget} intensity={0.8} distance={1.8} angle={0.92} />
     </group>
     <ShelfWash power={power} />
   </group>;
