@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-06T23:58:31.628Z",
+  "source": "Notion · BJJ training + Lo Profile",
+  "profile": {
+    "displayName": "여운탁",
+    "belt": "blue",
+    "stripes": 3,
+    "trainingStartDate": "2019-11-27",
+    "characterImage": "/images/bjj/character-full.webp"
+  },
+  "totals": {
+    "loggedSessions": 67,
+    "gi": 57,
+    "nogi": 10,
+    "class": 65,
+    "openmat": 2
+  },
+  "dateRange": {
+    "from": "2026-01-05",
+    "to": "2026-09-04"
+  },
+  "monthly": [
+    {
+      "month": "2026-01",
+      "gi": 7,
+      "nogi": 1,
+      "total": 8
+    },
+    {
+      "month": "2026-02",
+      "gi": 4,
+      "nogi": 0,
+      "total": 4
+    },
+    {
+      "month": "2026-03",
+      "gi": 7,
+      "nogi": 3,
+      "total": 10
+    },
+    {
+      "month": "2026-04",
+      "gi": 6,
+      "nogi": 0,
+      "total": 6
+    },
+    {
+      "month": "2026-05",
+      "gi": 5,
+      "nogi": 1,
+      "total": 6
+    },
+    {
+      "month": "2026-06",
+      "gi": 3,
+      "nogi": 2,
+      "total": 5
+    },
+    {
+      "month": "2026-07",
+      "gi": 12,
+      "nogi": 1,
+      "total": 13
+    },
+    {
+      "month": "2026-08",
+      "gi": 10,
+      "nogi": 1,
+      "total": 11
+    },
+    {
+      "month": "2026-09",
+      "gi": 3,
+      "nogi": 1,
+      "total": 4
+    }
+  ],
+  "sessions": [
+    {
+      "date": "2026-09-04",
+      "mode": "gi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-09-03",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "Lapel"
+      ]
+    },
+    {
+      "date": "2026-09-02",
+      "mode": "nogi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "XG"
+      ]
+    },
+    {
+      "date": "2026-09-01",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG"
+      ]
+    },
+    {
+      "date": "2026-08-28",
+      "mode": "gi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-08-25",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HalfPass",
+        "SitG"
+      ]
+    },
+    {
+      "date": "2026-08-24",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DLR"
+      ]
+    },
+    {
+      "date": "2026-08-20",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG"
+      ]
+    },
+    {
+      "date": "2026-08-19",
+      "mode": "nogi",
+      "type": "class",
+      "techniques": [
+        "HG"
+      ]
+    },
+    {
+      "date": "2026-08-18",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG"
+      ]
+    },
+    {
+      "date": "2026-08-13",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HalfPass",
+        "HG"
+      ]
+    },
+    {
+      "date": "2026-08-13",
+      "mode": "gi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-08-11",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "ArmB",
+        "HG"
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HalfPass",
+        "HG",
+        "HQ",
+        "KCP",
+        "Lasso"
+      ]
+    },
+    {
+      "date": "2026-08-06",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DLR",
+        "HG",
+        "XG"
+      ]
+    },
+    {
+      "date": "2026-07-31",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Half Pass",
+        "HG",
+        "KCP"
+      ]
+    },
+    {
+      "date": "2026-07-30",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Armbar",
+        "DLR",
+        "HG",
+        "Lasso"
+      ]
+    },
+    {
+      "date": "2026-07-28",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DLR",
+        "HG",
+        "HP",
+        "HQ",
+        "Shaolin Sweep",
+        "XG"
+      ]
+    },
+    {
+      "date": "2026-07-27",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DLR",
+        "HG",
+        "Lasso",
+        "Omoplata"
+      ]
+    },
+    {
+      "date": "2026-07-24",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DLR",
+        "Torreando",
+        "XG"
+      ]
+    },
+    {
+      "date": "2026-07-22",
+      "mode": "nogi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-07-21",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Omoplata",
+        "Triangle"
+      ]
+    },
+    {
+      "date": "2026-07-16",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DLR",
+        "HQ",
+        "KCP",
+        "Lasso"
+      ]
+    },
+    {
+      "date": "2026-07-14",
+      "mode": "gi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-07-06",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "HQ"
+      ]
+    },
+    {
+      "date": "2026-07-03",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HQ",
+        "KCP"
+      ]
+    },
+    {
+      "date": "2026-07-01",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Lasso",
+        "RDLR",
+        "Spider"
+      ]
+    },
+    {
+      "date": "2026-07-01",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DLR",
+        "HG",
+        "HQ",
+        "Lasso",
+        "Open"
+      ]
+    },
+    {
+      "date": "2026-06-24",
+      "mode": "nogi",
+      "type": "class",
+      "techniques": [
+        "DL takedown",
+        "Omoplata",
+        "SitG"
+      ]
+    },
+    {
+      "date": "2026-06-19",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "OG",
+        "SideCtrl"
+      ]
+    },
+    {
+      "date": "2026-06-19",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Lasso",
+        "Spider",
+        "Torreando",
+        "XG"
+      ]
+    },
+    {
+      "date": "2026-06-17",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "XG"
+      ]
+    },
+    {
+      "date": "2026-06-03",
+      "mode": "nogi",
+      "type": "class",
+      "techniques": [
+        "Torreando"
+      ]
+    },
+    {
+      "date": "2026-05-26",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "Long step"
+      ]
+    },
+    {
+      "date": "2026-05-26",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "Long step"
+      ]
+    },
+    {
+      "date": "2026-05-21",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "HP"
+      ]
+    },
+    {
+      "date": "2026-05-21",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Lapel",
+        "SideCtrl"
+      ]
+    },
+    {
+      "date": "2026-05-20",
+      "mode": "nogi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "SideCtrl"
+      ]
+    },
+    {
+      "date": "2026-05-18",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Half Pass"
+      ]
+    },
+    {
+      "date": "2026-04-26",
+      "mode": "gi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-04-20",
+      "mode": "gi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-04-18",
+      "mode": "gi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-04-09",
+      "mode": "gi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-04-07",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "KCP",
+        "SideCtrl",
+        "Torreando"
+      ]
+    },
+    {
+      "date": "2026-04-02",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "KCP"
+      ]
+    },
+    {
+      "date": "2026-03-31",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "ArmB"
+      ]
+    },
+    {
+      "date": "2026-03-24",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "HP",
+        "Spider"
+      ]
+    },
+    {
+      "date": "2026-03-20",
+      "mode": "gi",
+      "type": "class",
+      "techniques": []
+    },
+    {
+      "date": "2026-03-19",
+      "mode": "nogi",
+      "type": "class",
+      "techniques": [
+        "Armbar",
+        "Lapel"
+      ]
+    },
+    {
+      "date": "2026-03-17",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "Lasso",
+        "Shaolin Sweep"
+      ]
+    },
+    {
+      "date": "2026-03-13",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DoubleLeg",
+        "HG",
+        "Lasso",
+        "Open",
+        "RDLR",
+        "Spider",
+        "Triangle"
+      ]
+    },
+    {
+      "date": "2026-03-12",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DLR",
+        "DoubleLeg",
+        "HG",
+        "Open",
+        "XG"
+      ]
+    },
+    {
+      "date": "2026-03-11",
+      "mode": "nogi",
+      "type": "class",
+      "techniques": [
+        "Armbar",
+        "HG",
+        "Spider"
+      ]
+    },
+    {
+      "date": "2026-03-06",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "HQ"
+      ]
+    },
+    {
+      "date": "2026-03-04",
+      "mode": "nogi",
+      "type": "openmat",
+      "techniques": [
+        "HQ",
+        "KCP",
+        "Lasso"
+      ]
+    },
+    {
+      "date": "2026-02-24",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Open"
+      ]
+    },
+    {
+      "date": "2026-02-22",
+      "mode": "gi",
+      "type": "openmat",
+      "techniques": []
+    },
+    {
+      "date": "2026-02-21",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG"
+      ]
+    },
+    {
+      "date": "2026-02-20",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Sit-up"
+      ]
+    },
+    {
+      "date": "2026-01-21",
+      "mode": "nogi",
+      "type": "class",
+      "techniques": [
+        "Gogoplata",
+        "Omo",
+        "Rubber",
+        "Triangle"
+      ]
+    },
+    {
+      "date": "2026-01-19",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HalfPass",
+        "HG",
+        "Sit-up",
+        "Worm"
+      ]
+    },
+    {
+      "date": "2026-01-18",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HG",
+        "Octopus",
+        "RDLR",
+        "Sit-up"
+      ]
+    },
+    {
+      "date": "2026-01-16",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "DoubleLeg",
+        "Lapel",
+        "RWorm",
+        "Squid",
+        "Worm"
+      ]
+    },
+    {
+      "date": "2026-01-13",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "CrabRide",
+        "HG",
+        "Lapel",
+        "Worm"
+      ]
+    },
+    {
+      "date": "2026-01-11",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "HeadR",
+        "LongStep",
+        "Octopus"
+      ]
+    },
+    {
+      "date": "2026-01-07",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Open",
+        "Sit-up"
+      ]
+    },
+    {
+      "date": "2026-01-05",
+      "mode": "gi",
+      "type": "class",
+      "techniques": [
+        "Open",
+        "Sit-up"
+      ]
+    }
+  ]
+}

@@ -1,4 +1,18 @@
 ---
-import PersonalPage from '../components/PersonalPage.astro';
+import Layout from '../layouts/Layout.astro';
+import { BjjTrainingExplorer } from '../components/bjj/BjjTrainingExplorer';
+import '../components/bjj/bjj-public.css';
+import bjjData from '../data/bjj-public.json';
 ---
-<PersonalPage interest="bjj" />
+
+<Layout
+  title="Jiu-jitsu — Woon Tak Yuh"
+  description="Woon Tak Yuh's jiu-jitsu practice: a Notion-derived record of Gi and No-Gi training."
+  hideNav
+  hideFooter
+  bodyClass="bjj-page-body"
+>
+  <main id="main-content">
+    <BjjTrainingExplorer client:load data={bjjData} />
+  </main>
+</Layout>
