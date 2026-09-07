@@ -6,14 +6,14 @@ import type { StudioSceneProps } from '../types';
 import { ROOM } from './config';
 import { usePrintedTexture } from './Textures';
 
-export function Furniture({ lamp, reducedMotion, selected, onSelect, onClaudeSticker }: { readonly lamp: number } & Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onClaudeSticker' | 'reducedMotion'>) {
+export function Furniture({ lamp, reducedMotion, selected, onSelect, onClaudeSticker, halo, onHaloControls }: { readonly lamp: number } & Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onClaudeSticker' | 'reducedMotion' | 'halo' | 'onHaloControls'>) {
   const wood = usePrintedTexture('wood');
   const { desk, chair } = ROOM;
   return (
     <group>
       <group position={[...desk.position]} rotation={[0, desk.rotation, 0]}>
         <ExecutiveDesk />
-        <DeskAccessories selected={selected} onSelect={onSelect} onClaudeSticker={onClaudeSticker} reducedMotion={reducedMotion} />
+        <DeskAccessories selected={selected} onSelect={onSelect} onClaudeSticker={onClaudeSticker} reducedMotion={reducedMotion} halo={halo} onHaloControls={onHaloControls} />
       </group>
       <group position={[...chair.position]} rotation={[0, chair.rotation, 0]}>
         <OfficeChair reducedMotion={reducedMotion} />

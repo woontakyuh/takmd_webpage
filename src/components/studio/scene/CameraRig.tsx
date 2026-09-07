@@ -1,7 +1,7 @@
 import { OrbitControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { Mesh, PerspectiveCamera, Vector2, Vector3 } from 'three';
+import { MathUtils, Mesh, PerspectiveCamera, Vector2, Vector3 } from 'three';
 import type { Camera, Object3D } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import type { StudioSceneProps } from '../types';
@@ -64,6 +64,18 @@ function isFormTarget(target: EventTarget | null): boolean {
     && target.closest('input, textarea, select, button, a, [contenteditable="true"], [role="textbox"]') !== null;
 }
 
+function isVisibleSurface(object: Object3D): boolean {
+  let current: Object3D | null = object;
+  while (current) {
+    if (!current.visible) return false;
+    current = current.parent;
+  }
+  if (!(object instanceof Mesh)) return false;
+  const materials = Array.isArray(object.material) ? object.material : [object.material];
+  return materials.some(material => material.visible && material.colorWrite
+    && (!material.transparent || material.opacity > 0.1));
+}
+
 export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady }: CameraRigProps) {
   const { camera, size, gl, raycaster, scene, setFrameloop } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
@@ -78,6 +90,35 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   const targetFov = useRef(42);
   const initialPose = useRef((compact ? MOBILE_TOUR : TOUR)[viewCommand.view]);
   const scratch = useMemo(() => ({ pointer: new Vector2(), position: new Vector3(), target: new Vector3() }), []);
+
+  const surfaceAt = useCallback((clientX: number, clientY: number) => {
+    const bounds = gl.domElement.getBoundingClientRect();
+    scratch.pointer.set(
+      ((clientX - bounds.left) / bounds.width) * 2 - 1,
+      -((clientY - bounds.top) / bounds.height) * 2 + 1,
+    );
+    raycaster.setFromCamera(scratch.pointer, camera);
+    return raycaster.intersectObjects(scene.children, true).find(hit => isVisibleSurface(hit.object));
+  }, [camera, gl, raycaster, scene, scratch]);
+
+  const zoomAt = useCallback((clientX: number, clientY: number, scale: number) => {
+    const orbit = controls.current;
+    if (!orbit?.enabled || transition.current) return;
+    clearOrbitMomentum(camera, orbit);
+    const hit = surfaceAt(clientX, clientY);
+    const forward = camera.getWorldDirection(scratch.position);
+    const alignment = Math.max(0.1, raycaster.ray.direction.dot(forward));
+    const currentDepth = camera.position.distanceTo(orbit.target);
+    // Rebase the orbit plane onto real geometry, keeping the viewing direction unchanged.
+    const depth = scale < 1 && hit
+      ? MathUtils.clamp(hit.distance * alignment, orbit.minDistance, orbit.maxDistance)
+      : currentDepth;
+    const nextDepth = MathUtils.clamp(depth * scale, orbit.minDistance, orbit.maxDistance);
+    camera.position.addScaledVector(raycaster.ray.direction, (depth - nextDepth) / alignment);
+    orbit.target.copy(camera.position).addScaledVector(forward, nextDepth);
+    orbit.update();
+    userMoved.current = true;
+  }, [camera, raycaster, scratch, surfaceAt]);
 
   const finishTransition = useCallback((value: Transition, orbit: OrbitControlsImpl) => {
     camera.position.copy(value.position);
@@ -111,6 +152,35 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   }, [gl, setFrameloop]);
 
   useEffect(() => {
+    const canvas = gl.domElement;
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? canvas.clientHeight : 1;
+      const pixels = MathUtils.clamp(event.deltaY * unit * (event.ctrlKey ? 8 : 1), -160, 160);
+      if (pixels !== 0) zoomAt(event.clientX, event.clientY, Math.exp(pixels * 0.002));
+    };
+    const handleTouchStart = (event: TouchEvent) => {
+      const orbit = controls.current;
+      if (event.touches.length !== 2 || !orbit?.enabled || transition.current) return;
+      const [first, second] = event.touches;
+      const hit = surfaceAt((first.clientX + second.clientX) / 2, (first.clientY + second.clientY) / 2);
+      if (!hit) return;
+      const forward = camera.getWorldDirection(scratch.position);
+      const depth = MathUtils.clamp(hit.distance * raycaster.ray.direction.dot(forward), orbit.minDistance, orbit.maxDistance);
+      orbit.target.copy(camera.position).addScaledVector(forward, depth);
+      orbit.update();
+    };
+    canvas.addEventListener('wheel', handleWheel, { capture: true, passive: false });
+    canvas.addEventListener('touchstart', handleTouchStart, { capture: true, passive: true });
+    return () => {
+      canvas.removeEventListener('wheel', handleWheel, true);
+      canvas.removeEventListener('touchstart', handleTouchStart, true);
+    };
+  }, [camera, gl, raycaster, scratch, surfaceAt, zoomAt]);
+
+  useEffect(() => {
     const orbit = controls.current;
     if (!orbit) return;
     const handleDoubleClick = (event: MouseEvent) => {
@@ -129,23 +199,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
         };
         return;
       }
-      const bounds = gl.domElement.getBoundingClientRect();
-      scratch.pointer.set(
-        ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
-        -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
-      );
-      raycaster.setFromCamera(scratch.pointer, camera);
-      const hit = raycaster.intersectObjects(scene.children, true).find(({ object }) => {
-        let current: Object3D | null = object;
-        while (current) {
-          if (!current.visible) return false;
-          current = current.parent;
-        }
-        if (!(object instanceof Mesh)) return true;
-        return Array.isArray(object.material)
-          ? object.material.some(material => material.colorWrite)
-          : object.material.colorWrite;
-      });
+      const hit = surfaceAt(event.clientX, event.clientY);
       if (!hit) {
         orbit.enabled = true;
         return;
@@ -163,7 +217,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       cancelSceneSingleAction(gl.domElement);
       gl.domElement.removeEventListener('dblclick', handleDoubleClick, true);
     };
-  }, [camera, gl, raycaster, scene, scratch]);
+  }, [camera, gl, surfaceAt]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -263,9 +317,17 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
         case 'ArrowUp': orbit.setPolarAngle(orbit.getPolarAngle() - KEY_ROTATION_STEP); break;
         case 'ArrowDown': orbit.setPolarAngle(orbit.getPolarAngle() + KEY_ROTATION_STEP); break;
         case '+':
-        case '=': orbit.dollyIn(KEY_ZOOM_SCALE); break;
+        case '=': {
+          const bounds = gl.domElement.getBoundingClientRect();
+          zoomAt(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2, KEY_ZOOM_SCALE);
+          break;
+        }
         case '-':
-        case '_': orbit.dollyOut(KEY_ZOOM_SCALE); break;
+        case '_': {
+          const bounds = gl.domElement.getBoundingClientRect();
+          zoomAt(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2, 1 / KEY_ZOOM_SCALE);
+          break;
+        }
         default: handled = false;
       }
       if (!handled) return;
@@ -275,7 +337,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     };
     keyTarget.addEventListener('keydown', handleKeyDown);
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
-  }, [camera, gl]);
+  }, [camera, gl, zoomAt]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;

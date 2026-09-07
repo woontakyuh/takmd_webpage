@@ -49,10 +49,10 @@ export function StudioScene(props: StudioSceneProps) {
         shadow-camera-left={-5} shadow-camera-right={5} shadow-camera-top={6} shadow-camera-bottom={-5}
         shadow-normalBias={0.018} shadow-bias={-0.0001} shadow-radius={3} />
       <directionalLight position={[4, 4, -3]} intensity={0.04 + skyFill * 0.18} color={PALETTE.paperLight} />
-      <spotLight position={[0, ROOM.architecture.height - 0.13, 0]} intensity={0.55 + sun.lamp * 0.3} distance={7} decay={2}
+      <spotLight name="Room ceiling fill" position={[0, ROOM.architecture.height - 0.13, 0]} intensity={sun.lamp * 0.85} distance={7} decay={2}
         angle={1.3} penumbra={1} color="#ffddb0" />
-      <Architecture night={props.night} sky={sun.windowSky} />
-      <Furniture lamp={sun.lamp} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} />
+      <Architecture night={props.night} sky={sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} />
+      <Furniture lamp={sun.lamp} halo={props.halo} onHaloControls={props.onHaloControls} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} />
       <OfficeLounge />
       <OfficeLighting power={sun.lamp} />
       <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={[1.72, 1.3025, 3.09]} rotation={Math.PI}

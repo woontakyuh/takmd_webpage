@@ -41,11 +41,20 @@ export type OfficeCollection = {
   readonly talkSlide: TalkSlide | null;
 };
 
+export type HaloSettings = {
+  readonly enabled: boolean | null;
+  readonly brightness: number;
+  readonly temperature: number;
+};
+
 export type StudioSceneProps = {
   readonly progress: RefObject<number>;
   readonly selected: ExhibitId | null;
   readonly night: boolean;
   readonly lighting: OfficeLight;
+  readonly blindLift: number;
+  readonly halo: { readonly power: number; readonly brightness: number; readonly temperature: number };
+  readonly onHaloControls: () => void;
   readonly reducedMotion: boolean;
   readonly compact: boolean;
   readonly collection: OfficeCollection;

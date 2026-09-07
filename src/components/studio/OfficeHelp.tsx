@@ -10,9 +10,9 @@ export function OfficeHelp({ ready, explored, compact }: Props) {
     if (ready && !explored) timer.current = setTimeout(() => setOpen(false), 7000);
     return () => { if (timer.current) clearTimeout(timer.current); };
   }, [ready, explored]);
-  const gestures = compact
-    ? [['One finger', 'Rotate'], ['Two fingers', 'Move'], ['Pinch', 'Zoom']]
-    : [['Drag', 'Rotate'], ['Double-click', 'Inspect / return'], ['Scroll', 'Zoom']];
+  const gestureSummary = compact
+    ? 'One finger: orbit · Two fingers: pan or pinch to zoom · Tap: discover an object.'
+    : 'Drag: orbit · Right / Shift-drag: pan · Scroll / pinch: zoom · Double-click: inspect or return.';
 
   return <div className="office-help" id="office-help">
     <button className="office-help-toggle" aria-expanded={open} aria-controls="office-gesture-hint"
@@ -20,8 +20,7 @@ export function OfficeHelp({ ready, explored, compact }: Props) {
       <span aria-hidden="true">?</span> Controls
     </button>
     <div id="office-gesture-hint" className="office-gesture-hint" hidden={!open}>
-      <div>{gestures.map(([gesture, action]) => <span key={action}><kbd>{gesture}</kbd><span>{action}</span></span>)}</div>
-      <p>{compact ? 'Tap an object to discover its story.' : 'Click an object to discover its story.'}</p>
+      <p className="office-gesture-actions">{gestureSummary}</p>
     </div>
     <span className="studio-sr-only">Focus the scene: arrow keys rotate, Shift plus arrow keys pan, and plus or minus zoom. Double-click a room surface to inspect it, then double-click again to return. Right-drag also pans. Touch: one finger rotates; two fingers pan or pinch to zoom.</span>
   </div>;

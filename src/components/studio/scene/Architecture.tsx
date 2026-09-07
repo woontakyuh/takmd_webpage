@@ -25,7 +25,14 @@ const SHADOW_ENCLOSURE: readonly { readonly size: readonly [number, number, numb
   { size: [width + 0.1, height + 0.1, 0.08], position: [0, height / 2, -depth / 2 - 0.04] },
 ];
 
-export function Architecture({ night, sky }: { readonly night: boolean; readonly sky: readonly [string, string] }) {
+type ArchitectureProps = {
+  readonly night: boolean;
+  readonly sky: readonly [string, string];
+  readonly blindLift: number;
+  readonly reducedMotion: boolean;
+};
+
+export function Architecture({ night, sky, blindLift, reducedMotion }: ArchitectureProps) {
   return (
     <group>
       {SHADOW_ENCLOSURE.map((surface, index) => <mesh key={index} position={[...surface.position]} castShadow>
@@ -48,7 +55,7 @@ export function Architecture({ night, sky }: { readonly night: boolean; readonly
         <Block size={[0.12, 0.13, depth]} position={[leftX + 0.04, 0.075, 0]} color={INTERIOR.plaster} radius={0.005} />
         <Block size={[0.22, 0.075, depth]} position={[leftX + 0.05, height - 0.035, 0]} color={INTERIOR.ivory} radius={0.004} />
         <Block size={[0.13, 0.05, depth]} position={[leftX + 0.03, height - 0.097, 0]} color={INTERIOR.plaster} radius={0.004} />
-        <WindowBay night={night} sky={sky} />
+        <WindowBay night={night} sky={sky} blindLift={blindLift} reducedMotion={reducedMotion} />
       </CutawayWall>
     </group>
   );

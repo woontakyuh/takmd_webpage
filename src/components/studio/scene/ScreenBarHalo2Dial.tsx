@@ -1,7 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useCursor } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { CanvasTexture, CylinderGeometry, SRGBColorSpace } from 'three';
+import type { StudioSceneProps } from '../types';
 import type { Point } from './config';
+import { scheduleSceneSingleAction } from './sceneGesture';
 
 const DIAL = {
   diameter: 0.074,
@@ -20,14 +24,37 @@ const SURFACE_ROTATION = -Math.PI / 2 + DIAL.topTilt;
 
 type HaloDialProps = {
   readonly position: Point;
-};
+} & Pick<StudioSceneProps, 'halo' | 'onHaloControls'>;
 
-export function ScreenBarHalo2Dial({ position }: HaloDialProps) {
+export function ScreenBarHalo2Dial({ position, halo, onHaloControls }: HaloDialProps) {
   const shell = useMemo(() => createSlopedDialShell(), []);
-  const display = useHaloDialDisplay();
+  const display = useHaloDialDisplay(halo);
+  const { gl } = useThree();
+  const pointerStart = useRef<{ readonly pointerId: number; readonly x: number; readonly y: number } | null>(null);
+  const [hovered, setHovered] = useState(false);
+  useCursor(hovered);
   useEffect(() => () => shell.dispose(), [shell]);
 
-  return <group name="ScreenBar Halo 2 wireless dial" position={[...position]}>
+  return <group name="ScreenBar Halo 2 wireless dial" position={[...position]}
+    onPointerOver={event => { event.stopPropagation(); setHovered(event.pointerType !== 'touch' && event.buttons === 0); }}
+    onPointerOut={() => setHovered(false)}
+    onPointerDown={event => {
+      event.stopPropagation();
+      pointerStart.current = event.button === 0 && event.isPrimary && !event.shiftKey && !event.ctrlKey && !event.metaKey && !event.altKey
+        ? { pointerId: event.pointerId, x: event.clientX, y: event.clientY } : null;
+    }}
+    onPointerCancel={() => { pointerStart.current = null; }}
+    onPointerUp={event => {
+      event.stopPropagation();
+      const start = pointerStart.current;
+      pointerStart.current = null;
+      if (!start || event.button !== 0 || !event.isPrimary || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey
+        || event.pointerId !== start.pointerId || event.delta >= 5
+        || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 5) return;
+      scheduleSceneSingleAction(gl.domElement, onHaloControls);
+    }}
+    onClick={event => event.stopPropagation()}
+    onDoubleClick={event => event.stopPropagation()}>
     <mesh name="thin dark rubber dial base" position={[0, DIAL.baseHeight / 2, 0]} castShadow receiveShadow>
       <cylinderGeometry args={[DIAL.diameter / 2, DIAL.diameter / 2, DIAL.baseHeight, 64]} />
       <meshStandardMaterial color="#181A18" roughness={0.88} metalness={0.04} />
@@ -81,23 +108,27 @@ function createSlopedDialShell() {
   return geometry;
 }
 
-function useHaloDialDisplay() {
-  const texture = useMemo(() => {
+function useHaloDialDisplay(halo: StudioSceneProps['halo']) {
+  const { canvas, texture } = useMemo(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 768;
     canvas.height = 768;
-    const context = canvas.getContext('2d');
-    if (context) drawDialDisplay(context, canvas.width, canvas.height);
     const result = new CanvasTexture(canvas);
     result.colorSpace = SRGBColorSpace;
     result.generateMipmaps = false;
-    return result;
+    return { canvas, texture: result };
   }, []);
+  useEffect(() => {
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    drawDialDisplay(context, canvas.width, canvas.height, halo);
+    texture.needsUpdate = true;
+  }, [canvas, halo, texture]);
   useEffect(() => () => texture.dispose(), [texture]);
   return texture;
 }
 
-function drawDialDisplay(context: CanvasRenderingContext2D, width: number, height: number) {
+function drawDialDisplay(context: CanvasRenderingContext2D, width: number, height: number, halo: StudioSceneProps['halo']) {
   const center = width / 2;
   const muted = 'rgba(191, 204, 194, 0.66)';
   const bright = 'rgba(224, 233, 224, 0.94)';
@@ -109,9 +140,9 @@ function drawDialDisplay(context: CanvasRenderingContext2D, width: number, heigh
   context.textAlign = 'center';
   context.textBaseline = 'middle';
   context.font = '500 65px Arial, sans-serif';
-  context.fillText('50%', center, 286);
-  context.fillText('3500 K', center, 386);
-  context.fillText('50%', center, 483);
+  context.fillText(`${Math.round(halo.power * 100)}%`, center, 286);
+  context.fillText(halo.power <= 0 ? 'OFF' : `${Math.round(halo.temperature)} K`, center, 386);
+  context.fillText(`${Math.round(halo.brightness * 100)}%`, center, 483);
   context.fillStyle = muted;
   context.font = '500 31px Arial, sans-serif';
   context.fillText('BenQ', 466, 168);
