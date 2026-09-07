@@ -41,7 +41,7 @@ export const ROOM = {
   credenza: { position: [-2.46, 0, 0.65], width: 3.3, depth: 0.48, height: 0.74 },
   plant: { position: [-2.46, 0, 2.55] },
   wardrobe: { position: [-2.35, 0.0185, -2.15], rotation: Math.PI / 2, width: 0.99, height: 1.52, depth: 0.46 },
-  surfboard: { position: [2.44, 0, 2.67], rotation: -0.55 - Math.PI / 2 },
+  surfboard: { position: [2.35, 0, 2.30], rotation: -0.55 - Math.PI / 2 },
 } as const;
 
 export const TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
@@ -56,6 +56,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   education: { position: [-0.42, 1.95, 1.15], target: [0, 1.65, 3.22], zoom: 1 },
   ai: { position: [-0.16, 1.255, -1.8], target: [-0.24, 1.155, -0.8], zoom: 1 },
   family: { position: [0.68, 1.16, -1.63], target: [0.67, 0.885, -0.87], zoom: 1 },
+  award: { position: [1.58, 1.58, 2.20], target: [1.58, 1.448, 2.95], zoom: 1 },
   projects: { position: [0.25, 1.35, -1.72], target: [-0.24, 0.815, -0.93], zoom: 1 },
   bjj: { position: [-1.45, 1.65, -3.85], target: [-2.35, 1.04, -2.30], zoom: 1 },
   surfing: { position: [0.25, 1.8, 0.6], target: [2.44, 1.05, 2.67], zoom: 1 },
@@ -73,6 +74,7 @@ export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   education: { position: [-0.55, 2.15, 0.2], target: [0, 1.65, 3.22], zoom: 1 },
   ai: FOCUS.ai,
   family: FOCUS.family,
+  award: { position: [1.58, 1.60, 2.12], target: [1.58, 1.448, 2.95], zoom: 1 },
   projects: { position: [0.45, 1.7, -2.1], target: [-0.24, 0.815, -0.93], zoom: 1 },
   bjj: { position: [-1.2, 1.9, -4.1], target: [-2.35, 1.04, -2.30], zoom: 1 },
   surfing: { position: [-0.1, 2.15, 0], target: [2.44, 1.05, 2.67], zoom: 1 },

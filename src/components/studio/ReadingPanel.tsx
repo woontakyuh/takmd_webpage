@@ -7,6 +7,7 @@ import { OfficeIcon } from './OfficeIcon';
 import { workshops } from '../../data/workshops';
 import { AiReader } from './AiReader';
 import { PersonalReader } from './PersonalReader';
+import { PERSONAL_LINKS } from './personal';
 
 const titles = {
   spine: 'Precision, in practice.',
@@ -15,6 +16,7 @@ const titles = {
   ai: 'Curriculum Vitae',
   projects: 'AI, in practice.',
   family: 'Family.',
+  award: 'KOSESS Best Shorts Award',
   bjj: 'Jiu-jitsu.',
   surfing: 'Surfing.',
 } as const;
@@ -82,6 +84,11 @@ export function ReadingPanel({ selected, publications, presentations, updatedAt,
           </div>
         </div>
         <h2 id="studio-panel-title">{titles[selected]}</h2>
+        {selected === 'award' && <>
+          <p className="studio-panel-intro">Select the polished gold play button to watch the award-winning Short.</p>
+          <a className="studio-panel-footer" href={PERSONAL_LINKS.awardShort} target="_blank" rel="noopener noreferrer"
+            aria-label="Watch the award-winning Short on YouTube (opens in a new tab)">Watch the Short <span aria-hidden="true">↗</span></a>
+        </>}
         {selected === 'research' && <ResearchFolio publications={publications} updatedAt={updatedAt} publication={collection.publication} media={collection.paperMedia} direction={collection.paperDirection} onPaper={id => { onPaper(id); resetScroll(); }} />}
         {selected === 'spine' && <>
           <p className="studio-panel-intro">Endoscopic spine surgery, with a considered approach to anatomy and technique.</p>

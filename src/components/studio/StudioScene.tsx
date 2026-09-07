@@ -53,7 +53,8 @@ export function StudioScene(props: StudioSceneProps) {
       <Architecture night={props.night} sky={sun.windowSky} />
       <Furniture lamp={sun.lamp} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} />
       <OfficeLounge />
-      <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={[1.58, 1.3025, 2.985]} rotation={Math.PI} />
+      <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={[1.58, 1.3025, 2.985]} rotation={Math.PI}
+        focused={props.selected === 'award'} reducedMotion={props.reducedMotion} onSelect={() => props.onSelect('award')} />
       <PersonalCorner {...props} />
       <CalendarClock reducedMotion={props.reducedMotion} />
       <Greenery />

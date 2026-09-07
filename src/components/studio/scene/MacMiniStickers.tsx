@@ -2,6 +2,7 @@ import { useTexture } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import { SRGBColorSpace } from 'three';
+import codexPetUrl from '../../../assets/studio/codex-pet.png?url';
 
 export function MacMiniStickers({ onClaudeSticker }: { readonly onClaudeSticker: () => void }) {
   const { gl } = useThree();
@@ -11,7 +12,7 @@ export function MacMiniStickers({ onClaudeSticker }: { readonly onClaudeSticker:
     gl.domElement.addEventListener('pointerdown', rejectMultitouch);
     return () => gl.domElement.removeEventListener('pointerdown', rejectMultitouch);
   }, [gl]);
-  const [claudeSource, codexSource] = useTexture(['/studio/stickers/claude-heart.png', '/studio/stickers/codex-pet.png']);
+  const [claudeSource, codexSource] = useTexture(['/studio/stickers/claude-heart.png', codexPetUrl]);
   const textures = useMemo(() => [claudeSource, codexSource].map(source => {
     const texture = source.clone();
     texture.colorSpace = SRGBColorSpace;

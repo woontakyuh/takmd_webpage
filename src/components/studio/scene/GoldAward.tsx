@@ -1,20 +1,24 @@
-import { useCursor, useTexture } from '@react-three/drei';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTexture } from '@react-three/drei';
+import { useEffect, useMemo } from 'react';
 import { CylinderGeometry, ExtrudeGeometry, Path, Quaternion, RepeatWrapping, Shape, ShapeGeometry, SRGBColorSpace, Vector3 } from 'three';
 import type { Texture } from 'three';
 import { GOLD_AWARD, PALETTE } from './config';
 import type { Point } from './config';
 import { Block, Rod } from './Primitives';
+import { AWARD_INSET_NAME, useAwardInteraction } from './useAwardInteraction';
+import { GoldAwardGlow } from './GoldAwardGlow';
 
 const AWARD = {
   width: 0.21, height: 0.297, depth: 0.015, lean: -0.23,
-  clickThreshold: 5,
 } as const;
 const ARTWORK = { width: 0.2, height: 0.3 } as const;
 const FACE_SCALE = [AWARD.width / ARTWORK.width, AWARD.height / ARTWORK.height, 1] as const;
 
 type GoldAwardProps = {
   readonly channelUrl: string;
+  readonly focused: boolean;
+  readonly reducedMotion: boolean;
+  readonly onSelect: () => void;
   readonly position?: Point;
   readonly rotation?: number;
 };
@@ -31,13 +35,23 @@ function insetPath() {
   return path;
 }
 
-function awardGeometry() {
-  const face = new Shape();
-  face.moveTo(-0.0994, -0.1494);
-  face.lineTo(0.0994, -0.1494);
-  face.lineTo(0.0994, 0.1494);
-  face.lineTo(-0.0994, 0.1494);
+function roundedOutline(halfWidth: number, halfHeight: number) {
+  const face = new Shape(), radius = 0.0005;
+  face.moveTo(-halfWidth + radius, -halfHeight);
+  face.lineTo(halfWidth - radius, -halfHeight);
+  face.absarc(halfWidth - radius, -halfHeight + radius, radius, -Math.PI / 2, 0, false);
+  face.lineTo(halfWidth, halfHeight - radius);
+  face.absarc(halfWidth - radius, halfHeight - radius, radius, 0, Math.PI / 2, false);
+  face.lineTo(-halfWidth + radius, halfHeight);
+  face.absarc(-halfWidth + radius, halfHeight - radius, radius, Math.PI / 2, Math.PI, false);
+  face.lineTo(-halfWidth, -halfHeight + radius);
+  face.absarc(-halfWidth + radius, -halfHeight + radius, radius, Math.PI, Math.PI * 1.5, false);
   face.closePath();
+  return face;
+}
+
+function awardGeometry() {
+  const face = roundedOutline(0.0994, 0.1494);
   face.holes.push(insetPath());
   const body = new ExtrudeGeometry(face, {
     depth: AWARD.depth - 0.0012, bevelEnabled: true, bevelThickness: 0.0006,
@@ -57,9 +71,8 @@ function awardGeometry() {
   return { body, well, badge };
 }
 
-export function GoldAward({ channelUrl, position = [0, 0, 0], rotation = 0 }: GoldAwardProps) {
-  const [hovered, setHovered] = useState(false);
-  const pointerStart = useRef<{ readonly x: number; readonly y: number; readonly button: number } | null>(null);
+export function GoldAward({ channelUrl, focused, reducedMotion, onSelect, position = [0, 0, 0], rotation = 0 }: GoldAwardProps) {
+  const { material, handlers, insetHovered } = useAwardInteraction({ channelUrl, focused, reducedMotion, onSelect });
   const [inkSource, logoSource, grainSource] = useTexture([
     '/models/gold-award/face-ink.webp', '/models/gold-award/triangle-logo.webp', '/models/gold-award/satin-grain.webp',
   ]);
@@ -71,7 +84,8 @@ export function GoldAward({ channelUrl, position = [0, 0, 0], rotation = 0 }: Go
       texture.needsUpdate = true;
     }
     grain.wrapS = grain.wrapT = RepeatWrapping;
-    grain.repeat.set(64, 64);
+    grain.repeat.set(32, 32);
+    grain.anisotropy = 8;
     grain.needsUpdate = true;
     return { ink, logo, grain };
   }, [inkSource, logoSource, grainSource]);
@@ -87,40 +101,37 @@ export function GoldAward({ channelUrl, position = [0, 0, 0], rotation = 0 }: Go
     }
     return -lowest;
   }, [geometry]);
-  useCursor(hovered);
   useEffect(() => () => { Object.values(textures).forEach(texture => texture.dispose()); }, [textures]);
   useEffect(() => () => { Object.values(geometry).forEach((part) => part.dispose()); }, [geometry]);
 
-  return <group name="KOSESS Best Shorts Award" position={[...position]} rotation={[0, rotation, 0]}
-    onPointerOver={(event) => { event.stopPropagation(); setHovered(true); }}
-    onPointerOut={() => setHovered(false)}
-    onPointerDown={(event) => { pointerStart.current = { x: event.clientX, y: event.clientY, button: event.button }; }}
-    onPointerCancel={() => { pointerStart.current = null; }}
-    onClick={(event) => {
-      event.stopPropagation();
-      const start = pointerStart.current;
-      pointerStart.current = null;
-      if (!start || start.button !== 0 || event.delta >= AWARD.clickThreshold
-        || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= AWARD.clickThreshold) return;
-      window.open(channelUrl, '_blank', 'noopener,noreferrer');
-    }}>
+  return <group name="KOSESS Best Shorts Award" position={[...position]} rotation={[0, rotation, 0]} {...handlers}>
     <group position={[0, originY, 0]} rotation={[AWARD.lean, 0, 0]}>
       <group scale={[...FACE_SCALE]}>
-        <mesh geometry={geometry.body} castShadow receiveShadow>
-          <meshStandardMaterial attach="material-0" color={GOLD_AWARD.satin} metalness={0.42} roughness={0.52} envMapIntensity={1.1}
-            bumpMap={grain} bumpScale={0.000035} />
+        <mesh name="Gold award satin body" geometry={geometry.body} castShadow receiveShadow>
+          <meshStandardMaterial attach="material-0" color={GOLD_AWARD.satin} metalness={0.42} roughness={0.64} envMapIntensity={1.1}
+            bumpMap={grain} bumpScale={0.00022} customProgramCacheKey={() => 'gold-award-satin-grain-v1'}
+            onBeforeCompile={shader => {
+              shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
+                #include <color_fragment>
+                float awardGrain = texture2D(bumpMap, vBumpMapUv).r;
+                float awardGrainMean = texture2D(bumpMap, vBumpMapUv, 4.0).r;
+                diffuseColor.rgb *= 1.0 + (awardGrain - awardGrainMean) * 0.6;
+              `);
+            }} />
           <meshStandardMaterial attach="material-1" color={GOLD_AWARD.edge} metalness={0.58} roughness={0.32} />
         </mesh>
-        <mesh geometry={geometry.well} position={[0, 0, 0.003]} receiveShadow>
-          <meshPhysicalMaterial color={GOLD_AWARD.mirror} metalness={0.7} roughness={0.22} envMapIntensity={1.7}
+        <mesh name={AWARD_INSET_NAME} geometry={geometry.well} position={[0, 0, 0.003]} receiveShadow>
+          <meshPhysicalMaterial ref={material} color={GOLD_AWARD.mirror} metalness={0.7} roughness={0.22} envMapIntensity={1.7}
+            emissive={GOLD_AWARD.mirror} emissiveIntensity={0}
             clearcoat={0.5} clearcoatRoughness={0.12} />
         </mesh>
-        <mesh geometry={geometry.badge} position={[-0.00065, 0.07565, 0.0034]} castShadow receiveShadow>
+        <mesh name={AWARD_INSET_NAME} geometry={geometry.badge} position={[-0.00065, 0.07565, 0.0034]} castShadow receiveShadow>
           <meshStandardMaterial color={GOLD_AWARD.satin} metalness={0.76} roughness={0.43} />
         </mesh>
         <PhotoDecal texture={textures.logo} position={[-0.00065, 0.07565, 0.005]}
           size={[296 / 1536 * ARTWORK.width, 356 / 2304 * ARTWORK.height]} />
         <PhotoDecal texture={textures.ink} position={[0, 0, 0.00765]} size={[ARTWORK.width, ARTWORK.height]} ink />
+        <GoldAwardGlow hovered={insetHovered} reducedMotion={reducedMotion} />
         <BackPlate grain={grain} />
       </group>
     </group>
@@ -131,7 +142,7 @@ export function GoldAward({ channelUrl, position = [0, 0, 0], rotation = 0 }: Go
 function PhotoDecal({ texture, position, size, ink = false }: {
   readonly texture: Texture; readonly position: Point; readonly size: readonly [number, number]; readonly ink?: boolean;
 }) {
-  return <mesh position={[...position]}>
+  return <mesh position={[...position]} raycast={() => {}}>
     <planeGeometry args={[...size]} />
     <meshStandardMaterial map={texture} transparent depthWrite={false} alphaTest={0.02}
       color={ink ? PALETTE.ink : PALETTE.white} metalness={ink ? 0 : 0.12}
@@ -141,9 +152,7 @@ function PhotoDecal({ texture, position, size, ink = false }: {
 
 function BackPlate({ grain }: { readonly grain: Texture }) {
   const geometry = useMemo(() => {
-    const shape = new Shape();
-    shape.moveTo(-0.0988, -0.1488); shape.lineTo(0.0988, -0.1488);
-    shape.lineTo(0.0988, 0.1488); shape.lineTo(-0.0988, 0.1488); shape.closePath();
+    const shape = roundedOutline(0.0988, 0.1488);
     const hole = new Path();
     hole.absellipse(0, 0.114, 0.0021, 0.0026, 0, Math.PI * 2, true, 0);
     shape.holes.push(hole);

@@ -13,12 +13,12 @@ const Scene = lazy(async () => {
   const module = await import('./StudioScene');
   return { default: module.StudioScene };
 });
-const exhibits: readonly { readonly id: ExhibitId; readonly label: string; readonly detail: string }[] = [
+const exhibits = [
   { id: 'ai', label: 'Profile', detail: 'Living CV' },
   { id: 'spine', label: 'Practice', detail: 'Clinical spine surgery' },
   { id: 'research', label: 'Research', detail: 'Papers & ideas' },
   { id: 'education', label: 'Talks', detail: 'Conferences & lectures' },
-];
+] as const satisfies readonly { readonly id: ExhibitId; readonly label: string; readonly detail: string }[];
 const socialLinks = [
   { label: 'YouTube', detail: '@tak_md · Shorts', href: PERSONAL_LINKS.youtube },
   { label: 'LinkedIn', detail: 'Woon Tak Yuh', href: PERSONAL_LINKS.linkedin },
@@ -136,6 +136,7 @@ export function StudioExperience(content: StudioContent) {
           <Scene progress={progress} selected={selected} night={night} lighting={lighting} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClaudeSticker={openMemory} onPaperStep={onPaperStep} onTalk={selectTalk} onReady={onReady} />
         </Suspense>}</SceneBoundary>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
+        <button className="office-secret-trigger" id="studio-exhibit-award" onClick={() => open('award')}>Inspect the gold award</button>
       </div>
       <header className="studio-header">
         <a className="studio-brand" href="/" aria-label="TakMD home"><span className="studio-brand-mark" aria-hidden="true">t.</span><div><h1>Woon Tak Yuh<span>, MD.</span></h1><span className="studio-brand-caption">Endoscopic spine surgery · Research · Teaching</span></div></a>
