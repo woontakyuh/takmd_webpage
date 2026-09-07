@@ -9,9 +9,4 @@ Both assets include a dimensional mesh and embedded base-color, normal and metal
 
 These assets were generated for this project from authorized references; no third-party catalog model is redistributed here. Generated asset use is subject to the originating services' terms.
 
-On 2026-09-07, the gi's generated `USN` sleeve relief was repaired to read `USA` on the wearer's left sleeve (-Z in source coordinates). A fitted cotton panel replaces 776 malformed local triangles; 373 clipped boundary triangles retain the original cloth UVs, while 891 panel triangles use newly authored lettering and woven normals. A 177-triangle repair on the inside of the belt samples neighboring original blue weave to cover a stray white texture speck. The neck drape, three white rank stripes, hanger, hook, garment bounds, original vertex attributes, and all three original embedded textures are preserved. The corrected GLB adds 195,196 bytes and three mesh primitives.
-
-- Original gi SHA-256: `e66e1fa2fe2bccdc8387748bf05b8c1664c06f22e0c38afef5ae56e88b80bb52`
-- Corrected gi SHA-256: `600dd038b56550371178ccca6cfd17a2e996dc54a0fe2d48fe6bb6eb86f10fbd`
-
-The authoring script and before/after browser evidence are retained in the local reference archive at `docs/redesign/gi-detail-repair-2026-09-07/`; they are not production tooling or required to load these self-contained GLBs.
+The owner requested restoration of the original gi on 2026-09-07. `control-gi.glb` is byte-for-byte identical to the asset introduced in commit `0fa908f`, without the later sleeve patch, replacement relief or belt overlay. Its SHA-256 is `e66e1fa2fe2bccdc8387748bf05b8c1664c06f22e0c38afef5ae56e88b80bb52`.
