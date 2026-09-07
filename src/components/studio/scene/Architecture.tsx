@@ -2,66 +2,69 @@ import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { Group } from 'three';
-import { PALETTE, ROOM } from './config';
+import { INTERIOR, PALETTE, ROOM } from './config';
 import { Block } from './Primitives';
-import { usePrintedTexture } from './Textures';
-import { WindowSky } from './WindowSky';
+import { useInteriorMaterial } from './InteriorMaterials';
+import { WindowBay } from './WindowBay';
 
-const WALL_HEIGHT = 2.7;
-const FAR_Z = 3.16;
-const LEFT_X = -2.36;
-const WINDOW_Z = -0.55;
-const WINDOW_WIDTH = 2.4;
-const FAR_WALL = { size: [4.8, WALL_HEIGHT, 0.08], position: [0, WALL_HEIGHT / 2, FAR_Z] } as const;
+const { height, farZ, leftX, window: windowBay } = ROOM.architecture;
+const [width, , depth] = ROOM.platform.size;
+const windowStart = windowBay.centerZ - windowBay.width / 2;
+const windowEnd = windowBay.centerZ + windowBay.width / 2;
+const FAR_WALL = { size: [width, height, 0.08], position: [0, height / 2, farZ] } as const;
 const LEFT_WALLS = [
-  { size: [0.08, WALL_HEIGHT, 1.45], position: [LEFT_X, WALL_HEIGHT / 2, -2.475] },
-  { size: [0.08, WALL_HEIGHT, 2.55], position: [LEFT_X, WALL_HEIGHT / 2, 1.925] },
-  { size: [0.08, 0.65, WINDOW_WIDTH], position: [LEFT_X, 0.325, WINDOW_Z] },
-  { size: [0.08, 0.43, WINDOW_WIDTH], position: [LEFT_X, 2.485, WINDOW_Z] },
+  { size: [0.08, height, windowStart + depth / 2], position: [leftX, height / 2, (windowStart - depth / 2) / 2] },
+  { size: [0.08, height, depth / 2 - windowEnd], position: [leftX, height / 2, (windowEnd + depth / 2) / 2] },
+  { size: [0.08, windowBay.bottom, windowBay.width], position: [leftX, windowBay.bottom / 2, windowBay.centerZ] },
+  { size: [0.08, height - windowBay.top, windowBay.width], position: [leftX, (height + windowBay.top) / 2, windowBay.centerZ] },
 ] as const;
 const SHADOW_ENCLOSURE: readonly { readonly size: readonly [number, number, number]; readonly position: readonly [number, number, number] }[] = [
   FAR_WALL, ...LEFT_WALLS,
-  { size: [4.9, 0.08, 6.5], position: [0, 2.76, 0] },
-  { size: [0.08, 2.8, 6.5], position: [2.44, 1.4, 0] },
-  { size: [4.9, 2.8, 0.08], position: [0, 1.4, -3.24] },
+  { size: [width + 0.1, 0.08, depth + 0.1], position: [0, height + 0.06, 0] },
+  { size: [0.08, height + 0.1, depth + 0.1], position: [width / 2 + 0.04, height / 2, 0] },
+  { size: [width + 0.1, height + 0.1, 0.08], position: [0, height / 2, -depth / 2 - 0.04] },
 ];
 
 export function Architecture({ night, sky }: { readonly night: boolean; readonly sky: readonly [string, string] }) {
-  const plaster = usePrintedTexture('stone');
+  const stone = useInteriorMaterial('stone', [2.8, 3.4]);
+  const oak = useInteriorMaterial('oak');
   return (
     <group>
       {SHADOW_ENCLOSURE.map((surface, index) => <mesh key={index} position={[...surface.position]} castShadow>
         <boxGeometry args={[...surface.size]} />
         <meshBasicMaterial colorWrite={false} depthWrite={false} />
       </mesh>)}
-      <Block {...ROOM.platform} color={PALETTE.stone} texture={plaster} roughness={0.96} />
-      <Block size={[4.76, 0.025, 6.36]} position={[0, 0.006, 0]} radius={0.008}
-        color={PALETTE.paper} texture={plaster} roughness={0.92} />
-      <CutawayWall axis="z" boundary={FAR_Z - 0.08} direction={-1}>
-        <Block {...FAR_WALL} color={night ? PALETTE.nightSurface : PALETTE.plaster}
-          texture={plaster} radius={0.012} roughness={0.96} />
-        <Block size={[4.55, 0.11, 0.12]} position={[0.05, 0.07, 3.08]}
-          color={PALETTE.walnutDark} radius={0.008} roughness={0.75} />
-      </CutawayWall>
-      <CutawayWall axis="x" boundary={LEFT_X + 0.08}>
-        <WindowSky colors={sky} />
-        {LEFT_WALLS.map((wall, index) => <Block key={index} {...wall}
-          color={night ? PALETTE.nightSurface : PALETTE.plaster} texture={plaster} radius={0.012} roughness={0.96} />)}
-        <mesh position={[-2.405, 1.45, WINDOW_Z]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
-          <planeGeometry args={[WINDOW_WIDTH - 0.05, 1.55]} />
-          <meshPhysicalMaterial color={night ? PALETTE.teal : PALETTE.paperLight} transparent opacity={night ? 0.3 : 0.2}
-            roughness={0.18} metalness={0.03} transmission={0.35} depthWrite={false} />
+      <Block {...ROOM.platform} color={INTERIOR.stone} roughness={0.96} />
+      <Block size={[width - 0.04, 0.025, depth - 0.04]} position={[0, 0.006, 0]} radius={0.006}
+        color={INTERIOR.stone} material={{ ...stone, map: null, roughnessMap: null }} roughness={0.94} />
+      <CutawayWall axis="z" boundary={farZ - 0.08} direction={-1}>
+        <Block {...FAR_WALL} color={INTERIOR.ivory} radius={0.012} roughness={0.96} />
+        <Block size={[width, 0.13, 0.12]} position={[0, 0.075, farZ - 0.05]}
+          color={INTERIOR.plaster} radius={0.005} />
+        {[-1.18, 1.18].map(x => <Block key={x} size={[0.022, 2.12, 0.027]}
+          position={[x, 1.65, farZ - 0.064]} color={INTERIOR.plaster} radius={0.003} />)}
+        {[0.59, 2.71].map(y => <Block key={y} size={[2.38, 0.022, 0.027]}
+          position={[0, y, farZ - 0.064]} color={INTERIOR.plaster} radius={0.003} />)}
+        <Block size={[width, 0.075, 0.22]} position={[0, height - 0.035, farZ - 0.06]}
+          color={INTERIOR.ivory} radius={0.004} />
+        <Block size={[width, 0.05, 0.13]} position={[0, height - 0.097, farZ - 0.03]}
+          color={INTERIOR.plaster} radius={0.004} />
+        <mesh position={[0, height - 0.13, farZ - 0.073]}>
+          <boxGeometry args={[width - 0.18, 0.012, 0.025]} />
+          <meshStandardMaterial color={PALETTE.sun} emissive={PALETTE.sun} emissiveIntensity={night ? 1.8 : 0.35} />
         </mesh>
-        <Block size={[0.055, 1.62, 0.035]} position={[-2.42, 1.45, WINDOW_Z]}
-          color={PALETTE.steel} radius={0.006} metalness={0.7} />
-        {[-1.72, 0.62].map((z) => (
-          <Block key={z} size={[0.055, 1.62, 0.035]} position={[-2.42, 1.45, z]}
-            color={PALETTE.steel} radius={0.006} metalness={0.7} />
-        ))}
-        <Block size={[0.055, 0.035, WINDOW_WIDTH - 0.05]} position={[-2.42, 1.45, WINDOW_Z]}
-          color={PALETTE.steel} radius={0.006} metalness={0.7} />
-        <Block size={[0.22, 0.055, WINDOW_WIDTH + 0.1]} position={[-2.32, 0.66, WINDOW_Z]}
-          color={PALETTE.stone} radius={0.01} roughness={0.86} />
+      </CutawayWall>
+      <CutawayWall axis="x" boundary={leftX + 0.08}>
+        {LEFT_WALLS.map((wall, index) => <Block key={index} {...wall}
+          color={INTERIOR.ivory} radius={0.012} roughness={0.96} />)}
+        <Block size={[0.12, 0.13, depth]} position={[leftX + 0.04, 0.075, 0]} color={INTERIOR.plaster} radius={0.005} />
+        <Block size={[0.22, 0.075, depth]} position={[leftX + 0.05, height - 0.035, 0]} color={INTERIOR.ivory} radius={0.004} />
+        <Block size={[0.13, 0.05, depth]} position={[leftX + 0.03, height - 0.097, 0]} color={INTERIOR.plaster} radius={0.004} />
+        <Block size={[0.035, 2.52, 1.54]} position={[leftX + 0.063, 1.32, ROOM.wardrobe.position[2]]}
+          color="#ffffff" material={oak} roughness={0.84} radius={0.008} />
+        <Block size={[0.43, 0.035, 1.56]} position={[leftX + 0.245, 2.15, ROOM.wardrobe.position[2]]}
+          color="#ffffff" material={oak} roughness={0.8} radius={0.008} />
+        <WindowBay night={night} sky={sky} />
       </CutawayWall>
     </group>
   );

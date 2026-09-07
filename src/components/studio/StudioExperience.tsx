@@ -1,8 +1,8 @@
 import { Component, Suspense, lazy, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { ReadingPanel } from './ReadingPanel';
 import { OfficeIcon } from './OfficeIcon';
-import type { ExhibitId, ProjectId, StudioContent } from './types';
-import { mediaForPaper, orderedPapers, talkMedia } from './collection';
+import type { ExhibitId, StudioContent } from './types';
+import { featuredPresentation, mediaForPaper, orderedPapers, talkMedia } from './collection';
 import { useOfficeLight, LocalClockReadout } from './OfficeTime';
 import type { LightMode } from './localTime';
 
@@ -14,7 +14,8 @@ const exhibits: readonly { readonly id: ExhibitId; readonly label: string; reado
   { id: 'spine', label: 'The spine', compactLabel: 'Practice', detail: 'Clinical practice' },
   { id: 'research', label: 'On the desk', compactLabel: 'Papers', detail: 'Papers & ideas' },
   { id: 'education', label: 'Talks', compactLabel: 'Talks', detail: 'Teaching & conferences' },
-  { id: 'ai', label: 'The workstation', compactLabel: 'AI', detail: 'Clinical AI' },
+  { id: 'ai', label: 'The workstation', compactLabel: 'CV', detail: 'Living CV' },
+  { id: 'projects', label: 'AI projects', compactLabel: 'AI', detail: 'Builds, talks & papers' },
   { id: 'bjj', label: 'On the mat', compactLabel: 'Jiu-jitsu', detail: 'Jiu-jitsu' },
   { id: 'surfing', label: 'By the sea', compactLabel: 'Surfing', detail: 'Surfing' },
 ];
@@ -34,6 +35,7 @@ export function StudioExperience(content: StudioContent) {
   const night = (lighting?.sun.daylight ?? 1) < 0.35;
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
+  const [explored, setExplored] = useState(false);
   const [compact, setCompact] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [paperId, setPaperId] = useState(() => orderedPapers(content.publications)[0]?.id ?? null);
@@ -41,17 +43,16 @@ export function StudioExperience(content: StudioContent) {
   const [paperDirection, setPaperDirection] = useState<1 | -1>(1);
   const [talkId, setTalkId] = useState<string | null>(null);
   const [talkSlideIndex, setTalkSlideIndex] = useState(0);
-  const [project, setProject] = useState<ProjectId | null>(null);
   const publication = content.publications.find(paper => paper.id === paperId) ?? null;
   const presentation = content.presentations.find(talk => talk.id === talkId) ?? null;
   const slides = talkMedia.find(media => media.id === talkId)?.slides ?? [];
-  const collection = { publication, paperMedia: mediaForPaper(publication), paperTurn, paperDirection, presentation, talkSlide: slides[talkSlideIndex] ?? null, project };
+  const collection = { publication, paperMedia: mediaForPaper(publication), paperTurn, paperDirection, presentation, talkSlide: slides[talkSlideIndex] ?? null };
   const selectPaper = (id: string) => {
     const papers = orderedPapers(content.publications);
     setPaperDirection(papers.findIndex(paper => paper.id === id) >= papers.findIndex(paper => paper.id === paperId) ? 1 : -1);
     setPaperId(id); setPaperTurn(turn => turn + 1); setSelected('research');
   };
-  const selectTalk = (id: string | null) => { setTalkId(id); setTalkSlideIndex(0); };
+  const selectTalk = (id: string | null) => { setTalkId(id); setTalkSlideIndex(0); if (id) setSelected('education'); };
 
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 759px)');
@@ -64,27 +65,49 @@ export function StudioExperience(content: StudioContent) {
     return () => { mobile.removeEventListener('change', sync); motion.removeEventListener('change', sync); };
   }, []);
 
+  const featuredTalk = featuredPresentation(content.presentations);
   const open = useCallback((id: ExhibitId) => {
     const active = document.activeElement;
     returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id}`);
-    setSelected(id);
-  }, []);
+    if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
+    setExplored(true); setSelected(id);
+  }, [featuredTalk?.id]);
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const exhibit = query.get('exhibit');
+    if (exhibit === 'education') {
+      const talk = content.presentations.find(item => item.id === query.get('talk'));
+      if (talk) { setTalkId(talk.id); open('education'); }
+    } else if (exhibit === 'research') {
+      const paper = content.publications.find(item => item.id === query.get('paper') || item.doiUrl === query.get('paper'));
+      if (paper) { setPaperId(paper.id); open('research'); }
+    }
+  }, [content.presentations, content.publications, open]);
   const close = useCallback(() => {
     setSelected(null);
     requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
   }, []);
+  useEffect(() => {
+    if (selected !== 'family') return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') close(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selected, close]);
   const onReady = useCallback(() => setReady(true), []);
   const goToView = (view: 0 | 1 | 2) => {
+    setExplored(true);
     setSelected(null);
     progress.current = view / 2;
     setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
   };
 
-  return <div className="studio" data-night={night} data-selected={selected}>
+  return <div className="studio" data-night={night} data-selected={selected} data-explored={explored}>
     <section className="studio-stage" aria-label="TakMD's office">
-      <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}>
+      <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
+        onPointerDown={() => setExplored(true)} onWheel={() => setExplored(true)}
+        onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <SceneBoundary>{mounted && lighting && <Suspense fallback={<div className="studio-loading" role="status">Opening the office…</div>}>
-          <Scene progress={progress} selected={selected} night={night} lighting={lighting} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onReady={onReady} />
+          <Scene progress={progress} selected={selected} night={night} lighting={lighting} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onTalk={selectTalk} onReady={onReady} />
         </Suspense>}</SceneBoundary>
       </div>
       <header className="studio-header">
@@ -92,6 +115,7 @@ export function StudioExperience(content: StudioContent) {
         <nav aria-label="Office navigation"><a href="/cv">Living CV</a><a href="/contact">Contact <span aria-hidden="true">↗</span></a></nav>
       </header>
       <div className="studio-tools">
+        {selected === 'family' && <button onClick={close} aria-label="Close photo frame"><OfficeIcon name="close" /><span>Back to the office</span></button>}
         <button onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>
         <button onClick={() => setLightMode(value => value === 'local' ? 'day' : value === 'day' ? 'evening' : 'local')}
           aria-label={lightMode === 'local' ? 'Local light · Preview daylight' : lightMode === 'day' ? 'Daylight preview · Preview evening' : 'Evening preview · Return to local light'}
@@ -101,9 +125,9 @@ export function StudioExperience(content: StudioContent) {
         <LocalClockReadout />
       </div>
       <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>The office.</h2></div>
-      <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>The practice</button><button onClick={() => goToView(2)}>The desk</button></div>
+      <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>The practice</button><button onClick={() => goToView(2)}>The desk</button><button id="studio-exhibit-family" onClick={() => open('family')}>Photo frame</button></div>
       <footer className="studio-stage-footer">
-        <p id="office-help" className="office-help">{ready ? compact ? 'Drag to explore · Pinch to zoom · Tap an object' : 'Drag to explore · Scroll to zoom · Click an object' : 'The office is opening…'}<span className="studio-sr-only">Focus the scene and use arrow keys to rotate; plus and minus to zoom.</span></p>
+        <p id="office-help" className="office-help">{ready ? selected ? compact ? 'Drag around the object · Pinch to zoom' : 'Drag around the object · Scroll to zoom' : compact ? 'Drag to explore · Pinch to zoom · Tap an object' : 'Drag to explore · Scroll to zoom · Click an object' : 'The office is opening…'}<span className="studio-sr-only">Focus the scene and use arrow keys to rotate; plus and minus to zoom.</span></p>
         <nav className="studio-exhibits" aria-label="Office collection">{exhibits.map(item => <button id={`studio-exhibit-${item.id}`} key={item.id} aria-label={`${item.label} ${item.detail}`} aria-pressed={selected === item.id} onClick={() => open(item.id)}><OfficeIcon name={item.id} /><span><span className="exhibit-full-label">{item.label}</span><span className="exhibit-compact-label">{item.compactLabel}</span><small>{item.detail}</small></span></button>)}</nav>
         <a className="office-index" href="#office-reading">Browse the work <span aria-hidden="true">↓</span></a>
       </footer>
@@ -113,6 +137,6 @@ export function StudioExperience(content: StudioContent) {
       <div className="studio-notes-list">{content.publications.slice(0, 3).map(p => <a key={`${p.doiUrl}-${p.title}`} href={p.doiUrl || '/research'} target={p.doiUrl ? '_blank' : undefined} rel={p.doiUrl ? 'noreferrer' : undefined}><span className="studio-meta">{p.journal} / {p.year}</span><h3>{p.title}</h3><span className="studio-notes-arrow" aria-hidden="true">↗</span></a>)}</div>
     </section>
     <footer className="studio-end"><span>Woon Tak Yuh, MD.</span><nav aria-label="Browse all work"><a href="/cv">Living CV</a><a href="/research">Research</a><a href="/education">Education</a><a href="/jiu-jitsu">Jiu-jitsu</a><a href="/surfing">Surfing</a><a href="/contact">Contact ↗</a></nav></footer>
-    <ReadingPanel {...content} selected={selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onProject={setProject} onClose={close} />
+    <ReadingPanel {...content} selected={selected === 'family' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
   </div>;
 }

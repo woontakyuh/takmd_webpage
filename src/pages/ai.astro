@@ -4,50 +4,24 @@ import SectionHeader from '../components/SectionHeader.astro';
 import Layout from '../layouts/Layout.astro';
 import presentationsData from '../data/presentations.json';
 import publicationsData from '../data/publications.json';
+import { aiProjects, hasAiSignal } from '../data/ai-projects';
 
-const aiPresentations = presentationsData.presentations.filter((presentation) =>
-  /AI|Claude|LLM|Agent|Digital|workflow/i.test(`${presentation.name} ${presentation.topics.join(' ')}`),
-);
-const aiPublications = publicationsData.publications.filter((publication) =>
-  /deep learning|AI|model|radiograph|CNN|foundation/i.test(publication.title),
-);
-
-const workflows = [
-  {
-    title: 'Documentation continuity',
-    description: 'Voice capture and structured drafting reduce repetitive writing while keeping surgeon review as the final clinical checkpoint.',
-    tags: ['Documentation'],
-  },
-  {
-    title: 'Registry-ready data',
-    description: 'Case fields, outcome measures, and schedule metadata are shaped for later audit, dashboarding, and publication pipelines.',
-    tags: ['Notion', 'Registry'],
-  },
-  {
-    title: 'Decision support checklists',
-    description: 'Prompted review supports indication, risk, and follow-up thinking without turning judgment over to the model.',
-    tags: ['Safety'],
-  },
-  {
-    title: 'Research acceleration',
-    description: 'LLMs help organize protocols, literature, and analysis plans so clinical questions move faster from observation to manuscript.',
-    tags: ['Research'],
-  },
-];
+const aiPresentations = presentationsData.presentations.filter((presentation) => hasAiSignal(`${presentation.name} ${presentation.topics.join(' ')}`));
+const aiPublications = publicationsData.publications.filter((publication) => hasAiSignal(publication.title));
 ---
 
-<Layout title="Clinical AI - Woon Tak Yuh, MD" description="Practical AI workflows for spine surgery documentation, registries, research, and clinical reasoning.">
+<Layout title="AI Work - Woon Tak Yuh, MD" description="Documented AI-related projects, talks, and publications by Woon Tak Yuh, MD.">
   <main id="main-content">
     <section class="page-shell page-section">
       <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
         <div>
-          <p class="eyebrow">Clinical AI</p>
+          <p class="eyebrow">AI work</p>
           <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
-            AI as clinical infrastructure, not decoration.
+            Projects, teaching, and research with a clear source trail.
           </h1>
         </div>
         <p class="lede">
-          The AI page avoids gadget theater. It focuses on practical augmentation: notes, registries, checklists, research workflows, and structured professional records.
+          Projects, lectures, and research exploring AI in practice.
         </p>
       </div>
     </section>
@@ -60,24 +34,24 @@ const workflows = [
         </article>
         <article class="data-card">
           <p class="metric-number">{aiPublications.length}</p>
-          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">AI-adjacent papers</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">AI-related papers</p>
         </article>
         <article class="data-card">
-          <p class="metric-number">4</p>
-          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Workflow layers</p>
+          <p class="metric-number">{aiProjects.length}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Documented side projects</p>
         </article>
       </div>
     </section>
 
     <section class="page-shell page-section border-t border-[var(--color-border)]">
       <SectionHeader
-        eyebrow="Operating Model"
-        title="Where AI belongs in the clinical workflow"
-        description="The guiding constraint is simple: AI can structure, summarize, and surface patterns, but the physician remains responsible for interpretation and action."
+        eyebrow="Side projects"
+        title="Projects in progress"
+        description="A workflow study and K-Spinoscopy dashboard project connect AI methods with clinical practice, teaching, and research."
       />
       <div class="grid gap-4 md:grid-cols-2">
-        {workflows.map((workflow) => (
-          <Card title={workflow.title} description={workflow.description} tags={workflow.tags} />
+        {aiProjects.map((project) => (
+          <Card title={project.title} description={project.description} href={project.href} tags={[project.eyebrow]} />
         ))}
       </div>
     </section>
@@ -86,30 +60,70 @@ const workflows = [
       <div class="grid gap-8 lg:grid-cols-[0.35fr_0.65fr]">
         <div>
           <SectionHeader
-            eyebrow="Schedule Signal"
-            title="Recent AI-related presentations"
-            description="Schedule records that explicitly mention AI, LLMs, Claude, agents, digital convergence, or workflow."
+            eyebrow="Teaching record"
+            title="AI-related presentations"
+            description="Selected lectures on AI methods, workflow, peer review, imaging, and clinical practice."
             href="/ai-workflow"
             linkText="Detailed workflow"
           />
         </div>
         <div class="data-card">
           <div class="record-list">
-            {aiPresentations.slice(0, 6).map((presentation) => (
+            {aiPresentations.map((presentation) => (
               <article class="record-item">
                 <div>
                   <p class="record-kicker">{presentation.date}</p>
                   <p class="mt-1 text-xs text-[var(--color-text-muted)]">{presentation.place || 'Location TBA'}</p>
                 </div>
                 <div>
-                  <h2 class="text-base font-semibold leading-7 text-[var(--color-text)]">{presentation.name}</h2>
+                  <h2 class="text-base font-semibold leading-7 text-[var(--color-text)]"><a href={`/?exhibit=education&talk=${encodeURIComponent(presentation.id)}`} class="hover:underline">{presentation.name}</a></h2>
                   <p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{presentation.topics[0]}</p>
                 </div>
               </article>
             ))}
+            {aiPresentations.length === 0 && <p class="text-sm leading-6 text-[var(--color-text-secondary)]">No AI-related presentation records are available yet.</p>}
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <div class="grid gap-8 lg:grid-cols-[0.35fr_0.65fr]">
+        <div>
+          <SectionHeader
+            eyebrow="Publication record"
+            title="AI-related papers"
+            description="Published work on deep learning, foundation models, and computational imaging in spine care."
+            href="/research"
+            linkText="Research archive"
+          />
+        </div>
+        <div class="data-card">
+          <div class="record-list">
+            {aiPublications.map((publication) => (
+              <article class="record-item">
+                <div>
+                  <p class="record-kicker">{publication.year}</p>
+                  <p class="mt-1 text-xs text-[var(--color-text-muted)]">{publication.journal}</p>
+                </div>
+                <div>
+                  <h2 class="text-base font-semibold leading-7 text-[var(--color-text)]"><a href={`/?exhibit=research&paper=${encodeURIComponent(publication.doiUrl || publication.title)}`} class="hover:underline">{publication.title}</a></h2>
+                  <p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{publication.role} · Opens in the research folio</p>
+                </div>
+              </article>
+            ))}
+            {aiPublications.length === 0 && <p class="text-sm leading-6 text-[var(--color-text-secondary)]">No AI-related publication records are available yet.</p>}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="spinoscopy" class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader
+        eyebrow="K-Spinoscopy dashboard"
+        title="Project note in development"
+        description="This project is listed as active work. A public project note is being prepared."
+      />
     </section>
   </main>
 </Layout>

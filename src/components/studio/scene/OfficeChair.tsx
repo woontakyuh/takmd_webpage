@@ -1,12 +1,21 @@
 import { useGLTF, useTexture } from '@react-three/drei';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
 import { Box3, Mesh, MeshStandardMaterial, NoColorSpace, SRGBColorSpace, Vector3 } from 'three';
-import type { Material } from 'three';
+import type { Group, Material } from 'three';
 
 const MODEL_URL = '/models/office-chair/chair.glb' as const;
 const TARGET_HEIGHT = 1.02;
 
-export function OfficeChair() {
+export function OfficeChair({ reducedMotion }: { readonly reducedMotion: boolean }) {
+  const swivel = useRef<Group>(null);
+  const elapsed = useRef(2);
+  useFrame((_, delta) => {
+    if (!swivel.current) return;
+    elapsed.current = Math.min(2, elapsed.current + delta);
+    const t = elapsed.current;
+    swivel.current.rotation.y = reducedMotion || t >= 2 ? 0 : Math.sin(t * 8) * Math.exp(-t * 3) * 0.105;
+  });
   const { scene } = useGLTF(MODEL_URL);
   const sourceTextures = useTexture({
     baseColor: '/models/office-chair/base-color.webp',
@@ -81,8 +90,10 @@ export function OfficeChair() {
   }, [fitted, textures]);
 
   return (
+    <group ref={swivel} name="Desk chair" onPointerOver={() => { if (!reducedMotion && elapsed.current >= 1.5) elapsed.current = 0; }}>
     <group position={[...fitted.offset]} scale={fitted.scale}>
       <primitive object={fitted.model} dispose={null} />
+    </group>
     </group>
   );
 }

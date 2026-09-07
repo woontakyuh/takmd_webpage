@@ -15,7 +15,8 @@
     "fetch:presentations": "bun run scripts/fetch-schedule.ts",
     "fetch:surgery": "bun run scripts/fetch-notion-data.ts",
     "fetch:data": "bun run fetch:publications && bun run fetch:presentations && bun run fetch:surgery",
-    "deploy": "bun run build && bunx wrangler@4.129.0 pages deploy dist --project-name takmdwebpage --branch main"
+    "deploy": "bun run build && npm exec --yes --package=wrangler@4.129.0 -- wrangler pages deploy dist --project-name takmdwebpage --branch main",
+    "photos:import": "node scripts/import-frame-photos.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",

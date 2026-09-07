@@ -14,10 +14,10 @@ export const MONITOR_ARM = {
   elbowPivot: [-0.104, 0.208, -0.084],
   vesaPivot: [0, 0.368, -0.066],
   vesaPlate: [0, 0.36802, -0.0495],
-  miniDisplayPort: [0.006, 0.0195, 0.0663],
+  miniDisplayPort: [0.003811, 0.022, 0.066308],
   monitorDisplayPort: [0.042, 0.3683, -0.043],
   monitorPowerPort: [0.092, 0.3663, -0.043],
-  underDeskOutlet: [-0.083, -0.6345, -0.148],
+  underDeskOutlet: [-0.11, -0.095, -0.1],
 } as const satisfies Readonly<Record<string, Point>>;
 
 const ARM_JOINTS: readonly Point[] = [
@@ -40,20 +40,28 @@ export function MonitorArm() {
         color={PALETTE.ink} radius={0.001} roughness={0.72} />
       <Cable points={[
         MONITOR_ARM.miniDisplayPort,
-        [0.012, 0.118, 0.012],
-        [-0.034, 0.232, -0.046],
-        [-0.079, 0.213, -0.061],
+        [-0.006, 0.022, 0.05],
+        [0.035, 0.035, 0.015],
+        [0.045, 0.07, -0.024],
+        [0.045, 0.22, -0.047],
         MONITOR_ARM.monitorDisplayPort,
-      ]} radius={0.0031} />
+      ]} radius={0.0024} />
       <Cable points={[
         MONITOR_ARM.monitorPowerPort,
-        [0.05, 0.32, -0.067],
-        [-0.062, 0.227, -0.1],
-        [-0.145, 0.102, -0.136],
-        [-0.149542, 0.014, -0.137],
-        [-0.02, -0.005, -0.138],
+        [0.045, 0.345, -0.084],
+        [-0.104, 0.208, -0.112],
+        [-0.15, 0.084, -0.14],
+        [-0.15, 0.018, -0.142],
+        [-0.15, -0.065, -0.142],
         MONITOR_ARM.underDeskOutlet,
-      ]} radius={0.0034} />
+      ]} radius={0.0025} />
+      <Cable points={[
+        [0.049166, 0.022, 0.062671], [0.04, 0.014, 0.03],
+        [-0.132, 0.005, -0.05], [-0.149, 0.004, -0.135],
+        [-0.149, -0.065, -0.14], MONITOR_ARM.underDeskOutlet,
+      ]} radius={0.0025} />
+      <Block size={[0.18, 0.04, 0.18]} position={[-0.11, -0.078, -0.02]} color={PALETTE.ink}
+        radius={0.008} roughness={0.72} />
       <CableGuide position={[clampX, clampY - 0.002, clampZ - 0.026]} />
     </group>
   );

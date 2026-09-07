@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { CanvasTexture, PlaneGeometry, SRGBColorSpace, type Group } from 'three';
 import { Block } from './Primitives';
-import { PALETTE, type Point } from './config';
+import { CLOCK, PALETTE, type Point } from './config';
 
 const FLIP_SECONDS = 0.48;
 type Props = {
@@ -18,10 +18,14 @@ function useCardTexture(value: string) {
     canvas.width = 512; canvas.height = 400;
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      ctx.fillStyle = PALETTE.ink; ctx.fillRect(0, 0, 512, 400);
-      ctx.fillStyle = PALETTE.paperLight;
+      const shade = ctx.createLinearGradient(0, 0, 0, 400);
+      shade.addColorStop(0, '#29302B'); shade.addColorStop(0.49, CLOCK.card);
+      shade.addColorStop(0.5, '#1C211E'); shade.addColorStop(1, CLOCK.card);
+      ctx.fillStyle = shade; ctx.fillRect(0, 0, 512, 400);
+      ctx.fillStyle = CLOCK.numeral;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.font = '600 310px Arial, sans-serif'; ctx.fillText(value, 256, 221, 465);
+      ctx.font = `${value.length > 2 ? 500 : 600} ${value.length > 2 ? 190 : 302}px Arial, sans-serif`;
+      ctx.fillText(value, 256, 216, 458);
     }
     const result = new CanvasTexture(canvas);
     result.colorSpace = SRGBColorSpace; result.anisotropy = 4;
@@ -63,7 +67,7 @@ export function FlipCard({ value, size, position, reducedMotion }: Props) {
 
   return <group position={[...position]}>
     <Block size={[width + 0.008, height + 0.008, 0.008]} position={[0, 0, -0.006]}
-      color={PALETTE.walnutDark} radius={0.006} roughness={0.9} />
+      color={CLOCK.face} radius={0.006} roughness={0.9} />
     <mesh geometry={halves[0]} position={[0, height / 4, 0]}>
       <meshStandardMaterial map={current} roughness={0.9} />
     </mesh>

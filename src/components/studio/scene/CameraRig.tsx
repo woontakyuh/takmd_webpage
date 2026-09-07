@@ -5,7 +5,7 @@ import { PerspectiveCamera, Vector3 } from 'three';
 import type { Camera } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import type { StudioSceneProps } from '../types';
-import { FOCUS, MOBILE_FOCUS, MOBILE_TOUR, MOTION, TOUR } from './config';
+import { FOCUS, focusFov, MOBILE_FOCUS, MOBILE_TOUR, MOTION, SIDE_READER_SPACE, TOUR } from './config';
 import type { CameraPose } from './config';
 
 type CameraRigProps = Pick<StudioSceneProps,
@@ -26,6 +26,8 @@ type Transition = {
 const CAMERA_TOLERANCE = 0.002;
 const KEY_ROTATION_STEP = 0.08;
 const KEY_ZOOM_SCALE = 1.12;
+const FREE_ORBIT_LIMITS = { minDistance: 1.65, maxDistance: 13, minPolarAngle: 0.3, maxPolarAngle: 1.45 } as const;
+const FOCUSED_ORBIT_LIMITS = { minDistance: 0.65, maxDistance: 5.5, minPolarAngle: 0.35, maxPolarAngle: 1.52 } as const;
 
 function toTransition(kind: TransitionKind, pose: CameraPose): Transition {
   return {
@@ -47,6 +49,19 @@ function clearOrbitMomentum(camera: Camera, orbit: OrbitControlsImpl): void {
   orbit.enableDamping = damping;
 }
 
+function applyOrbitLimits(orbit: OrbitControlsImpl, focused: boolean): void {
+  const limits = focused ? FOCUSED_ORBIT_LIMITS : FREE_ORBIT_LIMITS;
+  orbit.minDistance = limits.minDistance;
+  orbit.maxDistance = limits.maxDistance;
+  orbit.minPolarAngle = limits.minPolarAngle;
+  orbit.maxPolarAngle = limits.maxPolarAngle;
+}
+
+function isFormTarget(target: EventTarget | null): boolean {
+  return target instanceof HTMLElement
+    && target.closest('input, textarea, select, button, a, [contenteditable="true"], [role="textbox"]') !== null;
+}
+
 export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady }: CameraRigProps) {
   const { camera, size, gl, setFrameloop } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
@@ -57,24 +72,28 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   const previousSelected = useRef(selected);
   const userMoved = useRef(false);
   const ready = useRef(false);
+  const targetFov = useRef(42);
   const initialPose = useRef((compact ? MOBILE_TOUR : TOUR)[viewCommand.view]);
   const scratch = useMemo(() => ({ position: new Vector3(), target: new Vector3() }), []);
 
   const finishTransition = useCallback((value: Transition, orbit: OrbitControlsImpl) => {
     camera.position.copy(value.position);
     orbit.target.copy(value.target);
-    if (value.kind === 'focus') camera.lookAt(orbit.target);
-    else orbit.update();
+    if (camera instanceof PerspectiveCamera) { camera.fov = targetFov.current; camera.updateProjectionMatrix(); }
+    if (value.kind === 'focus') applyOrbitLimits(orbit, true);
+    if (value.kind === 'return') applyOrbitLimits(orbit, false);
+    orbit.update();
     transition.current = null;
     if (value.kind === 'return') savedFreePose.current = null;
-    orbit.enabled = selected === null;
-  }, [camera, selected]);
+    orbit.enabled = true;
+  }, [camera]);
 
   useLayoutEffect(() => {
     const orbit = controls.current;
     if (!orbit) return;
     camera.position.set(...initialPose.current.position);
     orbit.target.set(...initialPose.current.target);
+    applyOrbitLimits(orbit, false);
     orbit.update();
   }, [camera]);
 
@@ -96,10 +115,13 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
           target: orbit.target.clone(),
         };
       }
-      clearOrbitMomentum(camera, orbit);
       orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
       transition.current = toTransition('focus', (compact ? MOBILE_FOCUS : FOCUS)[selected]);
     } else {
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      applyOrbitLimits(orbit, false);
       if (camera instanceof PerspectiveCamera) camera.clearViewOffset();
       camera.updateProjectionMatrix();
       const saved = savedFreePose.current;
@@ -107,10 +129,9 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       transition.current = saved
         ? { kind: 'return', position: saved.position.clone(), target: saved.target.clone() }
         : toTransition('return', fallback);
-      orbit.enabled = false;
     }
     previousSelected.current = selected;
-  }, [camera, compact, selected]);
+  }, [camera, compact, selected, size.width, size.height]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -119,8 +140,8 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     activeView.current = viewCommand.view;
     userMoved.current = false;
     if (selected) return;
-    clearOrbitMomentum(camera, orbit);
     orbit.enabled = false;
+    clearOrbitMomentum(camera, orbit);
     transition.current = toTransition('guide', (compact ? MOBILE_TOUR : TOUR)[viewCommand.view]);
   }, [compact, selected, viewCommand]);
 
@@ -128,24 +149,26 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const orbit = controls.current;
     if (!orbit) return;
     if (selected) {
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
       transition.current = toTransition('focus', (compact ? MOBILE_FOCUS : FOCUS)[selected]);
       return;
     }
     if (!userMoved.current && !savedFreePose.current) {
-      transition.current = toTransition('guide', (compact ? MOBILE_TOUR : TOUR)[activeView.current]);
       orbit.enabled = false;
+      transition.current = toTransition('guide', (compact ? MOBILE_TOUR : TOUR)[activeView.current]);
     }
   }, [compact, selected, size.height, size.width]);
 
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
-    camera.fov = size.width < size.height ? 60 : 42;
-    if (!selected) {
+    targetFov.current = focusFov(selected, compact, size.width, size.height);
+    if (!selected || selected === 'family') {
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
       return;
     }
-    const xOffset = compact ? 0 : Math.min(438, size.width * 0.42) / 2;
+    const xOffset = compact ? 0 : SIDE_READER_SPACE / 2;
     const yOffset = compact ? size.height * 0.24 : 0;
     camera.setViewOffset(size.width, size.height, xOffset, yOffset, size.width, size.height);
     camera.updateProjectionMatrix();
@@ -161,7 +184,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const keyTarget = wrapper instanceof HTMLElement ? wrapper : gl.domElement;
     if (!orbit) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!orbit.enabled || selected) return;
+      if (!orbit.enabled || isFormTarget(event.target)) return;
       let handled = true;
       switch (event.key) {
         case 'ArrowLeft': orbit.setAzimuthalAngle(orbit.getAzimuthalAngle() + KEY_ROTATION_STEP); break;
@@ -181,18 +204,21 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     };
     keyTarget.addEventListener('keydown', handleKeyDown);
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
-  }, [gl, selected]);
+  }, [gl]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;
     if (!orbit) return;
+    if (camera instanceof PerspectiveCamera && Math.abs(camera.fov - targetFov.current) > 0.01) {
+      camera.fov += (targetFov.current - camera.fov) * (reducedMotion ? 1 : 1 - Math.exp(-MOTION.camera * Math.min(delta, 0.1)));
+      camera.updateProjectionMatrix();
+    }
     const active = transition.current;
     if (active) {
       const damping = reducedMotion ? 1 : 1 - Math.exp(-MOTION.camera * Math.min(delta, 0.1));
       camera.position.lerp(active.position, damping);
       orbit.target.lerp(active.target, damping);
-      if (active.kind === 'focus') camera.lookAt(orbit.target);
-      else orbit.update();
+      camera.lookAt(orbit.target);
       scratch.position.copy(camera.position).sub(active.position);
       scratch.target.copy(orbit.target).sub(active.target);
       if (reducedMotion || (scratch.position.lengthSq() <= CAMERA_TOLERANCE ** 2
@@ -208,8 +234,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   return (
     <OrbitControls ref={controls} makeDefault enablePan={false} enableDamping={!reducedMotion}
-      dampingFactor={0.08} minDistance={1.65} maxDistance={13}
-      minPolarAngle={0.3} maxPolarAngle={1.45}
+      dampingFactor={0.08}
       onStart={() => { if (!selected && !transition.current) userMoved.current = true; }} />
   );
 }

@@ -18,6 +18,8 @@ type InteractiveProps = {
   readonly children: ReactNode;
 };
 
+const CLICK_DRAG_THRESHOLD = 5;
+
 export function Interactive({ id, selected, onSelect, reducedMotion, position, rotation = 0, children }: InteractiveProps) {
   const group = useRef<Group>(null);
   const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
@@ -25,12 +27,12 @@ export function Interactive({ id, selected, onSelect, reducedMotion, position, r
   useCursor(hovered);
   useFrame((_, delta) => {
     if (!group.current) return;
-    const lift = id !== 'ai' && (hovered || selected === id) ? MOTION.hoverLift : 0;
+    const lift = id !== 'ai' && id !== 'projects' && id !== 'family' && (hovered || selected === id) ? MOTION.hoverLift : 0;
     group.current.position.y = reducedMotion ? position[1] + lift
       : MathUtils.damp(group.current.position.y, position[1] + lift, MOTION.object, delta);
   });
   return (
-    <group ref={group} position={[...position]} rotation={[0, rotation, 0]}
+    <group name={`Exhibit ${id}`} ref={group} position={[...position]} rotation={[0, rotation, 0]}
       onPointerOver={(event) => { event.stopPropagation(); setHovered(true); }}
       onPointerOut={() => setHovered(false)}
       onPointerDown={(event) => {
@@ -41,7 +43,9 @@ export function Interactive({ id, selected, onSelect, reducedMotion, position, r
         event.stopPropagation();
         const start = pointerStart.current;
         pointerStart.current = null;
-        if (!start || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 5) return;
+        if (!start || event.delta >= CLICK_DRAG_THRESHOLD
+          || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= CLICK_DRAG_THRESHOLD
+          || selected === id) return;
         onSelect(id);
       }}>
       {children}

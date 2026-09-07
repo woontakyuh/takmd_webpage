@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { CanvasTexture, SRGBColorSpace } from 'three';
+import { ROOM } from './config';
 
 export function WindowSky({ colors }: { readonly colors: readonly [string, string] }) {
   const texture = useMemo(() => {
@@ -21,8 +22,9 @@ export function WindowSky({ colors }: { readonly colors: readonly [string, strin
     texture.needsUpdate = true;
   }, [top, bottom, texture]);
   useEffect(() => () => texture.dispose(), [texture]);
-  return <mesh position={[-2.445, 1.45, -0.55]} rotation={[0, Math.PI / 2, 0]}>
-    <planeGeometry args={[2.4, 1.55]} />
+  const { leftX, window: opening } = ROOM.architecture;
+  return <mesh position={[leftX - 0.06, (opening.top + opening.bottom) / 2, opening.centerZ]} rotation={[0, Math.PI / 2, 0]}>
+    <planeGeometry args={[opening.width, opening.top - opening.bottom]} />
     <meshBasicMaterial map={texture} toneMapped={false} />
   </mesh>;
 }

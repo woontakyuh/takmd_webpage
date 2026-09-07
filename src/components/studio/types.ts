@@ -1,7 +1,7 @@
 import type { RefObject } from 'react';
 import type { OfficeLight } from './localTime';
 
-export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing';
+export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing' | 'projects' | 'family';
 
 export type Publication = {
   readonly id: string;
@@ -28,8 +28,8 @@ export type PaperMedia = {
   readonly license: string;
 };
 
-export type TalkSlide = { readonly src: string; readonly caption: string };
-export type TalkMedia = { readonly id: string; readonly slides: readonly TalkSlide[] };
+export type TalkSlide = { readonly src: string; readonly caption: string; readonly thumbnail?: string; readonly width?: number; readonly height?: number };
+export type TalkMedia = { readonly id: string; readonly slides: readonly TalkSlide[]; readonly kind?: 'full' | 'selected' };
 export type ProjectId = 'imaging' | 'workflow';
 
 export type OfficeCollection = {
@@ -39,7 +39,6 @@ export type OfficeCollection = {
   readonly paperDirection: 1 | -1;
   readonly presentation: Presentation | null;
   readonly talkSlide: TalkSlide | null;
-  readonly project: ProjectId | null;
 };
 
 export type StudioSceneProps = {
@@ -54,6 +53,7 @@ export type StudioSceneProps = {
   readonly presentations: readonly Presentation[];
   readonly onSelect: (id: ExhibitId) => void;
   readonly onReady: () => void;
+  readonly onTalk: (id: string | null) => void;
 };
 
 export type StudioContent = {

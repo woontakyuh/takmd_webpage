@@ -2,55 +2,56 @@ import { useEffect, useMemo } from 'react';
 import { CanvasTexture, SRGBColorSpace } from 'three';
 import { useLocalDate } from '../OfficeTime';
 import { Block } from './Primitives';
-import { PALETTE, ROOM } from './config';
+import { CLOCK, ROOM } from './config';
 import { FlipCard } from './FlipCard';
 
 export function CalendarClock({ reducedMotion }: { readonly reducedMotion: boolean }) {
   const date = useLocalDate();
-  const calendarLabel = date ? `${date.weekday}   ${date.day} ${date.month}   ${date.year}` : '';
-  const texture = useMemo(() => {
+  const year = date?.year ?? '';
+  const lettering = useMemo(() => {
     const canvas = document.createElement('canvas');
-    canvas.width = 1024; canvas.height = 128;
-    const result = new CanvasTexture(canvas);
-    result.colorSpace = SRGBColorSpace;
-    result.anisotropy = 4;
-    return result;
+    canvas.width = 1200; canvas.height = 680;
+    const texture = new CanvasTexture(canvas);
+    texture.colorSpace = SRGBColorSpace; texture.anisotropy = 4;
+    return texture;
   }, []);
-
   useEffect(() => {
-    const canvas = texture.image;
+    const canvas = lettering.image;
     if (!(canvas instanceof HTMLCanvasElement)) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.fillStyle = PALETTE.paper; ctx.fillRect(0, 0, 1024, 128);
-    ctx.fillStyle = PALETTE.ink; ctx.textAlign = 'center';
-    ctx.font = '600 83px Arial, sans-serif';
-    ctx.fillText(calendarLabel, 512, 94, 985);
-    texture.needsUpdate = true;
-  }, [calendarLabel, texture]);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = CLOCK.label; ctx.textAlign = 'center';
+    ctx.font = '500 19px Arial';
+    ctx.fillText('24 HOUR', 213, 60); ctx.fillText('SECONDS', 936, 141);
+    ctx.font = '500 18px Arial';
+    ctx.fillText('DAY', 211, 418); ctx.fillText('DATE', 599, 418); ctx.fillText('MONTH', 969, 418);
+    ctx.font = '500 20px Arial'; ctx.fillText(`LOCAL TIME  ·  ${year}`, 600, 659);
+    lettering.needsUpdate = true;
+  }, [lettering, year]);
+  useEffect(() => () => lettering.dispose(), [lettering]);
 
-  useEffect(() => () => texture.dispose(), [texture]);
-
-  return <group position={[...ROOM.clock.position]} rotation={[0, ROOM.clock.rotation, 0]} scale={ROOM.clock.scale}>
-    <Block size={[0.34, 0.035, 0.035]} position={[0, 0.13, -0.067]}
-      color={PALETTE.steel} radius={0.006} metalness={0.64} roughness={0.4} />
-    {[-0.14, 0.14].map(x => <Block key={x} size={[0.035, 0.16, 0.055]} position={[x, 0.13, -0.073]}
-      color={PALETTE.steel} radius={0.006} metalness={0.64} roughness={0.4} />)}
-    <Block size={[0.46, 0.26, 0.095]} position={[0, 0.135, 0]} color={PALETTE.paper}
-      radius={0.019} metalness={0.08} roughness={0.65} />
-    <Block size={[0.447, 0.238, 0.014]} position={[0, 0.135, -0.048]} color={PALETTE.ink}
-      radius={0.016} roughness={0.78} />
+  return <group position={[...ROOM.clock.position]} rotation={[0, ROOM.clock.rotation, 0]}>
+    <Block size={[0.526, 0.281, 0.008]} position={[0, 0, -0.029]} color={CLOCK.back} radius={0.004} roughness={0.8} />
+    {[-0.17, 0.17].flatMap(x => [-0.09, 0.09].map(y => <Block key={`${x}-${y}`} size={[0.015, 0.015, 0.006]}
+      position={[x, y, -0.034]} color={CLOCK.back} radius={0.003} roughness={0.9} />))}
+    <Block size={[0.6, 0.35, 0.066]} color={CLOCK.case} radius={0.024} roughness={0.43} metalness={0.04} />
+    <Block size={[0.56, 0.308, 0.008]} position={[0, 0, 0.029]} color={CLOCK.rim} radius={0.004} roughness={0.38} />
+    <Block size={[0.542, 0.29, 0.003]} position={[0, 0, 0.032]} color={CLOCK.face} radius={0.0014} roughness={0.84} />
     {date && <>
-      <FlipCard value={date.hours} size={[0.128, 0.14]} position={[-0.145, 0.166, 0.049]} reducedMotion={reducedMotion} />
-      <FlipCard value={date.minutes} size={[0.128, 0.14]} position={[0, 0.166, 0.049]} reducedMotion={reducedMotion} />
-      <FlipCard value={date.seconds} size={[0.128, 0.14]} position={[0.145, 0.166, 0.049]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.hours} size={[0.146, 0.123]} position={[-0.167, 0.061, 0.035]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.minutes} size={[0.146, 0.123]} position={[0, 0.061, 0.035]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.seconds} size={[0.091, 0.081]} position={[0.181, 0.046, 0.035]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.weekday} size={[0.15, 0.076]} position={[-0.167, -0.079, 0.035]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.day} size={[0.116, 0.076]} position={[0, -0.079, 0.035]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.month} size={[0.15, 0.076]} position={[0.167, -0.079, 0.035]} reducedMotion={reducedMotion} />
     </>}
-    {[-0.0725, 0.0725].flatMap(x => [0.153, 0.18].map(y => <mesh key={`${x}-${y}`} position={[x, y, 0.048]}>
-      <circleGeometry args={[0.002, 12]} /><meshStandardMaterial color={PALETTE.ink} roughness={0.9} />
-    </mesh>))}
-    <mesh position={[0, 0.05, 0.048]}>
-      <planeGeometry args={[0.408, 0.051]} />
-      <meshStandardMaterial map={texture} roughness={0.92} />
+    {[0.045, 0.079].map(y => <mesh key={y} position={[-0.0835, y, 0.036]}>
+      <circleGeometry args={[0.002, 12]} /><meshStandardMaterial color={CLOCK.numeral} roughness={0.85} />
+    </mesh>)}
+    <mesh position={[0, 0, 0.041]}>
+      <planeGeometry args={[0.542, 0.29]} />
+      <meshBasicMaterial map={lettering} transparent depthWrite={false} />
     </mesh>
   </group>;
 }

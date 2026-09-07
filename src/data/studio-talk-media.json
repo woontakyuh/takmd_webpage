@@ -4,15 +4,24 @@
     "slides": [
       {
         "src": "/studio/talks/2026-06-27-ai-augmented-spine/slide-01.jpg",
-        "caption": "Title slide: My AI-Augmented Spine Practice"
+        "caption": "Title slide: My AI-Augmented Spine Practice",
+        "thumbnail": "/studio/talks/2026-06-27-ai-augmented-spine/slide-01.thumb.webp",
+        "width": 1684,
+        "height": 1190
       },
       {
         "src": "/studio/talks/2026-06-27-ai-augmented-spine/slide-03.jpg",
-        "caption": "Introduction: surgeon perspective and scope of the AI workflow talk"
+        "caption": "Introduction: surgeon perspective and scope of the AI workflow talk",
+        "thumbnail": "/studio/talks/2026-06-27-ai-augmented-spine/slide-03.thumb.webp",
+        "width": 1684,
+        "height": 1190
       },
       {
         "src": "/studio/talks/2026-06-27-ai-augmented-spine/slide-05.jpg",
-        "caption": "Concept slide: traditional clinical and research workflow bottlenecks"
+        "caption": "Concept slide: traditional clinical and research workflow bottlenecks",
+        "thumbnail": "/studio/talks/2026-06-27-ai-augmented-spine/slide-05.thumb.webp",
+        "width": 1684,
+        "height": 1190
       }
     ]
   },
@@ -21,7 +30,10 @@
     "slides": [
       {
         "src": "/studio/talks/2026-06-06-claude-ai-research/slide-01.jpg",
-        "caption": "Title slide: Research Methodology in Neurosurgery Using Claude AI"
+        "caption": "Title slide: Research Methodology in Neurosurgery Using Claude AI",
+        "thumbnail": "/studio/talks/2026-06-06-claude-ai-research/slide-01.thumb.webp",
+        "width": 1921,
+        "height": 1080
       }
     ]
   },
@@ -30,7 +42,10 @@
     "slides": [
       {
         "src": "/studio/talks/2026-05-29-komiss-ai-workflow/slide-01.jpg",
-        "caption": "Title slide: AI-Enhanced Surgical Workflow: LLMs and Agentic System in MISS"
+        "caption": "Title slide: AI-Enhanced Surgical Workflow: LLMs and Agentic System in MISS",
+        "thumbnail": "/studio/talks/2026-05-29-komiss-ai-workflow/slide-01.thumb.webp",
+        "width": 1921,
+        "height": 1080
       }
     ]
   },
@@ -39,7 +54,10 @@
     "slides": [
       {
         "src": "/studio/talks/2026-05-08-wcmisst/slide-01.jpg",
-        "caption": "Title slide: Breaking Barriers: Feasibility and Safety of Endoscopic Resection for Spinal Tumors"
+        "caption": "Title slide: Breaking Barriers: Feasibility and Safety of Endoscopic Resection for Spinal Tumors",
+        "thumbnail": "/studio/talks/2026-05-08-wcmisst/slide-01.thumb.webp",
+        "width": 1684,
+        "height": 1190
       }
     ]
   },
@@ -48,7 +66,10 @@
     "slides": [
       {
         "src": "/studio/talks/2026-07-09-kass-ube/slide-01.jpg",
-        "caption": "Title slide: Right-Sided Approach Mastery and Level-Adaptive Decision-Making Strategies"
+        "caption": "Title slide: Right-Sided Approach Mastery and Level-Adaptive Decision-Making Strategies",
+        "thumbnail": "/studio/talks/2026-07-09-kass-ube/slide-01.thumb.webp",
+        "width": 1684,
+        "height": 1191
       }
     ]
   },
@@ -57,7 +78,10 @@
     "slides": [
       {
         "src": "/studio/talks/2025-05-03-llm-peer-review/slide-01.jpg",
-        "caption": "Title slide: Strategies for Integrating LLM into the Peer-Review Process"
+        "caption": "Title slide: Strategies for Integrating LLM into the Peer-Review Process",
+        "thumbnail": "/studio/talks/2025-05-03-llm-peer-review/slide-01.thumb.webp",
+        "width": 1920,
+        "height": 1080
       }
     ]
   },
@@ -66,7 +90,10 @@
     "slides": [
       {
         "src": "/studio/talks/2025-10-16-kns-ai-colleague/slide-01.jpg",
-        "caption": "Title slide: Generative AI in Neurosurgical General Care — AI, Our Daily Colleague"
+        "caption": "Title slide: Generative AI in Neurosurgical General Care — AI, Our Daily Colleague",
+        "thumbnail": "/studio/talks/2025-10-16-kns-ai-colleague/slide-01.thumb.webp",
+        "width": 1920,
+        "height": 1080
       }
     ]
   }

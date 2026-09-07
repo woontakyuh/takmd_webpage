@@ -31,6 +31,14 @@
 .studio-editorial-note > span { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--studio-clay); }
 .studio-editorial-note h3 { font-size: 24px; line-height: 1.3; font-weight: 500; letter-spacing: -.025em; margin: 16px 0; }
 .studio-editorial-note p { color: var(--studio-muted); font-size: 13px; }
+.cv-intro { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
+.cv-portrait { width: 96px; height: 128px; object-fit: cover; object-position: center 30%; flex: 0 0 96px; border-radius: 2px; }
+.cv-intro .studio-panel-intro { margin: 0; }
+.cv-intro strong { color: var(--studio-ink); font-weight: 500; }
+.cv-reader .studio-panel-footer { margin-top: 0; }
+.cv-reader .studio-editorial-note { margin-top: 24px; }
+.cv-career-row { display: grid; grid-template-columns: 76px minmax(0,1fr); gap: 16px; align-items: baseline; margin-top: 14px; }
+.cv-career-row p { margin: 0; }
 .studio-empty { padding: 32px 0; }
 .studio-empty p { color: var(--studio-muted); font-size: 14px; }
 @keyframes studio-panel-enter { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }

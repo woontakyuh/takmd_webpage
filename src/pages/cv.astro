@@ -1,5 +1,6 @@
 ---
 import SectionHeader from '../components/SectionHeader.astro';
+import { academicInterests, currentRoles, career, educationPrograms, awards, profileImage } from '../data/cv';
 import Layout from '../layouts/Layout.astro';
 import presentationsData from '../data/presentations.json';
 import publicationsData from '../data/publications.json';
@@ -16,52 +17,7 @@ const coauthorCount = publications.filter((publication) => publication.role === 
 const publicationYears = Array.from(new Set(publications.map((publication) => publication.year))).sort((a, b) => b - a);
 const presentationYears = Array.from(new Set(presentations.map((presentation) => presentation.year))).sort((a, b) => b - a);
 
-const currentRoles = [
-  'Director, Center for Endoscopic Spine Surgery, Davos Hospital',
-  'Editorial Board Member, Neurospine',
-  'Scientific Secretary and Education Management Vice Chair, KOMISS',
-  'Education Secretary, KOSESS',
-  'Auditor, WUBES',
-  'Computation Committee, KSNS',
-  'Academic Committee, KNDCRS',
-];
 
-const career = [
-  { year: '2025-', text: 'Director, Davos Hospital' },
-  { year: '2025', text: 'AO Spine Fellowship, Keio University' },
-  { year: '2024', text: 'WSO Mission, Dominican Republic' },
-  { year: '2023-2025', text: 'Assistant Professor, Hallym University' },
-  { year: '2021-2022', text: 'Spine Fellowship, Seoul National University Hospital' },
-  { year: '2019-2021', text: 'Director, Korean Military Academy' },
-  { year: '2017', text: 'Board Certified Neurosurgeon' },
-  { year: '2013-2017', text: 'Neurosurgery Residency, Seoul National University Hospital' },
-  { year: '2012-2013', text: 'Internship, Seoul National University Hospital' },
-  { year: '2006-2012', text: 'Medical School, Keimyung University' },
-];
-
-const educationPrograms = [
-  {
-    title: 'International UBE Training Center',
-    meta: '2024-current',
-    description: 'Hands-on endoscopic spine training with live surgery observation for 80+ surgeons from 15+ countries.',
-  },
-  {
-    title: 'ESS Workshop for Beginners',
-    meta: '2025-current',
-    description: 'Government-funded national project with Incheon Technopark and Hayan Co., Ltd. for domestic surgeons in Korea.',
-  },
-  {
-    title: 'Cadaver, live animal, and dummy workshops',
-    meta: 'Ongoing',
-    description: 'Progressive skill acquisition format for portal orientation, anatomy, tissue handling, and full procedural sequence.',
-  },
-];
-
-const awards = [
-  { year: '2025', text: 'Best Research Award, KOSESS' },
-  { year: '2024', text: 'Best Paper Award, Korean Neurosurgical Society' },
-  { year: '2024', text: 'Most Cited Paper, Neurospine Congress' },
-];
 ---
 
 <Layout
@@ -74,16 +30,18 @@ const awards = [
         <div>
           <p class="eyebrow">Living CV</p>
           <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
-            A professional record that keeps breathing.
+            Woon Tak Yuh, MD.
           </h1>
         </div>
-        <div class="data-card">
-          <p class="text-lg leading-8 text-[var(--color-text-secondary)]">
-            This page turns the existing Notion-derived JSON into a public CV surface: publications, presentations, clinical case signal, education, roles, and awards.
-          </p>
-          <p class="mt-4 text-sm text-[var(--color-text-muted)]">
-            Last publication sync: {new Date(publicationsData.generatedAt).toLocaleDateString('en-CA')} · Last presentation sync: {new Date(presentationsData.generatedAt).toLocaleDateString('en-CA')}
-          </p>
+        <div class="flex items-center gap-6 sm:gap-8">
+          <img src={profileImage} alt="Woon Tak Yuh, MD" width="180" height="240"
+            class="w-28 shrink-0 rounded-sm object-cover sm:w-44" />
+          <div>
+            <p class="text-lg leading-8 text-[var(--color-text-secondary)]">
+              Neurosurgeon focused on endoscopic spine surgery, clinical research, and surgical education.
+            </p>
+            <p class="mt-4 text-sm text-[var(--color-text-muted)]">Director, Center for Endoscopic Spine Surgery<br />Davos Hospital</p>
+          </div>
         </div>
       </div>
     </section>
@@ -110,6 +68,11 @@ const awards = [
           <p class="mt-1 text-xs text-[var(--color-text-secondary)]">Across 15+ countries</p>
         </article>
       </div>
+    </section>
+
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader eyebrow="Academic interests" title="Areas of focus" />
+      <div class="grid gap-4 md:grid-cols-3">{academicInterests.map(interest => <p class="data-card">{interest}</p>)}</div>
     </section>
 
     <section class="page-shell page-section border-t border-[var(--color-border)]">

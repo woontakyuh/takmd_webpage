@@ -10,6 +10,14 @@ export const PALETTE = {
   rubber: '#222626', keyIvory: '#E4E2DB', keySage: '#9CB7A3',
 } as const;
 
+export const CLOCK = { case: '#D9D2C3', back: '#353831', rim: '#B9B3A5', face: '#151916', card: '#202622', numeral: '#F4F0E7', label: '#AFAE9F' } as const;
+
+export const INTERIOR = {
+  oak: '#A78A67', oakLight: '#C3AA85', oakShadow: '#6A513B', ivory: '#F1EDE4',
+  plaster: '#E3DCD0', sand: '#D5C7B1', upholstery: '#D5C8B6', bronze: '#51493E',
+  stone: '#DED8CB',
+} as const;
+
 export type Point = readonly [number, number, number];
 export type CameraPose = {
   readonly position: Point;
@@ -18,48 +26,68 @@ export type CameraPose = {
 };
 
 export const ROOM = {
-  platform: { size: [4.8, 0.08, 6.4], position: [0, -0.045, 0], radius: 0.008 },
-  desk: { position: [-0.05, 0, -1.1], rotation: Math.PI, width: 1.8, depth: 0.85, height: 0.75 },
-  spine: { position: [-1.9, 0.685, 0.85], height: 0.54, rotation: -0.12 },
+  platform: { size: [5.6, 0.08, 6.8], position: [0, -0.045, 0], radius: 0.008 },
+  architecture: { height: 2.85, farZ: 3.36, leftX: -2.76,
+    window: { centerZ: 0.55, width: 3.4, bottom: 0.75, top: 2.6 } },
+  desk: { position: [-0.05, 0, -1.1], rotation: Math.PI, width: 2.2, depth: 0.85, height: 0.75 },
+  spine: { position: [-2.38, 0.741, 0.85], height: 0.54, rotation: Math.PI / 2 - 0.12 },
   folio: { position: [0.38, 0.7845, -1.26], rotation: Math.PI - 0.17 },
   monitor: { position: [-0.24, 0.785, -0.8], rotation: Math.PI - 0.08 },
-  clock: { position: [-0.55, 1.88, 3.105], rotation: Math.PI, scale: 1.15 },
-  gallery: { position: [0.55, 1.78, 3.065], rotation: Math.PI },
+  clock: { position: [0, 2.43, 3.283], rotation: Math.PI, scale: 1 },
+  gallery: { position: [0, 1.65, 3.245], rotation: Math.PI },
   chair: { position: [-0.2, 0, -2.19], rotation: Math.PI - 0.23 },
-  credenza: { position: [-2.1, 0, 0.8], width: 1.6, depth: 0.44, height: 0.74 },
-  plant: { position: [-2.03, 0, 2.12] },
-  wardrobe: { position: [1.9, 0, 0.2], rotation: Math.PI - 0.37, width: 1.2, height: 1.7 },
-  surfboard: { position: [2, 0, 2.55], rotation: -0.2 },
+  credenza: { position: [-2.46, 0, 0.65], width: 3.3, depth: 0.48, height: 0.74 },
+  plant: { position: [-2.46, 0, 2.55] },
+  wardrobe: { position: [-2.35, 0, -2.15], rotation: Math.PI / 2, width: 1.2, height: 1.7 },
+  surfboard: { position: [2.44, 0, 2.67], rotation: -0.55 - Math.PI / 2 },
 } as const;
 
 export const TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
-  { position: [4.55, 3.35, -6.65], target: [0, 1.05, 0.45], zoom: 1 },
-  { position: [4.6, 2.35, -1.6], target: [-0.3, 1.05, 0.45], zoom: 1 },
+  { position: [4.8, 3.2, -6.65], target: [0, 1.03, 0], zoom: 1 },
+  { position: [1.65, 1.75, -3.25], target: [-0.45, 1.15, 1.55], zoom: 1 },
   { position: [-1.75, 2.25, -3.2], target: [-0.05, 0.85, -1.0], zoom: 1 },
 ];
 
 export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
-  spine: { position: [-0.15, 1.55, -0.15], target: [-1.9, 1.02, 0.85], zoom: 1 },
+  spine: { position: [-0.45, 1.6, -0.2], target: [-2.38, 1.07, 0.85], zoom: 1 },
   research: { position: [0.08, 1.9, -2.52], target: [0.38, 0.8, -1.26], zoom: 1 },
-  education: { position: [-0.18, 2.08, 1.1], target: [0.55, 1.7, 3], zoom: 1 },
-  ai: { position: [-1.25, 1.65, -2.49], target: [-0.24, 1.15, -0.8], zoom: 1 },
-  bjj: { position: [2.75, 1.7, -1.9], target: [1.9, 0.95, 0.2], zoom: 1 },
-  surfing: { position: [0.35, 1.8, 0.7], target: [2, 1.05, 2.55], zoom: 1 },
+  education: { position: [-0.42, 1.95, 1.15], target: [0, 1.65, 3.22], zoom: 1 },
+  ai: { position: [-0.16, 1.255, -1.8], target: [-0.24, 1.155, -0.8], zoom: 1 },
+  family: { position: [0.68, 1.16, -1.63], target: [0.67, 0.885, -0.87], zoom: 1 },
+  projects: { position: [0.25, 1.35, -1.72], target: [-0.24, 0.815, -0.93], zoom: 1 },
+  bjj: { position: [-0.1, 1.7, -2.85], target: [-2.315, 0.95, -2.45], zoom: 1 },
+  surfing: { position: [0.25, 1.8, 0.6], target: [2.44, 1.05, 2.67], zoom: 1 },
 };
 
 export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
-  { position: [5.8, 4.15, -10.45], target: [0, 1.05, 0.45], zoom: 1 },
-  { position: [5.6, 2.8, -2.5], target: [-0.25, 1.05, 0.45], zoom: 1 },
+  { position: [5.55, 3.85, -9.1], target: [0, 1, -0.15], zoom: 1 },
+  { position: [3.0, 2.2, -4.3], target: [-0.35, 1.05, 1.1], zoom: 1 },
   { position: [-2.5, 2.9, -3.95], target: [-0.05, 0.85, -1.0], zoom: 1 },
 ];
 
 export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
-  spine: { position: [-0.15, 1.8, -0.55], target: [-1.9, 1.02, 0.85], zoom: 1 },
+  spine: { position: [-0.3, 1.9, -0.65], target: [-2.38, 1.07, 0.85], zoom: 1 },
   research: { position: [-0.05, 2.5, -2.52], target: [0.38, 0.8, -1.26], zoom: 1 },
-  education: { position: [-0.4, 2.25, 0.25], target: [0.55, 1.7, 3], zoom: 1 },
-  ai: { position: [-1.65, 1.9, -2.52], target: [-0.24, 1.15, -0.8], zoom: 1 },
-  bjj: { position: [2.95, 2.05, -2.45], target: [1.9, 0.95, 0.2], zoom: 1 },
-  surfing: { position: [-0.1, 2.1, 0.15], target: [2, 1.05, 2.55], zoom: 1 },
+  education: { position: [-0.55, 2.15, 0.2], target: [0, 1.65, 3.22], zoom: 1 },
+  ai: FOCUS.ai,
+  family: FOCUS.family,
+  projects: { position: [0.45, 1.7, -2.1], target: [-0.24, 0.815, -0.93], zoom: 1 },
+  bjj: { position: [0.35, 2.05, -3.05], target: [-2.315, 0.95, -2.45], zoom: 1 },
+  surfing: { position: [-0.1, 2.15, 0], target: [2.44, 1.05, 2.67], zoom: 1 },
 };
 
+export const MONITOR = { width: 0.718, height: 0.422, screenWidth: 0.697, screenHeight: 0.697 * 9 / 16 } as const;
+
 export const MOTION = { camera: 4.5, object: 8, hoverLift: 0.008 } as const;
+
+export const SIDE_READER_SPACE = 438;
+
+export function focusFov(id: ExhibitId | null, compact: boolean, width: number, height: number): number {
+  const base = width < height ? 60 : 42;
+  if (id !== 'ai') return base;
+  const availableWidth = Math.max(32, width - (compact ? 32 : SIDE_READER_SPACE + 32));
+  const pose = FOCUS.ai;
+  const distance = Math.hypot(...pose.position.map((value, index) => value - pose.target[index]));
+  const fitted = 2 * Math.atan(0.8 * height / (2 * distance * availableWidth)) * 180 / Math.PI;
+  return Math.max(base, fitted);
+}

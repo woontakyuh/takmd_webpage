@@ -1,0 +1,269 @@
+---
+import type { Workshop } from '../data/workshops';
+import { workshops } from '../data/workshops';
+
+interface Props {
+  workshop: Workshop;
+}
+
+const { workshop } = Astro.props;
+---
+
+<main id="main-content" class="workshop-page">
+  <section class="page-shell workshop-hero">
+    <a class="workshop-back" href="/#studio">← Back to the studio</a>
+    <div class="workshop-heading">
+      <div>
+        <p class="eyebrow">Workshop corner / {workshop.objectLabel}</p>
+        <h1>{workshop.title}</h1>
+      </div>
+      <p class="workshop-lede">{workshop.description}</p>
+    </div>
+  </section>
+
+  <section class="page-shell workshop-content" aria-labelledby="workshop-status">
+    <article class="workshop-status-card">
+      <p class="workshop-status-label">Current status</p>
+      <h2 id="workshop-status">자료 준비 중</h2>
+      <p>Workshop photos and teaching materials will be added here.</p>
+    </article>
+
+    <div class="workshop-focus">
+      <p class="eyebrow">Workshop focus</p>
+      <h2>Training topics</h2>
+      <ul>
+        {workshop.focus.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <nav class="page-shell workshop-nav" aria-label="Workshop pages">
+    <div>
+      <p class="eyebrow">Workshop index</p>
+      <h2>Explore the training corner</h2>
+    </div>
+    <div class="workshop-links">
+      {workshops.map((item) => (
+        <a href={`/workshops/${item.slug}`} aria-current={item.slug === workshop.slug ? 'page' : undefined}>
+          <span>{item.objectLabel}</span>
+          <strong>{item.title}</strong>
+        </a>
+      ))}
+    </div>
+  </nav>
+
+  <section class="page-shell workshop-footer-link">
+    <a href="/education">View the education overview <span aria-hidden="true">→</span></a>
+  </section>
+</main>
+
+<style>
+  .workshop-page {
+    --workshop-ink: var(--color-text);
+    --workshop-muted: var(--color-text-secondary);
+    --workshop-line: var(--color-border);
+    --workshop-paper: var(--color-surface);
+    --workshop-accent: var(--color-accent);
+    padding-bottom: 5rem;
+  }
+
+  .workshop-hero {
+    padding-top: clamp(3.5rem, 8vw, 7rem);
+    padding-bottom: clamp(3rem, 7vw, 6rem);
+  }
+
+  .workshop-back,
+  .workshop-footer-link a {
+    color: var(--workshop-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .workshop-back:hover,
+  .workshop-footer-link a:hover {
+    color: var(--workshop-ink);
+  }
+
+  .workshop-heading {
+    display: grid;
+    gap: 2rem;
+    margin-top: clamp(3rem, 7vw, 6rem);
+  }
+
+  h1,
+  h2,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    max-width: 11ch;
+    margin-bottom: 0;
+    color: var(--workshop-ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(3.4rem, 9vw, 7.5rem);
+    font-weight: 400;
+    letter-spacing: -0.055em;
+    line-height: 0.9;
+    text-wrap: balance;
+  }
+
+  .workshop-lede {
+    align-self: end;
+    max-width: 34rem;
+    margin-bottom: 0.35rem;
+    color: var(--workshop-muted);
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    line-height: 1.65;
+  }
+
+  .workshop-content {
+    display: grid;
+    gap: 1rem;
+    padding-top: 1rem;
+    padding-bottom: clamp(4rem, 8vw, 7rem);
+    border-top: 1px solid var(--workshop-line);
+  }
+
+  .workshop-status-card,
+  .workshop-focus {
+    min-height: 19rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 1px solid var(--workshop-line);
+    border-radius: 1.5rem;
+  }
+
+  .workshop-status-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: var(--workshop-ink);
+    color: var(--color-bg);
+  }
+
+  .workshop-status-label {
+    margin-bottom: auto;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    opacity: 0.62;
+    text-transform: uppercase;
+  }
+
+  .workshop-status-card h2 {
+    margin-bottom: 0.75rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+  }
+
+  .workshop-status-card p:last-child {
+    max-width: 38rem;
+    margin-bottom: 0;
+    color: color-mix(in srgb, var(--color-bg) 72%, transparent);
+    line-height: 1.7;
+  }
+
+  .workshop-focus {
+    background: color-mix(in srgb, var(--workshop-paper) 88%, transparent);
+  }
+
+  .workshop-focus h2,
+  .workshop-nav h2 {
+    margin: 0.65rem 0 1.5rem;
+    color: var(--workshop-ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+  }
+
+  .workshop-focus ul {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .workshop-focus li {
+    padding: 1rem 0;
+    border-top: 1px solid var(--workshop-line);
+    color: var(--workshop-muted);
+  }
+
+  .workshop-nav {
+    display: grid;
+    gap: 2rem;
+    padding-top: clamp(3rem, 7vw, 5rem);
+    padding-bottom: 2.5rem;
+    border-top: 1px solid var(--workshop-line);
+  }
+
+  .workshop-links {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .workshop-links a {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid var(--workshop-line);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--workshop-paper) 84%, transparent);
+    color: var(--workshop-ink);
+    text-decoration: none;
+    transition: transform 180ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease;
+  }
+
+  .workshop-links a:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-border-hover);
+  }
+
+  .workshop-links a[aria-current='page'] {
+    border-color: var(--workshop-accent);
+  }
+
+  .workshop-links span {
+    color: var(--workshop-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .workshop-links strong {
+    font-size: 0.95rem;
+  }
+
+  .workshop-footer-link {
+    padding-top: 1rem;
+  }
+
+  @media (min-width: 760px) {
+    .workshop-heading {
+      grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.7fr);
+    }
+
+    .workshop-content {
+      grid-template-columns: minmax(0, 1.25fr) minmax(17rem, 0.75fr);
+    }
+
+    .workshop-nav {
+      grid-template-columns: minmax(14rem, 0.65fr) minmax(0, 1.35fr);
+    }
+
+    .workshop-links {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .workshop-links a {
+      transition: none;
+    }
+  }
+</style>
