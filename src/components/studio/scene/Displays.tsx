@@ -1,15 +1,27 @@
 import { Html } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import { useRef } from 'react';
+import { MathUtils } from 'three';
+import type { MeshStandardMaterial } from 'three';
 import { featuredPresentation, presentationNavigation, talkMedia } from '../collection';
 import type { StudioSceneProps } from '../types';
 import { Interactive } from './Interactive';
 import { MonitorArm } from './MonitorArm';
 import { Block } from './Primitives';
 import { useDocumentTexture, useWorkstationTexture } from './CollectionTextures';
-import { MONITOR, PALETTE, ROOM } from './config';
+import { MONITOR, MOTION, PALETTE, ROOM } from './config';
 
 type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'night' | 'presentations' | 'collection' | 'onTalk'>;
 
 export function Displays({ selected, onSelect, reducedMotion, night, presentations, collection, onTalk }: DisplaysProps) {
+  const screenMaterial = useRef<MeshStandardMaterial>(null);
+  const screenHovered = useRef(false);
+  useFrame((_, delta) => {
+    if (!screenMaterial.current) return;
+    const brightness = screenHovered.current ? 0.08 : 0;
+    screenMaterial.current.emissiveIntensity = reducedMotion ? brightness
+      : MathUtils.damp(screenMaterial.current.emissiveIntensity, brightness, MOTION.object, delta);
+  });
   const monitor = useWorkstationTexture();
   const today = new Date().toISOString().slice(0, 10);
   const featured = featuredPresentation(presentations);
@@ -29,9 +41,10 @@ export function Displays({ selected, onSelect, reducedMotion, night, presentatio
           <mesh position={[0.332, -0.203, 0.015]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         </group>
       </Interactive>
-      <Interactive id="education" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.gallery.position} rotation={ROOM.gallery.rotation}>
+      <Interactive id="education" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.gallery.position} rotation={ROOM.gallery.rotation}
+        fixed onHoverChange={hovered => { screenHovered.current = hovered; }}>
         <Block size={[1.60, 0.924, 0.035]} color={PALETTE.graphite} radius={0.012} roughness={0.32} metalness={0.5} />
-        <mesh position={[0, 0, 0.021]}><planeGeometry args={[1.568, 0.882]} /><meshStandardMaterial map={board} roughness={0.91} /></mesh>
+        <mesh name="Wall TV screen" position={[0, 0, 0.021]}><planeGeometry args={[1.568, 0.882]} /><meshStandardMaterial ref={screenMaterial} map={board} roughness={0.91} emissive={PALETTE.white} emissiveMap={board} emissiveIntensity={0} /></mesh>
         <mesh position={[0.73, -0.451, 0.021]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         {selected === 'education' && <Html center position={[0, -0.555, 0.045]} zIndexRange={[15, 10]}>
           <nav className="wall-tv-controls" aria-label="Wall TV presentations" onPointerDown={event => event.stopPropagation()} onWheel={event => event.stopPropagation()}>

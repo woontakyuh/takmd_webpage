@@ -12,7 +12,7 @@ const titles = {
   spine: 'Precision, in practice.',
   research: 'The research folio.',
   education: 'Knowledge, shared.',
-  ai: 'Living CV.',
+  ai: 'Curriculum Vitae',
   projects: 'AI, in practice.',
   family: 'Family.',
   bjj: 'Jiu-jitsu.',

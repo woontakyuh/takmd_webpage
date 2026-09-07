@@ -5,7 +5,6 @@ import { useCallback, useState } from 'react';
 import { AdaptiveQuality } from './scene/AdaptiveQuality';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { GoldAward } from './scene/GoldAward';
-import { OfficeGuide } from './scene/OfficeGuide';
 import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
 import { Architecture } from './scene/Architecture';
@@ -28,7 +27,7 @@ export function StudioScene(props: StudioSceneProps) {
     setQuality(current => Math.max(0.75, Math.min(1.75, current + step)));
   }, []);
   return (
-    <Canvas camera={{ position: [...TOUR[0].position], fov: 42, near: 0.05, far: 60 }}
+    <Canvas camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
       dpr={[0.75, Math.min(quality, props.compact ? 1.35 : 1.75)]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: 'none' }}>
@@ -52,10 +51,9 @@ export function StudioScene(props: StudioSceneProps) {
         angle={1.3} penumbra={1} color={PALETTE.paperLight} castShadow
         shadow-mapSize={[1024, 1024]} shadow-normalBias={0.008} shadow-bias={-0.0001} />
       <Architecture night={props.night} sky={sun.windowSky} />
-      <Furniture lamp={sun.lamp} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} />
+      <Furniture lamp={sun.lamp} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} />
       <OfficeLounge />
       <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={[1.58, 1.3025, 2.985]} rotation={Math.PI} />
-      <OfficeGuide compact={props.compact} />
       <PersonalCorner {...props} />
       <CalendarClock reducedMotion={props.reducedMotion} />
       <Greenery />

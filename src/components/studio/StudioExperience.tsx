@@ -1,6 +1,8 @@
 import { Component, Suspense, lazy, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { ReadingPanel } from './ReadingPanel';
 import { OfficeIcon } from './OfficeIcon';
+import { OfficeHelp } from './OfficeHelp';
+import { MemoryPhoto } from './MemoryPhoto';
 import type { ExhibitId, StudioContent } from './types';
 import { featuredPresentation, mediaForPaper, orderedPapers, talkMedia } from './collection';
 import { useOfficeLight, LocalClockReadout } from './OfficeTime';
@@ -32,6 +34,8 @@ export function StudioExperience(content: StudioContent) {
   const progress = useRef(0);
   const returnFocus = useRef<HTMLElement | null>(null);
   const [selected, setSelected] = useState<ExhibitId | null>(null);
+  const [memoryOpen, setMemoryOpen] = useState(false);
+  const openMemory = useCallback(() => setMemoryOpen(true), []);
   const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 }>({ sequence: 0, view: 0 });
   const [lightMode, setLightMode] = useState<LightMode>('local');
   const lighting = useOfficeLight(lightMode);
@@ -110,11 +114,11 @@ export function StudioExperience(content: StudioContent) {
     requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
   }, []);
   useEffect(() => {
-    if (selected !== 'family') return;
+    if (selected !== 'family' || memoryOpen) return;
     const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') close(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selected, close]);
+  }, [selected, close, memoryOpen]);
   const onReady = useCallback(() => setReady(true), []);
   const goToView = (view: 0 | 1 | 2) => {
     setExplored(true);
@@ -129,8 +133,9 @@ export function StudioExperience(content: StudioContent) {
         onPointerDown={() => setExplored(true)} onWheel={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <SceneBoundary>{mounted && lighting && <Suspense fallback={<div className="studio-loading" role="status">Opening the office…</div>}>
-          <Scene progress={progress} selected={selected} night={night} lighting={lighting} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onPaperStep={onPaperStep} onTalk={selectTalk} onReady={onReady} />
+          <Scene progress={progress} selected={selected} night={night} lighting={lighting} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClaudeSticker={openMemory} onPaperStep={onPaperStep} onTalk={selectTalk} onReady={onReady} />
         </Suspense>}</SceneBoundary>
+        <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
       </div>
       <header className="studio-header">
         <a className="studio-brand" href="/" aria-label="TakMD home"><span className="studio-brand-mark" aria-hidden="true">t.</span><div><h1>Woon Tak Yuh<span>, MD.</span></h1><span className="studio-brand-caption">Endoscopic spine surgery · Research · Teaching</span></div></a>
@@ -149,7 +154,7 @@ export function StudioExperience(content: StudioContent) {
       <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>The office.</h2></div>
       <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>The practice</button><button onClick={() => goToView(2)}>The desk</button><button id="studio-exhibit-family" onClick={() => open('family')}>Photo frame</button></div>
       <footer className="studio-stage-footer">
-        <p id="office-help" className="office-help">{ready ? selected ? compact ? 'Drag around the object · Two fingers: pan / zoom' : 'Drag around the object · Shift + drag: pan · Scroll: zoom' : compact ? 'One finger: rotate · Two fingers: pan / zoom · Tap: open' : 'Drag: rotate · Shift + drag: pan · Scroll: zoom · Click: open' : 'The office is opening…'}<span className="studio-sr-only">Focus the scene: arrow keys rotate, Shift plus arrow keys pan, and plus or minus zoom. Right-drag also pans around the office.</span></p>
+        <OfficeHelp ready={ready} explored={explored} compact={compact} />
         <div className="studio-collection">
           <p id="office-collection-hint" className="office-collection-hint">Swipe to browse all seven <span aria-hidden="true">→</span></p>
           <nav className="studio-exhibits" aria-label="Office collection" aria-describedby="office-collection-hint">
@@ -172,5 +177,6 @@ export function StudioExperience(content: StudioContent) {
     </section>
     <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/credits">Scene credits</a></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer">Education<small>Workshops & training ↗</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
     <ReadingPanel {...content} selected={selected === 'family' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
+    {memoryOpen && <MemoryPhoto onClose={() => setMemoryOpen(false)} />}
   </div>;
 }

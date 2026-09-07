@@ -25,10 +25,10 @@ type Transition = {
 
 const CAMERA_TOLERANCE = 0.002;
 const KEY_ROTATION_STEP = 0.08;
-const KEY_ZOOM_SCALE = 1.12;
+const KEY_ZOOM_SCALE = 1 / 1.12;
 const KEY_PAN_STEP = 0.04;
-const FREE_ORBIT_LIMITS = { minDistance: 0.35, maxDistance: 13, minPolarAngle: 0.3, maxPolarAngle: 1.45 } as const;
-const FOCUSED_ORBIT_LIMITS = { minDistance: 0.25, maxDistance: 5.5, minPolarAngle: 0.35, maxPolarAngle: 1.52 } as const;
+const FREE_ORBIT_LIMITS = { minDistance: 0.10, maxDistance: 13, minPolarAngle: 0.3, maxPolarAngle: 1.45 } as const;
+const FOCUSED_ORBIT_LIMITS = { minDistance: 0.08, maxDistance: 5.5, minPolarAngle: 0.35, maxPolarAngle: 1.52 } as const;
 
 function toTransition(kind: TransitionKind, pose: CameraPose): Transition {
   return {

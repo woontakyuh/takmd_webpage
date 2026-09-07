@@ -2,6 +2,7 @@
 @import './reading.css';
 @import './folio.css';
 @import './collection.css';
+@import './memory.css';
 
 .studio {
   --studio-paper: #eae8e1; --studio-light: #f8f6f0; --studio-plaster: #dcd8cc;
@@ -46,8 +47,15 @@
 .office-guided button { min-height: 44px; background: none; border: 0; border-bottom: 1px solid var(--studio-line); color: var(--studio-ink); padding: 8px 0; }
 .office-guided button:hover { border-color: var(--studio-ink); }
 .studio-stage-footer { position: absolute; z-index: 4; bottom: 28px; left: 32px; right: 32px; display: grid; grid-template-columns: minmax(100px,1fr) minmax(0,1000px) minmax(100px,1fr); gap: 24px; align-items: center; }
-.office-help { color: var(--studio-muted); font-size: 10px; max-width: 160px; line-height: 1.8; margin: 0; opacity: .7; pointer-events: none; transition: opacity var(--studio-panel); }
-.studio[data-explored='true'] .office-help { opacity: .45; }
+.office-help { color: var(--studio-muted); font-size: 11px; }
+.office-help-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 6px 0; border: 0; background: transparent; color: inherit; font-size: 11px; }
+.office-help-toggle > span { display: grid; place-items: center; width: 18px; height: 18px; border: 1px solid var(--studio-line); border-radius: 50%; }
+.office-help-toggle:hover { color: var(--studio-ink); }
+.office-gesture-hint { position: absolute; bottom: calc(100% + 16px); left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 40px); padding: 16px 22px 12px; border: 1px solid var(--studio-line); border-radius: 12px; background: color-mix(in srgb,var(--studio-light) 92%,transparent); backdrop-filter: blur(12px); color: var(--studio-ink); box-shadow: 0 4px 24px #202d2a0c; }
+.office-gesture-hint > div { display: flex; justify-content: center; gap: 28px; }
+.office-gesture-hint > div > span { display: grid; justify-items: center; gap: 3px; font-size: 11px; }
+.office-gesture-hint kbd { font: inherit; font-weight: 600; white-space: nowrap; }
+.office-gesture-hint p { margin: 10px 0 0; text-align: center; font-size: 11px; color: var(--studio-muted); }
 .office-index { justify-self: end; display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 11px; }
 .office-index:hover { text-decoration: underline; text-underline-offset: 4px; }
 .studio-collection { position: relative; min-width: 0; width: 100%; }
@@ -119,7 +127,8 @@
   .studio-exhibit { scroll-snap-align: start; }
   .office-collection-hint { display: block; margin: 0; position: absolute; right: 0; bottom: calc(100% + 4px); color: var(--studio-muted); background: var(--studio-paper); font-size: 11px; }
   .office-social-links { right: 16px; bottom: 176px; }
-  .office-help { font-size: 9px; }
+  .office-help { font-size: 11px; }
+  .office-gesture-hint { bottom: calc(100% + 32px); }
   .studio-notes { grid-template-columns: 1fr; gap: 32px; padding: 56px 24px; }
   .studio-end { flex-direction: column; align-items: flex-start; padding: 24px; gap: 12px; }
 }

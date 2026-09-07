@@ -16,12 +16,13 @@ type InteractiveProps = {
   readonly position: Point;
   readonly rotation?: number;
   readonly fixed?: boolean;
+  readonly onHoverChange?: (hovered: boolean) => void;
   readonly children: ReactNode;
 };
 
 const CLICK_DRAG_THRESHOLD = 5;
 
-export function Interactive({ id, selected, onSelect, reducedMotion, position, rotation = 0, fixed = false, children }: InteractiveProps) {
+export function Interactive({ id, selected, onSelect, reducedMotion, position, rotation = 0, fixed = false, onHoverChange, children }: InteractiveProps) {
   const group = useRef<Group>(null);
   const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
@@ -34,8 +35,8 @@ export function Interactive({ id, selected, onSelect, reducedMotion, position, r
   });
   return (
     <group name={`Exhibit ${id}`} ref={group} position={[...position]} rotation={[0, rotation, 0]}
-      onPointerOver={(event) => { event.stopPropagation(); setHovered(true); }}
-      onPointerOut={() => setHovered(false)}
+      onPointerOver={(event) => { event.stopPropagation(); setHovered(true); onHoverChange?.(true); }}
+      onPointerOut={() => { setHovered(false); onHoverChange?.(false); }}
       onPointerDown={(event) => {
         pointerStart.current = { x: event.clientX, y: event.clientY };
       }}

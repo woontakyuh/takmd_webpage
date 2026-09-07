@@ -18,16 +18,17 @@ const FACE_Z = M4_MAC_MINI.front + 0.0001;
 
 type MacMiniProps = {
   readonly position: Point;
+  readonly onClaudeSticker: () => void;
 };
 
-export function MacMini({ position }: MacMiniProps) {
+export function MacMini({ position, onClaudeSticker }: MacMiniProps) {
   return (
     <group position={[...position]}>
       <MacMiniEnclosure />
       <MacMiniBase />
       <FrontPorts />
       <RearPorts />
-      <MacMiniStickers />
+      <MacMiniStickers onClaudeSticker={onClaudeSticker} />
     </group>
   );
 }
