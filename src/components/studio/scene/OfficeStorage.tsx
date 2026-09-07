@@ -1,7 +1,8 @@
 import type { Texture } from 'three';
-import { INTERIOR, PALETTE, ROOM } from './config';
+import { INTERIOR, PALETTE } from './config';
 import { useInteriorMaterial } from './InteriorMaterials';
 import { Block } from './Primitives';
+import { UsmLowboard } from './UsmLowboard';
 
 const BAY_X = [-1.85, 1.85] as const;
 const SHELVES = [1.28, 1.72, 2.16, 2.6] as const;
@@ -16,7 +17,7 @@ export function OfficeStorage({ lamp }: OfficeStorageProps) {
 
   return <group>
     {BAY_X.map((x, bayIndex) => <CabinetBay key={x} x={x} lamp={lamp} bayIndex={bayIndex} oak={oak} stone={stone} />)}
-    <Credenza oak={oak} />
+    <UsmLowboard />
   </group>;
 }
 
@@ -101,24 +102,5 @@ function Ceramic({ position, scale, stone }: {
       <meshStandardMaterial {...stone} color={INTERIOR.stone} roughness={0.82} /></mesh>
     <mesh position={[0, 0.1, 0]} castShadow><cylinderGeometry args={[0.052, 0.066, 0.08, 28]} />
       <meshStandardMaterial {...stone} color={INTERIOR.stone} roughness={0.82} /></mesh>
-  </group>;
-}
-
-function Credenza({ oak }: { readonly oak: Material }) {
-  const doorZ = [-1.2, -0.4, 0.4, 1.2] as const;
-  return <group position={[...ROOM.credenza.position]}>
-    <Block size={[ROOM.credenza.depth - 0.08, 0.08, ROOM.credenza.width - 0.16]} position={[-0.015, 0.04, 0]}
-      color={INTERIOR.oakShadow} material={oak} radius={0.01} roughness={0.72} />
-    <Block size={[ROOM.credenza.depth, 0.61, ROOM.credenza.width]} position={[0, 0.385, 0]}
-      color={PALETTE.white} material={oak} radius={0.016} roughness={0.68} />
-    {doorZ.map((z) => <group key={z} position={[ROOM.credenza.depth / 2 + 0.014, 0.4, z]}>
-      <Block size={[0.026, 0.56, 0.766]} color={PALETTE.white} material={oak} radius={0.009} roughness={0.66} />
-      <Block size={[0.012, 0.16, 0.009]} position={[0.02, 0.04, z < 0 ? 0.31 : -0.31]}
-        color={INTERIOR.bronze} radius={0.003} roughness={0.36} metalness={0.55} />
-    </group>)}
-    <Block size={[ROOM.credenza.depth + 0.04, 0.055, ROOM.credenza.width + 0.04]}
-      position={[0.01, ROOM.credenza.height - 0.027, 0]} color={PALETTE.white}
-      material={oak} radius={0.014} roughness={0.62} />
-
   </group>;
 }

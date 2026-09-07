@@ -6,6 +6,7 @@ import { INTERIOR, PALETTE, ROOM } from './config';
 import { Block } from './Primitives';
 import { useInteriorMaterial } from './InteriorMaterials';
 import { WindowBay } from './WindowBay';
+import { MicrocementFloor } from './MicrocementFloor';
 
 const { height, farZ, leftX, window: windowBay } = ROOM.architecture;
 const [width, , depth] = ROOM.platform.size;
@@ -26,7 +27,6 @@ const SHADOW_ENCLOSURE: readonly { readonly size: readonly [number, number, numb
 ];
 
 export function Architecture({ night, sky }: { readonly night: boolean; readonly sky: readonly [string, string] }) {
-  const stone = useInteriorMaterial('stone', [2.8, 3.4]);
   const oak = useInteriorMaterial('oak');
   return (
     <group>
@@ -34,9 +34,7 @@ export function Architecture({ night, sky }: { readonly night: boolean; readonly
         <boxGeometry args={[...surface.size]} />
         <meshBasicMaterial colorWrite={false} depthWrite={false} />
       </mesh>)}
-      <Block {...ROOM.platform} color={INTERIOR.stone} roughness={0.96} />
-      <Block size={[width - 0.04, 0.025, depth - 0.04]} position={[0, 0.006, 0]} radius={0.006}
-        color={INTERIOR.stone} material={{ ...stone, map: null, roughnessMap: null }} roughness={0.94} />
+      <MicrocementFloor />
       <CutawayWall axis="z" boundary={farZ - 0.08} direction={-1}>
         <Block {...FAR_WALL} color={INTERIOR.ivory} radius={0.012} roughness={0.96} />
         <Block size={[width, 0.13, 0.12]} position={[0, 0.075, farZ - 0.05]}

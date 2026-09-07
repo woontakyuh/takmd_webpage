@@ -1,72 +1,63 @@
 import { useEffect, useMemo } from 'react';
-import { CubicBezierCurve3, CurvePath, LineCurve3, TubeGeometry, Vector3 } from 'three';
-import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { Matrix4 } from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { Block } from './Primitives';
 import { PALETTE, ROOM } from './config';
 
-export const RACK_TUBE_RADIUS = 0.011;
-const BEND_RADIUS = 0.1;
-const FOOT_TOP = 0.11;
-const FOOT_BEND = 0.035;
-const QUARTER_CIRCLE = 0.55228475;
+export const RACK_RAIL_HALF_HEIGHT = 0.015;
+const SECTION = RACK_RAIL_HALF_HEIGHT * 2;
+const EDGE_RADIUS = 0.0006;
+const FELT_HEIGHT = 0.003;
+const POWDER_COAT_ROUGHNESS = 0.58;
 
-function roundedArch(halfWidth: number, top: number, bottom: number, bend: number) {
-  const path = new CurvePath<Vector3>();
-  const inset = bend * (1 - QUARTER_CIRCLE);
-  path.add(new LineCurve3(new Vector3(-halfWidth, bottom, 0), new Vector3(-halfWidth, top - bend, 0)));
-  path.add(new CubicBezierCurve3(
-    new Vector3(-halfWidth, top - bend, 0), new Vector3(-halfWidth, top - inset, 0),
-    new Vector3(-halfWidth + inset, top, 0), new Vector3(-halfWidth + bend, top, 0),
-  ));
-  path.add(new LineCurve3(new Vector3(-halfWidth + bend, top, 0), new Vector3(halfWidth - bend, top, 0)));
-  path.add(new CubicBezierCurve3(
-    new Vector3(halfWidth - bend, top, 0), new Vector3(halfWidth - inset, top, 0),
-    new Vector3(halfWidth, top - inset, 0), new Vector3(halfWidth, top - bend, 0),
-  ));
-  path.add(new LineCurve3(new Vector3(halfWidth, top - bend, 0), new Vector3(halfWidth, bottom, 0)));
-  return path;
+type LegProps = {
+  readonly x: number;
+  readonly footZ: number;
+  readonly top: number;
+};
+
+function SquareLeg({ x, footZ, top }: LegProps) {
+  const rise = top - FELT_HEIGHT;
+  const slope = -footZ / rise;
+  const cutDepth = SECTION * Math.hypot(1, slope);
+  const geometry = useMemo(() => {
+    const leg = new RoundedBoxGeometry(SECTION, rise, cutDepth, 3, EDGE_RADIUS);
+    // Horizontal mitres keep the felt contact flat and the tilted section 3 cm square.
+    leg.applyMatrix4(new Matrix4().set(
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, slope, 1, 0,
+      0, 0, 0, 1,
+    ));
+    return leg;
+  }, [cutDepth, rise, slope]);
+  useEffect(() => () => geometry.dispose(), [geometry]);
+
+  return (
+    <group>
+      <mesh geometry={geometry} position={[x, (top + FELT_HEIGHT) / 2, footZ / 2]} castShadow receiveShadow>
+        <meshStandardMaterial color={PALETTE.white} roughness={POWDER_COAT_ROUGHNESS} metalness={0.08} />
+      </mesh>
+      <Block size={[SECTION, FELT_HEIGHT, cutDepth]} position={[x, FELT_HEIGHT / 2, footZ]}
+        color={PALETTE.ink} radius={0.0004} roughness={0.94} />
+    </group>
+  );
 }
 
 export function GarmentRack() {
   const { width, height, depth } = ROOM.wardrobe;
-  const postX = width / 2 - RACK_TUBE_RADIUS;
-  const top = height - RACK_TUBE_RADIUS;
-  const geometry = useMemo(() => {
-    const frame = new TubeGeometry(roundedArch(postX, top, FOOT_TOP - RACK_TUBE_RADIUS, BEND_RADIUS), 160, RACK_TUBE_RADIUS, 20, false);
-    const feet = [-postX, postX].map(x => {
-      const foot = new TubeGeometry(roundedArch(depth / 2 - RACK_TUBE_RADIUS, FOOT_TOP - RACK_TUBE_RADIUS,
-        RACK_TUBE_RADIUS, FOOT_BEND), 64, RACK_TUBE_RADIUS, 20, false);
-      return foot.rotateY(Math.PI / 2).translate(x, 0, 0);
-    });
-    const braceY = height - RACK_TUBE_RADIUS * 3 - 1.35;
-    const brace = new TubeGeometry(new LineCurve3(new Vector3(-postX, braceY, 0), new Vector3(postX, braceY, 0)), 1, RACK_TUBE_RADIUS, 20, false);
-    const parts = [frame, ...feet, brace];
-    const merged = mergeGeometries(parts);
-    for (const part of parts) part.dispose();
-    return merged;
-  }, [depth, height, postX, top]);
-  useEffect(() => () => geometry.dispose(), [geometry]);
+  const postX = width / 2 - RACK_RAIL_HALF_HEIGHT;
+  const railY = height - RACK_RAIL_HALF_HEIGHT;
+  const approximateSlope = (depth / 2 - RACK_RAIL_HALF_HEIGHT) / (railY - FELT_HEIGHT);
+  const footZ = depth / 2 - RACK_RAIL_HALF_HEIGHT * Math.hypot(1, approximateSlope);
 
   return (
-    <group name="White garment rack · 99 × 152 × 46 cm">
-      <mesh geometry={geometry} castShadow receiveShadow>
-        <meshStandardMaterial color={PALETTE.white} roughness={0.36} metalness={0.12} />
-      </mesh>
-      {[-postX, postX].map(x => (
-        <group key={x}>
-          {[-1, 1].map(side => (
-            <mesh key={side} position={[x, 0.006, side * (depth / 2 - RACK_TUBE_RADIUS)]} castShadow>
-              <cylinderGeometry args={[RACK_TUBE_RADIUS * 1.015, RACK_TUBE_RADIUS * 1.015, 0.012, 20]} />
-              <meshStandardMaterial color={PALETTE.paperLight} roughness={0.72} />
-            </mesh>
-          ))}
-          {[0.166, height - 0.225].map(y => (
-            <mesh key={y} position={[x, y, -RACK_TUBE_RADIUS]} rotation={[Math.PI / 2, 0, 0]}>
-              <cylinderGeometry args={[0.0024, 0.0024, 0.0018, 12]} />
-              <meshStandardMaterial color={PALETTE.aluminium} roughness={0.38} metalness={0.7} />
-            </mesh>
-          ))}
-        </group>
-      ))}
+    <group name="White HAY Loop Stand Hall · 45 × 150 × 39 cm">
+      <Block size={[width, SECTION, SECTION]} position={[0, railY, 0]} color={PALETTE.white}
+        radius={EDGE_RADIUS} roughness={POWDER_COAT_ROUGHNESS} metalness={0.08} />
+      <SquareLeg x={-postX} footZ={footZ} top={railY} />
+      <SquareLeg x={postX} footZ={footZ} top={railY} />
+      <SquareLeg x={0} footZ={-footZ} top={railY} />
     </group>
   );
 }

@@ -21,7 +21,7 @@ export function LoungeSofa() {
     return { model, scale };
   }, [scene]);
 
-  return <group name="Florence Knoll Relaxed two-seater" position={[2, 0.035, 1.14]} rotation={[0, -Math.PI / 2, 0]}>
+  return <group name="Florence Knoll Relaxed two-seater" position={[2, 0.0185, 1.14]} rotation={[0, -Math.PI / 2, 0]}>
     <group scale={fitted.scale}><primitive object={fitted.model} dispose={null} /></group>
   </group>;
 }

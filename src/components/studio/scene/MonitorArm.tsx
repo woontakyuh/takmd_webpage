@@ -9,15 +9,15 @@ import { Block, Rod } from './Primitives';
 const MONITOR_TILT = -0.04;
 
 export const MONITOR_ARM = {
-  deskEdgeContact: [-0.149542, -0.0075, -0.113412],
-  basePivot: [-0.149542, 0.084, -0.113412],
+  deskEdgeContact: [-0.15154, -0.0075, -0.138332],
+  basePivot: [-0.15154, 0.084, -0.138332],
   elbowPivot: [-0.104, 0.208, -0.084],
   vesaPivot: [0, 0.368, -0.066],
   vesaPlate: [0, 0.36802, -0.0495],
   miniDisplayPort: [0.003811, 0.022, 0.066308],
   monitorDisplayPort: [0.042, 0.3683, -0.043],
   monitorPowerPort: [0.092, 0.3663, -0.043],
-  underDeskOutlet: [-0.11, -0.095, -0.1],
+  underDeskOutlet: [-0.11, -0.153, -0.1],
 } as const satisfies Readonly<Record<string, Point>>;
 
 const ARM_JOINTS: readonly Point[] = [
@@ -51,16 +51,16 @@ export function MonitorArm() {
         [0.045, 0.345, -0.084],
         [-0.104, 0.208, -0.112],
         [-0.15, 0.084, -0.14],
-        [-0.15, 0.018, -0.142],
-        [-0.15, -0.065, -0.142],
+        [-0.15, 0.018, -0.183],
+        [-0.15, -0.15, -0.183],
         MONITOR_ARM.underDeskOutlet,
       ]} radius={0.0025} />
       <Cable points={[
         [0.049166, 0.022, 0.062671], [0.04, 0.014, 0.03],
-        [-0.132, 0.005, -0.05], [-0.149, 0.004, -0.135],
-        [-0.149, -0.065, -0.14], MONITOR_ARM.underDeskOutlet,
+        [-0.132, 0.005, -0.05], [-0.149, 0.004, -0.183],
+        [-0.149, -0.15, -0.183], MONITOR_ARM.underDeskOutlet,
       ]} radius={0.0025} />
-      <Block size={[0.18, 0.04, 0.18]} position={[-0.11, -0.078, -0.02]} color={PALETTE.ink}
+      <Block size={[0.18, 0.04, 0.18]} position={[-0.11, -0.1425, -0.02]} color={PALETTE.ink}
         radius={0.008} roughness={0.72} />
       <CableGuide position={[clampX, clampY - 0.002, clampZ - 0.026]} />
     </group>
@@ -71,13 +71,13 @@ function DeskEdgeClamp({ position }: { readonly position: Point }) {
   const [x, edgeY, z] = position;
   return (
     <group>
-      <Block size={[0.116, 0.012, 0.076]} position={[x, edgeY - 0.006, z]}
+      <Block size={[0.116, 0.012, 0.076]} position={[x, edgeY + 0.006, z + 0.018]}
         color={PALETTE.ink} radius={0.004} roughness={0.4} metalness={0.78} />
-      <Block size={[0.072, 0.009, 0.052]} position={[x, -0.069, z]}
+      <Block size={[0.072, 0.009, 0.052]} position={[x, edgeY - 0.1195, z + 0.018]}
         color={PALETTE.ink} radius={0.003} roughness={0.42} metalness={0.76} />
-      <Block size={[0.038, 0.06, 0.025]} position={[x, -0.039, z + 0.018]}
+      <Block size={[0.038, 0.127, 0.018]} position={[x, edgeY - 0.0515, z - 0.025]}
         color={PALETTE.steel} radius={0.003} roughness={0.44} metalness={0.72} />
-      <Rod from={[x, -0.052, z + 0.018]} to={[x, -0.068, z + 0.018]} radius={0.006}
+      <Rod from={[x, edgeY - 0.12, z + 0.018]} to={[x, edgeY - 0.146, z + 0.018]} radius={0.006}
         color={PALETTE.graphite} metalness={0.74} />
       <Block size={[0.054, 0.098, 0.055]} position={[x, 0.035, z]}
         color={PALETTE.ink} radius={0.008} roughness={0.38} metalness={0.78} />

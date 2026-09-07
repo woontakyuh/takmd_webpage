@@ -20,10 +20,10 @@ export function EamesLounge() {
   }), [lounge.scene, ottoman.scene]);
 
   return <>
-    <group name="Eames lounge chair" position={[-0.9, 0.035, 2.12]} rotation={[0, YAW, 0]}>
+    <group name="Eames lounge chair" position={[-0.9, 0.0185, 2.12]} rotation={[0, YAW, 0]}>
       <primitive object={models[0]} dispose={null} />
     </group>
-    <group name="Eames ottoman" position={[-0.58, 0.035, 1.15]} rotation={[0, YAW, 0]}>
+    <group name="Eames ottoman" position={[-0.58, 0.0185, 1.15]} rotation={[0, YAW, 0]}>
       <primitive object={models[1]} dispose={null} />
     </group>
   </>;

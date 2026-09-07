@@ -31,7 +31,7 @@ export function FamilyPhoto(props: Pick<StudioSceneProps, 'selected' | 'onSelect
     try { sessionStorage.setItem('takmd-frame-photo', selected); } catch { /* Photo selection remains available without storage. */ }
     return selected;
   });
-  return <Interactive id="family" {...props} position={[-0.72, 0.878, -0.23]}>
+  return <Interactive id="family" {...props} position={[-0.72, 0.874, -0.23]}>
     <group rotation={[-0.16, 0.13, 0]}>
       <Block size={[0.246, 0.19, 0.018]} color="#30332F" radius={0.0025} roughness={0.48} />
       <Block size={[0.23, 0.174, 0.001]} position={[0, 0, 0.0095]} color="#151815" radius={0.0004} />

@@ -18,7 +18,7 @@ import { Displays } from './scene/Displays';
 import { CalendarClock } from './scene/CalendarClock';
 import { OfficeLounge } from './scene/OfficeLounge';
 import { PersonalCorner } from './scene/PersonalCorner';
-import { PALETTE, TOUR } from './scene/config';
+import { PALETTE, ROOM, TOUR } from './scene/config';
 
 export function StudioScene(props: StudioSceneProps) {
   const { sun, position } = props.lighting;
@@ -47,7 +47,7 @@ export function StudioScene(props: StudioSceneProps) {
         shadow-camera-left={-5} shadow-camera-right={5} shadow-camera-top={6} shadow-camera-bottom={-5}
         shadow-normalBias={0.018} shadow-bias={-0.0001} shadow-radius={3} />
       <directionalLight position={[4, 4, -3]} intensity={0.65 + sun.daylight * 0.25} color={PALETTE.paperLight} />
-      <spotLight position={[0, 2.72, 0]} intensity={12 + sun.lamp * 8} distance={7} decay={2}
+      <spotLight position={[0, ROOM.architecture.height - 0.13, 0]} intensity={12 + sun.lamp * 8} distance={7} decay={2}
         angle={1.3} penumbra={1} color={PALETTE.paperLight} castShadow
         shadow-mapSize={[1024, 1024]} shadow-normalBias={0.008} shadow-bias={-0.0001} />
       <Architecture night={props.night} sky={sun.windowSky} />

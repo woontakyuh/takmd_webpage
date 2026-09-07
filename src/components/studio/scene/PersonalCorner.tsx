@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import type { StudioSceneProps } from '../types';
 import { DoctorCoat, JiuJitsuGi } from './Garment';
-import { GarmentRack, RACK_TUBE_RADIUS } from './GarmentRack';
+import { GarmentRack, RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 import { Interactive } from './Interactive';
 import { Surfboard } from './Surfboard';
 import { ROOM } from './config';
@@ -15,11 +15,11 @@ export function PersonalCorner({ selected, onSelect, reducedMotion }: PersonalCo
       <group position={[...wardrobe.position]} rotation={[0, wardrobe.rotation, 0]}>
         <GarmentRack />
         <Interactive id="spine" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
-          fixed position={[-0.235, wardrobe.height - RACK_TUBE_RADIUS, 0]} rotation={0.08}>
+          fixed position={[-0.12, wardrobe.height - RACK_RAIL_HALF_HEIGHT, 0]} rotation={0.08}>
           <DoctorCoat />
         </Interactive>
         <Interactive id="bjj" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
-          fixed position={[0.235, wardrobe.height - RACK_TUBE_RADIUS, 0]} rotation={-0.1}>
+          fixed position={[0.12, wardrobe.height - RACK_RAIL_HALF_HEIGHT, 0]} rotation={-0.1}>
           <JiuJitsuGi />
         </Interactive>
       </group>

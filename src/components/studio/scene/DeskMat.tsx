@@ -5,13 +5,13 @@ import { PALETTE } from './config';
 import { roundedRectangle } from './MacMiniGeometry';
 
 export const DESK_MAT = {
-  position: [0, 0.77925, 0],
-  size: [2.08, 0.0035, 0.76],
+  position: [0, 0.77525, 0],
+  size: [1.68, 0.0035, 0.76],
 } as const;
 
 export const DESK_MAT_TOP = DESK_MAT.position[1] + DESK_MAT.size[1] / 2;
 const STITCH_INSET = 0.018;
-const HORIZONTAL_STITCHES: readonly number[] = Array.from({ length: 99 }, (_, index) => -1 + index * 0.0205);
+const HORIZONTAL_STITCHES: readonly number[] = Array.from({ length: 79 }, (_, index) => -0.8 + index * 0.0205);
 const VERTICAL_STITCHES: readonly number[] = Array.from({ length: 35 }, (_, index) => -0.35 + index * 0.0205);
 const HALF_WIDTH = DESK_MAT.size[0] / 2 - STITCH_INSET;
 const HALF_DEPTH = DESK_MAT.size[2] / 2 - STITCH_INSET;

@@ -6,11 +6,11 @@ import { workshops } from '../../../data/workshops';
 import { Block } from './Primitives';
 import { BiportalEndoscope } from './BiportalEndoscope';
 import { PigPlush } from './PigPlush';
-import { INTERIOR, PALETTE } from './config';
+import { INTERIOR, PALETTE, ROOM } from './config';
 import type { Point } from './config';
 
 const CLICK_DRAG_THRESHOLD = 5;
-const CABINET_TOP = 0.742;
+const CABINET_TOP = ROOM.credenza.position[1] + ROOM.credenza.height;
 
 type WorkshopLinkProps = {
   readonly label: string;
@@ -26,6 +26,7 @@ function WorkshopLink({ label, position, route, children }: WorkshopLinkProps) {
 
   return (
     <group
+      name={`Workshop ${route}`}
       position={[...position]}
       onPointerOver={(event) => {
         event.stopPropagation();
@@ -160,7 +161,7 @@ export function WorkshopObjects() {
 
   return (
     <group rotation={[0, 0, 0]}>
-      <WorkshopLink label={dummy.title} route={`/workshops/${dummy.slug}`} position={[-2.38, CABINET_TOP, 0.27]}>
+      <WorkshopLink label={dummy.title} route={`/workshops/${dummy.slug}`} position={[-2.38, CABINET_TOP + 0.014, 0.27]}>
         <TrainingDummy />
       </WorkshopLink>
       <WorkshopLink label={cadaver.title} route={`/workshops/${cadaver.slug}`} position={[-2.38, CABINET_TOP, -0.22]}>
