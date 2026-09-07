@@ -393,3 +393,9 @@ The Noguchi tabletop uses a continuous reflective dielectric face with angle-dep
 Place the office title, guided-view buttons and collection footer in one bottom flow layout. The title row stays above the collection as its height changes across viewport widths, with the mobile swipe hint taking its own space. Retain the original links, keyboard controls and selected-object behavior.
 
 Keep the beige material palette and reduce the lights that washed out every surface. Sky fill now fades with sun altitude from -6 to 32 degrees; lower the constant environment, ambient, hemisphere and frontal-fill floors. The overhead light is a modest warm pool rather than an increasingly bright white flood at night. Preserve local time, solar position, daylight/evening previews, the window sky and cached shadows. Verify noon, dusk and night separately so evening retains legible objects with lower overall brightness.
+
+## 47. Paper, screens and luminous clock numerals
+
+The research folio's printed cover and every paper face use rough, non-emissive materials that receive the room's light and shadows. Preserve the actual publication textures and physical page-turn interaction. Do not use unlit materials or a fixed night tint to simulate paper.
+
+The wall TV has a self-lit image at all times, with a modest brightness increase while hovered and no movement. Its frame remains physical. The calendar clock's white numerals and colon remain readable at night; only the glyph mask emits light, while the dark flip cards and case continue to respond to the room illumination. Keep the live clock, flip animation and reduced-motion behavior.

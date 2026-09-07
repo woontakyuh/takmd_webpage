@@ -31,7 +31,7 @@ export function CalendarClock({ reducedMotion }: { readonly reducedMotion: boole
   }, [lettering, year]);
   useEffect(() => () => lettering.dispose(), [lettering]);
 
-  return <group position={[...ROOM.clock.position]} rotation={[0, ROOM.clock.rotation, 0]}>
+  return <group name="Calendar flip clock" position={[...ROOM.clock.position]} rotation={[0, ROOM.clock.rotation, 0]}>
     <Block size={[0.526, 0.281, 0.008]} position={[0, 0, -0.029]} color={CLOCK.back} radius={0.004} roughness={0.8} />
     {[-0.17, 0.17].flatMap(x => [-0.09, 0.09].map(y => <Block key={`${x}-${y}`} size={[0.015, 0.015, 0.006]}
       position={[x, y, -0.034]} color={CLOCK.back} radius={0.003} roughness={0.9} />))}
@@ -47,7 +47,7 @@ export function CalendarClock({ reducedMotion }: { readonly reducedMotion: boole
       <FlipCard value={date.month} size={[0.15, 0.076]} position={[0.167, -0.079, 0.035]} reducedMotion={reducedMotion} />
     </>}
     {[0.045, 0.079].map(y => <mesh key={y} position={[-0.0835, y, 0.036]}>
-      <circleGeometry args={[0.002, 12]} /><meshStandardMaterial color={CLOCK.numeral} roughness={0.85} />
+      <circleGeometry args={[0.002, 12]} /><meshStandardMaterial color={CLOCK.numeral} emissive={CLOCK.numeral} emissiveIntensity={0.65} roughness={0.85} />
     </mesh>)}
     <mesh position={[0, 0, 0.041]}>
       <planeGeometry args={[0.542, 0.29]} />

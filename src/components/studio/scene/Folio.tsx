@@ -13,7 +13,7 @@ import { usePrintedTexture } from './Textures';
 import { MOTION, PALETTE, ROOM } from './config';
 import { scheduleSceneSingleAction } from './sceneGesture';
 
-type FolioProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onPaperStep' | 'night' | 'reducedMotion' | 'progress' | 'collection'>;
+type FolioProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'progress' | 'collection'>;
 
 type FolioPaper = {
   readonly id: string;
@@ -37,7 +37,7 @@ function paperFromCollection(collection: OfficeCollection): FolioPaper {
 
 const CLICK_DRAG_THRESHOLD = 5;
 
-export function Folio({ selected, onSelect, onPaperStep, night, reducedMotion, progress, collection }: FolioProps) {
+export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress, collection }: FolioProps) {
   const canvas = useThree(state => state.gl.domElement);
   const cover = useRef<Group>(null);
   const leaf = useRef<Group>(null);
@@ -137,25 +137,25 @@ export function Folio({ selected, onSelect, onPaperStep, night, reducedMotion, p
     <Block size={[1.03, 0.024, 1.36]} color={PALETTE.linen} texture={linen} radius={0.006} roughness={0.96} />
     <Block size={[0.97, 0.047, 1.29]} position={[0.014, 0.036, 0]} color={PALETTE.paperLight} radius={0.003} />
     {[0.025, 0.033, 0.043, 0.053].map(y => <Block key={y} size={[0.971, 0.001, 1.29]} position={[0.014, y, 0]} color={PALETTE.line} radius={0.0004} />)}
-    <mesh name="Folio next page" position={[0.03, 0.063, 0]} rotation={[-Math.PI / 2, 0, 0]}
+    <mesh name="Folio next page" position={[0.03, 0.063, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow
       onPointerDown={beginPaperStep(1)} onPointerCancel={cancelPaperStep} onPointerUp={stepPaper(1)}>
-      <planeGeometry args={[0.93, 1.25]} /><meshBasicMaterial map={baseTexture} toneMapped={false} color={night ? PALETTE.plaster : PALETTE.white} />
+      <planeGeometry args={[0.93, 1.25]} /><meshStandardMaterial map={baseTexture} roughness={0.95} />
     </mesh>
     <group ref={leaf} position={[-0.49, 0.066, 0]}>
       <Block size={[0.97, 0.002, 1.29]} position={[0.49, 0, 0]} color={PALETTE.paperLight} radius={0.0004} />
-      <mesh name="Folio turning next page" position={[0.49, 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]}
+      <mesh name="Folio turning next page" position={[0.49, 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow
         onPointerDown={beginPaperStep(1)} onPointerCancel={cancelPaperStep} onPointerUp={stepPaper(1)}>
-        <planeGeometry args={[0.93, 1.25]} /><meshBasicMaterial map={leafTexture} toneMapped={false} color={night ? PALETTE.plaster : PALETTE.white} />
+        <planeGeometry args={[0.93, 1.25]} /><meshStandardMaterial map={leafTexture} roughness={0.95} />
       </mesh>
-      <mesh name="Folio turning previous page" position={[0.49, -0.002, 0]} rotation={[Math.PI / 2, 0, 0]}
+      <mesh name="Folio turning previous page" position={[0.49, -0.002, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow
         onPointerDown={beginPaperStep(-1)} onPointerCancel={cancelPaperStep} onPointerUp={stepPaper(-1)}>
         <planeGeometry args={[0.93, 1.25]} /><meshStandardMaterial color={PALETTE.paperLight} roughness={0.95} />
       </mesh>
     </group>
     <group ref={cover} position={[-0.515, 0.074, 0]}>
       <Block size={[1.03, 0.018, 1.36]} position={[0.515, 0, 0]} color={PALETTE.linen} texture={linen} radius={0.004} roughness={0.95} />
-      <mesh position={[0.52, 0.0095, -0.12]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[0.7, 0.72]} /><meshBasicMaterial map={coverPrint} toneMapped={false} color={night ? PALETTE.plaster : PALETTE.white} /></mesh>
-      <mesh name="Folio previous page" position={[0.515, -0.0095, 0]} rotation={[Math.PI / 2, 0, 0]}
+      <mesh name="Folio cover print" position={[0.52, 0.0095, -0.12]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[0.7, 0.72]} /><meshStandardMaterial map={coverPrint} roughness={0.95} /></mesh>
+      <mesh name="Folio previous page" position={[0.515, -0.0095, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow
         onPointerDown={beginPaperStep(-1)} onPointerCancel={cancelPaperStep} onPointerUp={stepPaper(-1)}>
         <planeGeometry args={[0.97, 1.29]} /><meshStandardMaterial color={PALETTE.paperLight} roughness={0.95} />
       </mesh>

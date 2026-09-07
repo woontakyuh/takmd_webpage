@@ -13,26 +13,30 @@ type Props = {
 };
 
 function useCardTexture(value: string) {
-  const texture = useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512; canvas.height = 400;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      const shade = ctx.createLinearGradient(0, 0, 0, 400);
-      shade.addColorStop(0, '#29302B'); shade.addColorStop(0.49, CLOCK.card);
-      shade.addColorStop(0.5, '#1C211E'); shade.addColorStop(1, CLOCK.card);
-      ctx.fillStyle = shade; ctx.fillRect(0, 0, 512, 400);
-      ctx.fillStyle = CLOCK.numeral;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.font = `${value.length > 2 ? 500 : 600} ${value.length > 2 ? 190 : 302}px Arial, sans-serif`;
-      ctx.fillText(value, 256, 216, 458);
-    }
-    const result = new CanvasTexture(canvas);
-    result.colorSpace = SRGBColorSpace; result.anisotropy = 4;
-    return result;
+  const textures = useMemo(() => {
+    const makeTexture = (numeralsOnly: boolean) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512; canvas.height = 400;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const shade = ctx.createLinearGradient(0, 0, 0, 400);
+        shade.addColorStop(0, '#29302B'); shade.addColorStop(0.49, CLOCK.card);
+        shade.addColorStop(0.5, '#1C211E'); shade.addColorStop(1, CLOCK.card);
+        ctx.fillStyle = numeralsOnly ? '#000000' : shade;
+        ctx.fillRect(0, 0, 512, 400);
+        ctx.fillStyle = CLOCK.numeral;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = `${value.length > 2 ? 500 : 600} ${value.length > 2 ? 190 : 302}px Arial, sans-serif`;
+        ctx.fillText(value, 256, 216, 458);
+      }
+      const result = new CanvasTexture(canvas);
+      result.colorSpace = SRGBColorSpace; result.anisotropy = 4;
+      return result;
+    };
+    return { color: makeTexture(false), numerals: makeTexture(true) };
   }, [value]);
-  useEffect(() => () => texture.dispose(), [texture]);
-  return texture;
+  useEffect(() => () => { textures.color.dispose(); textures.numerals.dispose(); }, [textures]);
+  return textures;
 }
 
 export function FlipCard({ value, size, position, reducedMotion }: Props) {
@@ -65,21 +69,21 @@ export function FlipCard({ value, size, position, reducedMotion }: Props) {
     if (t === 1) setFace(state => ({ ...state, flipping: false }));
   });
 
-  return <group position={[...position]}>
+  return <group name="Clock flip card" position={[...position]}>
     <Block size={[width + 0.008, height + 0.008, 0.008]} position={[0, 0, -0.006]}
       color={CLOCK.face} radius={0.006} roughness={0.9} />
     <mesh geometry={halves[0]} position={[0, height / 4, 0]}>
-      <meshStandardMaterial map={current} roughness={0.9} />
+      <meshStandardMaterial map={current.color} emissiveMap={current.numerals} emissive={PALETTE.white} emissiveIntensity={0.65} roughness={0.9} />
     </mesh>
     <mesh geometry={halves[1]} position={[0, -height / 4, 0]}>
-      <meshStandardMaterial map={face.flipping ? previous : current} roughness={0.9} />
+      <meshStandardMaterial map={face.flipping ? previous.color : current.color} emissiveMap={face.flipping ? previous.numerals : current.numerals} emissive={PALETTE.white} emissiveIntensity={0.65} roughness={0.9} />
     </mesh>
     {face.flipping && <group ref={leaf} position={[0, 0, 0.002]}>
       <mesh geometry={halves[0]} position={[0, height / 4, 0.0005]} castShadow>
-        <meshStandardMaterial map={previous} roughness={0.9} />
+        <meshStandardMaterial map={previous.color} emissiveMap={previous.numerals} emissive={PALETTE.white} emissiveIntensity={0.65} roughness={0.9} />
       </mesh>
       <mesh geometry={halves[1]} position={[0, height / 4, -0.0005]} rotation={[Math.PI, 0, 0]} castShadow>
-        <meshStandardMaterial map={current} roughness={0.9} />
+        <meshStandardMaterial map={current.color} emissiveMap={current.numerals} emissive={PALETTE.white} emissiveIntensity={0.65} roughness={0.9} />
       </mesh>
     </group>}
     <Block size={[width + 0.002, 0.0017, 0.003]} position={[0, 0, 0.003]}

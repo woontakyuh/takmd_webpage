@@ -18,7 +18,7 @@ export function Displays({ selected, onSelect, reducedMotion, night, presentatio
   const screenHovered = useRef(false);
   useFrame((_, delta) => {
     if (!screenMaterial.current) return;
-    const brightness = screenHovered.current ? 0.08 : 0;
+    const brightness = screenHovered.current ? 1.08 : 0.88;
     screenMaterial.current.emissiveIntensity = reducedMotion ? brightness
       : MathUtils.damp(screenMaterial.current.emissiveIntensity, brightness, MOTION.object, delta);
   });
@@ -44,7 +44,7 @@ export function Displays({ selected, onSelect, reducedMotion, night, presentatio
       <Interactive id="education" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.gallery.position} rotation={ROOM.gallery.rotation}
         fixed onHoverChange={hovered => { screenHovered.current = hovered; }}>
         <Block size={[1.60, 0.924, 0.035]} color={PALETTE.graphite} radius={0.012} roughness={0.32} metalness={0.5} />
-        <mesh name="Wall TV screen" position={[0, 0, 0.021]}><planeGeometry args={[1.568, 0.882]} /><meshStandardMaterial ref={screenMaterial} map={board} roughness={0.91} emissive={PALETTE.white} emissiveMap={board} emissiveIntensity={0} /></mesh>
+        <mesh name="Wall TV screen" position={[0, 0, 0.021]}><planeGeometry args={[1.568, 0.882]} /><meshStandardMaterial ref={screenMaterial} color="#000000" roughness={0.3} envMapIntensity={0.08} emissive={PALETTE.white} emissiveMap={board} emissiveIntensity={0.88} toneMapped={false} /></mesh>
         <mesh position={[0.73, -0.451, 0.021]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         {selected === 'education' && <Html center position={[0, -0.555, 0.045]} zIndexRange={[15, 10]}>
           <nav className="wall-tv-controls" aria-label="Wall TV presentations" onPointerDown={event => event.stopPropagation()} onWheel={event => event.stopPropagation()}>
