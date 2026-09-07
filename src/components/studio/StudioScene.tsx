@@ -1,6 +1,9 @@
 import { Canvas } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
 import { PCFSoftShadowMap } from 'three';
+import { useCallback, useState } from 'react';
+import { AdaptiveQuality } from './scene/AdaptiveQuality';
+import { OfficeRenderer } from './scene/OfficeRenderer';
 import type { StudioSceneProps } from './types';
 import { Architecture } from './scene/Architecture';
 import { CameraRig } from './scene/CameraRig';
@@ -17,9 +20,13 @@ import { PALETTE, TOUR } from './scene/config';
 
 export function StudioScene(props: StudioSceneProps) {
   const { sun, position } = props.lighting;
+  const [quality, setQuality] = useState(1.75);
+  const changeQuality = useCallback((step: number) => {
+    setQuality(current => Math.max(0.75, Math.min(1.75, current + step)));
+  }, []);
   return (
     <Canvas camera={{ position: [...TOUR[0].position], fov: 42, near: 0.05, far: 60 }}
-      dpr={[1, props.compact ? 1.35 : 1.75]} shadows={{ type: PCFSoftShadowMap }}
+      dpr={[0.75, Math.min(quality, props.compact ? 1.35 : 1.75)]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: 'none' }}>
       <Environment resolution={128} frames={1} environmentIntensity={0.45 + sun.daylight * 0.2}>
@@ -51,6 +58,8 @@ export function StudioScene(props: StudioSceneProps) {
       <Folio {...props} />
       <Displays {...props} />
       <CameraRig {...props} />
+      <AdaptiveQuality onChange={changeQuality} />
+      <OfficeRenderer lighting={props.lighting} />
     </Canvas>
   );
 }

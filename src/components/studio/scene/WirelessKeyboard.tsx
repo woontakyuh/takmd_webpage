@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { CanvasTexture, SRGBColorSpace } from 'three';
 import { Block } from './Primitives';
+import { MergedBlocks, type BlockPart } from './MergedBlocks';
 import type { Point } from './config';
 import { PALETTE } from './config';
 
@@ -22,6 +23,16 @@ type WirelessKeyboardProps = {
   readonly position: Point;
 };
 
+const KEY_GROUPS = [false, true].flatMap(accent => [false, true].map(top => ({
+  id: `${accent}-${top}`,
+  color: top ? (accent ? PALETTE.keySage : PALETTE.keyIvory) : (accent ? PALETTE.tealLight : PALETTE.stone),
+  roughness: top ? 0.48 : 0.63,
+  parts: KEY_ROWS.flatMap(row => layoutRow(row).filter(item => item.key.accent === accent).map(({ x, width }): BlockPart => ({
+    size: [width - (top ? 0.002 : 0), top ? 0.004 : 0.012, (row.z === -0.056 ? 0.014 : 0.0179) - (top ? 0.002 : 0)],
+    position: [x, top ? 0.0268 : 0.021, row.z], radius: top ? 0.0018 : 0.0022,
+  }))),
+})));
+
 export function WirelessKeyboard({ position }: WirelessKeyboardProps) {
   const legends = useKeyboardLegends();
   return (
@@ -40,12 +51,7 @@ export function WirelessKeyboard({ position }: WirelessKeyboardProps) {
           <cylinderGeometry args={[0.007, 0.007, 0.016, 28]} />
           <meshStandardMaterial color={PALETTE.aluminium} roughness={0.32} metalness={0.65} />
         </mesh>
-        {KEY_ROWS.flatMap(row => layoutRow(row).map(({ key: currentKey, x, width }) => <group key={`${row.z}-${x}`} position={[x, 0, row.z]}>
-          <Block size={[width, 0.012, row.z === -0.056 ? 0.014 : 0.0179]} position={[0, 0.021, 0]}
-            color={currentKey.accent ? PALETTE.tealLight : PALETTE.stone} radius={0.0022} roughness={0.63} />
-          <Block size={[width - 0.002, 0.004, row.z === -0.056 ? 0.012 : 0.0159]} position={[0, 0.0268, 0]}
-            color={currentKey.accent ? PALETTE.keySage : PALETTE.keyIvory} radius={0.0018} roughness={0.48} />
-        </group>))}
+        {KEY_GROUPS.map(({ id, ...group }) => <MergedBlocks key={id} {...group} />)}
         <mesh position={[0, 0.02895, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[0.34, 0.14]} />
           <meshStandardMaterial map={legends} transparent alphaTest={0.08} depthWrite={false} roughness={0.7} />
