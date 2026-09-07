@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Mesh } from 'three';
 import type { Point } from './config';
 
-const MODEL_URL = '/models/mx-master-4/mouse.glb' as const;
+const MODEL_URL = '/models/mx-master-4/mouse.glb?v=20260907-thumbwheel-2' as const;
 
 export function MxMasterMouse({ position }: { readonly position: Point }) {
   const { scene } = useGLTF(MODEL_URL);
