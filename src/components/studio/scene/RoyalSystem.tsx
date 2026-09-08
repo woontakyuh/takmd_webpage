@@ -7,6 +7,7 @@ import { HallymPlaque } from './HallymPlaque';
 import { SnuhAward } from './SnuhAward';
 import { KomissAward } from './KomissAward';
 import { CertificateFrames } from './CertificateFrames';
+import { WhiskyCollection } from './WhiskyCollection';
 
 const WOOD_BASE = new Color(PALETTE.paperLight);
 const WOOD_TINT = new Color(INTERIOR.lightWood).multiply(
@@ -30,7 +31,7 @@ const CABINET_HEIGHT = 0.424;
 
 const FULL_RAIL_X = [-2.40, -1.35, 1.35, 2.40] as const;
 const SHORT_RAIL_X = [0] as const;
-const LEFT_LEVELS = [1.3, 1.7, 2.1, 2.4] as const;
+const LEFT_LEVELS = [1.3, 1.7, 2.0, 2.4] as const;
 const RIGHT_LEVELS = [AWARD_SHELF_TOP, 1.82, 2.26] as const;
 
 type RoyalSystemProps = { readonly wood: Texture };
@@ -68,15 +69,16 @@ export function RoyalSystem({ wood }: RoyalSystemProps) {
         width={SIDE_BAY_WIDTH} wood={wood} supportX={[1.35, 2.40]} />)}
     </group>
 
+    <Suspense fallback={null}><WhiskyCollection /></Suspense>
     <group name="personal-awards-collection">
       <Suspense fallback={null}><CertificateFrames /></Suspense>
-      <group name="Hallym appreciation display" position={[-1.69, 1.3, 3.095]} rotation={[0, Math.PI, 0]}>
+      <group name="Hallym appreciation display" position={[1.54, 0.82, 3.095]} rotation={[0, Math.PI, 0]}>
         <HallymPlaque />
       </group>
-      <group name="SNUH merit display" position={[-2.11, 1.7, 3.115]} rotation={[0, Math.PI, 0]}>
+      <group name="SNUH merit display" position={[1.875, 0.82, 3.115]} rotation={[0, Math.PI, 0]}>
         <SnuhAward />
       </group>
-      <group name="KOMISS membership display" position={[-1.69, 1.7, 3.115]} rotation={[0, Math.PI, 0]}>
+      <group name="KOMISS membership display" position={[2.21, 0.82, 3.115]} rotation={[0, Math.PI, 0]}>
         <KomissAward />
       </group>
     </group>

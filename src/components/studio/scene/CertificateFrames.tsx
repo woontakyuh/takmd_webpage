@@ -36,7 +36,7 @@ const CREDENTIALS = [
     texture: '/models/personal-certificates/komiss-life-membership-2023.webp',
     width: 0.38,
     height: 0.285,
-    position: [-2.12, 1.3, 3.115],
+    position: [1.875, 1.82, 3.115],
     paperRatio: 1517 / 1037,
   },
 ] as const;
