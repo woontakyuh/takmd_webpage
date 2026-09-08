@@ -3,6 +3,7 @@ import { DeskAccessories } from './DeskAccessories';
 import { ExecutiveDesk } from './ExecutiveDesk';
 import { OfficeChair } from './OfficeChair';
 import { OfficeStorage } from './OfficeStorage';
+import { FenderMusicCorner, FENDER_MUSIC_CORNER_BOUNDS } from './FenderMusicCorner';
 import type { StudioSceneProps } from '../types';
 import { ROOM } from './config';
 import { usePrintedTexture } from './Textures';
@@ -20,6 +21,11 @@ export function Furniture({ lamp, reducedMotion, selected, onSelect, onClaudeSti
         <OfficeChair reducedMotion={reducedMotion} />
       </group></Movable>
       <OfficeStorage wood={wood} lamp={lamp} />
+      <Movable id="music"><group position={[...ROOM.music.position]} rotation={[0, ROOM.music.rotation, 0]}>
+        <group position={[-(FENDER_MUSIC_CORNER_BOUNDS.min[0] + FENDER_MUSIC_CORNER_BOUNDS.max[0]) / 2, 0, 0]}>
+          <FenderMusicCorner />
+        </group>
+      </group></Movable>
     </group>
   );
 }

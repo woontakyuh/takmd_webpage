@@ -11,9 +11,10 @@ export const FURNITURE = {
   plant: { label: 'Palm', center: [2.18, 0, -0.55], radius: 0.28, handle: 2.15 },
   mantis: { label: 'Mantis', center: [-1.75, 0, 2.62], radius: 0.15, handle: 1.7 },
   signe: { label: 'Signe', center: [-2.49, 0, 2.84], radius: 0.06, handle: 1.6 },
+  music: { label: 'Guitar & amp', center: [2.12, 0, -2.1], radius: 0.61, handle: 1.1 },
 } as const satisfies Record<string, { readonly label: string; readonly center: Point; readonly radius: number; readonly handle: number }>;
 export type FurnitureId = keyof typeof FURNITURE;
-export const FURNITURE_IDS: readonly FurnitureId[] = ['desk', 'chair', 'sofa', 'table', 'lounge', 'plant', 'mantis', 'signe'];
+export const FURNITURE_IDS: readonly FurnitureId[] = ['desk', 'chair', 'sofa', 'table', 'lounge', 'plant', 'mantis', 'signe', 'music'];
 export type FurniturePose = { readonly x: number; readonly z: number; readonly angle: number };
 type Layout = Partial<Record<FurnitureId, FurniturePose>>;
 const ZERO: FurniturePose = { x: 0, z: 0, angle: 0 };

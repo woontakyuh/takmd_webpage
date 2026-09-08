@@ -52,6 +52,7 @@ export const ROOM = {
   gallery: { position: [0, 1.94, 3.245], rotation: Math.PI },
   chair: { position: [-0.2, 0.0185, -2.59], rotation: Math.PI - 0.23 },
   credenza: { position: [-2.42, 0.0185, 0.55], width: 3.023, depth: 0.373, height: 0.55 },
+  music: { position: [2.12, 0.0185, -2.1], rotation: -Math.PI / 2 - 0.12 },
   plant: { position: [2.18, 0.0185, -0.55] },
   wardrobe: { position: [-2.658, 0.0185, -1.95], rotation: Math.PI * 1.5, width: 1.18, height: 0.08, depth: 0.204 },
   surfboard: { position: [-2.382, 0, -3.01], rotation: Math.PI / 2 + 0.18 },
