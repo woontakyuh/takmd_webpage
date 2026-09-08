@@ -507,3 +507,67 @@ TV, monitor and photo frame use the same light-reactive screen material: white M
 ## 60. Subtle surrounding award warmth
 
 Whole-award hover also adds gentle steady warmth to the satin face (emission 0.045) and edges (0.07), using their existing gold colors. Keep grain and roughness intact and preserve the brighter continuous polished-inset sparkle. Reset body/edge emission to zero on exit; reduced motion retains steady warmth. No geometry movement or new hit regions.
+
+## 61. Beolab 8 stereo pair
+
+Place two Bang & Olufsen Beolab 8 speakers in Natural Aluminium and natural/light oak on the window-side USM. Use the manufacturer's published OBJ planning geometry for the speaker, wooden cover and table stand, converted from millimetres and Z-up into metre-scale, Y-up geometry. Preserve the U-shaped aluminium shell, curved vertical oak slats, dark acoustic backing, top cap and thin oval tabletop foot. The upright tabletop assembly is approximately 0.165 m wide, 0.29 m high and 0.172 m deep. Share the prepared geometry and materials between the two instances; retain the real slat gaps and edge normals while removing concealed duplicate hardware when needed. Use existing aluminium/aluminiumEdge, graphite/rubber and lightWood/oak material tokens with scene lighting and non-emissive surfaces; no new lighting or motion.
+
+Both feet rest on the USM top, inset from its ends, around z=-0.72 and z=1.82, facing into the room with a restrained 0.13-radian inward toe-in. Group the existing workshop objects and spine between them, keeping separate hit areas and the spine camera target aligned with its adjusted position. Leave blinds, window, cabinet dimensions, room lighting and all other furniture unchanged. Speakers are furnishing objects in this iteration: no simulated music player, autoplay, hover motion or new keyboard action. Existing double-click inspection continues to work on the geometry. Desktop, tablet and mobile views must keep cabinet and window readable. Verify daylight/night metal and oak response, foot contact, prop clearance and navigation before completion.
+
+Reference: [B&O Beolab 8 support and 3D drawings](https://support.bang-olufsen.com/hc/en-us/articles/19746053132561-Beolab-8), [official 3D package](https://bangolufsenrmaskillgohel.blob.core.windows.net/zendesk-guide/Manuals_3D/Beolab%208.zip), and the October 2024 product sheet. This is an adaptation of manufacturer planning geometry with locally authored material treatment, not an acoustic simulation.
+
+## 62. Personal awards on the Royal System
+
+Use the owner's 19 multi-angle photographs IMG_0764–IMG_0782 supplied September 8, 2026. Three distinct objects: Hallym Dongtan Sacred Heart Hospital appreciation plaque (January 17, 2025), Seoul National University Hospital neurosurgery merit award (February 28, 2023), and KOMISS lifetime membership No. 180 (April 14, 2023). Preserve source lettering, logos, seal and the Hallym group portrait as artwork; never publish full source photos or their unrelated office/monitor background. Build solid geometry, bevels, side/back surfaces and reference-specific supports rather than billboard photos. The Hallym plaque has reddish figured wood side stiles, a black gold-engraved plate, keyhole/socket details and a ribbed silver rear prop. SNUH uses a wavy black inner face, beveled clear outer glass, and a stepped gold-on-black pedestal. KOMISS uses tapered black polished glass, a clear diagonal band and sculpted gold arch feet.
+
+Photo-derived approximate heights: Hallym 0.255 m, SNUH 0.30 m, KOMISS 0.29 m. No measured-size claim. Local +Z is the front of each model, local Y=0 its bottom. Place Hallym on the left 1.30 m shelf, SNUH and KOMISS together on the left 1.70 m shelf with separate silhouettes and clear margins; retain books, existing KOSESS trophy and ceramics. All bases and rear props sit wholly inside the 0.30 m shelf depth and clear uprights/hangers. Use non-emissive lit ink/metal/wood materials responding to day/night and a restrained physical glass material; no new lights or hover motion. Existing double-click geometry inspection remains available.
+
+## 63. Portrait-led monitor CV
+
+Keep the 2560 × 1440 physical screen texture, existing paper/ink/teal palette and Georgia/Arial type. On its 1920 × 1080 layout grid, reserve the right third for a large portrait, approximately 560 × 747, preserving the source's 3:4 proportions and face. The left area holds name, current role, all three interests and all ten activities in two compact columns. Leave generous separation between text and portrait, and a shared quiet footer. Use “CURRICULUM VITAE / TAKMD” as the screen label. Preserve the full shared CV data, click-through reader without duplicate portrait, screen lighting and hover response; no physical monitor or camera changes.
+
+## 64. A shelf calendar instead of a TV header
+
+Remove the cramped calendar from above the TV. Retain the existing mechanical weekday/day/month and HH:MM cards, actual visitor-local time, reduced motion and subtly luminous numerals. Rehouse it as a compact ivory shelf clock, 0.468 m wide and 0.276 m high, on the right Royal System shelf at 1.82 m. Its center is x=2.08, z=3.104, clear of the books at x=1.58 and the next shelf. Two small rubber feet ground the case, and a rounded back provides tabletop depth. Case #E4E2DA and rim #B9BCB4 sit quietly with ivory furniture; dark cards stay unchanged. This is an adaptation of the existing flip-clock design, not a claim of an exact new product model. Clear the wall above the TV and do not move the TV, shelf, books or ceramics. Preserve the accessible HTML local-time readout and existing double-click inspection.
+
+## 65. Audo Copenhagen Epoch Shelf with Rack 118
+
+Replace the floor-standing wardrobe in the personal corner with the wall-mounted Audo Copenhagen Epoch Shelf with Rack Long in Natural Oak / Fog. The faithful product envelope is W 1.18 × H 0.08 × D 0.204 m: a steam-bent natural-oak-veneer shell around a Fog HPL recessed top ledge, with no legs, cabinet or exposed rail. Keep its eleven individual, concealed natural-oak wooden pegs visible inside the shell under the front edge. Their axes remain horizontal, following the official underside photograph and bottom-view drawing. Mount the rear face on the left wall at x=-2.76; its width runs along room Z from -2.54 to -1.36, clear of the surfboard and window/blinds.
+
+The shelf centre is y=1.80 m (including the room surface offset). The physician coat uses the window-side peg and the gi the surfboard-side peg. Keep their existing garment GLBs, hanger hooks, USA lettering, belt and sleeve emblem; rotate the complete garments so their fronts face the room, and seat their hook crowns at the two authored peg tips. The coat and gi retain their existing click routes. Natural oak remains a lacquered, lit material using the scene oak maps; the recessed Fog HPL is #D4D5CF, matte and non-emissive. This is an accurate simple parametric shell because the official product page exposes the product drawings and 2D/3D download route but no directly usable local CAD asset was obtained.
+
+Reference: [Audo Copenhagen Epoch Shelf with Rack](https://audocph.com/products/epoch-shelf-with-rack), Natural Oak SKU 71005-002287. Official dimensions and construction: 118 × 8 × 20.4 cm, plywood/oak veneer/HPL, recessed top ledge, 11 concealed wooden pegs, designed by Nina Bruun.
+
+## 66. Framed academic credentials above the garments
+
+Use the owner's IMG_0783–0785 photographs supplied September 8: the Korean Spinal Neurosurgery Society permanent-member certificate (March12,2022), Seoul National University Master of Science in Medicine diploma (February26,2018), and KOMISS life-membership certificate No180 (April14,2023). Preserve original document pixels, lettering, signatures, borders and seals; no invented text or credential changes. Extract only the paper inside the existing frame, correcting camera perspective and orientation. Do not publish the surrounding photographed wall. Original photographs remain unchanged.
+
+Place three independent tabletop frames together on the Epoch's recessed upper ledge, with the diploma central and the two membership certificates beside it. Keep each document's portrait/landscape format: frame widths/heights approximately .28×.38m, .30×.41m and .38×.285m, .045m gaps, combined1.05m wide inside the1.18m shelf. Model restrained black bevelled frames following the photographed finish, a substantial backboard, original paper image, subdued clear glazing and unobtrusive rear supports. Ground every frame on the recessed ledge with actual depth within.16m; lean slightly toward the wall and clear the front rim and wall. +Z is each frame's front, Y0 the grounded bottom. No new lighting, emissive paper, bounce or decorative hover. Existing double-click inspection provides closer reading. Keep the garments and their click destinations usable, and preserve original USA/belt/emblem details. Verify day/night, front/angle, all three device layouts and close inspection.
+
+## 67. Only owner-selected shelf contents
+
+Remove all placeholder shelf books and decorative ceramic vases at the owner's request. Empty shelves are intentional space reserved for future owner-supplied books and objects. This supersedes earlier instructions to retain generic books and ceramics in sections62/64. Preserve the functional Research portfolio, living plant/pot, anatomy teaching models, personal photographs, actual awards/credentials, clock and approved furnishings. Do not replace removed fillers with new invented decor.
+
+## 68. Physician coat sleeve emblem visibility
+The Davos emblem remains on the wearer-left sleeve (-Z in the source garment), moved from rear-side X=-0.043m to front-side X=0.025m. Its projection faces 30 degrees toward the garment front, conforming to the original mesh. Coat/gi assets, belt, USA patch, and garment arrangement are preserved; the hospital profile destination remains dr_idx=139.
+
+## 69. Certificate reflection cleanup and music corner
+The owner rejected visible photographer hands/phone in the glass. Use the reflection-cleaned display textures, with original text, names, dates, seals and signature design checked against the source. The cleaned images are restorations, not archival scans; original source crops stay in private evidence. Physical glazing responds to scene light without baked-in camera reflections.
+The owner has now authorized finishing audio and guitar: a natural-oak/silver B&O Beosound Theatre on the TV-under shelf replaces the Beolab8 pair. Fender USA Strat Sienna (maple neck, cream SSS pickguard) on a stand with a black/silver ’65 Deluxe Reverb forms a compact personal music corner. Use real-product reference proportions and materials, preserve existing furniture and content navigation.
+
+## 70. Owner corrections: original emblem and document-only framing
+Restore the Davos sleeve decal exactly to the pre-move position [-0.043,0.15,-0.246] and Euler[0.17,PI,0]; the attempted forward projection was rejected. Keep garment and hospital destination intact.
+For the three credentials, retain only the document contents from the supplied photographs. Their photographed broad black frames are not the presentation design. Use new slim8mm satin-aluminium frames that match the room's silver hardware, with physically separate paper, mat, glass and backing. Reflection-cleaned document textures are used, never the photographed room, black frame, hand or phone. This supersedes the black frame direction in section66.
+
+## 71. Academic documents on the bookshelves
+
+The owner moved all three document frames off the Epoch shelf. Diploma and KSNS vertical certificate sit on the right upper Royal shelf at y=2.26m, centered x=1.67/2.12m. The horizontal KOMISS certificate sits on the left y=1.30m shelf at x=-2.12m, beside the Hallym plaque. Each frame faces into the room, with its physical easel fully supported within the 30cm shelf depth. The Epoch top stays empty. Slim satin-aluminium frames remain independent 3D objects; current document images are provisional until the owner provides new photographs of the bare paper.
+
+The B&O Beosound Theatre replaces the Beolab8 pair. Its official-OBJ-derived tabletop envelope is 1.222×.197×.157m, positioned [0,.82,3.111], facing world -Z, with feet on the connected under-TV shelf.
+
+
+## 72. A reference-based Fender music corner
+
+The owner rejected the handmade Stratocaster. Use Anderson Fogaça's existing CC BY 4.0 Fender Stratocaster mesh (Sketchfab d5dac6b9f2964601b07109c78ed9e7cd), preserving the real asymmetric body, pickguard, three single-coil pickups, tuners, strings, frets and hardware. Adapt the source sunburst and dark fingerboard to the owner's Sienna finish and maple/black-dot fingerboard; the owner's series and model year remain unspecified. Retain the original artist attribution and transformation provenance in public/models/fender/SOURCE.md.
+
+The guitar stands alongside a black/silver Fender ’65 Deluxe Reverb, using the actual Fender script wordmark as physical badge geometry. Place the combined music corner at [2.12,.0185,-2.10], facing into the room. Keep the complete instrument and amplifier movable as one item through the existing visitor-only Arrange controls; reload returns to the official layout. No performance video is published, and no new player or automatic sound is added.
