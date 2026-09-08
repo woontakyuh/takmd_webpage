@@ -498,3 +498,8 @@ Arrangement now lasts only for the current visit. Do not read or write visitor l
 ## 58. Award and shade interaction finish
 
 Hovering any part of the award activates the existing polished-inset shimmer and glow. Preserve the focus-first click flow and restrict the focused YouTube link to the polished inset. Reduced motion keeps a steady glint. Each shade column includes its own 44px-high Open fully and Close fully keys below the hold arrows and position readout; retain the warm ivory keypad tokens and independent, interruptible travel. No new animation mechanism or timing token.
+
+
+## 59. Screen hover contrast
+
+TV, monitor and photo frame use the same light-reactive screen material: white MeshStandardMaterial, image as both diffuse and emissive map, roughness 0.4, normal scene tone mapping, idle emission 0.10 and hover emission 0.50. Room daylight, ambient light and actual lamps determine the visible day/night difference. Do not cap daylight with an independent low brightness multiplier or bypass lighting with MeshBasicMaterial. TV hover shares the rear lightstrip signal. Keep object damping 8/second, immediate reduced-motion feedback, and all existing textures, geometry and click behavior.

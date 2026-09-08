@@ -3,7 +3,7 @@ import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import { MathUtils } from 'three';
-import type { MeshBasicMaterial } from 'three';
+import type { MeshStandardMaterial } from 'three';
 import { featuredPresentation, presentationNavigation, talkMedia } from '../collection';
 import type { StudioSceneProps } from '../types';
 import { Interactive } from './Interactive';
@@ -12,9 +12,9 @@ import { Block } from './Primitives';
 import { ScreenBarHalo2 } from './ScreenBarHalo2';
 import { useDocumentTexture, useWorkstationTexture } from './CollectionTextures';
 import { MONITOR, MOTION, PALETTE, ROOM, WALL_TV } from './config';
-import { setWallTvContentColors, setWallTvHovered } from './hoverReactions';
+import { setWallTvContentColors, setWallTvHovered, useWallTvBacklight } from './hoverReactions';
 
-type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'night' | 'halo' | 'presentations' | 'collection' | 'onTalk'>;
+type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk'>;
 type RgbTotals = { red: number; green: number; blue: number; count: number };
 
 const TV_CONTENT_FALLBACK = ['#9D998F', '#9AA7A4'] as const;
@@ -70,16 +70,21 @@ function loadTvContentColors(source: string, onColors: (colors: readonly [string
   };
 }
 
-export function Displays({ selected, onSelect, reducedMotion, night, halo, presentations, collection, onTalk }: DisplaysProps) {
-  const monitorMaterial = useRef<MeshBasicMaterial>(null);
+export function Displays({ selected, onSelect, reducedMotion, halo, presentations, collection, onTalk }: DisplaysProps) {
+  const monitorMaterial = useRef<MeshStandardMaterial>(null);
+  const tvMaterial = useRef<MeshStandardMaterial>(null);
+  const { hovered: tvHovered } = useWallTvBacklight();
   const monitorHovered = useRef(false);
-  const monitorBrightness = useRef(0.84);
   useFrame((_, delta) => {
+    if (tvMaterial.current) {
+      const target = tvHovered ? 0.5 : 0.1;
+      tvMaterial.current.emissiveIntensity = reducedMotion ? target
+        : MathUtils.damp(tvMaterial.current.emissiveIntensity, target, MOTION.object, delta);
+    }
     if (!monitorMaterial.current) return;
-    const targetBrightness = monitorHovered.current ? 1 : 0.84;
-    monitorBrightness.current = reducedMotion ? targetBrightness
-      : MathUtils.damp(monitorBrightness.current, targetBrightness, MOTION.object, delta);
-    monitorMaterial.current.color.set(night ? PALETTE.paper : PALETTE.white).multiplyScalar(monitorBrightness.current);
+    const targetBrightness = monitorHovered.current ? 0.5 : 0.1;
+    monitorMaterial.current.emissiveIntensity = reducedMotion ? targetBrightness
+      : MathUtils.damp(monitorMaterial.current.emissiveIntensity, targetBrightness, MOTION.object, delta);
   });
   const monitor = useWorkstationTexture();
   const today = new Date().toISOString().slice(0, 10);
@@ -103,7 +108,7 @@ export function Displays({ selected, onSelect, reducedMotion, night, halo, prese
         <group position={[0, 0.37, 0]} rotation={[-0.04, 0, 0]}>
           <Block size={[MONITOR.width, MONITOR.height, 0.027]} radius={0.008} color={PALETTE.ink} roughness={0.3} metalness={0.25} />
           <Block size={[0.3, 0.26, 0.035]} position={[0, 0, -0.025]} color={PALETTE.ink} radius={0.028} />
-          <mesh position={[0, 0.004, 0.0145]}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshBasicMaterial ref={monitorMaterial} map={monitor} toneMapped={false} color={night ? PALETTE.paper : PALETTE.white} /></mesh>
+          <mesh name="Desk monitor screen" position={[0, 0.004, 0.0145]}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshStandardMaterial ref={monitorMaterial} map={monitor} emissiveMap={monitor} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
           <mesh position={[0.332, -0.203, 0.015]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
           <ScreenBarHalo2 power={halo.power} temperature={halo.temperature} />
         </group>
@@ -112,7 +117,7 @@ export function Displays({ selected, onSelect, reducedMotion, night, halo, prese
         fixed onHoverChange={setWallTvHovered}>
         <group name={WALL_TV.model}>
           <Block size={[WALL_TV.width, WALL_TV.height, WALL_TV.depth]} color={PALETTE.graphite} radius={0.005} roughness={0.32} metalness={0.5} />
-          <mesh name="Wall TV screen" position={[0, 0.003, WALL_TV.depth / 2 + 0.001]}><planeGeometry args={[WALL_TV.screenWidth, WALL_TV.screenHeight]} /><meshStandardMaterial color="#000000" roughness={0.3} envMapIntensity={0.08} emissive={PALETTE.white} emissiveMap={board} emissiveIntensity={0.88} toneMapped={false} /></mesh>
+          <mesh name="Wall TV screen" position={[0, 0.003, WALL_TV.depth / 2 + 0.001]}><planeGeometry args={[WALL_TV.screenWidth, WALL_TV.screenHeight]} /><meshStandardMaterial ref={tvMaterial} map={board} emissiveMap={board} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
           <mesh position={[WALL_TV.width / 2 - 0.034, -WALL_TV.height / 2 + 0.008, 0.017]}><sphereGeometry args={[0.0015, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         </group>
         {selected === 'education' && <Html center position={[0, -WALL_TV.height / 2 - 0.09, 0.045]} zIndexRange={[15, 10]}>

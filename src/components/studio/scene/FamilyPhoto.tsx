@@ -34,7 +34,7 @@ function Photograph({ src, hovered, reducedMotion }: { readonly src: string; rea
   const width = Math.min(0.21, 0.146 * ratio), height = width / ratio;
   useFrame((_, delta) => {
     if (!material.current) return;
-    const targetBrightness = hovered ? 0.32 : 0.1;
+    const targetBrightness = hovered ? 0.50 : 0.1;
     material.current.emissiveIntensity = reducedMotion ? targetBrightness
       : MathUtils.damp(material.current.emissiveIntensity, targetBrightness, 8, delta);
   });
