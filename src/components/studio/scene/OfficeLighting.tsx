@@ -1,45 +1,32 @@
-import { useLayoutEffect, useMemo, useRef } from 'react';
-import { Object3D } from 'three';
+import { Movable } from './Movable';
+import type { RoomLightPalette } from '../lightingPresets';
+import { useLayoutEffect, useRef } from 'react';
 import type { RectAreaLight } from 'three';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-import { AJ_LAMP, AjLamp } from './AjLamp';
+import { MantisFloor } from './MantisFloor';
+import { SigneFloor } from './SigneFloor';
 import { Block } from './Primitives';
-import { LIGHTING, PALETTE } from './config';
-import type { Point } from './config';
+import { LIGHTING, PALETTE, ROOM, WALL_TV } from './config';
+import { useWallTvBacklight } from './hoverReactions';
 
 RectAreaLightUniformsLib.init();
 
-export function OfficeLighting({ power }: { readonly power: number }) {
+export function OfficeLighting({ power, palette }: { readonly power: number; readonly palette: RoomLightPalette }) {
   return <group name="warm-office-lighting">
-    <group name="reading-lamp-placement" position={[-0.13, 0.0185, 2.18]} rotation={[0, -Math.PI / 2, 0]}>
-      <AjLamp variant="floor" powered={power} />
-      <TaskLight name="Reading lamp pool" power={power} position={AJ_LAMP.floor.aperture}
-        target={AJ_LAMP.floor.lightTarget} intensity={1.8} distance={3} angle={0.8} />
-    </group>
-    <ShelfWash power={power} />
+    <Movable id="mantis"><MantisFloor power={power} color={palette.color} /></Movable>
+    <Movable id="signe"><SigneFloor power={power} palette={palette} /></Movable>
+    <UnderStorageWash power={power} color={palette.gradient[0]} />
+    <ShelfWash palette={palette} power={power} />
+    <TvBacklight power={power} />
   </group>;
 }
 
-function TaskLight({ name, power, position, target, intensity, distance, angle }: {
-  readonly name: string; readonly power: number; readonly position: Point; readonly target: Point;
-  readonly intensity: number; readonly distance: number; readonly angle: number;
-}) {
-  const aim = useMemo(() => new Object3D(), []);
-  return <>
-    <primitive object={aim} position={[...target]} />
-    <spotLight name={name} position={[...position]} target={aim} color={LIGHTING.warm}
-      intensity={intensity * power} distance={distance} decay={2} angle={angle} penumbra={0.8}
-      castShadow shadow-mapSize={[512, 512]} shadow-camera-near={0.02}
-      shadow-normalBias={0.003} shadow-bias={-0.0001} shadow-radius={3} />
-  </>;
-}
-
-function ShelfWash({ power }: { readonly power: number }) {
-  return <group name="concealed-amber-to-warm-white-shelf-strip">
+function ShelfWash({ power, palette }: { readonly power: number; readonly palette: RoomLightPalette }) {
+  return <group name="continuous-4.8m-shelf-lightstrip">
     {[-1, 1].map(side => <group key={side}>
-      <Block size={[1.09, 0.015, 0.018]} position={[side * 0.57, 0.80, 3.283]}
+      <Block size={[2.4, 0.015, 0.018]} position={[side * 1.2, 0.80, 3.283]}
         color={PALETTE.aluminium} radius={0.002} metalness={0.75} roughness={0.4} />
-      <WallWash x={side * 0.57} color={side < 0 ? LIGHTING.amber : LIGHTING.warmWhite} power={power} />
+      <WallWash x={side * 1.2} color={palette.color} power={power} />
     </group>)}
   </group>;
 }
@@ -49,10 +36,42 @@ function WallWash({ x, color, power }: { readonly x: number; readonly color: str
   useLayoutEffect(() => { light.current?.lookAt(x, 1.22, 3.32); }, [x]);
   return <>
     <mesh position={[x, 0.809, 3.288]} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[1.075, 0.009]} />
+      <planeGeometry args={[2.4, 0.009]} />
       <meshStandardMaterial color={LIGHTING.reflector} emissive={color} emissiveIntensity={power * 2} />
     </mesh>
-    <rectAreaLight ref={light} name={x < 0 ? 'Shelf amber wash' : 'Shelf warm-white wash'}
-      position={[x, 0.83, 3.277]} color={color} intensity={power * 20} width={1.075} height={0.028} />
+    <rectAreaLight ref={light} name={x < 0 ? 'Shelf left wash' : 'Shelf right wash'}
+      position={[x, 0.83, 3.277]} color={color} intensity={power * 15} width={2.4} height={0.028} />
   </>;
+}
+
+function TvBacklight({ power }: { readonly power: number }) {
+  const inset = 0.04;
+  const { hovered, colors } = useWallTvBacklight();
+  const brightness = Math.max(power, 0.18) * (hovered ? 1.55 : 1);
+  return <group name="TV rear four-edge gradient lightstrip" position={[...ROOM.gallery.position]}>
+    {([-1, 1] as const).map(side => <group key={side}>
+      <RearStrip position={[0, side * (WALL_TV.height / 2 - inset), 0.025]}
+        width={WALL_TV.width - inset * 2} height={0.012} color={colors[side < 0 ? 0 : 1]} power={brightness} />
+      <RearStrip position={[side * (WALL_TV.width / 2 - inset), 0, 0.025]}
+        width={0.012} height={WALL_TV.height - inset * 2} color={colors[side < 0 ? 0 : 1]} power={brightness} />
+    </group>)}
+  </group>;
+}
+
+function RearStrip({ position, width, height, color, power }: {
+  readonly position: readonly [number, number, number]; readonly width: number; readonly height: number; readonly color: string; readonly power: number;
+}) {
+  return <group position={[...position]} rotation={[0, Math.PI, 0]}>
+    <mesh><planeGeometry args={[width, height]} /><meshStandardMaterial color={LIGHTING.reflector} emissive={color} emissiveIntensity={power * 2} /></mesh>
+    <rectAreaLight name="TV rear wall wash" position={[0, 0, 0.001]} color={color} intensity={power * 24} width={width} height={height} />
+  </group>;
+}
+
+function UnderStorageWash({ power, color }: { readonly power: number; readonly color: string }) {
+  const light = useRef<RectAreaLight>(null);
+  useLayoutEffect(() => { light.current?.lookAt(-2.12, 0, 0.55); }, []);
+  return <group name="USM concealed underside lightstrip">
+    <Block size={[0.018, 0.012, 2.88]} position={[-2.35, 0.195, 0.55]} color={PALETTE.aluminium} radius={0.002} />
+    <rectAreaLight ref={light} name="USM floating floor wash" position={[-2.35, 0.185, 0.55]} width={2.88} height={0.025} intensity={power * 12} color={color} />
+  </group>;
 }

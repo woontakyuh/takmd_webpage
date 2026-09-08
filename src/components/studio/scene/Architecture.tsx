@@ -1,6 +1,7 @@
 import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import type { ReactNode } from 'react';
+import type { BlindLift } from '../types';
 import type { Group } from 'three';
 import { INTERIOR, ROOM } from './config';
 import { Block } from './Primitives';
@@ -28,7 +29,7 @@ const SHADOW_ENCLOSURE: readonly { readonly size: readonly [number, number, numb
 type ArchitectureProps = {
   readonly night: boolean;
   readonly sky: readonly [string, string];
-  readonly blindLift: number;
+  readonly blindLift: BlindLift;
   readonly reducedMotion: boolean;
 };
 

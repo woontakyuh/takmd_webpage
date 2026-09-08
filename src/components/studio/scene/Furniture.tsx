@@ -1,3 +1,4 @@
+import { Movable } from './Movable';
 import { DeskAccessories } from './DeskAccessories';
 import { ExecutiveDesk } from './ExecutiveDesk';
 import { OfficeChair } from './OfficeChair';
@@ -11,13 +12,13 @@ export function Furniture({ lamp, reducedMotion, selected, onSelect, onClaudeSti
   const { desk, chair } = ROOM;
   return (
     <group>
-      <group position={[...desk.position]} rotation={[0, desk.rotation, 0]}>
+      <Movable id="desk"><group position={[...desk.position]} rotation={[0, desk.rotation, 0]}>
         <ExecutiveDesk />
         <DeskAccessories selected={selected} onSelect={onSelect} onClaudeSticker={onClaudeSticker} reducedMotion={reducedMotion} halo={halo} onHaloControls={onHaloControls} />
-      </group>
-      <group position={[...chair.position]} rotation={[0, chair.rotation, 0]}>
+      </group></Movable>
+      <Movable id="chair"><group position={[...chair.position]} rotation={[0, chair.rotation, 0]}>
         <OfficeChair reducedMotion={reducedMotion} />
-      </group>
+      </group></Movable>
       <OfficeStorage wood={wood} lamp={lamp} />
     </group>
   );

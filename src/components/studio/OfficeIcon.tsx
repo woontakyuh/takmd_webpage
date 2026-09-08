@@ -1,6 +1,7 @@
-type IconName = 'room' | 'overview' | 'clock' | 'sun' | 'moon' | 'spine' | 'research' | 'education' | 'workshop' | 'social' | 'cv' | 'ai' | 'projects' | 'family' | 'bjj' | 'surfing' | 'expand' | 'collapse' | 'close' | 'rotateLeft' | 'rotateRight';
+type IconName = 'arrange' | 'room' | 'overview' | 'clock' | 'sun' | 'moon' | 'spine' | 'research' | 'education' | 'workshop' | 'social' | 'cv' | 'ai' | 'projects' | 'family' | 'bjj' | 'surfing' | 'expand' | 'collapse' | 'close' | 'rotateLeft' | 'rotateRight';
 
 const paths: Record<IconName, string> = {
+  arrange: 'M12 2v20M2 12h20M8 6l4-4 4 4M8 18l4 4 4-4M6 8l-4 4 4 4M18 8l4 4-4 4',
   room: 'M4 6h16M4 12h16M4 18h16M8 3v6m8 0v6m-6 0v6',
   clock: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M12 6v6l4 2',
   overview: 'M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 12h8m-4-4v8',

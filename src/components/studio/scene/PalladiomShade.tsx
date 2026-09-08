@@ -12,30 +12,29 @@ type PalladiomShadeProps = {
   readonly top: number;
   readonly bottom: number;
   readonly blindLift: number;
-  readonly reducedMotion: boolean;
+  readonly bracketSides?: readonly (-1 | 1)[];
 };
 
 const CORE_RADIUS = 0.016;
 const ROLL_RADIUS = 0.043;
 const HEMBAR_RADIUS = 0.011;
-const TRAVEL_SPEED = 7;
 const LINEN_NORMAL = new Vector2(0.035, 0.035);
 
-export function PalladiomShade({ centerZ, width, leftX, top, bottom, blindLift, reducedMotion }: PalladiomShadeProps) {
+export function PalladiomShade({ centerZ, width, leftX, top, bottom, blindLift, bracketSides = [-1, 1] }: PalladiomShadeProps) {
   const roll = useRef<Mesh>(null);
   const cloth = useRef<Mesh>(null);
   const hembar = useRef<Mesh>(null);
   const lift = useRef(blindLift);
   const gl = useThree(state => state.gl);
   const linen = useInteriorMaterial('linen', [1, 5]);
-  const rollerX = leftX + 0.098;
-  const rollerY = top - 0.055;
+  const rollerX = leftX + 0.105;
+  const rollerY = top;
   const drop = rollerY - bottom - HEMBAR_RADIUS;
   const target = MathUtils.clamp(blindLift, 0, 1);
 
-  useFrame((_, delta) => {
+  useFrame(() => {
     const previousLift = lift.current;
-    lift.current = reducedMotion ? target : MathUtils.damp(previousLift, target, TRAVEL_SPEED, delta);
+    lift.current = target;
     const fabricLength = drop * (1 - lift.current);
     const rollRadius = CORE_RADIUS + (ROLL_RADIUS - CORE_RADIUS) * Math.sqrt(lift.current);
     const scale = rollRadius / ROLL_RADIUS;
@@ -56,7 +55,7 @@ export function PalladiomShade({ centerZ, width, leftX, top, bottom, blindLift, 
       <cylinderGeometry args={[ROLL_RADIUS, ROLL_RADIUS, width, 28]} />
       <meshStandardMaterial {...linen} color={INTERIOR.sand} roughness={0.9} normalScale={LINEN_NORMAL} />
     </mesh>
-    {[-1, 1].map(side => <group key={side} position={[rollerX + 0.004, rollerY, centerZ + side * (width / 2 + 0.037)]}>
+    {bracketSides.map(side => <group key={side} position={[rollerX + 0.004, rollerY, centerZ + side * (width / 2 + 0.037)]}>
       <Block size={[0.052, 0.105, 0.044]} position={[0.014, 0, 0]}
         color={PALETTE.aluminiumEdge} radius={0.022} roughness={0.3} metalness={0.88} />
       <mesh position={[0.045, 0, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow receiveShadow>

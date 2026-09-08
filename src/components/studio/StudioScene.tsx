@@ -1,8 +1,7 @@
+import { Movable } from './scene/Movable';
 import { Canvas } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
 import { MathUtils, PCFSoftShadowMap } from 'three';
-import { useCallback, useState } from 'react';
-import { AdaptiveQuality } from './scene/AdaptiveQuality';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { GoldAward } from './scene/GoldAward';
 import { PERSONAL_LINKS } from './personal';
@@ -16,6 +15,7 @@ import { SpineExhibit } from './scene/SpineExhibit';
 import { Folio } from './scene/Folio';
 import { Displays } from './scene/Displays';
 import { CalendarClock } from './scene/CalendarClock';
+import { RoomSwitches } from './scene/RoomSwitches';
 import { OfficeLighting } from './scene/OfficeLighting';
 import { OfficeLounge } from './scene/OfficeLounge';
 import { PersonalCorner } from './scene/PersonalCorner';
@@ -24,13 +24,9 @@ import { PALETTE, ROOM, TOUR } from './scene/config';
 export function StudioScene(props: StudioSceneProps) {
   const { sun, position } = props.lighting;
   const skyFill = MathUtils.smoothstep(sun.altitude, -6, 32);
-  const [quality, setQuality] = useState(1.75);
-  const changeQuality = useCallback((step: number) => {
-    setQuality(current => Math.max(0.75, Math.min(1.75, current + step)));
-  }, []);
   return (
     <Canvas camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
-      dpr={[0.75, Math.min(quality, props.compact ? 1.35 : 1.75)]} shadows={{ type: PCFSoftShadowMap }}
+      dpr={[1, props.compact ? 1 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: 'none' }}>
       <Environment resolution={128} frames={1} environmentIntensity={0.12 + skyFill * 0.32}>
@@ -50,22 +46,22 @@ export function StudioScene(props: StudioSceneProps) {
         shadow-normalBias={0.018} shadow-bias={-0.0001} shadow-radius={3} />
       <directionalLight position={[4, 4, -3]} intensity={0.04 + skyFill * 0.18} color={PALETTE.paperLight} />
       <spotLight name="Room ceiling fill" position={[0, ROOM.architecture.height - 0.13, 0]} intensity={sun.lamp * 0.85} distance={7} decay={2}
-        angle={1.3} penumbra={1} color="#ffddb0" />
+        angle={1.3} penumbra={1} color={props.roomPalette.color} />
       <Architecture night={props.night} sky={sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} />
       <Furniture lamp={sun.lamp} halo={props.halo} onHaloControls={props.onHaloControls} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} />
       <OfficeLounge />
-      <OfficeLighting power={sun.lamp} />
-      <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={[1.72, 1.3025, 3.09]} rotation={Math.PI}
+      <RoomSwitches onControl={props.onRoomControl} />
+      <OfficeLighting palette={props.roomPalette} power={sun.lamp} />
+      <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={[1.875, 1.3025, 3.09]} rotation={Math.PI}
         focused={props.selected === 'award'} reducedMotion={props.reducedMotion} onSelect={() => props.onSelect('award')} />
       <PersonalCorner {...props} />
       <CalendarClock reducedMotion={props.reducedMotion} />
-      <Greenery />
+      <Movable id="plant"><Greenery reducedMotion={props.reducedMotion} /></Movable>
       <SpineExhibit {...props} />
       <WorkshopObjects />
-      <Folio {...props} />
+      <Movable id="desk" handle={false}><Folio {...props} /></Movable>
       <Displays {...props} />
       <CameraRig {...props} />
-      <AdaptiveQuality onChange={changeQuality} />
       <OfficeRenderer lighting={props.lighting} />
     </Canvas>
   );

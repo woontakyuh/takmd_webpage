@@ -1,6 +1,8 @@
 import { useTexture } from '@react-three/drei';
-import { useEffect, useMemo, useState } from 'react';
-import { SRGBColorSpace, Vector3 } from 'three';
+import { useFrame } from '@react-three/fiber';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { MathUtils, SRGBColorSpace, Vector3 } from 'three';
+import type { MeshStandardMaterial } from 'three';
 import type { StudioSceneProps } from '../types';
 import photos from '../../../data/photo-frame.json';
 import { profileImage } from '../../../data/cv';
@@ -19,8 +21,9 @@ const EASEL_CENTER = EASEL_HINGE.clone().add(EASEL_FOOT).multiplyScalar(0.5);
 const EASEL_LENGTH = EASEL_HINGE.distanceTo(EASEL_FOOT);
 const EASEL_ANGLE = Math.atan2(EASEL_HINGE.z - EASEL_FOOT.z, EASEL_HINGE.y - EASEL_FOOT.y);
 
-function Photograph({ src }: { readonly src: string }) {
+function Photograph({ src, hovered, reducedMotion }: { readonly src: string; readonly hovered: boolean; readonly reducedMotion: boolean }) {
   const source = useTexture(src);
+  const material = useRef<MeshStandardMaterial>(null);
   const texture = useMemo(() => {
     const copy = source.clone(); copy.colorSpace = SRGBColorSpace; copy.anisotropy = 4; copy.needsUpdate = true;
     return copy;
@@ -29,10 +32,17 @@ function Photograph({ src }: { readonly src: string }) {
   const image = source.image;
   const ratio = image instanceof HTMLImageElement ? image.naturalWidth / image.naturalHeight : 4 / 3;
   const width = Math.min(0.21, 0.146 * ratio), height = width / ratio;
-  return <mesh position={[0, 0, 0.0102]}><planeGeometry args={[width, height]} /><meshStandardMaterial map={texture} emissiveMap={texture} emissive="#ffffff" emissiveIntensity={0.15} roughness={0.4} /></mesh>;
+  useFrame((_, delta) => {
+    if (!material.current) return;
+    const targetBrightness = hovered ? 0.32 : 0.1;
+    material.current.emissiveIntensity = reducedMotion ? targetBrightness
+      : MathUtils.damp(material.current.emissiveIntensity, targetBrightness, 8, delta);
+  });
+  return <mesh position={[0, 0, 0.0102]}><planeGeometry args={[width, height]} /><meshStandardMaterial ref={material} map={texture} emissiveMap={texture} emissive="#ffffff" emissiveIntensity={0.1} roughness={0.4} /></mesh>;
 }
 
 export function FamilyPhoto(props: Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion'>) {
+  const [hovered, setHovered] = useState(false);
   const [photo] = useState(() => {
     const choices: readonly { readonly src: string }[] = photos;
     if (!choices.length) return profileImage;
@@ -43,11 +53,11 @@ export function FamilyPhoto(props: Pick<StudioSceneProps, 'selected' | 'onSelect
     try { sessionStorage.setItem('takmd-frame-photo', selected); } catch { /* Photo selection remains available without storage. */ }
     return selected;
   });
-  return <Interactive id="family" {...props} position={[-0.72, 0.0185 + ROOM.desk.height, -0.23]} rotation={0.13}>
+  return <Interactive id="family" {...props} position={[-0.72, 0.0185 + ROOM.desk.height, -0.23]} rotation={0.13} onHoverChange={setHovered}>
     <group name="photo-frame-body" position={[0, FRAME_CENTER_Y, 0]} rotation={[FRAME_TILT, 0, 0]}>
       <Block size={[0.246, 0.19, 0.018]} color="#30332F" radius={0.0025} roughness={0.48} />
       <Block size={[0.23, 0.174, 0.001]} position={[0, 0, 0.0095]} color="#151815" radius={0.0004} />
-      <Photograph src={photo} />
+      <Photograph src={photo} hovered={hovered} reducedMotion={props.reducedMotion} />
     </group>
     <group name="photo-frame-hinged-easel">
       <mesh name="photo-frame-easel-hinge" position={EASEL_HINGE} rotation={[0, 0, Math.PI / 2]} castShadow>

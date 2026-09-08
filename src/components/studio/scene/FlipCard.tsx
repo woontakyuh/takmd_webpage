@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { CanvasTexture, PlaneGeometry, SRGBColorSpace, type Group } from 'three';
 import { Block } from './Primitives';
-import { CLOCK, PALETTE, type Point } from './config';
+import { CLOCK, type Point } from './config';
 
 const FLIP_SECONDS = 0.48;
 type Props = {
@@ -26,7 +26,7 @@ function useCardTexture(value: string) {
         ctx.fillRect(0, 0, 512, 400);
         ctx.fillStyle = CLOCK.numeral;
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.font = `${value.length > 2 ? 500 : 600} ${value.length > 2 ? 190 : 302}px Arial, sans-serif`;
+        ctx.font = `${value.length > 2 ? 600 : 700} ${value.length > 2 ? 190 : 316}px Arial, sans-serif`;
         ctx.fillText(value, 256, 216, 458);
       }
       const result = new CanvasTexture(canvas);
@@ -73,24 +73,20 @@ export function FlipCard({ value, size, position, reducedMotion }: Props) {
     <Block size={[width + 0.008, height + 0.008, 0.008]} position={[0, 0, -0.006]}
       color={CLOCK.face} radius={0.006} roughness={0.9} />
     <mesh geometry={halves[0]} position={[0, height / 4, 0]}>
-      <meshStandardMaterial map={current.color} emissiveMap={current.numerals} emissive={PALETTE.white} emissiveIntensity={0.65} roughness={0.9} />
+      <meshStandardMaterial map={current.color} emissiveMap={current.numerals} emissive={CLOCK.numeral} emissiveIntensity={0.42} roughness={0.9} />
     </mesh>
     <mesh geometry={halves[1]} position={[0, -height / 4, 0]}>
-      <meshStandardMaterial map={face.flipping ? previous.color : current.color} emissiveMap={face.flipping ? previous.numerals : current.numerals} emissive={PALETTE.white} emissiveIntensity={0.65} roughness={0.9} />
+      <meshStandardMaterial map={face.flipping ? previous.color : current.color} emissiveMap={face.flipping ? previous.numerals : current.numerals} emissive={CLOCK.numeral} emissiveIntensity={0.42} roughness={0.9} />
     </mesh>
     {face.flipping && <group ref={leaf} position={[0, 0, 0.002]}>
       <mesh geometry={halves[0]} position={[0, height / 4, 0.0005]} castShadow>
-        <meshStandardMaterial map={previous.color} emissiveMap={previous.numerals} emissive={PALETTE.white} emissiveIntensity={0.65} roughness={0.9} />
+        <meshStandardMaterial map={previous.color} emissiveMap={previous.numerals} emissive={CLOCK.numeral} emissiveIntensity={0.42} roughness={0.9} />
       </mesh>
       <mesh geometry={halves[1]} position={[0, height / 4, -0.0005]} rotation={[Math.PI, 0, 0]} castShadow>
-        <meshStandardMaterial map={current.color} emissiveMap={current.numerals} emissive={PALETTE.white} emissiveIntensity={0.65} roughness={0.9} />
+        <meshStandardMaterial map={current.color} emissiveMap={current.numerals} emissive={CLOCK.numeral} emissiveIntensity={0.42} roughness={0.9} />
       </mesh>
     </group>}
     <Block size={[width + 0.002, 0.0017, 0.003]} position={[0, 0, 0.003]}
-      color={PALETTE.ink} radius={0.0004} roughness={0.8} />
-    {[-1, 1].map(side => <mesh key={side} position={[side * width / 2, 0, 0.003]} rotation={[0, 0, Math.PI / 2]}>
-      <cylinderGeometry args={[0.0023, 0.0023, 0.006, 10]} />
-      <meshStandardMaterial color={PALETTE.steel} metalness={0.8} roughness={0.38} />
-    </mesh>)}
+      color={CLOCK.back} radius={0.0004} roughness={0.8} />
   </group>;
 }

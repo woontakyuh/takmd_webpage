@@ -3,6 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
 import type { MeshPhysicalMaterial } from 'three';
+import { useArrangement } from '../arrangement';
 import { scheduleSceneSingleAction } from './sceneGesture';
 
 const CLICK_THRESHOLD = 5;
@@ -23,19 +24,21 @@ function modified(event: Pick<MouseEvent, 'shiftKey' | 'ctrlKey' | 'metaKey' | '
 }
 
 export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSelect }: Options) {
+  const { editing } = useArrangement();
   const canvas = useThree(state => state.gl.domElement);
   const material = useRef<MeshPhysicalMaterial>(null);
   const gesture = useRef<Gesture | null>(null);
   const shimmer = useRef(0);
   const [region, setRegion] = useState<'body' | 'inset' | null>(null);
-  const insetHovered = region === 'inset' && focused;
-  useCursor(region !== null && (!focused || insetHovered));
+  const hovered = region !== null;
+  useCursor(region !== null && !editing);
 
   useEffect(() => {
     gesture.current = null;
     setRegion(null);
   }, [focused]);
-  useEffect(() => { shimmer.current = 0; }, [insetHovered]);
+  useEffect(() => { if (editing) setRegion(null); }, [editing]);
+  useEffect(() => { shimmer.current = 0; }, [hovered]);
   useEffect(() => {
     const cancel = () => { gesture.current = null; };
     const track = (event: PointerEvent) => {
@@ -62,26 +65,31 @@ export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSele
 
   useFrame((_, delta) => {
     if (!material.current) return;
-    shimmer.current = insetHovered ? (shimmer.current + delta) % SHIMMER_SECONDS : 0;
+    shimmer.current = hovered ? (shimmer.current + delta) % SHIMMER_SECONDS : 0;
     const pulse = reducedMotion ? 0.5 : 0.5 + 0.5 * Math.sin(2 * Math.PI * shimmer.current / SHIMMER_SECONDS);
-    material.current.emissiveIntensity = insetHovered ? 0.65 + pulse * 0.5 : 0;
-    material.current.envMapIntensity = insetHovered ? 2.2 + pulse * 0.9 : 1.7;
-    material.current.roughness = insetHovered ? 0.12 : 0.22;
+    material.current.emissiveIntensity = hovered ? 0.65 + pulse * 0.5 : 0;
+    material.current.envMapIntensity = hovered ? 2.2 + pulse * 0.9 : 1.7;
+    material.current.roughness = hovered ? 0.12 : 0.22;
   });
 
   const hover = (event: ThreeEvent<PointerEvent>) => {
+    if (editing) {
+      setRegion(null);
+      return;
+    }
     event.stopPropagation();
     setRegion(event.pointerType !== 'touch' && event.buttons === 0
       ? event.object.name === AWARD_INSET_NAME ? 'inset' : 'body' : null);
   };
   return {
     material,
-    insetHovered,
+    hovered,
     handlers: {
       onPointerOver: hover,
       onPointerMove: hover,
       onPointerOut: () => setRegion(null),
       onPointerDown: (event: ThreeEvent<PointerEvent>) => {
+        if (editing) return;
         event.stopPropagation();
         setRegion(null);
         gesture.current = event.button !== 0 || !event.isPrimary || modified(event) ? null
@@ -92,7 +100,7 @@ export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSele
         event.stopPropagation();
         const start = gesture.current;
         gesture.current = null;
-        if (!start || start.focused !== focused || event.button !== 0 || !event.isPrimary || modified(event)
+        if (editing || !start || start.focused !== focused || event.button !== 0 || !event.isPrimary || modified(event)
           || event.pointerId !== start.pointerId
           || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= CLICK_THRESHOLD) return;
         if (!focused) {

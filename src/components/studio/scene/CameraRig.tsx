@@ -1,3 +1,4 @@
+import { useArrangement, moveFocus } from '../arrangement';
 import { OrbitControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
@@ -77,6 +78,7 @@ function isVisibleSurface(object: Object3D): boolean {
 }
 
 export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady }: CameraRigProps) {
+  const { editing, layout } = useArrangement();
   const { camera, size, gl, raycaster, scene, setFrameloop } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const transition = useRef<Transition | null>(null);
@@ -103,7 +105,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   const zoomAt = useCallback((clientX: number, clientY: number, scale: number) => {
     const orbit = controls.current;
-    if (!orbit?.enabled || transition.current) return;
+    if (editing || !orbit?.enabled || transition.current) return;
     clearOrbitMomentum(camera, orbit);
     const hit = surfaceAt(clientX, clientY);
     const forward = camera.getWorldDirection(scratch.position);
@@ -118,7 +120,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     orbit.target.copy(camera.position).addScaledVector(forward, nextDepth);
     orbit.update();
     userMoved.current = true;
-  }, [camera, raycaster, scratch, surfaceAt]);
+  }, [camera, raycaster, scratch, surfaceAt, editing]);
 
   const finishTransition = useCallback((value: Transition, orbit: OrbitControlsImpl) => {
     camera.position.copy(value.position);
@@ -184,7 +186,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const orbit = controls.current;
     if (!orbit) return;
     const handleDoubleClick = (event: MouseEvent) => {
-      if (event.button !== 0 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (editing || event.button !== 0 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) return;
       cancelSceneSingleAction(gl.domElement);
       event.preventDefault();
       event.stopPropagation();
@@ -217,7 +219,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       cancelSceneSingleAction(gl.domElement);
       gl.domElement.removeEventListener('dblclick', handleDoubleClick, true);
     };
-  }, [camera, gl, surfaceAt]);
+  }, [camera, gl, surfaceAt, editing]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -232,7 +234,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       }
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
-      transition.current = toTransition('focus', (compact ? MOBILE_FOCUS : FOCUS)[selected]);
+      transition.current = toTransition('focus', moveFocus((compact ? MOBILE_FOCUS : FOCUS)[selected], selected, layout));
     } else {
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
@@ -268,7 +270,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     if (selected) {
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
-      transition.current = toTransition('focus', (compact ? MOBILE_FOCUS : FOCUS)[selected]);
+      transition.current = toTransition('focus', moveFocus((compact ? MOBILE_FOCUS : FOCUS)[selected], selected, layout));
       return;
     }
     if (!userMoved.current && !savedFreePose.current) {
@@ -301,7 +303,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const keyTarget = wrapper instanceof HTMLElement ? wrapper : gl.domElement;
     if (!orbit) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!orbit.enabled || isFormTarget(event.target)) return;
+      if (editing || !orbit.enabled || isFormTarget(event.target)) return;
       let handled = true;
       if (event.shiftKey && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
         if (!orbit.enablePan) return;
@@ -337,11 +339,14 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     };
     keyTarget.addEventListener('keydown', handleKeyDown);
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
-  }, [camera, gl, zoomAt]);
+  }, [camera, gl, zoomAt, editing]);
+
+  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing; }, [editing]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;
     if (!orbit) return;
+    if (editing) { orbit.enabled = false; return; }
     if (camera instanceof PerspectiveCamera && Math.abs(camera.fov - targetFov.current) > 0.01) {
       camera.fov += (targetFov.current - camera.fov) * (reducedMotion ? 1 : 1 - Math.exp(-MOTION.camera * Math.min(delta, 0.1)));
       camera.updateProjectionMatrix();

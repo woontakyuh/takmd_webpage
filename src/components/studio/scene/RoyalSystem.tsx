@@ -13,8 +13,8 @@ const WALL_FACE_Z = 3.32;
 const MOUNTING_STANDOFF = 0.04;
 const RAIL_DEPTH = 0.019;
 const RAIL_WIDTH = 0.034;
-const CENTER_SHELF_WIDTH = 1.16;
-const SIDE_BAY_WIDTH = 1.12;
+const CENTER_SHELF_WIDTH = 1.35;
+const SIDE_BAY_WIDTH = 1.05;
 const SHELF_DEPTH = 0.3;
 const SHELF_THICKNESS = 0.019;
 const LOWER_SHELF_TOP = 0.82;
@@ -23,7 +23,7 @@ const CABINET_WIDTH = SIDE_BAY_WIDTH;
 const CABINET_DEPTH = 0.38;
 const CABINET_HEIGHT = 0.424;
 
-const FULL_RAIL_X = [-2.28, -1.16, 1.16, 2.28] as const;
+const FULL_RAIL_X = [-2.40, -1.35, 1.35, 2.40] as const;
 const SHORT_RAIL_X = [0] as const;
 const LEFT_LEVELS = [1.3, 1.7, 2.1, 2.4] as const;
 const RIGHT_LEVELS = [AWARD_SHELF_TOP, 1.82, 2.26] as const;
@@ -47,28 +47,28 @@ export function RoyalSystem({ wood }: RoyalSystemProps) {
     </group>
 
     <group name="two-custom-width-wall-hung-cabinets">
-      <RoyalCabinet centerX={-1.72} top={LOWER_SHELF_TOP} kind="drawers" wood={wood} />
-      <RoyalCabinet centerX={1.72} top={LOWER_SHELF_TOP} kind="sliding" wood={wood} />
+      <RoyalCabinet centerX={-1.875} top={LOWER_SHELF_TOP} kind="drawers" wood={wood} />
+      <RoyalCabinet centerX={1.875} top={LOWER_SHELF_TOP} kind="sliding" wood={wood} />
     </group>
 
     <group name="two-connected-open-shelves-below-tv">
-      {[-0.58, 0.58].map(centerX => <Shelf key={centerX} centerX={centerX} top={LOWER_SHELF_TOP}
+      {[-0.675, 0.675].map(centerX => <Shelf key={centerX} centerX={centerX} top={LOWER_SHELF_TOP}
         width={CENTER_SHELF_WIDTH} wood={wood} />)}
-      {[-1.16, 0, 1.16].map(x => <SteelHanger key={x} x={x} shelfTop={LOWER_SHELF_TOP} />)}
+      {[-1.35, 0, 1.35].map(x => <SteelHanger key={x} x={x} shelfTop={LOWER_SHELF_TOP} />)}
     </group>
 
     <group name="asymmetric-open-side-shelving">
-      {LEFT_LEVELS.map(top => <Shelf key={`left-${top}`} centerX={-1.72} top={top}
-        width={SIDE_BAY_WIDTH} wood={wood} supportX={[-2.28, -1.16]} />)}
-      {RIGHT_LEVELS.map(top => <Shelf key={`right-${top}`} centerX={1.72} top={top}
-        width={SIDE_BAY_WIDTH} wood={wood} supportX={[1.16, 2.28]} />)}
+      {LEFT_LEVELS.map(top => <Shelf key={`left-${top}`} centerX={-1.875} top={top}
+        width={SIDE_BAY_WIDTH} wood={wood} supportX={[-2.40, -1.35]} />)}
+      {RIGHT_LEVELS.map(top => <Shelf key={`right-${top}`} centerX={1.875} top={top}
+        width={SIDE_BAY_WIDTH} wood={wood} supportX={[1.35, 2.40]} />)}
     </group>
 
     <group name="quiet-shelf-objects">
-      <BookCluster position={[-2.08, 1.3, 3.09]} count={4} seed={0} />
-      <Ceramic position={[-1.48, 2.1, 3.09]} scale={0.76} />
-      <BookCluster position={[1.43, 1.82, 3.09]} count={4} seed={1} />
-      <Ceramic position={[2.02, 2.26, 3.09]} scale={0.68} />
+      <BookCluster position={[-2.18, 1.3, 3.09]} count={4} seed={0} />
+      <Ceramic position={[-1.65, 2.1, 3.09]} scale={0.76} />
+      <BookCluster position={[1.58, 1.82, 3.09]} count={4} seed={1} />
+      <Ceramic position={[2.17, 2.26, 3.09]} scale={0.68} />
     </group>
   </group>;
 }
@@ -128,7 +128,7 @@ function WallRail({ x, centerY, height, wood }: {
   const fastenerY = [centerY - height / 2 + 0.08, centerY + height / 2 - 0.08] as const;
   return <group name={`royal-rail-${height}m`}>
     <Block size={[RAIL_WIDTH, height, RAIL_DEPTH]} position={[x, centerY, railBackZ - RAIL_DEPTH / 2]}
-      color={WOOD_COLOR} texture={wood} radius={0.004} roughness={0.58} />
+      color={WOOD_COLOR} texture={wood} radius={0.004} roughness={0.675} />
     {fastenerY.map(y => <group key={y} name="40mm-wall-standoff-and-fastener">
       <Rod from={[x, y, railBackZ]} to={[x, y, WALL_FACE_Z]} radius={0.006}
         color={PALETTE.aluminiumEdge} metalness={1} />

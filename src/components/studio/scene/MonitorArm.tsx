@@ -14,7 +14,7 @@ export const MONITOR_ARM = {
   elbowPivot: [-0.104, 0.208, -0.084],
   vesaPivot: [0, 0.368, -0.066],
   vesaPlate: [0, 0.36802, -0.0495],
-  miniDisplayPort: [0.003811, 0.022, 0.066308],
+  miniDisplayPort: [0.1885, 0.022, 0.0664],
   monitorDisplayPort: [0.042, 0.3683, -0.043],
   monitorPowerPort: [0.092, 0.3663, -0.043],
   underDeskOutlet: [-0.11, -0.153, -0.1],
@@ -40,7 +40,7 @@ export function MonitorArm() {
         color={PALETTE.ink} radius={0.001} roughness={0.72} />
       <Cable points={[
         MONITOR_ARM.miniDisplayPort,
-        [-0.006, 0.022, 0.05],
+        [0.18, 0.022, 0.05],
         [0.035, 0.035, 0.015],
         [0.045, 0.07, -0.024],
         [0.045, 0.22, -0.047],
@@ -56,7 +56,7 @@ export function MonitorArm() {
         MONITOR_ARM.underDeskOutlet,
       ]} radius={0.0025} />
       <Cable points={[
-        [0.049166, 0.022, 0.062671], [0.04, 0.014, 0.03],
+        [0.234, 0.022, 0.0664], [0.225, 0.014, 0.03],
         [-0.132, 0.005, -0.05], [-0.149, 0.004, -0.183],
         [-0.149, -0.15, -0.183], MONITOR_ARM.underDeskOutlet,
       ]} radius={0.0025} />

@@ -1,13 +1,17 @@
 import { Component, Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { ArrangementProvider, useArrangement } from './arrangement';
+import { ArrangementControls } from './ArrangementControls';
 import { ReadingPanel } from './ReadingPanel';
 import { OfficeIcon } from './OfficeIcon';
 import { OfficeHelp } from './OfficeHelp';
-import { OfficeRoomControls } from './OfficeRoomControls';
+import { useBlindLift } from './useBlindLift';
+import { OfficeRoomControls, type RoomControl } from './OfficeRoomControls';
 import { MemoryPhoto } from './MemoryPhoto';
 import type { ExhibitId, HaloSettings, StudioContent } from './types';
 import { featuredPresentation, mediaForPaper, orderedPapers, talkMedia } from './collection';
 import { useOfficeLight, LocalClockReadout } from './OfficeTime';
 import type { LightMode } from './localTime';
+import { LIGHT_PRESETS, type LightPreset } from './lightingPresets';
 import { PERSONAL_LINKS } from './personal';
 
 const Scene = lazy(async () => {
@@ -32,18 +36,23 @@ class SceneBoundary extends Component<{ readonly children: ReactNode }, { readon
 }
 
 export function StudioExperience(content: StudioContent) {
+  return <ArrangementProvider><OfficeExperience {...content} /></ArrangementProvider>;
+}
+function OfficeExperience(content: StudioContent) {
+  const arrangement = useArrangement();
   const progress = useRef(0);
   const returnFocus = useRef<HTMLElement | null>(null);
   const [selected, setSelected] = useState<ExhibitId | null>(null);
   const [memoryOpen, setMemoryOpen] = useState(false);
-  const openMemory = useCallback(() => setMemoryOpen(true), []);
+  const openMemory = useCallback(() => { if (!arrangement.editing) setMemoryOpen(true); }, [arrangement.editing]);
   const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 }>({ sequence: 0, view: 0 });
   const [lightMode, setLightMode] = useState<LightMode>('local');
   const localLighting = useOfficeLight(lightMode);
   const [manualLights, setManualLights] = useState<boolean | null>(null);
+  const [lightPreset, setLightPreset] = useState<LightPreset>('warm');
   const [roomBrightness, setRoomBrightness] = useState(1);
   const [haloSettings, setHaloSettings] = useState<HaloSettings>({ enabled: null, brightness: 0.65, temperature: 3500 });
-  const [blindLift, setBlindLift] = useState(0.82);
+  const [roomControl, setRoomControl] = useState<RoomControl | null>(null);
   const lighting = useMemo(() => localLighting
     ? { ...localLighting, sun: { ...localLighting.sun, lamp: (manualLights === null ? localLighting.sun.lamp : Number(manualLights)) * roomBrightness } }
     : null, [localLighting, manualLights, roomBrightness]);
@@ -52,16 +61,19 @@ export function StudioExperience(content: StudioContent) {
     brightness: haloSettings.brightness,
     temperature: haloSettings.temperature,
   };
-  const openHaloControls = useCallback(() => {
-    document.getElementById('office-room-settings')?.showPopover();
-    requestAnimationFrame(() => document.getElementById('office-halo-brightness')?.focus({ preventScroll: true }));
-  }, []);
+  const applyPreset = (preset: LightPreset) => {
+    const values = LIGHT_PRESETS[preset];
+    setLightPreset(preset); setManualLights(true); setRoomBrightness(values.brightness);
+    setHaloSettings({ enabled: true, brightness: values.halo, temperature: values.temperature });
+  };
+  const openHaloControls = useCallback(() => { if (!arrangement.editing) setRoomControl('halo'); }, [arrangement.editing]);
   const night = (lighting?.sun.daylight ?? 1) < 0.35;
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
   const [explored, setExplored] = useState(false);
   const [compact, setCompact] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [blindLift, changeBlindLift] = useBlindLift(reducedMotion);
   const [paperId, setPaperId] = useState(() => orderedPapers(content.publications)[0]?.id ?? null);
   const paperIdRef = useRef(paperId);
   const [paperTurn, setPaperTurn] = useState(0);
@@ -104,6 +116,7 @@ export function StudioExperience(content: StudioContent) {
 
   const featuredTalk = featuredPresentation(content.presentations);
   const open = useCallback((id: ExhibitId) => {
+    if (arrangement.editing) return;
     if (id === 'surfing') {
       window.open(PERSONAL_LINKS.instagram, '_blank', 'noopener,noreferrer');
       setExplored(true);
@@ -113,7 +126,7 @@ export function StudioExperience(content: StudioContent) {
     returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id}`);
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
     setExplored(true); setSelected(id);
-  }, [featuredTalk?.id]);
+  }, [featuredTalk?.id, arrangement.editing]);
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const exhibit = query.get('exhibit');
@@ -144,13 +157,13 @@ export function StudioExperience(content: StudioContent) {
     setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
   };
 
-  return <div className="studio" data-night={night} data-selected={selected} data-explored={explored}>
+  return <div className="studio" data-night={night} data-selected={selected} data-explored={explored} data-arranging={arrangement.editing}>
     <section className="studio-stage" aria-label="TakMD's office">
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <SceneBoundary>{mounted && lighting && <Suspense fallback={<div className="studio-loading" role="status">Opening the office…</div>}>
-          <Scene progress={progress} selected={selected} night={night} lighting={lighting} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClaudeSticker={openMemory} onPaperStep={onPaperStep} onTalk={selectTalk} onReady={onReady} />
+          <Scene progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClaudeSticker={openMemory} onPaperStep={onPaperStep} onTalk={selectTalk} onReady={onReady} />
         </Suspense>}</SceneBoundary>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
         <button className="office-secret-trigger" id="studio-exhibit-award" onClick={() => open('award')}>Inspect the gold award</button>
@@ -168,12 +181,13 @@ export function StudioExperience(content: StudioContent) {
           title="Light follows your time zone’s approximate sun position. Click to preview other lighting.">
           <OfficeIcon name={lightMode === 'local' ? 'clock' : lightMode === 'day' ? 'sun' : 'moon'} /><span>{lightMode === 'local' ? 'Local light' : lightMode === 'day' ? 'Daylight preview' : 'Evening preview'}</span>
         </button>
-        <OfficeRoomControls blindLift={blindLift} lightsOn={(lighting?.sun.lamp ?? 0) > 0}
-          automaticLight={manualLights === null} onBlindLift={setBlindLift}
+        <OfficeRoomControls preset={lightPreset} onPreset={applyPreset} control={roomControl} onClose={() => setRoomControl(null)} blindLift={blindLift} lightsOn={(lighting?.sun.lamp ?? 0) > 0}
+          automaticLight={manualLights === null} onBlindLift={changeBlindLift}
           onLights={value => { setManualLights(value); if (value && roomBrightness === 0) setRoomBrightness(1); }}
           onAutomaticLight={() => { setManualLights(null); setRoomBrightness(1); }} roomBrightness={roomBrightness}
           onRoomBrightness={value => { setRoomBrightness(value); setManualLights(true); }}
           haloSettings={haloSettings} haloOn={halo.power > 0} onHaloSettings={setHaloSettings} />
+        <ArrangementControls onStart={() => { setRoomControl(null); setSelected(null); }} />
         <LocalClockReadout />
       </div>
       <div className="office-bottom">
@@ -182,7 +196,7 @@ export function StudioExperience(content: StudioContent) {
           <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>The practice</button><button onClick={() => goToView(2)}>The desk</button><button id="studio-exhibit-family" onClick={() => open('family')}>Photo frame</button></div>
         </div>
         <footer className="studio-stage-footer">
-        <OfficeHelp ready={ready} explored={explored} compact={compact} />
+        <OfficeHelp ready={ready} explored={explored} compact={compact} onControl={setRoomControl} />
         <div className="studio-collection">
           <p id="office-collection-hint" className="office-collection-hint">Swipe to browse all seven <span aria-hidden="true">→</span></p>
           <nav className="studio-exhibits" aria-label="Office collection" aria-describedby="office-collection-hint">

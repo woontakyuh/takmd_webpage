@@ -72,7 +72,7 @@ function awardGeometry() {
 }
 
 export function GoldAward({ channelUrl, focused, reducedMotion, onSelect, position = [0, 0, 0], rotation = 0 }: GoldAwardProps) {
-  const { material, handlers, insetHovered } = useAwardInteraction({ channelUrl, focused, reducedMotion, onSelect });
+  const { material, handlers, hovered } = useAwardInteraction({ channelUrl, focused, reducedMotion, onSelect });
   const [inkSource, logoSource, grainSource] = useTexture([
     '/models/gold-award/face-ink.webp', '/models/gold-award/triangle-logo.webp', '/models/gold-award/satin-grain.webp',
   ]);
@@ -131,7 +131,7 @@ export function GoldAward({ channelUrl, focused, reducedMotion, onSelect, positi
         <PhotoDecal texture={textures.logo} position={[-0.00065, 0.07565, 0.005]}
           size={[296 / 1536 * ARTWORK.width, 356 / 2304 * ARTWORK.height]} />
         <PhotoDecal texture={textures.ink} position={[0, 0, 0.00765]} size={[ARTWORK.width, ARTWORK.height]} ink />
-        <GoldAwardGlow hovered={insetHovered} reducedMotion={reducedMotion} />
+        <GoldAwardGlow hovered={hovered} reducedMotion={reducedMotion} />
         <BackPlate grain={grain} />
       </group>
     </group>

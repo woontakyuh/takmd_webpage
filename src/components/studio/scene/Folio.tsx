@@ -47,6 +47,7 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress
   const coverPrint = usePrintedTexture('folio');
   const incoming = useMemo(() => paperFromCollection(collection), [collection.paperMedia, collection.publication]);
   const [folio, setFolio] = useState<FolioTurnState<FolioPaper>>(() => ({ kind: 'rest', displayed: incoming }));
+  const [coverHovered, setCoverHovered] = useState(false);
   const observedTurn = useRef(collection.paperTurn);
   const activeTurn = folio.kind === 'turn' ? folio : null;
   const basePaper = activeTurn?.base ?? folio.displayed;
@@ -122,8 +123,10 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress
     if (!cover.current || !leaf.current) return;
     const value = progress.current ?? 0;
     const approach = reducedMotion ? Number(value >= 0.7) : MathUtils.smoothstep(value, 0.5, 0.95);
-    const openness = selected === 'research' ? 1 : selected ? 0 : approach;
-    cover.current.rotation.z = reducedMotion ? openness * Math.PI : MathUtils.damp(cover.current.rotation.z, openness * Math.PI, MOTION.object, delta);
+    const tourAngle = approach * Math.PI;
+    const hoverAngle = coverHovered ? Math.PI / 9 : 0;
+    const coverAngle = selected === 'research' ? Math.PI : Math.max(tourAngle, hoverAngle);
+    cover.current.rotation.z = reducedMotion ? coverAngle : MathUtils.damp(cover.current.rotation.z, coverAngle, MOTION.object, delta);
     if (!activeTurn || reducedMotion) return;
     const nextAngle = MathUtils.damp(leaf.current.rotation.z, activeTurn.target, MOTION.object, delta);
     leaf.current.rotation.z = nextAngle;
@@ -132,7 +135,7 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress
       setFolio(current => current.kind === 'turn' && current.sequence === activeTurn.sequence ? settleFolioTurn(current) : current);
     }
   });
-  return <Interactive id="research" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.folio.position} rotation={ROOM.folio.rotation}>
+  return <Interactive id="research" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.folio.position} rotation={ROOM.folio.rotation} onHoverChange={setCoverHovered}>
     <group scale={0.3}>
     <Block size={[1.03, 0.024, 1.36]} color={PALETTE.linen} texture={linen} radius={0.006} roughness={0.96} />
     <Block size={[0.97, 0.047, 1.29]} position={[0.014, 0.036, 0]} color={PALETTE.paperLight} radius={0.003} />

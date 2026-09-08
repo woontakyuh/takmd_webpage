@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import type { RoomControl } from './OfficeRoomControls';
 
-type Props = { readonly ready: boolean; readonly explored: boolean; readonly compact: boolean };
+type Props = { readonly ready: boolean; readonly explored: boolean; readonly compact: boolean; readonly onControl: (control: RoomControl) => void };
 
-export function OfficeHelp({ ready, explored, compact }: Props) {
+export function OfficeHelp({ ready, explored, compact, onControl }: Props) {
   const [open, setOpen] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -21,6 +22,11 @@ export function OfficeHelp({ ready, explored, compact }: Props) {
     </button>
     <div id="office-gesture-hint" className="office-gesture-hint" hidden={!open}>
       <p className="office-gesture-actions">{gestureSummary}</p>
+      <div className="office-device-shortcuts" aria-label="Device controls">
+        <button onClick={() => { setOpen(false); onControl('room'); }}>Room lights</button>
+        <button onClick={() => { setOpen(false); onControl('shades'); }}>Blinds</button>
+        <button onClick={() => { setOpen(false); onControl('halo'); }}>Halo 2</button>
+      </div>
     </div>
     <span className="studio-sr-only">Focus the scene: arrow keys rotate, Shift plus arrow keys pan, and plus or minus zoom. Double-click a room surface to inspect it, then double-click again to return. Right-drag also pans. Touch: one finger rotates; two fingers pan or pinch to zoom.</span>
   </div>;

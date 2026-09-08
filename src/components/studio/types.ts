@@ -1,4 +1,6 @@
 import type { RefObject } from 'react';
+import type { RoomLightPalette } from './lightingPresets';
+import type { RoomControl } from './OfficeRoomControls';
 import type { OfficeLight } from './localTime';
 
 export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing' | 'projects' | 'family' | 'award';
@@ -47,13 +49,17 @@ export type HaloSettings = {
   readonly temperature: number;
 };
 
+export type BlindLift = readonly [number, number];
+
 export type StudioSceneProps = {
   readonly progress: RefObject<number>;
   readonly selected: ExhibitId | null;
   readonly night: boolean;
   readonly lighting: OfficeLight;
-  readonly blindLift: number;
+  readonly roomPalette: RoomLightPalette;
+  readonly blindLift: BlindLift;
   readonly halo: { readonly power: number; readonly brightness: number; readonly temperature: number };
+  readonly onRoomControl: (control: RoomControl) => void;
   readonly onHaloControls: () => void;
   readonly reducedMotion: boolean;
   readonly compact: boolean;
