@@ -1,7 +1,12 @@
+import { Suspense } from 'react';
 import { Color } from 'three';
 import type { Texture } from 'three';
 import { INTERIOR, PALETTE } from './config';
 import { Block, Rod } from './Primitives';
+import { HallymPlaque } from './HallymPlaque';
+import { SnuhAward } from './SnuhAward';
+import { KomissAward } from './KomissAward';
+import { CertificateFrames } from './CertificateFrames';
 
 const WOOD_BASE = new Color(PALETTE.paperLight);
 const WOOD_TINT = new Color(INTERIOR.lightWood).multiply(
@@ -27,7 +32,6 @@ const FULL_RAIL_X = [-2.40, -1.35, 1.35, 2.40] as const;
 const SHORT_RAIL_X = [0] as const;
 const LEFT_LEVELS = [1.3, 1.7, 2.1, 2.4] as const;
 const RIGHT_LEVELS = [AWARD_SHELF_TOP, 1.82, 2.26] as const;
-const BOOK_COLORS = [INTERIOR.bronze, PALETTE.teal, PALETTE.muted, INTERIOR.sand] as const;
 
 type RoyalSystemProps = { readonly wood: Texture };
 type CabinetKind = 'push' | 'sliding' | 'drawers';
@@ -64,11 +68,17 @@ export function RoyalSystem({ wood }: RoyalSystemProps) {
         width={SIDE_BAY_WIDTH} wood={wood} supportX={[1.35, 2.40]} />)}
     </group>
 
-    <group name="quiet-shelf-objects">
-      <BookCluster position={[-2.18, 1.3, 3.09]} count={4} seed={0} />
-      <Ceramic position={[-1.65, 2.1, 3.09]} scale={0.76} />
-      <BookCluster position={[1.58, 1.82, 3.09]} count={4} seed={1} />
-      <Ceramic position={[2.17, 2.26, 3.09]} scale={0.68} />
+    <group name="personal-awards-collection">
+      <Suspense fallback={null}><CertificateFrames /></Suspense>
+      <group name="Hallym appreciation display" position={[-1.69, 1.3, 3.095]} rotation={[0, Math.PI, 0]}>
+        <HallymPlaque />
+      </group>
+      <group name="SNUH merit display" position={[-2.11, 1.7, 3.115]} rotation={[0, Math.PI, 0]}>
+        <SnuhAward />
+      </group>
+      <group name="KOMISS membership display" position={[-1.69, 1.7, 3.115]} rotation={[0, Math.PI, 0]}>
+        <KomissAward />
+      </group>
     </group>
   </group>;
 }
@@ -163,33 +173,5 @@ function SteelHanger({ x, shelfTop }: { readonly x: number; readonly shelfTop: n
       color={PALETTE.aluminiumEdge} metalness={1} />
     <Rod from={[x, shelfTop + 0.018, backZ]} to={[x, shelfTop + 0.145, backZ]} radius={0.004}
       color={PALETTE.aluminiumEdge} metalness={1} />
-  </group>;
-}
-
-function BookCluster({ position, count, seed }: {
-  readonly position: readonly [number, number, number]; readonly count: number; readonly seed: number;
-}) {
-  return <group name="books-seated-on-shelf" position={[...position]}>{Array.from({ length: count }, (_, index) => {
-    const width = 0.045 + ((index + seed) % 2) * 0.012;
-    const height = 0.22 + ((index + seed) % 3) * 0.035;
-    return <Block key={index} size={[width, height, 0.18]}
-      position={[index * 0.061 + width / 2, height / 2, 0]}
-      color={BOOK_COLORS[(index + seed) % BOOK_COLORS.length] ?? INTERIOR.bronze}
-      radius={0.003} roughness={0.84} />;
-  })}</group>;
-}
-
-function Ceramic({ position, scale }: {
-  readonly position: readonly [number, number, number]; readonly scale: number;
-}) {
-  return <group name="ceramic-seated-on-shelf" position={[...position]} scale={scale}>
-    <mesh position={[0, 0.1, 0]} castShadow receiveShadow>
-      <sphereGeometry args={[0.1, 24, 18]} />
-      <meshStandardMaterial color={INTERIOR.stone} roughness={0.86} />
-    </mesh>
-    <mesh position={[0, 0.205, 0]} castShadow receiveShadow>
-      <cylinderGeometry args={[0.044, 0.06, 0.08, 24]} />
-      <meshStandardMaterial color={INTERIOR.stone} roughness={0.86} />
-    </mesh>
   </group>;
 }
