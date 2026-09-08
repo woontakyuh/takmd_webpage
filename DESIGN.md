@@ -571,3 +571,21 @@ The B&O Beosound Theatre replaces the Beolab8 pair. Its official-OBJ-derived tab
 The owner rejected the handmade Stratocaster. Use Anderson Fogaça's existing CC BY 4.0 Fender Stratocaster mesh (Sketchfab d5dac6b9f2964601b07109c78ed9e7cd), preserving the real asymmetric body, pickguard, three single-coil pickups, tuners, strings, frets and hardware. Adapt the source sunburst and dark fingerboard to the owner's Sienna finish and maple/black-dot fingerboard; the owner's series and model year remain unspecified. Retain the original artist attribution and transformation provenance in public/models/fender/SOURCE.md.
 
 The guitar stands alongside a black/silver Fender ’65 Deluxe Reverb, using the actual Fender script wordmark as physical badge geometry. Place the combined music corner at [2.12,.0185,-2.10], facing into the room. Keep the complete instrument and amplifier movable as one item through the existing visitor-only Arrange controls; reload returns to the official layout. No performance video is published, and no new player or automatic sound is added.
+
+## 73. Guitar support and the owner's whisky collection
+
+Fit the guitar stand to the loaded Stratocaster mesh: rear uprights stay behind the body, a foam crossbar meets the back, and two padded cradles support the asymmetric lower body curves. Front stops sit outside the finish. Verify support geometry against actual transformed body triangles and inspect both side and rear views; front-only checks are insufficient.
+
+Populate two available Royal shelves with the owner's ten whisky expressions confirmed in Notion on 2026-09-08. Exclude exhausted stock. Display Ballantine's 30, Ballantine's Limited, Hibiki Master's Select, Yamazaki Distiller's Reserve and LARK Classic Cask Strength on the left top shelf; Bowmore 12, Lagavulin 16, Redbreast 12, Balvenie The Creation of a Classic and Booker's on the right cabinet top. Preserve space around the existing awards, credentials and clock. Build physical bottle forms from product references, with non-emissive labels and materials responsive to room light. Public scene assets contain product identity and reference provenance only; private inventory notes, purchase information and Notion identifiers remain outside the build. No exact Booker's batch or bottle count is implied.
+
+## 74. Calendar clock below the television
+
+Move the existing cream calendar flip clock to the continuous under-TV shelf beside the Beosound Theatre at [0.91,0.9628,3.104], retaining its 0.6 scale and room-facing orientation. Its feet rest at shelf height 0.82m. Leave a clear gap to the soundbar. The upper row displays year, month, day and weekday; the lower row shows hours, minutes and seconds with two steady colons. Keep real device-time updates, restrained luminous numerals and reduced-motion support. This supersedes the previous side-shelf placement.
+
+## 75. Keep shelf collections together
+
+Group the owner's ten whiskies on the negative-X bookcase, five bottles each on the 0.82m cabinet top and 1.30m shelf. Keep their source-derived shapes, labels and lighting unchanged. On the positive-X bookcase, group the three academic documents on the two upper shelves: portrait documents at 2.26m and the horizontal KOMISS certificate at 1.82m. Group awards below them: keep the KOSESS gold trophy centered at 1.3025m, and place the Hallym, SNUH and KOMISS awards together on the 0.82m cabinet top. Preserve the clock/soundbar and the gold trophy's existing focus/hover/link. This supersedes the split contents in sections 62, 71 and 73.
+
+## 76. Whisky on the two highest shelves
+
+Move all ten bottles together to the two highest negative-X shelves, five at 2.401m and five at 2.001m. Lower the second-highest shelf from 2.10m to 2.00m so 35cm bottles clear the top shelf's underside by 3cm, retaining the real bottle proportions. Preserve the shelf footprint, other shelves, all credentials/awards on the opposite bookcase, and the clock below the TV. This placement supersedes section75's lower whisky rows. Bottle realism remains a future refinement; this change only relocates the collection.
