@@ -2,7 +2,7 @@ import { useCursor } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
-import type { MeshPhysicalMaterial } from 'three';
+import type { MeshPhysicalMaterial, MeshStandardMaterial } from 'three';
 import { useArrangement } from '../arrangement';
 import { scheduleSceneSingleAction } from './sceneGesture';
 
@@ -27,6 +27,8 @@ export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSele
   const { editing } = useArrangement();
   const canvas = useThree(state => state.gl.domElement);
   const material = useRef<MeshPhysicalMaterial>(null);
+  const bodyMaterial = useRef<MeshStandardMaterial>(null);
+  const edgeMaterial = useRef<MeshStandardMaterial>(null);
   const gesture = useRef<Gesture | null>(null);
   const shimmer = useRef(0);
   const [region, setRegion] = useState<'body' | 'inset' | null>(null);
@@ -64,12 +66,21 @@ export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSele
   }, []);
 
   useFrame((_, delta) => {
-    if (!material.current) return;
     shimmer.current = hovered ? (shimmer.current + delta) % SHIMMER_SECONDS : 0;
     const pulse = reducedMotion ? 0.5 : 0.5 + 0.5 * Math.sin(2 * Math.PI * shimmer.current / SHIMMER_SECONDS);
-    material.current.emissiveIntensity = hovered ? 0.65 + pulse * 0.5 : 0;
-    material.current.envMapIntensity = hovered ? 2.2 + pulse * 0.9 : 1.7;
-    material.current.roughness = hovered ? 0.12 : 0.22;
+    if (material.current) {
+      material.current.emissiveIntensity = hovered ? 0.65 + pulse * 0.5 : 0;
+      material.current.envMapIntensity = hovered ? 2.2 + pulse * 0.9 : 1.7;
+      material.current.roughness = hovered ? 0.12 : 0.22;
+    }
+    if (bodyMaterial.current) {
+      bodyMaterial.current.emissiveIntensity = hovered ? 0.045 : 0;
+      bodyMaterial.current.envMapIntensity = hovered ? 1.16 : 1.1;
+    }
+    if (edgeMaterial.current) {
+      edgeMaterial.current.emissiveIntensity = hovered ? 0.07 : 0;
+      edgeMaterial.current.envMapIntensity = hovered ? 1.22 : 1;
+    }
   });
 
   const hover = (event: ThreeEvent<PointerEvent>) => {
@@ -83,6 +94,8 @@ export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSele
   };
   return {
     material,
+    bodyMaterial,
+    edgeMaterial,
     hovered,
     handlers: {
       onPointerOver: hover,

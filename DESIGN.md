@@ -503,3 +503,7 @@ Hovering any part of the award activates the existing polished-inset shimmer and
 ## 59. Screen hover contrast
 
 TV, monitor and photo frame use the same light-reactive screen material: white MeshStandardMaterial, image as both diffuse and emissive map, roughness 0.4, normal scene tone mapping, idle emission 0.10 and hover emission 0.50. Room daylight, ambient light and actual lamps determine the visible day/night difference. Do not cap daylight with an independent low brightness multiplier or bypass lighting with MeshBasicMaterial. TV hover shares the rear lightstrip signal. Keep object damping 8/second, immediate reduced-motion feedback, and all existing textures, geometry and click behavior.
+
+## 60. Subtle surrounding award warmth
+
+Whole-award hover also adds gentle steady warmth to the satin face (emission 0.045) and edges (0.07), using their existing gold colors. Keep grain and roughness intact and preserve the brighter continuous polished-inset sparkle. Reset body/edge emission to zero on exit; reduced motion retains steady warmth. No geometry movement or new hit regions.

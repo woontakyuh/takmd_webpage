@@ -72,7 +72,7 @@ function awardGeometry() {
 }
 
 export function GoldAward({ channelUrl, focused, reducedMotion, onSelect, position = [0, 0, 0], rotation = 0 }: GoldAwardProps) {
-  const { material, handlers, hovered } = useAwardInteraction({ channelUrl, focused, reducedMotion, onSelect });
+  const { material, bodyMaterial, edgeMaterial, handlers, hovered } = useAwardInteraction({ channelUrl, focused, reducedMotion, onSelect });
   const [inkSource, logoSource, grainSource] = useTexture([
     '/models/gold-award/face-ink.webp', '/models/gold-award/triangle-logo.webp', '/models/gold-award/satin-grain.webp',
   ]);
@@ -108,7 +108,8 @@ export function GoldAward({ channelUrl, focused, reducedMotion, onSelect, positi
     <group position={[0, originY, 0]} rotation={[AWARD.lean, 0, 0]}>
       <group scale={[...FACE_SCALE]}>
         <mesh name="Gold award satin body" geometry={geometry.body} castShadow receiveShadow>
-          <meshStandardMaterial attach="material-0" color={GOLD_AWARD.satin} metalness={0.42} roughness={0.64} envMapIntensity={1.1}
+          <meshStandardMaterial ref={bodyMaterial} attach="material-0" color={GOLD_AWARD.satin} metalness={0.42} roughness={0.64} envMapIntensity={1.1}
+            emissive={GOLD_AWARD.satin} emissiveIntensity={0}
             bumpMap={grain} bumpScale={0.00022} customProgramCacheKey={() => 'gold-award-satin-grain-v1'}
             onBeforeCompile={shader => {
               shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
@@ -118,7 +119,8 @@ export function GoldAward({ channelUrl, focused, reducedMotion, onSelect, positi
                 diffuseColor.rgb *= 1.0 + (awardGrain - awardGrainMean) * 0.6;
               `);
             }} />
-          <meshStandardMaterial attach="material-1" color={GOLD_AWARD.edge} metalness={0.58} roughness={0.32} />
+          <meshStandardMaterial ref={edgeMaterial} attach="material-1" color={GOLD_AWARD.edge} metalness={0.58} roughness={0.32}
+            envMapIntensity={1} emissive={GOLD_AWARD.edge} emissiveIntensity={0} />
         </mesh>
         <mesh name={AWARD_INSET_NAME} geometry={geometry.well} position={[0, 0, 0.003]} receiveShadow>
           <meshPhysicalMaterial ref={material} color={GOLD_AWARD.mirror} metalness={0.7} roughness={0.22} envMapIntensity={1.7}
