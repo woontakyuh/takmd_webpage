@@ -49,14 +49,16 @@ export function CalendarClock({ reducedMotion }: { readonly reducedMotion: boole
     <ClockPlate size={[0.724, 0.404, 0.006]} z={0.037} color={CLOCK.rim} radius={0.045} roughness={0.28} metalness={0.74} />
     <ClockPlate size={[0.704, 0.384, 0.003]} z={CLOCK_FRONT_LAYERS.face} color={CLOCK.face} radius={0.032} roughness={0.84} />
     {date && <>
-      <FlipCard value={date.weekday} size={[0.165, 0.115]} position={[-0.23, 0.102, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
-      <FlipCard value={date.day} size={[0.165, 0.115]} position={[0, 0.102, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
-      <FlipCard value={date.month} size={[0.165, 0.115]} position={[0.23, 0.102, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
-      <FlipCard value={date.hours} size={[0.225, 0.175]} position={[-0.13, -0.093, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
-      <FlipCard value={date.minutes} size={[0.225, 0.175]} position={[0.13, -0.093, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.year} size={[0.16, 0.115]} position={[-0.255, 0.102, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.month} size={[0.14, 0.115]} position={[-0.073, 0.102, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.day} size={[0.12, 0.115]} position={[0.09, 0.102, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.weekday} size={[0.13, 0.115]} position={[0.25, 0.102, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.hours} size={[0.195, 0.175]} position={[-0.23, -0.093, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.minutes} size={[0.195, 0.175]} position={[0, -0.093, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
+      <FlipCard value={date.seconds} size={[0.195, 0.175]} position={[0.23, -0.093, CLOCK_FRONT_LAYERS.card]} reducedMotion={reducedMotion} />
     </>}
-    {[-0.018, 0.018].map(y => <mesh key={y} position={[0, y - 0.093, CLOCK_FRONT_LAYERS.indicator]}>
+    {[-0.115, 0.115].flatMap(x => [-0.018, 0.018].map(y => <mesh key={`${x}:${y}`} position={[x, y - 0.093, CLOCK_FRONT_LAYERS.indicator]}>
       <circleGeometry args={[0.0042, 16]} /><meshStandardMaterial color={CLOCK.numeral} emissive={CLOCK.numeral} emissiveIntensity={0.42} roughness={0.85} />
-    </mesh>)}
+    </mesh>))}
   </group>;
 }

@@ -48,7 +48,7 @@ export const ROOM = {
   spine: { position: [-2.38, 0.5695, 1.22], height: 0.54, rotation: Math.PI / 2 - 0.12 },
   folio: { position: [0.38, 0.7805, -1.66], rotation: Math.PI - 0.17 },
   monitor: { position: [-0.05, 0.781, -1.2], rotation: Math.PI },
-  clock: { position: [2.08, 1.9628, 3.104], rotation: Math.PI, scale: 0.6 },
+  clock: { position: [0.91, 0.9628, 3.104], rotation: Math.PI, scale: 0.6 },
   gallery: { position: [0, 1.94, 3.245], rotation: Math.PI },
   chair: { position: [-0.2, 0.0185, -2.59], rotation: Math.PI - 0.23 },
   credenza: { position: [-2.42, 0.0185, 0.55], width: 3.023, depth: 0.373, height: 0.55 },
