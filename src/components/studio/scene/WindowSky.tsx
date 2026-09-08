@@ -1,17 +1,13 @@
-import { useTexture } from '@react-three/drei';
-import { useEffect, useMemo, useRef } from 'react';
-import { Color, MathUtils, ShaderMaterial, SRGBColorSpace, Vector3, Vector4 } from 'three';
+import { useFrame, useThree } from '@react-three/fiber';
+import { useEffect, useMemo } from 'react';
+import {
+  Color, HalfFloatType, MathUtils, PerspectiveCamera, Vector2, Vector4, WebGLRenderTarget,
+} from 'three';
+import { createHanRiverLandscape } from './HanRiverLandscape';
 import { ROOM } from './config';
-
-const DAY_OUTLOOK = '/images/office-outlook/seongsu-han-river-day.webp';
-const NIGHT_OUTLOOK = '/images/office-outlook/seongsu-han-river-night.webp';
-const BACKDROP_X = -24;
-const BACKDROP_WIDTH = 180;
-const BACKDROP_ASPECT = 1835 / 857;
 
 const vertexShader = `
   varying vec3 vWorldPosition;
-
   void main() {
     vec4 worldPosition = modelMatrix * vec4(position, 1.0);
     vWorldPosition = worldPosition.xyz;
@@ -21,34 +17,21 @@ const vertexShader = `
 `;
 
 const fragmentShader = `
-  uniform sampler2D uDay;
-  uniform sampler2D uNight;
-  uniform float uNightMix;
+  uniform sampler2D uExterior;
+  uniform vec2 uResolution;
   uniform float uPortalX;
   uniform vec4 uPortalBounds;
-  uniform vec3 uViewOrigin;
-  uniform float uAspect;
   varying vec3 vWorldPosition;
-
   void main() {
     vec3 ray = vWorldPosition - cameraPosition;
     if (abs(ray.x) < 0.00001) discard;
-
     float portalDistance = (uPortalX - cameraPosition.x) / ray.x;
     if (portalDistance <= 0.0 || portalDistance >= 1.0) discard;
-
     vec3 portalPoint = cameraPosition + ray * portalDistance;
     if (portalPoint.z < uPortalBounds.x || portalPoint.z > uPortalBounds.y
       || portalPoint.y < uPortalBounds.z || portalPoint.y > uPortalBounds.w) discard;
-
-    vec3 outlook = vWorldPosition - uViewOrigin;
-    vec2 panoramaUv = vec2(
-      0.5 + atan(-outlook.z, -outlook.x) / 3.14159265,
-      0.5 + atan(outlook.y, length(outlook.xz)) * uAspect / 3.14159265
-    );
-    vec3 dayColor = texture2D(uDay, panoramaUv).rgb;
-    vec3 nightColor = texture2D(uNight, panoramaUv).rgb;
-    gl_FragColor = vec4(mix(dayColor, nightColor, uNightMix), 1.0);
+    gl_FragColor = texture2D(uExterior, gl_FragCoord.xy / uResolution);
+    #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
 `;
@@ -57,48 +40,81 @@ function nightMixFor(colors: readonly [string, string]): number {
   const top = new Color(colors[0]);
   const bottom = new Color(colors[1]);
   const luminance = (color: Color) => 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-  const averageLuminance = (luminance(top) + luminance(bottom)) / 2;
-  return 1 - MathUtils.smoothstep(averageLuminance, 0.035, 0.42);
+  return 1 - MathUtils.smoothstep((luminance(top) + luminance(bottom)) / 2, 0.035, 0.42);
 }
 
-export function WindowSky({ colors }: { readonly colors: readonly [string, string] }) {
-  const [day, night] = useTexture([DAY_OUTLOOK, NIGHT_OUTLOOK]);
-  const material = useRef<ShaderMaterial>(null);
+type WindowSkyProps = {
+  readonly colors: readonly [string, string];
+  readonly reducedMotion: boolean;
+};
+
+export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
+  const compact = useThree(state => state.size.width < 760);
   const { leftX, window: opening } = ROOM.architecture;
   const centerY = (opening.top + opening.bottom) / 2;
   const nightMix = nightMixFor(colors);
-
-  useEffect(() => {
-    day.colorSpace = SRGBColorSpace;
-    night.colorSpace = SRGBColorSpace;
-    day.needsUpdate = true;
-    night.needsUpdate = true;
-  }, [day, night]);
-
+  const exterior = useMemo(createHanRiverLandscape, []);
+  const output = useMemo(() => new WebGLRenderTarget(1, 1, { type: HalfFloatType, samples: 2 }), []);
+  const exteriorCamera = useMemo(() => new PerspectiveCamera(), []);
+  const saved = useMemo(() => ({ viewport: new Vector4(), scissor: new Vector4() }), []);
   const uniforms = useMemo(() => ({
-    uDay: { value: day },
-    uNight: { value: night },
-    uNightMix: { value: nightMix },
+    uExterior: { value: output.texture },
+    uResolution: { value: new Vector2(1, 1) },
     uPortalX: { value: leftX - 0.04 },
-    uViewOrigin: { value: new Vector3(0, centerY, opening.centerZ + 18) },
-    uAspect: { value: BACKDROP_ASPECT },
     uPortalBounds: { value: new Vector4(
       opening.centerZ - opening.width / 2,
       opening.centerZ + opening.width / 2,
       opening.bottom,
       opening.top,
     ) },
-  }), [day, leftX, night, opening.bottom, opening.centerZ, opening.top, opening.width]);
+  }), [leftX, opening.bottom, opening.centerZ, opening.top, opening.width, output]);
 
-  useEffect(() => {
-    if (material.current) material.current.uniforms.uNightMix.value = nightMix;
-  }, [nightMix]);
+  useEffect(() => { exterior.setNightMix(nightMix); }, [exterior, nightMix]);
+  useEffect(() => () => { exterior.dispose(); output.dispose(); }, [exterior, output]);
 
-  return <mesh name="Seongsu Han River outlook" position={[BACKDROP_X, centerY, opening.centerZ]}
+  useFrame(({ camera, gl, clock }) => {
+    if (!(camera instanceof PerspectiveCamera)) return;
+    gl.getDrawingBufferSize(uniforms.uResolution.value);
+    const { x: width, y: height } = uniforms.uResolution.value;
+    if (output.width !== width || output.height !== height) output.setSize(width, height);
+    exteriorCamera.copy(camera);
+    const overviewDistance = Math.hypot(camera.position.x - leftX, camera.position.z - opening.centerZ);
+    const overviewBlend = compact ? MathUtils.smoothstep(overviewDistance, 4, 12) : 0;
+    exteriorCamera.position.y += MathUtils.lerp(340, 620, overviewBlend);
+    exteriorCamera.far = 12000;
+    exteriorCamera.updateProjectionMatrix();
+    exteriorCamera.updateMatrixWorld();
+    exterior.setTime(reducedMotion ? 0 : clock.elapsedTime);
+
+    const target = gl.getRenderTarget();
+    const cubeFace = gl.getActiveCubeFace();
+    const mipLevel = gl.getActiveMipmapLevel();
+    const scissorTest = gl.getScissorTest();
+    const autoClear = gl.autoClear;
+    const shadows = gl.shadowMap.enabled;
+    gl.getViewport(saved.viewport);
+    gl.getScissor(saved.scissor);
+    try {
+      gl.shadowMap.enabled = false;
+      gl.autoClear = true;
+      gl.setRenderTarget(output);
+      gl.setScissorTest(false);
+      gl.render(exterior.scene, exteriorCamera);
+    } finally {
+      gl.setRenderTarget(target, cubeFace, mipLevel);
+      gl.setViewport(saved.viewport);
+      gl.setScissor(saved.scissor);
+      gl.setScissorTest(scissorTest);
+      gl.shadowMap.enabled = shadows;
+      gl.autoClear = autoClear;
+    }
+  }, 0.5);
+
+  return <mesh name="Yeouido Han River outlook" position={[-24, centerY, opening.centerZ]}
     rotation={[0, Math.PI / 2, 0]} frustumCulled={false} renderOrder={-100}
     raycast={() => undefined}>
-    <planeGeometry args={[BACKDROP_WIDTH, BACKDROP_WIDTH / BACKDROP_ASPECT]} />
-    <shaderMaterial ref={material} uniforms={uniforms} vertexShader={vertexShader}
-      fragmentShader={fragmentShader} depthWrite={false} toneMapped={false} />
+    <planeGeometry args={[180, 84]} />
+    <shaderMaterial name="Rendered Han River window" uniforms={uniforms} vertexShader={vertexShader}
+      fragmentShader={fragmentShader} depthWrite={false} />
   </mesh>;
 }

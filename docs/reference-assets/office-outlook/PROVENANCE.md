@@ -1,20 +1,22 @@
-# Seongsu / Han River office outlook
+# Rendered Yeouido / Han River outlook
 
-The two public backdrop images are original AI-generated reconstructions made for this site. They are visual atmosphere assets, not photographs of a private unit, a claim about a particular floor or resident location, or a surveyed record of the view.
+The active window background is an original Three.js exterior scene. The river, bridge, piers, lights, distant buildings and hills use geometry and procedural materials. The renderer draws this scene from a camera following the office camera, at the canvas drawing-buffer resolution, then clips the result to the real window opening. It does not magnify a photographic background.
 
-## Geographic and composition references
+## Composition references
 
-- Hanwha Engineering & Construction's public Galleria Foret project page established the Seoul Forest setting and south-facing Han River outlook: https://www.hwenc.com/majorprojects/galleria-foret.do
-- Haeahn Architecture's public project page was checked for the development's site and tower axis: https://www.haeahn.com/ko/project/detail.do?prjctSeq=715
-- A public broker photograph at https://galleriaforet.hnchouse.com/assets/view.jpg was used only as a temporary composition reference during generation: park and low industrial roofs in front, a tall glazed tower on the left, dense Seoul in the middle, the broad Han River and low straight bridges on the right, and a continuous mountain ridge in the distance. No reuse license was found, so the photograph is not committed or displayed by this site.
+- Masato Nawate's public night photograph from 63 Building in Yeouido: https://yakei.jp/en/spot.php?i=63build, specifically `https://yakei.jp/en/nightphoto/63build2.jpg`. Personally inspected before modeling. It establishes broad open water in front, a long low diagonal bridge, a thin illuminated far bank and distant Namsan. This historical photograph is a visual reference, not a current live view. The original photograph is not distributed by this site.
+- Seoul Institute's elevated Han River photograph: https://data.si.re.kr/photo/03u88061ba3si0. Personally inspected as a supporting reference for river breadth and the elevated perspective over low bridges. It is not used as a public texture.
 
-The references do not establish an exact private-unit viewpoint. The generated scene intentionally uses non-identifying, reconstructed architecture and contains no readable signs, logos, famous landmarks, interior frames, or watermarks.
+The modeled architecture is a visual interpretation of the references, not a surveyed arrangement of every building or bridge. No exact apartment, floor or resident viewpoint is claimed.
 
-## Generated deliverables
+## Rendering and lifecycle
 
-- `public/images/office-outlook/seongsu-han-river-day.webp` — late-afternoon documentary-style reconstruction, 1835 × 857, SHA-256 `825c81e2fb9d169011956b8f6481c7276db203a80970270132d16da35c21eb09`.
-- `public/images/office-outlook/seongsu-han-river-night.webp` — matched blue-hour/night lighting variant, 1837 × 856, SHA-256 `eda8b9b4ba8ec55122596d32d14fca648b827c7ef9d738b09fcf6802ef36a430`.
+`HanRiverLandscape.ts` constructs the outside geometry, materials and lighting. A separate scene gives the landscape its own long camera range without changing the room camera's near/far limits or exposing outdoor objects in the cutaway room. It is excluded from room interaction picking. The existing solar sky colors drive day/night lighting. The full-resolution exterior render is tone mapped with the room, and its geometry is rendered afresh when approaching the window.
 
-Both were generated on 2026-09-08 with Codex's built-in OpenAI image-generation tool. The day prompt requested a new photorealistic 2:1-or-wider Seoul panorama preserving only the verified geographic composition. It explicitly excluded exact buildings, private-unit inference, readable signs, logos, watermarks, fisheye distortion, invented landmarks, fantasy architecture, and stylized color grading. The night prompt treated the day output as the invariant edit target and changed only the lighting to restrained blue hour with warm city lights, while preserving the panorama framing, skyline, river, bridges, ridge, and foreground.
+The water reflects the actual exterior scene through Three.js's installed `Reflector` implementation. Subtle shader ripples disturb those reflections; reduced motion freezes their animation. Instanced structures limit draw calls. The exterior pass restores renderer state, and its resources are disposed on unmount.
 
-The generated PNG outputs were visually inspected, then encoded as WebP at quality 84 with Sharp 0.34.5. The runtime blends the matched day and night assets from the existing solar sky colors and displays them with angular panorama coordinates on a distant plane clipped in the fragment shader to the actual window opening. Sky depth is placed behind the room to keep oblique mobile views within camera clip space. This is a 2.5D reconstruction, not a full 360-degree photographic panorama.
+The acceptance surfaces include both the untouched desktop/mobile overview and a close view through the window: a broad river must dominate, with distant-bank and bridge context, sharp geometric outlines, natural perspective, shade coverage and no landscape escaping outside the window aperture.
+
+## Retired photographic work
+
+The older `seongsu-han-river-day.webp` and `seongsu-han-river-night.webp` files are not used by the active window. Their apartment-dominated composition was rejected. A subsequent generated Yeouido photo pair was also rejected for softness and a visual mismatch with the rendered room; those experiment assets remain only in local task evidence and are not part of the public build. The active background has no day/night panorama image dependency.

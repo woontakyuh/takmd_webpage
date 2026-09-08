@@ -15,7 +15,7 @@ export function WindowBay({ night, sky, blindLift, reducedMotion }: WindowBayPro
   const centerY = (opening.bottom + opening.top) / 2;
   const openingHeight = opening.top - opening.bottom;
   return <group name="two-panel-window-bay">
-    <WindowSky colors={sky} />
+    <WindowSky colors={sky} reducedMotion={reducedMotion} />
     <mesh position={[leftX - 0.025, centerY, opening.centerZ]} rotation={[0, Math.PI / 2, 0]}>
       <planeGeometry args={[opening.width, openingHeight]} />
       <meshPhysicalMaterial color={night ? PALETTE.teal : PALETTE.paperLight} transparent
