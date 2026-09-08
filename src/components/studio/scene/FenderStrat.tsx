@@ -2,7 +2,7 @@ import { useGLTF } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { Float32BufferAttribute, Mesh, MeshStandardMaterial } from 'three';
 import type { BufferGeometry, Material } from 'three';
-import { Block, Rod } from './Primitives';
+import { Rod } from './Primitives';
 
 const MODEL_URL = '/models/fender/stratocaster-sunburst.glb' as const;
 const DARK = '#20201d';
@@ -166,14 +166,20 @@ export function FenderStrat() {
       />
     </group>
     <group name="padded A-frame guitar stand">
-      <Rod from={[-0.112, 0.018, -0.09]} to={[-0.052, 0.505, -0.015]} radius={0.008} color={DARK} metalness={0.28} />
-      <Rod from={[0.112, 0.018, -0.09]} to={[0.052, 0.505, -0.015]} radius={0.008} color={DARK} metalness={0.28} />
+      <Rod from={[-0.112, 0.018, -0.09]} to={[-0.052, 0.43, -0.055]} radius={0.008} color={DARK} metalness={0.28} />
+      <Rod from={[0.112, 0.018, -0.09]} to={[0.052, 0.43, -0.055]} radius={0.008} color={DARK} metalness={0.28} />
       <Rod from={[-0.112, 0.018, -0.09]} to={[-0.18, 0.018, 0.11]} radius={0.009} color={DARK} metalness={0.28} />
       <Rod from={[0.112, 0.018, -0.09]} to={[0.18, 0.018, 0.11]} radius={0.009} color={DARK} metalness={0.28} />
-      <Rod from={[-0.073, 0.191, -0.047]} to={[-0.09, 0.185, 0.045]} radius={0.008} color={DARK} metalness={0.28} />
-      <Rod from={[0.073, 0.191, -0.047]} to={[0.09, 0.185, 0.045]} radius={0.008} color={DARK} metalness={0.28} />
-      <Block size={[0.09, 0.018, 0.035]} position={[-0.09, 0.185, 0.045]} rotation={[0, 0, -0.18]} color="#393833" radius={0.007} roughness={0.95} />
-      <Block size={[0.09, 0.018, 0.035]} position={[0.09, 0.185, 0.045]} rotation={[0, 0, 0.18]} color="#393833" radius={0.007} roughness={0.95} />
+      {/* The imported body's two lower curves meet the foam at slightly different heights. */}
+      <Rod from={[-0.0964, 0.12507, -0.0809]} to={[-0.09, 0.12507, -0.052]} radius={0.008} color={DARK} metalness={0.28} />
+      <Rod from={[0.0968, 0.12215, -0.0812]} to={[0.09, 0.12215, -0.052]} radius={0.008} color={DARK} metalness={0.28} />
+      <Rod from={[-0.09, 0.12507, -0.052]} to={[-0.09, 0.12507, 0.044]} radius={0.012} color="#393833" />
+      <Rod from={[0.09, 0.12215, -0.052]} to={[0.09, 0.12215, 0.044]} radius={0.012} color="#393833" />
+      <Rod from={[-0.09, 0.12507, 0.044]} to={[-0.09, 0.15, 0.044]} radius={0.012} color="#393833" />
+      <Rod from={[0.09, 0.12215, 0.044]} to={[0.09, 0.147, 0.044]} radius={0.012} color="#393833" />
+      <Rod from={[-0.0564, 0.4, -0.0575]} to={[-0.0564, 0.4, -0.039]} radius={0.008} color={DARK} metalness={0.28} />
+      <Rod from={[0.0564, 0.4, -0.0575]} to={[0.0564, 0.4, -0.039]} radius={0.008} color={DARK} metalness={0.28} />
+      <Rod from={[-0.063, 0.4, -0.039]} to={[0.063, 0.4, -0.039]} radius={0.012} color="#393833" />
     </group>
   </group>;
 }
