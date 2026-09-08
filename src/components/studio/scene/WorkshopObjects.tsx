@@ -164,13 +164,13 @@ export function WorkshopObjects() {
 
   return (
     <group rotation={[0, 0, 0]}>
-      <WorkshopLink label={dummy.title} route={`/workshops/${dummy.slug}`} position={[-2.38, CABINET_TOP + 0.014, 0.27]}>
+      <WorkshopLink label={dummy.title} route={`/workshops/${dummy.slug}`} position={[-2.38, CABINET_TOP + 0.014, 0.70]}>
         <TrainingDummy />
       </WorkshopLink>
-      <WorkshopLink label={cadaver.title} route={`/workshops/${cadaver.slug}`} position={[-2.38, CABINET_TOP, -0.22]}>
+      <WorkshopLink label={cadaver.title} route={`/workshops/${cadaver.slug}`} position={[-2.38, CABINET_TOP, 0.19]}>
         <EndoscopeTray />
       </WorkshopLink>
-      <WorkshopLink label={animal.title} route={`/workshops/${animal.slug}`} position={[-2.37, CABINET_TOP, -0.78]}>
+      <WorkshopLink label={animal.title} route={`/workshops/${animal.slug}`} position={[-2.37, CABINET_TOP, -0.31]}>
         <PigPlush />
       </WorkshopLink>
     </group>

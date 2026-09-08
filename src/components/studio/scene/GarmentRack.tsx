@@ -1,28 +1,91 @@
-import { Block, Rod } from './Primitives';
-import { INTERIOR, PALETTE } from './config';
-import { usePrintedTexture } from './Textures';
+import { useEffect, useMemo } from 'react';
+import { ExtrudeGeometry, Path, Shape } from 'three';
+import { useInteriorMaterial } from './InteriorMaterials';
+import { Rod } from './Primitives';
+import { INTERIOR } from './config';
 
 export const RACK_RAIL_HALF_HEIGHT = 0.015;
-const WHITE = '#eeeae2';
-const BAYS = [-0.30, 0.30] as const;
+
+export const EPOCH_HANGER_POSITIONS = {
+  coat: [0.368, 1.777, -0.075],
+  gi: [-0.368, 1.774, -0.081],
+} as const;
+
+const WIDTH = 1.18;
+const HEIGHT = 0.08;
+const DEPTH = 0.204;
+const CENTRE_Y = 1.78;
+const FRONT_RADIUS = 0.096;
+const WALL = 0.016;
+const HPL_THICKNESS = 0.006;
+const FOG = '#D4D5CF';
+const PEG_X = [-0.46, -0.368, -0.276, -0.184, -0.092, 0, 0.092, 0.184, 0.276, 0.368, 0.46] as const;
+
+export const EPOCH_SHELF_TOP = CENTRE_Y + 0.02;
+
+function roundedFrontShape(width: number, depth: number, radius: number) {
+  const halfWidth = width / 2;
+  const rear = -depth / 2;
+  const front = depth / 2;
+  const corner = Math.min(radius, halfWidth, depth / 2);
+  const shape = new Shape();
+  shape.moveTo(-halfWidth, rear);
+  shape.lineTo(halfWidth, rear);
+  shape.lineTo(halfWidth, front - corner);
+  shape.quadraticCurveTo(halfWidth, front, halfWidth - corner, front);
+  shape.lineTo(-halfWidth + corner, front);
+  shape.quadraticCurveTo(-halfWidth, front, -halfWidth, front - corner);
+  shape.lineTo(-halfWidth, rear);
+  shape.closePath();
+  return shape;
+}
+
+function roundedFrontHole(width: number, depth: number, radius: number) {
+  const halfWidth = width / 2;
+  const rear = -depth / 2;
+  const front = depth / 2;
+  const corner = Math.min(radius, halfWidth, depth / 2);
+  const path = new Path();
+  path.moveTo(-halfWidth, rear);
+  path.lineTo(-halfWidth, front - corner);
+  path.quadraticCurveTo(-halfWidth, front, -halfWidth + corner, front);
+  path.lineTo(halfWidth - corner, front);
+  path.quadraticCurveTo(halfWidth, front, halfWidth, front - corner);
+  path.lineTo(halfWidth, rear);
+  path.closePath();
+  return path;
+}
+
+function createShellGeometry() {
+  const shell = roundedFrontShape(WIDTH, DEPTH, FRONT_RADIUS);
+  shell.holes.push(roundedFrontHole(WIDTH - 2 * WALL, DEPTH - 2 * WALL, FRONT_RADIUS - WALL));
+  return new ExtrudeGeometry(shell, { depth: HEIGHT, bevelEnabled: false, curveSegments: 16 });
+}
+
+function createTopGeometry() {
+  const top = roundedFrontShape(WIDTH - 2 * WALL, DEPTH - 2 * WALL, FRONT_RADIUS - WALL);
+  return new ExtrudeGeometry(top, { depth: HPL_THICKNESS, bevelEnabled: false, curveSegments: 16 });
+}
 
 export function GarmentRack() {
-  const wood = usePrintedTexture('wood');
-  return <group name="String System 120cm white and oak wardrobe">
-    {[-0.60, 0, 0.60].map(x => <group key={x} name="String 200x30cm wire floor panel">
-      {[-0.10, 0.20].map(z => <Rod key={z} from={[x, 0.025, z]} to={[x, 1.99, z]} radius={0.006} color={WHITE} />)}
-      {Array.from({ length: 40 }, (_, i) => <Rod key={i} from={[x, 0.05 + i * 0.05, -0.10]} to={[x, 0.05 + i * 0.05, 0.20]} radius={0.0025} color={WHITE} />)}
-      {[-0.10, 0.20].map(z => <Block key={z} size={[0.026, 0.018, 0.026]} position={[x, 0.018, z]} color={PALETTE.rubber} radius={0.008} />)}
-      {[0.15, 1.85].map(y => <Rod key={y} from={[x, y, 0.20]} to={[x, y, 0.365]} radius={0.005} color={WHITE} />)}
-    </group>)}
-    {BAYS.map(x => <group key={x} name="String 58cm wardrobe bay">
-      <Block size={[0.58, 0.018, 0.30]} position={[x, 1.97, 0.05]} color={INTERIOR.lightWood} texture={wood} radius={0.004} roughness={0.6} />
-      {[0.20, 1.65].map(y => <group key={y} name="String white metal shelf with low edge">
-        <Block size={[0.58, 0.009, 0.30]} position={[x, y, 0.05]} color={WHITE} radius={0.003} roughness={0.45} />
-        {[-0.097, 0.197].map(z => <Block key={z} size={[0.58, 0.018, 0.006]} position={[x, y + 0.008, z]} color={WHITE} radius={0.002} />)}
-      </group>)}
-      <Rod from={[x - 0.265, 1.485, 0]} to={[x + 0.265, 1.485, 0]} radius={0.012} color={WHITE} />
-      {[-0.265, 0.265].map(dx => <Rod key={dx} from={[x + dx, 1.485, 0]} to={[x + dx, 1.64, 0]} radius={0.005} color={WHITE} />)}
-    </group>)}
+  const oak = useInteriorMaterial('oak', [3, 1]);
+  const geometry = useMemo(() => ({ shell: createShellGeometry(), top: createTopGeometry() }), []);
+  useEffect(() => () => {
+    geometry.shell.dispose();
+    geometry.top.dispose();
+  }, [geometry]);
+  return <group name="Audo Copenhagen Epoch Shelf with Rack 118 Natural Oak Fog">
+    <mesh name="Steam-bent oak veneer continuous rounded-front shell" geometry={geometry.shell}
+      position={[0, CENTRE_Y - HEIGHT / 2, 0]} rotation={[-Math.PI / 2, 0, 0]} castShadow receiveShadow>
+      <meshPhysicalMaterial {...oak} color={INTERIOR.oakLight} roughness={0.46} clearcoat={0.06} clearcoatRoughness={0.6} />
+    </mesh>
+    <mesh name="Fog HPL recessed top ledge" geometry={geometry.top}
+      position={[0, EPOCH_SHELF_TOP - HPL_THICKNESS, 0]} rotation={[-Math.PI / 2, 0, 0]} castShadow receiveShadow>
+      <meshPhysicalMaterial color={FOG} roughness={0.3} clearcoat={0.08} clearcoatRoughness={0.3} />
+    </mesh>
+    <group name="Eleven concealed natural-oak garment pegs">
+      {PEG_X.map(x => <Rod key={x} from={[x, 1.77, -0.085]} to={[x, 1.77, -0.035]}
+        radius={0.011} endRadius={0.013} color={INTERIOR.oak} />)}
+    </group>
   </group>;
 }

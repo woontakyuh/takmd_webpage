@@ -39,9 +39,13 @@ function ClockPlate({ size, radius, z = 0, color, roughness, metalness = 0 }: {
 export function CalendarClock({ reducedMotion }: { readonly reducedMotion: boolean }) {
   const date = useLocalDate();
 
-  return <group name="Calendar flip clock" position={[...ROOM.clock.position]} rotation={[0, ROOM.clock.rotation, 0]}>
-    <ClockPlate size={[0.706, 0.386, 0.008]} z={-0.035} color={CLOCK.back} radius={0.038} roughness={0.8} />
-    <ClockPlate size={[0.78, 0.46, 0.078]} color={CLOCK.case} radius={0.07} roughness={0.3} metalness={0.08} />
+  return <group name="Calendar flip clock" position={[...ROOM.clock.position]} rotation={[0, ROOM.clock.rotation, 0]} scale={ROOM.clock.scale}>
+    <ClockPlate size={[0.752, 0.432, 0.102]} z={-0.044} color={CLOCK.case} radius={0.055} roughness={0.48} />
+    <ClockPlate size={[0.706, 0.386, 0.004]} z={-0.097} color={CLOCK.back} radius={0.038} roughness={0.8} />
+    <ClockPlate size={[0.78, 0.46, 0.078]} color={CLOCK.case} radius={0.055} roughness={0.42} />
+    {[-0.26, 0.26].map(x => <mesh key={x} position={[x, -0.234, -0.03]} castShadow receiveShadow>
+      <boxGeometry args={[0.1, 0.008, 0.085]} /><meshStandardMaterial color={CLOCK.back} roughness={0.92} />
+    </mesh>)}
     <ClockPlate size={[0.724, 0.404, 0.006]} z={0.037} color={CLOCK.rim} radius={0.045} roughness={0.28} metalness={0.74} />
     <ClockPlate size={[0.704, 0.384, 0.003]} z={CLOCK_FRONT_LAYERS.face} color={CLOCK.face} radius={0.032} roughness={0.84} />
     {date && <>

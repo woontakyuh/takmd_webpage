@@ -23,7 +23,7 @@ export const WALL_TV = {
   screenWidth: 2.1694, screenHeight: 1.2203,
 } as const;
 
-export const CLOCK = { case: '#111312', back: '#090A0A', rim: '#A8AAA5', face: '#252624', card: '#1E201E', numeral: '#F6F5EE' } as const;
+export const CLOCK = { case: '#E4E2DA', back: '#090A0A', rim: '#B9BCB4', face: '#252624', card: '#1E201E', numeral: '#F6F5EE' } as const;
 
 export const GOLD_AWARD = { satin: '#D6B77A', edge: '#C7A15A', mirror: '#D9AD4A', back: '#D6B77A' } as const;
 
@@ -45,15 +45,15 @@ export const ROOM = {
   architecture: { height: 3.2, farZ: 3.36, leftX: -2.76,
     window: { centerZ: 0.55, width: 3.4, bottom: 0.75, top: 2.6 } },
   desk: { position: [-0.05, 0, -1.5], rotation: Math.PI, width: 1.8, depth: 0.9, height: 0.755 },
-  spine: { position: [-2.38, 0.5695, 0.85], height: 0.54, rotation: Math.PI / 2 - 0.12 },
+  spine: { position: [-2.38, 0.5695, 1.22], height: 0.54, rotation: Math.PI / 2 - 0.12 },
   folio: { position: [0.38, 0.7805, -1.66], rotation: Math.PI - 0.17 },
   monitor: { position: [-0.05, 0.781, -1.2], rotation: Math.PI },
-  clock: { position: [0, 2.82, 3.283], rotation: Math.PI, scale: 1 },
+  clock: { position: [2.08, 1.9628, 3.104], rotation: Math.PI, scale: 0.6 },
   gallery: { position: [0, 1.94, 3.245], rotation: Math.PI },
   chair: { position: [-0.2, 0.0185, -2.59], rotation: Math.PI - 0.23 },
   credenza: { position: [-2.42, 0.0185, 0.55], width: 3.023, depth: 0.373, height: 0.55 },
   plant: { position: [2.18, 0.0185, -0.55] },
-  wardrobe: { position: [-2.35, 0.0185, -1.95], rotation: Math.PI * 1.5, width: 1.2, height: 1.5, depth: 0.6 },
+  wardrobe: { position: [-2.658, 0.0185, -1.95], rotation: Math.PI * 1.5, width: 1.18, height: 0.08, depth: 0.204 },
   surfboard: { position: [-2.382, 0, -3.01], rotation: Math.PI / 2 + 0.18 },
 } as const;
 
@@ -64,14 +64,14 @@ export const TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
 ];
 
 export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
-  spine: { position: [-0.45, 1.6, -0.2], target: [-2.38, 0.9, 0.85], zoom: 1 },
+  spine: { position: [-0.45, 1.6, 0.17], target: [-2.38, 0.9, 1.22], zoom: 1 },
   research: { position: [0.08, 1.9, -2.92], target: [0.38, 0.8, -1.66], zoom: 1 },
   education: { position: [-0.42, 2.20, 1.15], target: [0, 1.90, 3.22], zoom: 1 },
   ai: { position: [0.03, 1.255, -2.2], target: [-0.05, 1.155, -1.2], zoom: 1 },
   family: { position: [0.68, 1.16, -2.03], target: [0.67, 0.885, -1.27], zoom: 1 },
   award: { position: [1.875, 1.58, 2.215], target: [1.875, 1.448, 3.06], zoom: 1 },
   projects: { position: [0.25, 1.35, -2.12], target: [-0.24, 0.815, -1.33], zoom: 1 },
-  bjj: { position: [-1.25, 1.65, -1.05], target: [-2.35, 1.04, -2.25], zoom: 1 },
+  bjj: { position: [-1.25, 1.82, -1.02], target: [-2.505, 1.30, -2.318], zoom: 1 },
   surfing: { position: [0.65, 1.85, -4.25], target: [-2.382, 1.46, -3.01], zoom: 1 },
 };
 
@@ -82,14 +82,14 @@ export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
 ];
 
 export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
-  spine: { position: [-0.3, 1.9, -0.65], target: [-2.38, 0.9, 0.85], zoom: 1 },
+  spine: { position: [-0.3, 1.9, -0.28], target: [-2.38, 0.9, 1.22], zoom: 1 },
   research: { position: [-0.05, 2.5, -2.92], target: [0.38, 0.8, -1.66], zoom: 1 },
   education: { position: [-0.55, 2.40, 0.2], target: [0, 1.90, 3.22], zoom: 1 },
   ai: FOCUS.ai,
   family: FOCUS.family,
   award: { position: [1.875, 1.60, 2.135], target: [1.875, 1.448, 3.06], zoom: 1 },
   projects: { position: [0.45, 1.7, -2.5], target: [-0.24, 0.815, -1.33], zoom: 1 },
-  bjj: { position: [-0.7, 1.9, -0.9], target: [-2.35, 1.04, -2.25], zoom: 1 },
+  bjj: { position: [-0.7, 2.05, -0.88], target: [-2.505, 1.30, -2.318], zoom: 1 },
   surfing: { position: [1.05, 2.15, -4.5], target: [-2.382, 1.46, -3.01], zoom: 1 },
 };
 

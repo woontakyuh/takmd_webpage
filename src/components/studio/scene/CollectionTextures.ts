@@ -91,28 +91,44 @@ export function useWorkstationTexture() {
       context.scale(4 / 3, 4 / 3);
       context.fillStyle = PALETTE.paperLight; context.fillRect(0, 0, 1920, 1080);
       context.fillStyle = PALETTE.teal; context.fillRect(80, 66, 42, 3);
-      context.font = '21px Arial'; context.fillText('LIVING CV  /  TAKMD', 142, 78);
+      context.font = '21px Arial'; context.fillText('CURRICULUM VITAE  /  TAKMD', 142, 78);
       context.fillStyle = PALETTE.ink; context.font = '68px Georgia';
       context.fillText('Woon Tak Yuh, MD.', 80, 184);
       context.font = '25px Arial'; context.fillStyle = PALETTE.muted;
       context.fillText('Neurosurgeon · Research · Teaching', 83, 234);
-      context.font = '23px Arial'; context.fillText(currentRoles[0], 83, 277, 1260);
+      context.font = '23px Arial'; context.fillText(currentRoles[0], 83, 277);
       context.fillStyle = PALETTE.teal; context.font = '20px Arial';
-      context.fillText('ACADEMIC INTERESTS', 80, 347);
+      context.fillText('ACADEMIC INTERESTS', 80, 320);
       context.fillStyle = PALETTE.ink; context.font = '29px Arial';
-      academicInterests.forEach((interest, index) => context.fillText(interest, 80, 393 + index * 45));
+      academicInterests.forEach((interest, index) => context.fillText(interest, 80, 363 + index * 42));
       context.strokeStyle = PALETTE.line; context.lineWidth = 2;
-      context.beginPath(); context.moveTo(80, 538); context.lineTo(1840, 538); context.stroke();
+      context.beginPath(); context.moveTo(80, 482); context.lineTo(1180, 482); context.stroke();
       context.fillStyle = PALETTE.teal; context.font = '20px Arial';
-      context.fillText('ACADEMIC & PROFESSIONAL ACTIVITIES', 80, 583);
+      context.fillText('ACADEMIC & PROFESSIONAL ACTIVITIES', 80, 527);
+      const drawActivityText = (text: string, x: number, y: number) => {
+        let line = '';
+        let baseline = y;
+        for (const word of text.split(/\s+/)) {
+          const next = line ? `${line} ${word}` : word;
+          if (line && context.measureText(next).width > 530) {
+            context.fillText(line, x, baseline);
+            baseline += 31;
+            line = word;
+          } else line = next;
+        }
+        context.fillText(line, x, baseline);
+        return baseline + 32;
+      };
+      const columnBaselines: [number, number] = [570, 570];
       activities.forEach((activity, index) => {
-        const x = index < 5 ? 80 : 1035;
-        const y = 635 + (index % 5) * 78;
+        const column = index < 5 ? 0 : 1;
+        const x = column === 0 ? 80 : 650;
+        const y = columnBaselines[column];
         context.fillStyle = PALETTE.ink;
         context.font = activity.organization === 'Neurospine' || activity.organization === 'JMISST' ? 'italic 26px Georgia' : '25px Arial';
-        context.fillText(activity.organization, x, y, index < 5 ? 885 : 800);
+        const roleY = drawActivityText(activity.organization, x, y);
         context.fillStyle = PALETTE.muted; context.font = '23px Arial';
-        context.fillText(activity.role, x, y + 32, index < 5 ? 885 : 800);
+        columnBaselines[column] = drawActivityText(activity.role, x, roleY) + 16;
       });
       context.fillStyle = PALETTE.line; context.fillRect(80, 1014, 1760, 1);
       context.fillStyle = PALETTE.teal; context.font = '20px Arial';
@@ -129,7 +145,11 @@ export function useWorkstationTexture() {
       if (!active || !(texture.image instanceof HTMLCanvasElement)) return;
       const context = texture.image.getContext('2d');
       if (!context) return;
-      context.drawImage(portrait, 1560, 82, 260, 260 * 4 / 3);
+      const scale = Math.min(560 / portrait.naturalWidth, (560 * 4 / 3) / portrait.naturalHeight);
+      const width = portrait.naturalWidth * scale;
+      const height = portrait.naturalHeight * scale;
+      context.imageSmoothingQuality = 'high';
+      context.drawImage(portrait, 1280 + (560 - width) / 2, 170 + (560 * 4 / 3 - height) / 2, width, height);
       texture.needsUpdate = true;
     };
     portrait.src = profileImage;

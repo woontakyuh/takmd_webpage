@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import type { StudioSceneProps } from '../types';
 import { PERSONAL_LINKS } from '../personal';
 import { DoctorCoat, JiuJitsuGi } from './Garment';
-import { GarmentRack, RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
+import { EPOCH_HANGER_POSITIONS, GarmentRack, RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 import { Interactive } from './Interactive';
 import { Surfboard } from './Surfboard';
 import { ROOM } from './config';
@@ -17,11 +17,13 @@ export function PersonalCorner({ selected, onSelect, reducedMotion }: PersonalCo
         <GarmentRack />
         <Interactive id="spine" name="Exhibit hospital" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
           onActivate={() => window.open(PERSONAL_LINKS.hospital, '_blank', 'noopener,noreferrer')}
-          fixed position={[0.3, wardrobe.height - RACK_RAIL_HALF_HEIGHT, 0]} rotation={0.08}>
+          fixed position={[EPOCH_HANGER_POSITIONS.coat[0], EPOCH_HANGER_POSITIONS.coat[1] - RACK_RAIL_HALF_HEIGHT, EPOCH_HANGER_POSITIONS.coat[2]]}
+          rotation={Math.PI / 2 + 0.08}>
           <DoctorCoat />
         </Interactive>
         <Interactive id="bjj" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
-          fixed position={[-0.3, wardrobe.height - RACK_RAIL_HALF_HEIGHT, 0]} rotation={-0.1}>
+          fixed position={[EPOCH_HANGER_POSITIONS.gi[0], EPOCH_HANGER_POSITIONS.gi[1] - RACK_RAIL_HALF_HEIGHT, EPOCH_HANGER_POSITIONS.gi[2]]}
+          rotation={Math.PI / 2}>
           <JiuJitsuGi />
         </Interactive>
       </group>
