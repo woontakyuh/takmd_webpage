@@ -70,7 +70,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   books: { position: [-1.65, 2.38, 1.65], target: [-1.875, 2.15, 2.62], zoom: 1 },
   spine: { position: [-0.45, 1.6, 0.17], target: [-2.38, 0.9, 1.22], zoom: 1 },
   research: { position: [0.08, 1.9, -2.92], target: [0.38, 0.8, -1.66], zoom: 1 },
-  education: { position: [-0.42, 2.20, 1.15], target: [0, 1.90, 3.22], zoom: 1 },
+  education: { position: [0, 1.943, 1.02], target: [0, 1.943, 3.22], zoom: 1 },
   ai: { position: [0.03, 1.255, -2.2], target: [-0.05, 1.155, -1.2], zoom: 1 },
   family: { position: [0.604, 0.96, -1.74], target: [0.67, 0.87, -1.27], zoom: 1 },
   'award-photo': { position: [2.01, 1.51, 2.64], target: [2.01, 1.42, 3.11], zoom: 1 },
@@ -90,7 +90,7 @@ export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   books: FOCUS.books,
   spine: { position: [-0.3, 1.9, -0.28], target: [-2.38, 0.9, 1.22], zoom: 1 },
   research: { position: [-0.05, 2.5, -2.92], target: [0.38, 0.8, -1.66], zoom: 1 },
-  education: { position: [-0.55, 2.40, 0.2], target: [0, 1.90, 3.22], zoom: 1 },
+  education: FOCUS.education,
   ai: FOCUS.ai,
   family: FOCUS.family,
   'award-photo': FOCUS['award-photo'],
@@ -104,8 +104,17 @@ export const MOTION = { camera: 4.5, object: 8, hoverLift: 0.008 } as const;
 
 export const SIDE_READER_SPACE = 438;
 
+export function tvReadingSize(width: number, height: number) {
+  const tvWidth = Math.min(Math.max(32, width - 32), Math.max(32, height - (width > height && height < 560 ? 32 : 128)) * WALL_TV.width / WALL_TV.height);
+  return tvWidth * WALL_TV.screenWidth / WALL_TV.width;
+}
+
 export function focusFov(id: ExhibitId | null, compact: boolean, width: number, height: number): number {
   const base = width < height ? 60 : 42;
+  if (id === 'education') {
+    const distance = ROOM.gallery.position[2] - WALL_TV.depth / 2 - .001 - FOCUS.education.position[2];
+    return 2 * Math.atan(WALL_TV.screenWidth * height / (2 * distance * tvReadingSize(width, height))) * 180 / Math.PI;
+  }
   if (id === 'family' || id === 'award-photo' || id === 'books') {
     const pose = FOCUS[id];
     const distance = Math.hypot(...pose.position.map((value, index) => value - pose.target[index]));
@@ -113,10 +122,10 @@ export function focusFov(id: ExhibitId | null, compact: boolean, width: number, 
     const frameWidth = id === 'family' ? 0.286 : id === 'books' ? 0.44 : 0.334;
     return Math.max(base, 2 * Math.atan(frameWidth * height / (2 * distance * availableWidth)) * 180 / Math.PI);
   }
-  if (id !== 'ai' && id !== 'education') return base;
+  if (id !== 'ai') return base;
   const availableWidth = Math.max(32, width - (compact ? 48 : SIDE_READER_SPACE + 56));
   const pose = compact ? MOBILE_FOCUS[id] : FOCUS[id];
   const distance = Math.hypot(...pose.position.map((value, index) => value - pose.target[index]));
-  const fitted = 2 * Math.atan((id === 'education' ? 2.45 : 0.8) * height / (2 * distance * availableWidth)) * 180 / Math.PI;
+  const fitted = 2 * Math.atan(0.8 * height / (2 * distance * availableWidth)) * 180 / Math.PI;
   return Math.max(base, fitted);
 }

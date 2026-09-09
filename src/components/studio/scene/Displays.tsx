@@ -1,10 +1,9 @@
 import { Movable } from './Movable';
-import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import { MathUtils } from 'three';
 import type { MeshStandardMaterial } from 'three';
-import { featuredPresentation, presentationNavigation, talkMedia } from '../collection';
+import { featuredPresentation, talkMedia } from '../collection';
 import type { StudioSceneProps } from '../types';
 import { Interactive } from './Interactive';
 import { MonitorArm } from './MonitorArm';
@@ -12,12 +11,11 @@ import { Block } from './Primitives';
 import { ScreenBarHalo2 } from './ScreenBarHalo2';
 import { useWorkstationTexture } from './CollectionTextures';
 import { useTvPresentationTexture } from './TvPresentationTexture';
-import { tvPreviews } from './tvPreviews';
-import { TvSlideTargets } from './TvSlideTargets';
+import { TvScreenReader } from './TvScreenReader';
 import { MONITOR, MOTION, PALETTE, ROOM, WALL_TV } from './config';
 import { setWallTvContentColors, setWallTvHovered, useWallTvBacklight } from './hoverReactions';
 
-type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide'>;
+type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose'>;
 type RgbTotals = { red: number; green: number; blue: number; count: number };
 
 const TV_CONTENT_FALLBACK = ['#9D998F', '#9AA7A4'] as const;
@@ -55,7 +53,7 @@ function sampleTvContentColors(source: HTMLCanvasElement) {
   setWallTvContentColors(left && right ? [left, right] : TV_CONTENT_FALLBACK);
 }
 
-export function Displays({ selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide }: DisplaysProps) {
+export function Displays({ selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose }: DisplaysProps) {
   const monitorMaterial = useRef<MeshStandardMaterial>(null);
   const tvMaterial = useRef<MeshStandardMaterial>(null);
   const { hovered: tvHovered } = useWallTvBacklight();
@@ -74,7 +72,6 @@ export function Displays({ selected, onSelect, reducedMotion, halo, presentation
   const monitor = useWorkstationTexture();
   const featured = featuredPresentation(presentations);
   const talk = collection.presentation ?? featured;
-  const navigation = presentationNavigation(presentations, talk?.id);
   const cover = collection.presentation ? collection.talkSlide?.src : talkMedia.find(media => media.id === featured?.id)?.slides[0]?.src;
   const board = useTvPresentationTexture({ cover: cover ?? null, talk, presentations });
   useEffect(() => {
@@ -104,16 +101,10 @@ export function Displays({ selected, onSelect, reducedMotion, halo, presentation
         <group name={WALL_TV.model}>
           <Block size={[WALL_TV.width, WALL_TV.height, WALL_TV.depth]} color={PALETTE.graphite} radius={0.005} roughness={0.32} metalness={0.5} />
           <mesh name="Wall TV screen" position={[0, 0.003, WALL_TV.depth / 2 + 0.001]}><planeGeometry args={[WALL_TV.screenWidth, WALL_TV.screenHeight]} /><meshStandardMaterial ref={tvMaterial} map={board} emissiveMap={board} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
-          {selected === 'education' && <TvSlideTargets {...tvPreviews(cover ?? null, talk, presentations)} talkId={talk?.id} onTalk={onTalk} onSlide={onTalkSlide} />}
+          {selected === 'education' && <TvScreenReader talk={talk} slide={collection.talkSlide} presentations={presentations} onTalk={onTalk} onSlide={onTalkSlide} onClose={onClose} />}
           <mesh position={[WALL_TV.width / 2 - 0.034, -WALL_TV.height / 2 + 0.008, 0.017]}><sphereGeometry args={[0.0015, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         </group>
-        {selected === 'education' && <Html center position={[0, -WALL_TV.height / 2 - 0.09, 0.045]} zIndexRange={[15, 10]}>
-          <nav className="wall-tv-controls" aria-label="Wall TV presentations" onPointerDown={event => event.stopPropagation()} onWheel={event => event.stopPropagation()}>
-            <button aria-label="Previous presentation on wall TV" disabled={!navigation.previous} onClick={() => { if (navigation.previous) onTalk(navigation.previous.id); }}>←</button>
-            <span>Event {navigation.index + 1} / {navigation.total}</span>
-            <button aria-label="Next presentation on wall TV" disabled={!navigation.next} onClick={() => { if (navigation.next) onTalk(navigation.next.id); }}>→</button>
-          </nav>
-        </Html>}
+
       </Interactive>
     </group>
   );

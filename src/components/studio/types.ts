@@ -74,6 +74,7 @@ export type StudioSceneProps = {
   readonly viewCommand: { readonly sequence: number; readonly view: 0 | 1 | 2 };
   readonly presentations: readonly Presentation[];
   readonly onSelect: (id: ExhibitId) => void;
+  readonly onClose: () => void;
   readonly onClaudeSticker: () => void;
   readonly onAwardPhoto: () => void;
   readonly onPaperStep: (direction: 1 | -1) => void;

@@ -136,14 +136,15 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     orbit.target.copy(value.target);
     if (camera instanceof PerspectiveCamera) { camera.fov = targetFov.current; camera.updateProjectionMatrix(); }
     if (value.kind === 'focus') applyOrbitLimits(orbit, true);
+    if (selected === 'education') orbit.maxPolarAngle = Math.PI;
     if (value.kind === 'return') applyOrbitLimits(orbit, false);
     if (value.kind === 'inspect' || value.kind === 'restore-inspection') applyOrbitLimits(orbit, selected !== null);
     orbit.update();
     transition.current = null;
     if (value.kind === 'return') savedFreePose.current = null;
     if (value.kind === 'restore-inspection') inspectionReturnPose.current = null;
-    orbit.enabled = true;
-  }, [camera, selected]);
+    orbit.enabled = selected !== 'education' && !editing;
+  }, [camera, selected, editing]);
 
   useLayoutEffect(() => {
     const orbit = controls.current;
@@ -195,7 +196,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const orbit = controls.current;
     if (!orbit) return;
     const handleDoubleClick = (event: MouseEvent) => {
-      if (editing || event.button !== 0 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (editing || selected === 'education' || event.button !== 0 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) return;
       cancelSceneSingleAction(gl.domElement);
       event.preventDefault();
       event.stopPropagation();
@@ -229,7 +230,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       cancelSceneSingleAction(gl.domElement);
       gl.domElement.removeEventListener('dblclick', handleDoubleClick, true);
     };
-  }, [camera, gl, surfaceAt, editing]);
+  }, [camera, gl, surfaceAt, editing, selected]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -292,7 +293,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
     targetFov.current = focusFov(selected, compact, size.width, size.height);
-    if (!selected) {
+    if (!selected || selected === 'education') {
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
       return;
@@ -352,7 +353,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
   }, [camera, gl, zoomAt, editing]);
 
-  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing; }, [editing]);
+  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && selected !== 'education'; }, [editing, selected]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;
