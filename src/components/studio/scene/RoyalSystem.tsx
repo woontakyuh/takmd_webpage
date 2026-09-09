@@ -71,13 +71,13 @@ export function RoyalSystem({ wood, onAwardPhoto }: RoyalSystemProps) {
     <group name="personal-awards-collection">
       <Suspense fallback={null}><CertificateFrames /></Suspense>
       <Suspense fallback={null}><AwardCeremonyPhoto onOpen={onAwardPhoto} /></Suspense>
-      <group name="Hallym appreciation display" position={[1.54, 0.82, 3.095]} rotation={[0, Math.PI, 0]}>
+      <group name="Hallym appreciation display" position={[-1.54, LEFT_LEVELS[0], 3.095]} rotation={[0, Math.PI, 0]}>
         <HallymPlaque />
       </group>
-      <group name="SNUH merit display" position={[1.875, 0.82, 3.115]} rotation={[0, Math.PI, 0]}>
+      <group name="SNUH merit display" position={[-1.875, LEFT_LEVELS[0], 3.115]} rotation={[0, Math.PI, 0]}>
         <SnuhAward />
       </group>
-      <group name="KOMISS membership display" position={[2.21, 0.82, 3.115]} rotation={[0, Math.PI, 0]}>
+      <group name="KOMISS membership display" position={[-2.21, LEFT_LEVELS[0], 3.115]} rotation={[0, Math.PI, 0]}>
         <KomissAward />
       </group>
     </group>
