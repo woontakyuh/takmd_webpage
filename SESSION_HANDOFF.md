@@ -1,5 +1,25 @@
 # Office session handoff — 2026-09-09
 
+## Intermediate checkpoint requested
+
+The owner requested a status report and commit/push/deploy of the cabinet, focused screen readers, river landscape/adjacent bridges, and refreshed entry images. Release evidence is `.omo/evidence/office-checkpoint-2026-09-09/release.json`; that receipt determines the deployed SHA and supersedes older local-only status below once deployment is verified. Individual bridge silhouette corrections remain deferred, as do administrator-persisted arrangements and 2024-or-earlier presentation imports.
+
+## Barware refinement after cabinet approval
+
+Current barware is a 215mm-tall Usagi 800mL-inspired shaker, six Glencairn tasting glasses and two Riedel-style coupes. After the owner rejected spread-out display placement, all eight glasses now share the fixed upper compartment in a compact two-row arrangement. The opening half has a single 720mm shelf, with the existing seven bottles split three above/four below; mirrored hinge transforms are canceled for bottle labels. Fixed counter retains the shaker/mixing glass/jigger/spoon tray; fixed lower bay is reserved for future additions. Taupe finish and accepted 90-degree corner placement remain unchanged. TypeScript/build and five cabinet geometry tests pass. Ten fresh browser checks cover shapes, dense glass spacing, bottle transforms, opening/closing and zero browser errors. Root personally inspected the day/night screenshots in .omo/evidence/isidoro-glencairn-2026-09-09/. This pass is local only.
+
+The read-only bridge silhouette audit is complete: .omo/evidence/river-bridges-2026-09-09/silhouette-audit.md. Actual geography is sourced, but Dongjak arches are too large/few, Dongho needs central peaked railway trusses instead of outer straight-top trusses, and Hannam lacks paired deck/support silhouettes. These shape corrections have NOT been implemented; do not claim exact bridge fidelity.
+
+## Current local correction pass
+
+The user accepted the new Isidoro L-shaped placement. Current local source uses center [2.50, 0.0185, -2.66], rotation PI/2, closes against the guitar-side wall facing the desk, and opens a mirrored leaf only 90 degrees along the desk-back wall. The worktop moves sequentially. Guitar/amp center is [2.47, 0.0185, -1.48]. Lower bottle bays stay exposed. The rejected olive exterior is now warm taupe #A69583 with CC0 leather grain and fine seams; new hollow glasses, copitas, shaker, jigger and spoon are true geometry. Cabinet six browser checks and five geometry tests passed; final-open.png was personally inspected.
+
+TV/monitor clicks now open a large fixed frontal reader. In-screen slide arrows change pages within the same event. TV keeps a main slide with a narrow right filmstrip; all arrows fit in the viewport. Monitor CV uses native selectable text and a high-resolution portrait. Original source PDFs produced 304 on-demand 3840px derivatives; four previously audited/redacted pages retain their approved 1920px versions. No source PDFs are public. Importer preserves protected derivatives and refuses a changed protected source until reviewed. Final root browser run passed 10 desktop/Retina/mobile checks, including actual 3D screen clicks and HD requests.
+
+Han River local work adds actual OpenStreetMap footprints/three-dimensional facade details, CC0 instanced near-bank trees, muted green ground with road/forecourt coverage, and three real adjacent bridges: Dongjak, Hannam and Dongho. Google Maps satellite views were inspected; OSM axes and official Seoul references are recorded in public/models/han-river/bridges.json. Geometry stays in the existing Banpo geographic frame and preserves the default observer/bridge composition. Added vehicle lanes avoid central rail beds and night lighting resets during daylight. This remains an optimized geographic scene, not a photoreal city model; distant buildings and terrain are still coarse.
+
+Evidence: .omo/evidence/isidoro-corner-2026-09-09/, focused-screens-2026-09-09/, river-quality-2026-09-09/ and river-bridges-2026-09-09/. Port 4322 serves built dist. Previous deployed SHA is 6f95cc3105ada5e5d42f88518bab9239a2cfcfa2, Cloudflare 25428139-59fa-4ed4-974b-85aa948c8634; receipt is .omo/evidence/isidoro-inward-2026-09-09/release.json. The current corrections are local and not part of that older release.
+
 ## Latest continuation · Office media and loading
 
 The current finishing batch includes seven photographed personal books with pull/open/return interaction, two physical electronic-frame inspectors, the connected research folio and shifting paper stacks, the corrected IJSS preview, warm mineral walls/floor, USM underside lighting, selected-screen brightness, actual-office sharing/loading images, lossless model compression and a committed-lifecycle Banpo loader. Connect includes the existing public email. A Cloudflare D1 footer visit counter counts one browser-tab session; local Astro preview intentionally hides it because it does not run Pages Functions.
