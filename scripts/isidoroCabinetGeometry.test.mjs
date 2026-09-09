@@ -28,8 +28,9 @@ describe('Isidoro cabinet measured layout', () => {
   });
 
   test('keeps the articulated leaf and worktop clear of the room, guitar, and desk', () => {
+    const musicCenter = (FENDER_MUSIC_CORNER_BOUNDS.min[0] + FENDER_MUSIC_CORNER_BOUNDS.max[0]) / 2;
     const music = rotateFootprint({
-      minX: FENDER_MUSIC_CORNER_BOUNDS.min[0], maxX: FENDER_MUSIC_CORNER_BOUNDS.max[0],
+      minX: FENDER_MUSIC_CORNER_BOUNDS.min[0] - musicCenter, maxX: FENDER_MUSIC_CORNER_BOUNDS.max[0] - musicCenter,
       minZ: FENDER_MUSIC_CORNER_BOUNDS.min[2], maxZ: FENDER_MUSIC_CORNER_BOUNDS.max[2],
     }, ROOM.music.position, ROOM.music.rotation);
     const desk = rotateFootprint({
@@ -47,6 +48,14 @@ describe('Isidoro cabinet measured layout', () => {
       expect(gap(cabinet, music)).toBeGreaterThanOrEqual(0.03);
       expect(gap(cabinet, desk)).toBeGreaterThanOrEqual(0.03);
     }
+  });
+
+  test('faces into the room toward the desk', () => {
+    const forwardX = -Math.sin(WHISKY_CABINET.rotation);
+    const forwardZ = -Math.cos(WHISKY_CABINET.rotation);
+    const toDeskX = ROOM.desk.position[0] - WHISKY_CABINET.center[0];
+    const toDeskZ = ROOM.desk.position[2] - WHISKY_CABINET.center[2];
+    expect(forwardX * toDeskX + forwardZ * toDeskZ).toBeGreaterThan(0);
   });
 
   test('fits all seven real bottles below the worktop without overlap', () => {

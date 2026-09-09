@@ -14,7 +14,7 @@ export const FURNITURE = {
   signe: { label: 'Signe', center: [-2.49, 0, 2.84], radius: 0.06, handle: 1.6 },
   whisky: { label: 'Isidoro drinks cabinet', center: WHISKY_CABINET.center,
     radius: Math.hypot(WHISKY_CABINET.width, WHISKY_CABINET.depth) / 2 + .04, handle: 2.25 },
-  music: { label: 'Guitar & amp', center: [2.12, 0, -2.1], radius: 0.61, handle: 1.1 },
+  music: { label: 'Guitar & amp', center: [2.28, 0, -1.48], radius: 0.61, handle: 1.1 },
 } as const satisfies Record<string, { readonly label: string; readonly center: Point; readonly radius: number; readonly handle: number }>;
 export type FurnitureId = keyof typeof FURNITURE;
 export const FURNITURE_IDS: readonly FurnitureId[] = ['desk', 'chair', 'sofa', 'table', 'lounge', 'plant', 'mantis', 'signe', 'music', 'whisky'];

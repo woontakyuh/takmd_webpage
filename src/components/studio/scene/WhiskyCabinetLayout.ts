@@ -20,8 +20,8 @@ export const ISIDORO_BOTTLE_DECK_TOP = 0.12;
 
 export const WHISKY_CABINET = {
   ...ISIDORO_DIMENSIONS,
-  center: [1.45, 0.0185, -2.55],
-  rotation: 0,
+  center: [1.63, 0.0185, -2.9],
+  rotation: Math.PI,
   shelfTops: [0.1, ISIDORO_WORKTOP_HEIGHT, 0.91],
 } as const satisfies typeof ISIDORO_DIMENSIONS & {
   readonly center: Point;
