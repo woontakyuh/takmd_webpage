@@ -34,6 +34,8 @@ type Props = StudioContent & {
 export function ReadingPanel({ selected, publications, presentations, updatedAt, presentationsUpdatedAt, collection, onPaper, onTalk, talkSlideIndex, onTalkSlide, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [expanded, setExpanded] = useState(false);
+  const screenFocused = selected === 'education' || selected === 'ai';
+  const modal = expanded || screenFocused;
   const resetScroll = () => dialogRef.current?.scrollTo({ top: 0 });
 
   useEffect(() => { setExpanded(false); }, [selected]);
@@ -41,9 +43,9 @@ export function ReadingPanel({ selected, publications, presentations, updatedAt,
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (selected && dialog.open && dialog.matches(':modal') !== expanded) dialog.close();
+    if (selected && dialog.open && dialog.matches(':modal') !== modal) dialog.close();
     if (selected && !dialog.open) {
-      if (expanded) dialog.showModal();
+      if (modal) dialog.showModal();
       else dialog.show();
       dialog.querySelector<HTMLButtonElement>('[data-reader-close]')?.focus({ preventScroll: true });
     }
@@ -58,7 +60,7 @@ export function ReadingPanel({ selected, publications, presentations, updatedAt,
     };
     window.addEventListener('keydown', onKey);
     return () => { document.body.style.overflow = previousOverflow; window.removeEventListener('keydown', onKey); };
-  }, [selected, expanded, onClose]);
+  }, [selected, modal, onClose]);
 
   return (
     <dialog
@@ -66,7 +68,8 @@ export function ReadingPanel({ selected, publications, presentations, updatedAt,
       className="studio-dialog"
       data-exhibit={selected}
       data-expanded={expanded}
-      aria-modal={expanded}
+      data-screen-focus={screenFocused}
+      aria-modal={modal}
       aria-labelledby="studio-panel-title"
       onCancel={event => { event.preventDefault(); onClose(); }}
       onClick={event => {
@@ -79,7 +82,7 @@ export function ReadingPanel({ selected, publications, presentations, updatedAt,
         <div className="studio-panel-top">
           <span className="studio-kicker">TakMD / {selected === 'spine' ? 'Clinical practice' : selected === 'ai' ? 'CV' : selected}</span>
           <div className="studio-panel-actions">
-            <button className="studio-icon-button" onClick={() => setExpanded(value => !value)} aria-label={expanded ? 'Return to side reader' : 'Expand reading view'}><OfficeIcon name={expanded ? 'collapse' : 'expand'} /></button>
+            {!screenFocused && <button className="studio-icon-button" onClick={() => setExpanded(value => !value)} aria-label={expanded ? 'Return to side reader' : 'Expand reading view'}><OfficeIcon name={expanded ? 'collapse' : 'expand'} /></button>}
             <button className="studio-icon-button" onClick={onClose} aria-label="Close and return to office" data-reader-close><OfficeIcon name="close" /></button>
           </div>
         </div>

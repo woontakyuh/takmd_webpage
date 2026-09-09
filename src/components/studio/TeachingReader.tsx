@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SlideViewer } from './SlideViewer';
 import { presentationNavigation, talkMedia } from './collection';
-import type { Presentation } from './types';
+import type { Presentation, TalkSlide } from './types';
 
 type Props = {
   readonly presentations: readonly Presentation[];
@@ -12,6 +12,16 @@ type Props = {
   readonly updatedAt: string;
 };
 
+const HD_PRIVACY_LIMITED_SLIDES = new Set([
+  '/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0012.webp',
+  '/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0014.webp',
+  '/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0011.webp',
+  '/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0021.webp',
+]);
+
+const publicHighResolutionSlide = (slide: TalkSlide) => HD_PRIVACY_LIMITED_SLIDES.has(slide.src)
+  ? undefined : slide.src.replace(/(\.[^./]+)$/, '.hd$1');
+
 export function TeachingReader({ presentations, selected, onSelect, slideIndex, onSlide, updatedAt }: Props) {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [year, setYear] = useState('all');
@@ -21,6 +31,7 @@ export function TeachingReader({ presentations, selected, onSelect, slideIndex, 
   const photos = media?.kind === 'photos';
   const slides = media?.slides ?? [];
   const slide = slides[slideIndex];
+  const highResolutionSlide = slide && media?.kind === 'full' ? publicHighResolutionSlide(slide) : undefined;
   const nextPage = slides[slideIndex + 1]?.src;
   useEffect(() => {
     if (nextPage) { const image = new Image(); image.src = nextPage; }
@@ -31,7 +42,7 @@ export function TeachingReader({ presentations, selected, onSelect, slideIndex, 
   const today = new Date().toISOString().slice(0, 10);
   return <div className="teaching-reader" data-active-talk={selected?.id}>
     {selected ? <>
-      <nav className="folio-paging" aria-label="Browse presentations"><span>Event {navigation.index + 1} / {navigation.total}</span><div>
+      <nav className="folio-paging presentation-navigation" aria-label="Browse presentations"><span>Event {navigation.index + 1} / {navigation.total}</span><div>
         <button aria-label="Previous presentation" disabled={!navigation.previous} onClick={() => { if (navigation.previous) onSelect(navigation.previous.id); }}>←</button>
         <button aria-label="Next presentation" disabled={!navigation.next} onClick={() => { if (navigation.next) onSelect(navigation.next.id); }}>→</button>
       </div></nav>
@@ -40,11 +51,15 @@ export function TeachingReader({ presentations, selected, onSelect, slideIndex, 
       <h3 className="reader-detail-title">{(selected.topic || selected.title).split(' · ').map((topic, index) => <span className="reader-topic" key={index}>{topic}</span>)}</h3>
       <p className="studio-panel-intro">{photos && media.role ? `${media.role} · ` : ''}{selected.title}{selected.venue && ' · ' + selected.venue}</p>
       {slide ? <>
-        <div className="folio-paging"><span role="status">{slideIndex + 1} / {slides.length} · {photos ? 'Event photos' : 'On the wall TV'}</span><div>
-          <button aria-label={photos ? 'Previous event photo' : 'Previous presentation slide'} disabled={slideIndex === 0} onClick={() => onSlide(slideIndex - 1)}>←</button>
-          <button aria-label={photos ? 'Next event photo' : 'Next presentation slide'} disabled={slideIndex === slides.length - 1} onClick={() => onSlide(slideIndex + 1)}>→</button>
-        </div></div>
-        <figure className="talk-slide" key={slide.src}><button className="slide-open" onClick={() => setViewerOpen(true)} aria-label={photos ? 'Open event photo viewer' : 'Open presentation slide viewer'}><img src={slide.src} alt={slide.caption} width={slide.width ?? 1280} height={slide.height ?? 720} decoding="async" /><span>View larger ↗</span></button><figcaption>{slide.caption}</figcaption></figure>
+        <figure className="talk-slide" key={slide.src}>
+          <div className="talk-screen-media">
+            <span className="screen-slide-status" role="status">{slideIndex + 1} / {slides.length}</span>
+            <button className="screen-slide-control" data-direction="previous" aria-label={photos ? 'Previous event photo' : 'Previous presentation slide'} disabled={slideIndex === 0} onClick={() => onSlide(slideIndex - 1)}><span aria-hidden="true">←</span><span>Previous</span></button>
+            <button className="slide-open" onClick={() => setViewerOpen(true)} aria-label={photos ? 'Open event photo viewer' : 'Open presentation slide viewer'}><img src={slide.src} srcSet={highResolutionSlide ? `${slide.src} 1920w, ${highResolutionSlide} 3840w` : undefined} sizes="(max-width: 759px) calc(100vw - 40px), 68vw" alt={slide.caption} width={slide.width ?? 1280} height={slide.height ?? 720} decoding="async" fetchPriority="high" /><span>View larger ↗</span></button>
+            <button className="screen-slide-control" data-direction="next" aria-label={photos ? 'Next event photo' : 'Next presentation slide'} disabled={slideIndex === slides.length - 1} onClick={() => onSlide(slideIndex + 1)}><span aria-hidden="true">→</span><span>Next</span></button>
+          </div>
+          <figcaption>{slide.caption}</figcaption>
+        </figure>
         {slides.length > 1 && <nav className="slide-strip" aria-label={photos ? 'Event photos' : 'Presentation slides'}>{slides.map((item, index) => <button key={item.src} aria-label={(photos ? 'Show event photo ' : 'Show presentation slide ') + (index + 1)} aria-pressed={index === slideIndex} onClick={() => onSlide(index)}><img src={item.thumbnail ?? item.src} alt="" width={160} height={90} loading="lazy" decoding="async" /><span>{String(index + 1).padStart(2, '0')}</span></button>)}</nav>}
         <p className="studio-meta">{photos ? 'Event photo record' : media?.kind === 'full' ? 'Complete presentation' : 'Selected slides'} · The wall TV follows your selection.</p>
       </> : <div className="reader-record"><span className="studio-kicker">Presentation record</span><p>The wall TV shows the topic and event details. Slide previews are not available for this presentation.</p></div>}
@@ -59,6 +74,6 @@ export function TeachingReader({ presentations, selected, onSelect, slideIndex, 
       {visible.length === 0 && <div className="studio-empty"><p>No presentations match these filters.</p><button className="studio-text-link" onClick={() => { setYear('all'); setSlidesOnly(false); }}>Clear filters ↗</button></div>}
       <p className="folio-snapshot">Presentation record from Notion · {updatedAt}</p>
     </>}
-    {viewerOpen && selected && <SlideViewer title={selected.topic || selected.title} slides={slides} index={slideIndex} onSlide={onSlide} onClose={() => setViewerOpen(false)} mediaLabel={photos ? 'photo' : 'slide'} />}
+    {viewerOpen && selected && <SlideViewer title={selected.topic || selected.title} slides={slides} index={slideIndex} onSlide={onSlide} onClose={() => setViewerOpen(false)} mediaLabel={photos ? 'photo' : 'slide'} highResolutionSource={media?.kind === 'full' ? publicHighResolutionSlide : undefined} />}
   </div>;
 }
