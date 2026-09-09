@@ -3,7 +3,8 @@
 .office-poster img { object-fit: cover; }
 .office-poster[data-ready="true"] { opacity: 0; visibility: hidden; }
 .office-poster-status { position: absolute; left: 50%; bottom: 180px; transform: translateX(-50%); display: grid; gap: 5px; width: max-content; max-width: calc(100% - 32px); padding: 12px 18px; border: 1px solid var(--studio-line); border-radius: 10px; background: color-mix(in srgb, var(--studio-light) 88%, transparent); color: var(--studio-ink); font-size: 12px; text-align: center; pointer-events: auto; }
-.office-poster-status a { color: var(--studio-muted); font-size: 11px; text-decoration: underline; text-underline-offset: 3px; }
+.office-poster-status button { border: 0; padding: 10px 4px; min-height: 44px; background: transparent; color: var(--studio-muted); font: inherit; font-size: 11px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.office-poster-status button:focus-visible { outline: 2px solid var(--studio-ink); outline-offset: 2px; }
 .office-poster[data-ready="true"] .office-poster-status { pointer-events: none; }
 @media (max-width: 759px) { .office-poster-status { bottom: 245px; } }
 @media (prefers-reduced-motion: reduce) { .office-poster { transition: none; } }

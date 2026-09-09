@@ -56,7 +56,7 @@ export function StudioScene(props: StudioSceneProps) {
         angle={1.3} penumbra={1} color={props.roomPalette.color} />
       <Architecture night={props.night} sky={sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} />
       <Furniture familyPhotoSrc={props.familyPhotoSrc} lamp={sun.lamp} halo={props.halo} onHaloControls={props.onHaloControls} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} onAwardPhoto={props.onAwardPhoto} />
-      <BookshelfBooks selected={props.selected} selectedBook={props.selectedBook} pageIndex={props.bookPageIndex} reducedMotion={props.reducedMotion} onBookSelect={props.onBookSelect} />
+      <BookshelfBooks selected={props.selected} selectedBook={props.selectedBook} pageIndex={props.bookPageIndex} reducedMotion={props.reducedMotion} onBookSelect={props.onBookSelect} onBookStep={props.onBookStep} onApproach={props.onBookshelfApproach} shelfReady={props.bookshelfReady} onShelfReady={props.onBookshelfReady} />
       <OfficeLounge />
       <RoomSwitches onControl={props.onRoomControl} />
       <OfficeLighting palette={props.roomPalette} power={sun.lamp} tvFocused={props.selected === 'education'} />

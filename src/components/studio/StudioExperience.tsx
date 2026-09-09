@@ -8,7 +8,8 @@ import { useBlindLift } from './useBlindLift';
 import { OfficeRoomControls, type RoomControl } from './OfficeRoomControls';
 import { MemoryPhoto } from './MemoryPhoto';
 import { BookReader } from './BookReader';
-import { PERSONAL_BOOKS, type PersonalBookId } from './personalBooks';
+import { PERSONAL_BOOKS, personalBook, type PersonalBookId } from './personalBooks';
+import { bookPageAfter } from './personalBookInteraction';
 import { PhotoFrameInfo } from './PhotoFrameInfo';
 import { VisitorCount } from './VisitorCount';
 import { OfficePoster, SceneBoundary } from './OfficePoster';
@@ -47,6 +48,8 @@ function OfficeExperience(content: StudioContent) {
   const [selected, setSelected] = useState<ExhibitId | null>(null);
   const [selectedBook, setSelectedBook] = useState<PersonalBookId>(PERSONAL_BOOKS[0].id);
   const [bookPageIndex, setBookPageIndex] = useState(0);
+  const [bookshelfVisit, setBookshelfVisit] = useState(0);
+  const [bookshelfReady, setBookshelfReady] = useState(false);
   const [familyPhoto] = useState(selectFamilyPhoto);
   const [memory, setMemory] = useState<PhotoMemory | null>(null);
   const openMemory = useCallback(() => { if (!arrangement.editing) setMemory(PHOTO_MEMORIES.ppomppu); }, [arrangement.editing]);
@@ -132,12 +135,21 @@ function OfficeExperience(content: StudioContent) {
       return;
     }
     const active = document.activeElement;
-    returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id}`);
+    returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id === 'bookshelf' ? 'books' : id}`);
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
     setExplored(true); setSelected(id);
   }, [featuredTalk?.id, arrangement.editing]);
   const openAwardPhoto = useCallback(() => open('award-photo'), [open]);
+  const openLoadingProfile = () => {
+    open('ai');
+    returnFocus.current = document.getElementById('studio-exhibit-ai');
+  };
   const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(0); open('books'); };
+  const approachBookshelf = () => { setBookshelfReady(false); setBookshelfVisit(visit => visit + 1); open('bookshelf'); };
+  const stepBook = useCallback((direction: 1 | -1) => {
+    if (selected !== 'books') return;
+    setBookPageIndex(index => bookPageAfter(index, personalBook(selectedBook).pages.length, direction));
+  }, [selected, selectedBook]);
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const exhibit = query.get('exhibit');
@@ -168,10 +180,10 @@ function OfficeExperience(content: StudioContent) {
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} familyPhotoSrc={familyPhoto.src} progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={openAwardPhoto} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+          <Scene selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={openAwardPhoto} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary>
-        <OfficePoster ready={ready} failed={sceneFailed} night={night} />
-        <button className="office-secret-trigger" id="studio-exhibit-books" onClick={() => selectBook(selectedBook)}>Browse personal books</button>
+        <OfficePoster ready={ready} failed={sceneFailed} night={night} onProfile={openLoadingProfile} />
+        <button className="office-secret-trigger" id="studio-exhibit-books" onClick={approachBookshelf}>Browse personal books</button>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
         <button className="office-secret-trigger" id="studio-exhibit-award" onClick={() => open('award')}>Inspect the gold award</button>
         <button className="office-secret-trigger" id="studio-exhibit-award-photo" onClick={openAwardPhoto}>View the KOSESS award photograph</button>
@@ -226,9 +238,9 @@ function OfficeExperience(content: StudioContent) {
       <div className="studio-notes-list">{content.publications.slice(0, 3).map(p => <a key={`${p.doiUrl}-${p.title}`} href={p.doiUrl || '/research'} target={p.doiUrl ? '_blank' : undefined} rel={p.doiUrl ? 'noreferrer' : undefined}><span className="studio-meta">{p.journal} / {p.year}</span><h3>{p.title}</h3><span className="studio-notes-arrow" aria-hidden="true">↗</span></a>)}</div>
     </section>
     <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/credits">Scene credits</a><VisitorCount /></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer">Education<small>Workshops & training ↗</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
-    <ReadingPanel {...content} selected={selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
+    <ReadingPanel {...content} selected={selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
     {(selected === 'family' || selected === 'award-photo') && <PhotoFrameInfo memory={selected === 'family' ? familyPhoto : PHOTO_MEMORIES['kosess-award']} onClose={close} />}
-    {selected === 'books' && <BookReader selectedBook={selectedBook} pageIndex={bookPageIndex} onBookSelect={selectBook} onPageChange={setBookPageIndex} onClose={close} />}
+    {(selected === 'books' || selected === 'bookshelf') && <BookReader selectedBook={selectedBook} pageIndex={bookPageIndex} browsingShelf={selected === 'bookshelf'} shelfReady={bookshelfReady} onBookSelect={selectBook} onPageChange={setBookPageIndex} onClose={close} />}
     {memory && <MemoryPhoto memory={memory} onClose={() => setMemory(null)} />}
   </div>;
 }

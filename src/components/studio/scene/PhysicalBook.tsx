@@ -7,6 +7,7 @@ import type { BookPage, PersonalBook } from '../personalBooks';
 import { BookSurfaceMesh } from './BookSurface';
 import { BookPaperPacket } from './BookPaperPacket';
 import { bookPacketLayout } from './bookGeometry';
+import { useBookPageTurn } from './useBookPageTurn';
 
 function Solid({ size, position, color, name }: {
   readonly size: readonly [number, number, number];
@@ -20,13 +21,16 @@ function Solid({ size, position, color, name }: {
   </mesh>;
 }
 
-export function PhysicalBook({ book, showDetails, page, openAmount, reducedMotion }: {
+export function PhysicalBook({ book, showDetails, page, openAmount, reducedMotion, active, onPageStep }: {
   readonly book: PersonalBook;
   readonly showDetails: boolean;
   readonly page: BookPage | undefined;
   readonly openAmount: RefObject<number>;
   readonly reducedMotion: boolean;
+  readonly active: boolean;
+  readonly onPageStep: (direction: 1 | -1) => void;
 }) {
+  const pageTurn = useBookPageTurn(active, onPageStep);
   const cover = useRef<Group>(null);
   const bend = useRef(0);
   const { width: w, height: h, thickness: t } = book;
@@ -57,23 +61,29 @@ export function PhysicalBook({ book, showDetails, page, openAmount, reducedMotio
     {showDetails && <Suspense fallback={null}>
       <BookSurfaceMesh surface={book.back} width={w} height={h} name={`book-back-${book.id}`}
         position={[w / 2, 0, -t / 2 - .00003]} rotation={[0, Math.PI, 0]} />
-      {page && <BookSurfaceMesh surface={page.right} width={pageWidth} height={pageHeight} bend={bend}
-        name={`book-right-page-${book.id}`} position={[w / 2, 0, splitZ + .00005]} />}
+      {page && <group name={`book-next-page-${book.id}`} {...pageTurn(1)}>
+        <BookSurfaceMesh surface={page.right} width={pageWidth} height={pageHeight} bend={bend}
+          name={`book-right-page-${book.id}`} position={[w / 2, 0, splitZ + .00005]} />
+      </group>}
     </Suspense>}
-    <group name="hinged-front-cover" ref={cover} position={[0, 0, splitZ]}>
+    <group name="hinged-front-cover" ref={cover} position={[0, 0, splitZ]} {...pageTurn(-1)}>
       {leftDepth > 0 && <group position={[.001, 0, 0]}>
         <BookPaperPacket width={pageWidth} height={pageHeight} depth={leftDepth}
           direction={-1} bend={bend} name="left-bound-paper-packet" />
       </group>}
-      <Solid name="front-cover-board" size={[w, h, board]}
-        position={[w / 2, 0, leftDepth + board / 2]} color={book.binding} />
+      <group name={`book-next-cover-${book.id}`} {...pageTurn(1)}>
+        <Solid name="front-cover-board" size={[w, h, board]}
+          position={[w / 2, 0, leftDepth + board / 2]} color={book.binding} />
+        {showDetails && <Suspense fallback={null}>
+          <BookSurfaceMesh surface={book.cover} width={w} height={h} name={`book-cover-${book.id}`}
+            position={[w / 2, 0, leftDepth + board + .00003]} />
+        </Suspense>}
+      </group>
       <mesh name="inside-cover-paper" position={[w / 2, 0, leftDepth - .00004]} rotation={[0, Math.PI, 0]}>
         <planeGeometry args={[pageWidth, pageHeight]} />
         <meshStandardMaterial color={book.id === 'woodpecker' ? '#d5cd29' : '#e6dfcf'} roughness={.94} />
       </mesh>
       {showDetails && <Suspense fallback={null}>
-        <BookSurfaceMesh surface={book.cover} width={w} height={h} name={`book-cover-${book.id}`}
-          position={[w / 2, 0, leftDepth + board + .00003]} />
         {page?.left && <BookSurfaceMesh surface={page.left} width={pageWidth} height={pageHeight} bend={bend} spineAtRight
           name={`book-left-page-${book.id}`} position={[w / 2, 0, -.00005]} rotation={[0, Math.PI, 0]} />}
       </Suspense>}

@@ -8,6 +8,7 @@
 .office-book-pages button[aria-pressed='true'], .office-book-catalog button[aria-pressed='true'] {
   border-color: var(--studio-teal); background: var(--studio-paper);
 }
+.office-book-catalog button:disabled { opacity: .45; cursor: default; }
 .office-book-pages button:focus-visible, .office-book-catalog button:focus-visible,
 .office-book-catalog summary:focus-visible { outline: 2px solid var(--studio-teal); outline-offset: 4px; }
 .office-book-catalog { margin-top: 24px; border-top: 1px solid var(--studio-line); padding-top: 12px; }

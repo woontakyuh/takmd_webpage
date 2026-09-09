@@ -4,7 +4,7 @@ import type { RoomLightPalette } from './lightingPresets';
 import type { RoomControl } from './OfficeRoomControls';
 import type { OfficeLight } from './localTime';
 
-export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing' | 'projects' | 'family' | 'award' | 'award-photo' | 'books';
+export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing' | 'projects' | 'family' | 'award' | 'award-photo' | 'bookshelf' | 'books';
 
 export type Publication = {
   readonly id: string;
@@ -58,6 +58,11 @@ export type StudioSceneProps = {
   readonly selectedBook: PersonalBookId;
   readonly bookPageIndex: number;
   readonly onBookSelect: (id: PersonalBookId) => void;
+  readonly onBookStep: (direction: 1 | -1) => void;
+  readonly onBookshelfApproach: () => void;
+  readonly bookshelfVisit: number;
+  readonly bookshelfReady: boolean;
+  readonly onBookshelfReady: (ready: boolean) => void;
   readonly familyPhotoSrc: string;
   readonly progress: RefObject<number>;
   readonly selected: ExhibitId | null;

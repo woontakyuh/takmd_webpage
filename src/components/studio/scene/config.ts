@@ -67,6 +67,7 @@ export const TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
 ];
 
 export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
+  bookshelf: { position: [-1.875, 2.12, 2.35], target: [-1.875, 2.145, 3.004], zoom: 1 },
   books: { position: [-1.80, 1.64, 1.87], target: [-1.80, 1.25, 2.15], zoom: 1 },
   spine: { position: [-0.45, 1.6, 0.17], target: [-2.38, 0.9, 1.22], zoom: 1 },
   research: { position: [0.08, 1.9, -2.92], target: [0.38, 0.8, -1.66], zoom: 1 },
@@ -87,6 +88,7 @@ export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
 ];
 
 export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
+  bookshelf: FOCUS.bookshelf,
   books: FOCUS.books,
   spine: { position: [-0.3, 1.9, -0.28], target: [-2.38, 0.9, 1.22], zoom: 1 },
   research: { position: [-0.05, 2.5, -2.92], target: [0.38, 0.8, -1.66], zoom: 1 },

@@ -11,7 +11,7 @@ import type { CameraPose } from './config';
 import { cancelSceneSingleAction, zoomPoseForPoint } from './sceneGesture';
 
 type CameraRigProps = Pick<StudioSceneProps,
-  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady'>;
+  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit'>;
 
 type SavedPose = {
   readonly position: Vector3;
@@ -86,7 +86,7 @@ function isVisibleSurface(object: Object3D): boolean {
     && (isSceneControl(object) || !material.transparent || material.opacity > 0.1));
 }
 
-export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady }: CameraRigProps) {
+export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit }: CameraRigProps) {
   const { editing, layout } = useArrangement();
   const { camera, size, gl, raycaster, scene, setFrameloop } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
@@ -288,7 +288,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       orbit.enabled = false;
       transition.current = toTransition('guide', (compact ? MOBILE_TOUR : TOUR)[activeView.current]);
     }
-  }, [compact, selected, size.height, size.width]);
+  }, [bookshelfVisit, compact, selected, size.height, size.width]);
 
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
@@ -298,7 +298,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       camera.updateProjectionMatrix();
       return;
     }
-    const compactReader = selected === 'family' || selected === 'award-photo' || selected === 'books';
+    const compactReader = selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf';
     const xOffset = compact ? 0 : (compactReader ? 352 : SIDE_READER_SPACE) / 2;
     const yOffset = compact ? size.height * 0.24 : 0;
     camera.setViewOffset(size.width, size.height, xOffset, yOffset, size.width, size.height);

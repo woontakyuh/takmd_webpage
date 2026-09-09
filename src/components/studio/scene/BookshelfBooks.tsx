@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { MathUtils } from 'three';
 import type { Group } from 'three';
 import type { ExhibitId } from '../types';
@@ -8,6 +8,7 @@ import { BOOK_READING_CENTER, BOOK_SHELF_TOP, PERSONAL_BOOKS } from '../personal
 import type { PersonalBook, PersonalBookId } from '../personalBooks';
 import { Interactive } from './Interactive';
 import { PhysicalBook } from './PhysicalBook';
+import { canReadShelfBook } from '../personalBookInteraction';
 
 type BookshelfBooksProps = {
   readonly selected: ExhibitId | null;
@@ -15,6 +16,10 @@ type BookshelfBooksProps = {
   readonly pageIndex: number;
   readonly reducedMotion: boolean;
   readonly onBookSelect: (id: PersonalBookId) => void;
+  readonly onBookStep: (direction: 1 | -1) => void;
+  readonly onApproach: () => void;
+  readonly shelfReady: boolean;
+  readonly onShelfReady: (ready: boolean) => void;
 };
 
 const BOOK_GAP = .003;
@@ -23,6 +28,11 @@ const SHELF_SPINE_Z = 3.004;
 
 export function BookshelfBooks(props: BookshelfBooksProps) {
   const extractedBook = useRef<PersonalBookId | null>(null);
+  useFrame(({ camera }) => {
+    if (props.selected !== 'bookshelf') return;
+    const ready = canReadShelfBook(camera.position);
+    if (ready !== props.shelfReady) props.onShelfReady(ready);
+  });
   let offset = 0;
   return <group name="owner-photographed-personal-library">
     {PERSONAL_BOOKS.map(book => {
@@ -33,11 +43,12 @@ export function BookshelfBooks(props: BookshelfBooksProps) {
   </group>;
 }
 
-function ShelfBook({ book, shelfX, extractedBook, selected, selectedBook, pageIndex, reducedMotion, onBookSelect }: BookshelfBooksProps & {
+function ShelfBook({ book, shelfX, extractedBook, selected, selectedBook, pageIndex, reducedMotion, onBookSelect, onBookStep, onApproach }: BookshelfBooksProps & {
   readonly book: PersonalBook;
   readonly shelfX: number;
   readonly extractedBook: RefObject<PersonalBookId | null>;
 }) {
+  const camera = useThree(state => state.camera);
   const active = selected === 'books' && selectedBook === book.id;
   const group = useRef<Group>(null);
   const progress = useRef(0);
@@ -49,6 +60,10 @@ function ShelfBook({ book, shelfX, extractedBook, selected, selectedBook, pageIn
   const [detailsRequested, setDetailsRequested] = useState(active);
   const visiblePageIndex = active ? pageIndex : previousPage.current;
   const page = book.pages[visiblePageIndex];
+  const selectBook = () => {
+    if (canReadShelfBook(camera.position)) onBookSelect(book.id);
+    else onApproach();
+  };
 
   useEffect(() => {
     if (!active) return;
@@ -80,11 +95,11 @@ function ShelfBook({ book, shelfX, extractedBook, selected, selectedBook, pageIn
 
   return <group ref={group} position={[shelfX, BOOK_SHELF_TOP + book.height / 2, SHELF_SPINE_Z]}
     rotation={[0, -Math.PI / 2, 0]} name={`shelf-book-${book.id}`}>
-    <Interactive id="books" selected={selected} onSelect={() => onBookSelect(book.id)}
-      onActivate={() => onBookSelect(book.id)} position={[0, 0, 0]} reducedMotion={reducedMotion}
+    <Interactive id="books" selected={selected} onSelect={selectBook}
+      onActivate={active ? undefined : selectBook} position={[0, 0, 0]} reducedMotion={reducedMotion}
       onHoverChange={setHovered} name={`Read ${book.title}`}>
       <PhysicalBook book={book} showDetails={detailsRequested} page={page}
-        openAmount={opening} reducedMotion={reducedMotion} />
+        openAmount={opening} reducedMotion={reducedMotion} active={active} onPageStep={onBookStep} />
     </Interactive>
   </group>;
 }
