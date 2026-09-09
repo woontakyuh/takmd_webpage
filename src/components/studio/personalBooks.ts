@@ -6,6 +6,7 @@ export type BookPage = {
   readonly label: string;
   readonly right: BookSurface;
   readonly left?: BookSurface;
+  readonly leftLeaves?: number;
 };
 export type PersonalBook = {
   readonly id: PersonalBookId;
@@ -14,6 +15,7 @@ export type PersonalBook = {
   readonly width: number;
   readonly height: number;
   readonly thickness: number;
+  readonly coverThickness?: number;
   readonly binding: string;
   readonly spine: BookSurface;
   readonly cover: BookSurface;
@@ -40,12 +42,12 @@ export const PERSONAL_BOOKS = [
     spine: spine([[594,94],[645,95],[627,800],[578,800]]),
     cover: BOOK_SURFACES['emory-cover'], back: BOOK_SURFACES['emory-back'], pages: [] },
   { id: 'csrs', title: 'CSRS 50th Annual Meeting · Abstract Book 2022', author: 'Cervical Spine Research Society',
-    width: .16, height: .238, thickness: .019, binding: '#eee9df',
+    width: .16, height: .238, thickness: .019, coverThickness: .0005, binding: '#eee9df',
     spine: spine([[658,226],[695,226],[683,813],[644,812]]),
     cover: BOOK_SURFACES['csrs-cover'], back: BOOK_SURFACES['csrs-back'],
     pages: [
-      { label: '발표 일정 · 11쪽', right: BOOK_SURFACES['csrs-program'] },
-      { label: 'Paper 23 · 86–87쪽', left: BOOK_SURFACES['csrs-paper-left'], right: BOOK_SURFACES['csrs-paper-right'] },
+      { label: '발표 일정 · 11쪽', right: BOOK_SURFACES['csrs-program'], leftLeaves: 5 },
+      { label: 'Paper 23 · 86–87쪽', left: BOOK_SURFACES['csrs-paper-left'], right: BOOK_SURFACES['csrs-paper-right'], leftLeaves: 43 },
     ] },
   { id: 'consciousness', title: '의식', author: '크리스토프 코흐 · 이정진 옮김',
     width: .163, height: .226, thickness: .026, binding: '#e5ded1',
@@ -71,5 +73,5 @@ const BOOK_BY_ID = {
   csrs: PERSONAL_BOOKS[3], consciousness: PERSONAL_BOOKS[4], memoir: PERSONAL_BOOKS[5], woodpecker: PERSONAL_BOOKS[6],
 } as const satisfies Readonly<Record<PersonalBookId, PersonalBook>>;
 
-export const BOOK_READING_CENTER = [-1.875, 2.15, 2.62] as const;
+export const BOOK_READING_CENTER = [-1.8, 1.25, 2.15] as const;
 export const BOOK_SHELF_TOP = 2.002;

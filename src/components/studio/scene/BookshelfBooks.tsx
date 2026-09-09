@@ -63,10 +63,10 @@ function ShelfBook({ book, shelfX, extractedBook, selected, selectedBook, pageIn
     if (canExtract) extractedBook.current = book.id;
     progress.current = reducedMotion ? Number(canExtract) : MathUtils.damp(progress.current, Number(canExtract), 8, Math.min(delta, .1));
     if (!active && progress.current < .003 && extractedBook.current === book.id) extractedBook.current = null;
-    const pull = MathUtils.smoothstep(progress.current, 0, .45);
-    const turn = MathUtils.smoothstep(progress.current, .42, 1);
+    const pull = MathUtils.smoothstep(progress.current, 0, .5);
+    const turn = MathUtils.smoothstep(progress.current, .5, 1);
     opening.current = MathUtils.smoothstep(progress.current, .72, 1);
-    const offsetTarget = page ? 0 : book.width / 2;
+    const offsetTarget = page ? (book.id === 'csrs' && !page.left ? book.width * .43 : 0) : book.width / 2;
     readingOffset.current = reducedMotion ? offsetTarget : MathUtils.damp(readingOffset.current, offsetTarget, 8, delta);
     hoverOffset.current = reducedMotion ? Number(hovered) : MathUtils.damp(hoverOffset.current, Number(hovered), 8, delta);
     const readingX = BOOK_READING_CENTER[0] + readingOffset.current;
@@ -75,7 +75,7 @@ function ShelfBook({ book, shelfX, extractedBook, selected, selectedBook, pageIn
       MathUtils.lerp(BOOK_SHELF_TOP + book.height / 2, BOOK_READING_CENTER[1], turn),
       MathUtils.lerp(SHELF_SPINE_Z - hoverOffset.current * .007, BOOK_READING_CENTER[2], pull),
     );
-    object.rotation.set(-.14 * turn, -Math.PI / 2 - Math.PI / 2 * turn, 0);
+    object.rotation.set(.65 * turn, -Math.PI / 2 - Math.PI / 2 * turn, 0);
   });
 
   return <group ref={group} position={[shelfX, BOOK_SHELF_TOP + book.height / 2, SHELF_SPINE_Z]}

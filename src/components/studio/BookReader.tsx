@@ -13,6 +13,7 @@ export function BookReader({ selectedBook, pageIndex, onBookSelect, onPageChange
   readonly onClose: () => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const catalogRef = useRef<HTMLDetailsElement>(null);
   const book = personalBook(selectedBook);
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -49,9 +50,13 @@ export function BookReader({ selectedBook, pageIndex, onBookSelect, onPageChange
       {book.pages.map((page, index) => <button key={page.label} onClick={() => onPageChange(index)}
         aria-pressed={pageIndex === index}>{page.label}</button>)}
     </div>
-    <details className="office-book-catalog">
+    <details ref={catalogRef} className="office-book-catalog">
       <summary>다른 책 보기</summary>
-      <div>{PERSONAL_BOOKS.map(item => <button key={item.id} onClick={() => onBookSelect(item.id)}
+      <div>{PERSONAL_BOOKS.map(item => <button key={item.id} onClick={() => {
+        onBookSelect(item.id);
+        if (catalogRef.current) catalogRef.current.open = false;
+        dialogRef.current?.querySelector<HTMLButtonElement>('.office-book-pages button')?.focus({ preventScroll: true });
+      }}
         aria-pressed={selectedBook === item.id}>{item.title}</button>)}</div>
     </details>
   </dialog>;

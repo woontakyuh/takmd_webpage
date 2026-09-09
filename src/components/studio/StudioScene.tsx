@@ -40,7 +40,7 @@ export function StudioScene(props: StudioSceneProps) {
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
     <Canvas camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
-      dpr={[1, props.compact ? 1 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
+      dpr={[1, props.selected === 'books' ? 2 : props.compact ? 1 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: 'none' }}>
       {ROOM_ENVIRONMENT}

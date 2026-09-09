@@ -1,7 +1,10 @@
 import { useTexture } from '@react-three/drei';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import type { RefObject } from 'react';
+import { useFrame } from '@react-three/fiber';
 import { PlaneGeometry, SRGBColorSpace } from 'three';
 import type { BookQuad, BookSurface } from '../personalBookSurfaces';
+import { pageArchAt } from './bookGeometry';
 
 export function bookUvAt(quad: BookQuad, u: number, v: number): readonly [number, number] {
   const [a, b, c, d] = quad;
@@ -17,21 +20,24 @@ export function bookUvAt(quad: BookQuad, u: number, v: number): readonly [number
     ((b[1] - a[1] + g * b[1]) * u + (d[1] - a[1] + h * d[1]) * v + a[1]) / scale];
 }
 
-export function BookSurfaceMesh({ surface, width, height, position, rotation = [0, 0, 0], name }: {
+export function BookSurfaceMesh({ surface, width, height, position, rotation = [0, 0, 0], name, bend, spineAtRight = false }: {
   readonly surface: BookSurface;
   readonly width: number;
   readonly height: number;
   readonly position: readonly [number, number, number];
   readonly rotation?: readonly [number, number, number];
   readonly name: string;
+  readonly bend?: RefObject<number>;
+  readonly spineAtRight?: boolean;
 }) {
+  const lastBend = useRef(-1);
   const texture = useTexture(surface.src, loaded => {
     if (Array.isArray(loaded)) return;
     loaded.colorSpace = SRGBColorSpace;
     loaded.anisotropy = 8;
   });
   const geometry = useMemo(() => {
-    const result = new PlaneGeometry(width, height, 16, 16);
+    const result = new PlaneGeometry(width, height, 36, 12);
     const uv = result.getAttribute('uv');
     for (let index = 0; index < uv.count; index += 1) {
       const [x, y] = bookUvAt(surface.quad, uv.getX(index), 1 - uv.getY(index));
@@ -39,8 +45,23 @@ export function BookSurfaceMesh({ surface, width, height, position, rotation = [
     }
     return result;
   }, [width, height, surface]);
-  useEffect(() => () => geometry.dispose(), [geometry]);
-  return <mesh name={name} geometry={geometry} position={[...position]} rotation={[...rotation]} receiveShadow>
-    <meshStandardMaterial map={texture} color="#ffffff" roughness={.78} />
+  useEffect(() => {
+    lastBend.current = -1;
+    return () => geometry.dispose();
+  }, [geometry]);
+  useFrame(() => {
+    if (!bend || Math.abs(lastBend.current - bend.current) < .00001) return;
+    lastBend.current = bend.current;
+    const vertices = geometry.getAttribute('position');
+    for (let index = 0; index < vertices.count; index += 1) {
+      const distance = width / 2 + vertices.getX(index) * (spineAtRight ? -1 : 1);
+      vertices.setZ(index, bend.current * pageArchAt(distance, width));
+    }
+    vertices.needsUpdate = true;
+    geometry.computeVertexNormals();
+    geometry.computeBoundingSphere();
+  });
+  return <mesh name={name} geometry={geometry} position={[...position]} rotation={[...rotation]} castShadow receiveShadow>
+    <meshStandardMaterial map={texture} color={surface.albedo ?? '#ffffff'} roughness={bend ? .94 : .78} />
   </mesh>;
 }

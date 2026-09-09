@@ -1,5 +1,13 @@
 # Office session handoff — 2026-09-09
 
+## TV and standing book reader follow-up
+
+TV selection now approaches the actual wall-mounted television, with native 3840px approved slide imagery registered inside its real bezel, internal slide/event controls, mobile layouts, browser Back/Escape and exact camera/focus return. No education modal replaces the room. Monitor/photo readers retain their existing behavior. Evidence: `.omo/evidence/tv-in-scene-2026-09-09/`.
+
+CSRS 2022 uses the matching official abstract PDF cover and printed pages11/86/87, replacing photographed curvature. A continuous binding and two paper packets follow the selected page depth. Personal books pull clear of their shelf before lowering to1.25m, leaning back37.2degrees and being read from1.64m eye height. Book-only DPR2 and calibrated matte-paper albedo preserve print detail; the four replacement URLs are cache-versioned. The full PDF is not published. Evidence: `.omo/evidence/csrs-book-repair-2026-09-09/`.
+
+Local build/types/public-boundary and browser checks passed: TV36checks/16captures, book10checks/16captures, integrated15checks/3captures. Both independent source and visual review passed after fixing daylight paper bleaching. The release receipt `.omo/evidence/tv-in-scene-2026-09-09/release.json` determines the final deployed SHA/provider/live state; do not infer deployment from this handoff alone. Older checkpoint sections below are historical.
+
 ## Bridge fidelity follow-up
 
 Naver satellite aerials and Seoul Institute close photographs informed the revised Dongjak central short arches, Dongho central peaked railway truss, and Hannam paired road decks/support rows. Concrete piers and transverse caps are separate from glowing steel; Dongho peaks align with modeled supports. Geographic axes, overview camera and moving traffic remain intact. Detailed dimensions/counts are explicitly visual approximations where unverified. Full build, TypeScript, structural/lifecycle tests and integrated day/night/traffic browser QA passed. Evidence and the subsequent release receipt live in `.omo/evidence/river-bridge-fidelity-2026-09-09/`; use its `release.json` to verify whether this follow-up is deployed. Distant city/greenery and approaches beyond the modeled banks remain coarse. Administrator layout persistence and 2024-or-earlier slides remain deferred.
