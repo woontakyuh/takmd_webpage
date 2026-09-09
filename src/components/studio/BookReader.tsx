@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { OfficeIcon } from './OfficeIcon';
 import { personalBook, PERSONAL_BOOKS } from './personalBooks';
+import { PERSONAL_BOOK_INFO } from './personalBookInfo';
 import type { PersonalBookId } from './personalBooks';
 import './photo-frame-info.css';
 import './book-reader.css';
@@ -19,6 +20,7 @@ export function BookReader({ selectedBook, pageIndex, browsingShelf, shelfReady,
   const selectionFocusFrame = useRef<number | null>(null);
   const closing = useRef(false);
   const book = personalBook(selectedBook);
+  const info = PERSONAL_BOOK_INFO[selectedBook];
   const close = useCallback(() => {
     if (closing.current) return;
     closing.current = true;
@@ -65,10 +67,22 @@ export function BookReader({ selectedBook, pageIndex, browsingShelf, shelfReady,
     </div>
     <h2 id="office-book-title">{browsingShelf ? '책장' : book.title}</h2>
     <p className="office-frame-occasion" aria-live="polite">{browsingShelf ? (shelfReady ? '읽을 책을 골라주세요.' : '책장으로 다가가는 중입니다.') : book.author}</p>
+    {!browsingShelf && <p className="office-book-publication">{info.publication}</p>}
     {!browsingShelf && <div className="office-book-pages" aria-label="책에서 보기">
       <button onClick={() => onPageChange(-1)} aria-pressed={pageIndex < 0 || book.pages.length === 0}>표지</button>
       {book.pages.map((page, index) => <button key={page.label} onClick={() => onPageChange(index)}
         aria-pressed={pageIndex === index}>{page.label}</button>)}
+    </div>}
+    {!browsingShelf && <div className="office-book-info" key={selectedBook}>
+      <p>{info.description}</p>
+      {info.details && <details className="office-book-details">
+        <summary>{info.details.label}</summary>
+        {info.details.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+        <a href={info.details.source.url} target="_blank" rel="noopener noreferrer"
+          aria-label={`${info.details.source.label} (새 탭)`}>{info.details.source.label}<span aria-hidden="true"> ↗</span></a>
+      </details>}
+      <a href={info.source.url} target="_blank" rel="noopener noreferrer"
+        aria-label={`${info.source.label} (새 탭)`}>{info.source.label}<span aria-hidden="true"> ↗</span></a>
     </div>}
     <details ref={catalogRef} className="office-book-catalog" open={browsingShelf || undefined}>
       <summary>{browsingShelf ? '책 선택' : '다른 책 보기'}</summary>
