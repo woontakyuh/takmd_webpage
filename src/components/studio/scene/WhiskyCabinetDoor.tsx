@@ -105,11 +105,13 @@ export function useCabinetAction({ disabled, onActivate, onHoverChange }: Action
 export function useIsidoroMotion(door: RefObject<Group | null>, worktop: RefObject<Group | null>,
   open: boolean, reducedMotion: boolean, disabled: boolean) {
   const invalidate = useThree(state => state.invalidate);
+  const [ready, setReady] = useState(false);
   useLayoutEffect(() => {
     if ((reducedMotion || disabled) && door.current && worktop.current) {
       door.current.rotation.y = open && !disabled ? -ISIDORO_OPEN_ANGLE : 0;
       worktop.current.rotation.x = open && !disabled ? 0 : Math.PI / 2;
     }
+    setReady(reducedMotion && open && !disabled);
     invalidate();
   }, [disabled, door, invalidate, open, reducedMotion, worktop]);
   useFrame((state, delta) => {
@@ -130,7 +132,10 @@ export function useIsidoroMotion(door: RefObject<Group | null>, worktop: RefObje
       group.userData.angle = group.rotation[axis];
     }
     if (moving) state.invalidate();
+    const settled = desiredOpen && leaf.rotation.y === -ISIDORO_OPEN_ANGLE && top.rotation.x === 0;
+    if (settled !== ready) setReady(settled);
   });
+  return ready;
 }
 
 export function WhiskyCabinetDoor({ open, wood, pivot, children, ...action }: Omit<DoorProps, 'reducedMotion'> & { readonly pivot: RefObject<Group | null> }) {
@@ -138,8 +143,18 @@ export function WhiskyCabinetDoor({ open, wood, pivot, children, ...action }: Om
   const target = open && !action.disabled ? -ISIDORO_OPEN_ANGLE : 0;
   return <group ref={pivot} name="Isidoro book-opening mobile half"
     position={[ISIDORO_DIMENSIONS.width / 2, 0, 0]}
-    userData={{ sceneControl: true, open: open && !action.disabled, angle: target }} {...handlers}>
+    userData={{ open: open && !action.disabled, angle: target }} {...(!open ? handlers : {})}>
     <group scale={[-1, 1, 1]}><IsidoroOpeningHalf wood={wood}>{children}</IsidoroOpeningHalf></group>
+    {open && <group name="Isidoro left outer edge and leather handle close target" {...handlers}>
+      <mesh position={[-0.6975, 0.595, -0.1275]}>
+        <boxGeometry args={[0.050, 1.12, 0.285]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
+      </mesh>
+      <mesh position={[-0.600, 0.62, -0.279]}>
+        <boxGeometry args={[0.065, 0.25, 0.055]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
+      </mesh>
+    </group>}
     {[0.23, 0.94].map(y => <Rod key={y} from={[0, y, -0.015]} to={[0, y, 0.015]}
       radius={0.006} color={hovered ? PALETTE.aluminiumEdge : PALETTE.steel} metalness={0.9} />)}
   </group>;

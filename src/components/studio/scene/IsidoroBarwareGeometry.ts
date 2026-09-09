@@ -1,6 +1,5 @@
 import {
   CatmullRomCurve3,
-  CylinderGeometry,
   LatheGeometry,
   SphereGeometry,
   TorusGeometry,
@@ -93,8 +92,7 @@ export function createIsidoroBarwareGeometries() {
     glencairn: createIsidoroGlencairnGeometry(),
     coupe: createIsidoroCoupeGeometry(),
     mixingGlass: new LatheGeometry(hollowProfile(0.041, mixingGlass.radius, mixingGlass.height,
-      mixingGlass.wall, mixingGlass.base), 48),
-    mixingFacets: new CylinderGeometry(0.0442, 0.0416, 0.098, 16, 3, true),
+      mixingGlass.wall, mixingGlass.base), 16),
     mixingBaseRing: new TorusGeometry(0.035, 0.0022, 8, 40),
     shakerTin: new LatheGeometry([
       new Vector2(0, 0), new Vector2(0.032, 0), new Vector2(0.034, 0.0015),
