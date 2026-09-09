@@ -9,6 +9,8 @@ import type { StudioSceneProps } from '../types';
 import { FOCUS, focusFov, MOBILE_FOCUS, MOBILE_TOUR, MOTION, SIDE_READER_SPACE, TOUR } from './config';
 import type { CameraPose } from './config';
 import { cancelSceneSingleAction, zoomPoseForPoint } from './sceneGesture';
+import { useSceneInspection } from './SceneInspection';
+import { monitorReadingPose, monitorReadingFov } from './monitorReading';
 
 type CameraRigProps = Pick<StudioSceneProps,
   'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit'>;
@@ -18,7 +20,7 @@ type SavedPose = {
   readonly target: Vector3;
 };
 
-type TransitionKind = 'focus' | 'guide' | 'return' | 'inspect' | 'restore-inspection';
+type TransitionKind = 'focus' | 'guide' | 'return' | 'inspect' | 'restore-inspection' | 'object' | 'restore-object';
 type Transition = {
   readonly kind: TransitionKind;
   readonly position: Vector3;
@@ -88,11 +90,17 @@ function isVisibleSurface(object: Object3D): boolean {
 
 export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit }: CameraRigProps) {
   const { editing, layout } = useArrangement();
+  const { inspection, setInspection } = useSceneInspection();
+  const screenFocused = selected === 'education' || selected === 'ai';
   const { camera, size, gl, raycaster, scene, setFrameloop } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const transition = useRef<Transition | null>(null);
   const savedFreePose = useRef<SavedPose | null>(null);
   const inspectionReturnPose = useRef<SavedPose | null>(null);
+  const objectReturnPose = useRef<SavedPose | null>(null);
+  const previousObject = useRef(inspection);
+  const focusPose = useCallback(() => moveFocus(selected === 'ai' ? monitorReadingPose()
+    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout]);
   const activeView = useRef<0 | 1 | 2>(viewCommand.view);
   const lastViewSequence = useRef(viewCommand.sequence);
   const previousSelected = useRef(selected);
@@ -136,15 +144,16 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     orbit.target.copy(value.target);
     if (camera instanceof PerspectiveCamera) { camera.fov = targetFov.current; camera.updateProjectionMatrix(); }
     if (value.kind === 'focus') applyOrbitLimits(orbit, true);
-    if (selected === 'education') orbit.maxPolarAngle = Math.PI;
+    if (screenFocused) orbit.maxPolarAngle = Math.PI;
     if (value.kind === 'return') applyOrbitLimits(orbit, false);
-    if (value.kind === 'inspect' || value.kind === 'restore-inspection') applyOrbitLimits(orbit, selected !== null);
+    if (value.kind === 'inspect' || value.kind === 'restore-inspection' || value.kind === 'object' || value.kind === 'restore-object') applyOrbitLimits(orbit, selected !== null);
     orbit.update();
     transition.current = null;
     if (value.kind === 'return') savedFreePose.current = null;
     if (value.kind === 'restore-inspection') inspectionReturnPose.current = null;
-    orbit.enabled = selected !== 'education' && !editing;
-  }, [camera, selected, editing]);
+    if (value.kind === 'restore-object') objectReturnPose.current = null;
+    orbit.enabled = !screenFocused && !editing;
+  }, [camera, selected, screenFocused, editing]);
 
   useLayoutEffect(() => {
     const orbit = controls.current;
@@ -195,42 +204,91 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   useEffect(() => {
     const orbit = controls.current;
     if (!orbit) return;
-    const handleDoubleClick = (event: MouseEvent) => {
-      if (editing || selected === 'education' || event.button !== 0 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) return;
+    let touchStart: { id: number; x: number; y: number } | null = null;
+    let lastTap: { time: number; x: number; y: number } | null = null;
+    let touchZoomTime = 0;
+    const inspectAt = (x: number, y: number) => {
+      if (editing || screenFocused) return;
       cancelSceneSingleAction(gl.domElement);
-      event.preventDefault();
-      event.stopPropagation();
-      const hit = surfaceAt(event.clientX, event.clientY);
-      if (hit && isSceneControl(hit.object)) return;
+      const hit = surfaceAt(x, y);
+      if (!hit) return;
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
       const saved = inspectionReturnPose.current;
       if (saved) {
-        transition.current = {
-          kind: 'restore-inspection',
-          position: saved.position.clone(),
-          target: saved.target.clone(),
-        };
+        transition.current = { kind: 'restore-inspection', position: saved.position.clone(), target: saved.target.clone() };
         return;
       }
-      if (!hit) {
-        orbit.enabled = true;
-        return;
-      }
-      inspectionReturnPose.current = {
-        position: camera.position.clone(),
-        target: orbit.target.clone(),
-      };
+      inspectionReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
       const pose = zoomPoseForPoint(camera.position, hit.point);
       transition.current = { kind: 'inspect', position: pose.position, target: pose.target };
       userMoved.current = true;
     };
-    gl.domElement.addEventListener('dblclick', handleDoubleClick, true);
-    return () => {
-      cancelSceneSingleAction(gl.domElement);
-      gl.domElement.removeEventListener('dblclick', handleDoubleClick, true);
+    const handleDoubleClick = (event: MouseEvent) => {
+      if (event.button !== 0 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey
+        || performance.now() - touchZoomTime < 500) return;
+      event.preventDefault();
+      event.stopPropagation();
+      inspectAt(event.clientX, event.clientY);
     };
-  }, [camera, gl, surfaceAt, editing, selected]);
+    const touchDown = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch') return;
+      if (!event.isPrimary) { touchStart = null; lastTap = null; return; }
+      touchStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    };
+    const touchMove = (event: PointerEvent) => {
+      if (touchStart?.id === event.pointerId && Math.hypot(event.clientX - touchStart.x, event.clientY - touchStart.y) > 5) {
+        touchStart = null; lastTap = null;
+      }
+    };
+    const touchUp = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch' || !event.isPrimary || touchStart?.id !== event.pointerId) return;
+      touchStart = null;
+      const time = performance.now();
+      if (lastTap && time - lastTap.time <= 320 && Math.hypot(event.clientX - lastTap.x, event.clientY - lastTap.y) <= 18) {
+        lastTap = null; touchZoomTime = time;
+        inspectAt(event.clientX, event.clientY);
+      } else lastTap = { time, x: event.clientX, y: event.clientY };
+    };
+    const cancelTouch = () => { touchStart = null; lastTap = null; };
+    const canvas = gl.domElement;
+    canvas.addEventListener('dblclick', handleDoubleClick, true);
+    canvas.addEventListener('pointerdown', touchDown, true);
+    canvas.addEventListener('pointermove', touchMove, true);
+    canvas.addEventListener('pointerup', touchUp);
+    canvas.addEventListener('pointercancel', cancelTouch, true);
+    return () => {
+      cancelSceneSingleAction(canvas);
+      canvas.removeEventListener('dblclick', handleDoubleClick, true);
+      canvas.removeEventListener('pointerdown', touchDown, true);
+      canvas.removeEventListener('pointermove', touchMove, true);
+      canvas.removeEventListener('pointerup', touchUp);
+      canvas.removeEventListener('pointercancel', cancelTouch, true);
+    };
+  }, [camera, gl, surfaceAt, editing, screenFocused]);
+
+  useEffect(() => {
+    const orbit = controls.current;
+    if (!orbit || previousObject.current === inspection) return;
+    previousObject.current = inspection;
+    inspectionReturnPose.current = null;
+    if (inspection) {
+      if (!objectReturnPose.current) objectReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      transition.current = { kind: 'object', position: new Vector3(...inspection.position), target: new Vector3(...inspection.target) };
+    } else if (objectReturnPose.current) {
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      transition.current = { kind: 'restore-object', position: objectReturnPose.current.position.clone(), target: objectReturnPose.current.target.clone() };
+    }
+  }, [camera, inspection]);
+
+  useEffect(() => {
+    if (!selected && !editing) return;
+    objectReturnPose.current = null;
+    setInspection(null);
+  }, [selected, editing, setInspection]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -245,7 +303,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       }
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
-      transition.current = toTransition('focus', moveFocus((compact ? MOBILE_FOCUS : FOCUS)[selected], selected, layout));
+      transition.current = toTransition('focus', focusPose());
     } else {
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
@@ -277,11 +335,11 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   useEffect(() => {
     const orbit = controls.current;
     if (!orbit) return;
-    if (inspectionReturnPose.current) return;
+    if (inspectionReturnPose.current || inspection) return;
     if (selected) {
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
-      transition.current = toTransition('focus', moveFocus((compact ? MOBILE_FOCUS : FOCUS)[selected], selected, layout));
+      transition.current = toTransition('focus', focusPose());
       return;
     }
     if (!userMoved.current && !savedFreePose.current) {
@@ -292,8 +350,8 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
-    targetFov.current = focusFov(selected, compact, size.width, size.height);
-    if (!selected || selected === 'education') {
+    targetFov.current = selected === 'ai' ? monitorReadingFov(size.width, size.height) : focusFov(selected, compact, size.width, size.height);
+    if (!selected || screenFocused) {
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
       return;
@@ -353,7 +411,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
   }, [camera, gl, zoomAt, editing]);
 
-  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && selected !== 'education'; }, [editing, selected]);
+  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && !screenFocused; }, [editing, screenFocused]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;

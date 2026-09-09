@@ -12,6 +12,8 @@ import { ScreenBarHalo2 } from './ScreenBarHalo2';
 import { useWorkstationTexture } from './CollectionTextures';
 import { useTvPresentationTexture } from './TvPresentationTexture';
 import { TvScreenReader } from './TvScreenReader';
+import { MonitorScreenReader } from './MonitorScreenReader';
+import { MONITOR_SCREEN } from './monitorReading';
 import { MONITOR, MOTION, PALETTE, ROOM, WALL_TV } from './config';
 import { setWallTvContentColors, setWallTvHovered, useWallTvBacklight } from './hoverReactions';
 
@@ -88,10 +90,11 @@ export function Displays({ selected, onSelect, reducedMotion, halo, presentation
       <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
         position={ROOM.monitor.position} rotation={ROOM.monitor.rotation} onHoverChange={hovered => { monitorHovered.current = hovered; }}>
         <MonitorArm />
-        <group position={[0, 0.37, 0]} rotation={[-0.04, 0, 0]}>
+        <group position={MONITOR_SCREEN.mount} rotation={[MONITOR_SCREEN.tilt, 0, 0]}>
           <Block size={[MONITOR.width, MONITOR.height, 0.027]} radius={0.008} color={PALETTE.ink} roughness={0.3} metalness={0.25} />
           <Block size={[0.3, 0.26, 0.035]} position={[0, 0, -0.025]} color={PALETTE.ink} radius={0.028} />
-          <mesh name="Desk monitor screen" position={[0, 0.004, 0.0145]}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshStandardMaterial ref={monitorMaterial} map={monitor} emissiveMap={monitor} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
+          <mesh name="Desk monitor screen" position={MONITOR_SCREEN.surface}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshStandardMaterial ref={monitorMaterial} map={monitor} emissiveMap={monitor} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
+          {selected === 'ai' && <MonitorScreenReader publicationCount={collection.paperCount} presentationCount={presentations.length} onClose={onClose} />}
           <mesh position={[0.332, -0.203, 0.015]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
           <ScreenBarHalo2 power={halo.power} temperature={halo.temperature} />
         </group>

@@ -102,7 +102,7 @@ export function ReadingPanel({ selected, publications, presentations, updatedAt,
         </>}
         {selected === 'education' && <TeachingReader presentations={presentations} selected={collection.presentation} onSelect={id => { onTalk(id); resetScroll(); }} slideIndex={talkSlideIndex} onSlide={onTalkSlide} updatedAt={presentationsUpdatedAt} />}
         {selected === 'projects' && <AiReader publications={publications} presentations={presentations} onPaper={id => { onPaper(id); resetScroll(); }} onTalk={id => { onTalk(id); resetScroll(); }} />}
-        {selected === 'ai' && <CvReader publications={publications} presentations={presentations} />}
+        {selected === 'ai' && <CvReader publicationCount={publications.length} presentationCount={presentations.length} />}
         {(selected === 'bjj' || selected === 'surfing') && <PersonalReader interest={selected} />}
       </>}
     </dialog>

@@ -20,6 +20,7 @@ import { useOfficeLight, LocalClockReadout } from './OfficeTime';
 import type { LightMode } from './localTime';
 import { LIGHT_PRESETS, type LightPreset } from './lightingPresets';
 import { PERSONAL_LINKS } from './personal';
+import { SceneInspectionProvider, useSceneInspection } from './scene/SceneInspection';
 
 const Scene = lazy(async () => {
   const module = await import('./StudioScene');
@@ -39,13 +40,15 @@ const socialLinks = [
 ] as const;
 
 export function StudioExperience(content: StudioContent) {
-  return <ArrangementProvider><OfficeExperience {...content} /></ArrangementProvider>;
+  return <ArrangementProvider><SceneInspectionProvider><OfficeExperience {...content} /></SceneInspectionProvider></ArrangementProvider>;
 }
 function OfficeExperience(content: StudioContent) {
   const arrangement = useArrangement();
+  const { inspection } = useSceneInspection();
   const progress = useRef(0);
   const returnFocus = useRef<HTMLElement | null>(null);
   const [selected, setSelected] = useState<ExhibitId | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
   const [selectedBook, setSelectedBook] = useState<PersonalBookId>(PERSONAL_BOOKS[0].id);
   const [bookPageIndex, setBookPageIndex] = useState(0);
   const [bookshelfVisit, setBookshelfVisit] = useState(0);
@@ -137,11 +140,12 @@ function OfficeExperience(content: StudioContent) {
     const active = document.activeElement;
     returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id === 'bookshelf' ? 'books' : id}`);
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
-    setExplored(true); setSelected(id);
+    setLoadingProfile(false); setExplored(true); setSelected(id);
   }, [featuredTalk?.id, arrangement.editing]);
   const openAwardPhoto = useCallback(() => open('award-photo'), [open]);
   const openLoadingProfile = () => {
-    open('ai');
+    setSelected(null);
+    setLoadingProfile(true);
     returnFocus.current = document.getElementById('studio-exhibit-ai');
   };
   const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(0); open('books'); };
@@ -163,6 +167,7 @@ function OfficeExperience(content: StudioContent) {
     }
   }, [content.presentations, content.publications, open, selectPaper]);
   const close = useCallback(() => {
+    setLoadingProfile(false);
     setSelected(null);
     requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
   }, []);
@@ -174,7 +179,7 @@ function OfficeExperience(content: StudioContent) {
     setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
   };
 
-  return <div className="studio" data-night={night} data-selected={selected} data-explored={explored} data-arranging={arrangement.editing}>
+  return <div className="studio" data-night={night} data-selected={selected} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
     <section className="studio-stage" aria-label="TakMD's office">
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
@@ -219,7 +224,7 @@ function OfficeExperience(content: StudioContent) {
         <div className="studio-collection">
           <p id="office-collection-hint" className="office-collection-hint">Swipe to browse all seven <span aria-hidden="true">→</span></p>
           <nav className="studio-exhibits" aria-label="Office collection" aria-describedby="office-collection-hint">
-            {exhibits.map(item => <button className="studio-exhibit" id={`studio-exhibit-${item.id}`} key={item.id} aria-label={`${item.label}: ${item.detail}`} aria-pressed={selected === item.id} onClick={() => open(item.id)}><OfficeIcon name={item.id === 'ai' ? 'cv' : item.id} /><span>{item.label}<small>{item.detail}</small></span></button>)}
+            {exhibits.map(item => <button className="studio-exhibit" id={`studio-exhibit-${item.id}`} key={item.id} aria-label={`${item.label}: ${item.detail}`} aria-pressed={selected === item.id} onClick={() => item.id === 'ai' && (!ready || sceneFailed) ? openLoadingProfile() : open(item.id)}><OfficeIcon name={item.id === 'ai' ? 'cv' : item.id} /><span>{item.label}<small>{item.detail}</small></span></button>)}
             <a className="studio-exhibit studio-exhibit-workshop" href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer" aria-label="Education: Workshops & training (opens in a new tab)"><OfficeIcon name="workshop" /><span>Education<small>Workshops & training ↗</small></span></a>
             <button className="studio-exhibit" id="studio-exhibit-projects" aria-pressed={selected === 'projects'} onClick={() => open('projects')}><OfficeIcon name="projects" /><span>AI projects<small>Builds, talks & papers</small></span></button>
             <button className="studio-exhibit" popoverTarget="office-social-links" aria-controls="office-social-links" aria-haspopup="dialog"><OfficeIcon name="social" /><span>Connect<small>Email & social</small></span></button>
@@ -238,7 +243,7 @@ function OfficeExperience(content: StudioContent) {
       <div className="studio-notes-list">{content.publications.slice(0, 3).map(p => <a key={`${p.doiUrl}-${p.title}`} href={p.doiUrl || '/research'} target={p.doiUrl ? '_blank' : undefined} rel={p.doiUrl ? 'noreferrer' : undefined}><span className="studio-meta">{p.journal} / {p.year}</span><h3>{p.title}</h3><span className="studio-notes-arrow" aria-hidden="true">↗</span></a>)}</div>
     </section>
     <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/credits">Scene credits</a><VisitorCount /></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer">Education<small>Workshops & training ↗</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
-    <ReadingPanel {...content} selected={selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
+    <ReadingPanel {...content} selected={loadingProfile ? 'ai' : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
     {(selected === 'family' || selected === 'award-photo') && <PhotoFrameInfo memory={selected === 'family' ? familyPhoto : PHOTO_MEMORIES['kosess-award']} onClose={close} />}
     {(selected === 'books' || selected === 'bookshelf') && <BookReader selectedBook={selectedBook} pageIndex={bookPageIndex} browsingShelf={selected === 'bookshelf'} shelfReady={bookshelfReady} onBookSelect={selectBook} onPageChange={setBookPageIndex} onClose={close} />}
     {memory && <MemoryPhoto memory={memory} onClose={() => setMemory(null)} />}

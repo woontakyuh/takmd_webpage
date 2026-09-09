@@ -3,6 +3,7 @@ import { useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { presentationNavigation, talkMedia } from '../collection';
 import { publicHighResolutionSlide } from '../publicSlideSource';
+import { OfficeIcon } from '../OfficeIcon';
 import type { Presentation, TalkSlide } from '../types';
 import { tvReadingSize, WALL_TV } from './config';
 import '../tv-screen-reader.css';
@@ -75,7 +76,7 @@ export function TvScreenReader({ talk, slide, presentations, onTalk, onSlide, on
       data-talk={talk?.id} style={{ width, height: width * WALL_TV.screenHeight / WALL_TV.screenWidth }}
       onPointerDown={event => event.stopPropagation()} onWheel={event => event.stopPropagation()}>
       <header className="tv-screen-header">
-        <button ref={returnButton} onClick={close} aria-label="Back to office">← <span>Office</span></button>
+        <button ref={returnButton} onClick={close} aria-label="Close and return to office"><OfficeIcon name="close" /></button>
         <select aria-label="Choose presentation" value={talk?.id ?? ''} onChange={event => { onTalk(event.target.value); setRailOpen(false); }}>
           {presentations.map(item => <option key={item.id} value={item.id}>{item.date} · {item.title} {item.topic ? `· ${item.topic}` : ''}{talkMedia.some(media => media.id === item.id && media.slides.length) ? '' : ' · Event record only'}</option>)}
         </select>

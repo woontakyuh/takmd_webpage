@@ -4,7 +4,8 @@
 .tv-screen-reader button:disabled { opacity: .35; cursor: default; }
 .tv-screen-reader :focus-visible { outline: 2px solid var(--studio-light); outline-offset: -4px; }
 .tv-screen-header { position: absolute; left: 0; right: 0; bottom: calc(100% + 12px); display: flex; gap: 4px; align-items: center; padding: 0 4px; border-radius: 4px; background: var(--studio-ink); }
-.tv-screen-header > button:first-child { padding: 0 12px; white-space: nowrap; }
+.tv-screen-header > button:first-child { display: grid; place-items: center; padding: 0; }
+.tv-screen-header > button:first-child svg { width: 18px; height: 18px; }
 .tv-screen-header select { flex: 1; min-width: 0; width: 0; padding: 0 8px; text-overflow: ellipsis; }
 .tv-screen-header option { background: var(--studio-ink); color: var(--studio-light); }
 .tv-screen-content { position: absolute; inset: 0 0 44px; display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); background: var(--studio-light); overflow: hidden; }

@@ -1,0 +1,29 @@
+.monitor-screen-reader {
+  --studio-ink: #202d2a; --studio-light: #f8f6f0; --studio-paper: #eae8e1;
+  --studio-muted: #5c655f; --studio-line: #cbcdc3; --studio-clay: #ac5737; --studio-teal: #355a50;
+  position: relative; color: var(--studio-ink); font: 14px/1.65 var(--studio-sans, sans-serif);
+}
+.monitor-screen-header { position: absolute; inset: auto 0 calc(100% + 12px); display: flex; align-items: center; gap: 8px; padding: 0 4px 0 16px; border-radius: 4px; color: var(--studio-light); background: var(--studio-ink); }
+.monitor-screen-header h2 { flex: 1; margin: 0; font: inherit; font-size: 12px; }
+.monitor-screen-header button { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; border: 0; border-radius: 4px; padding: 0; color: inherit; background: transparent; cursor: pointer; }
+.monitor-screen-header button:hover { background: var(--studio-night-surface, #34463d); }
+.monitor-screen-header button:focus-visible { outline: 2px solid var(--studio-light); outline-offset: -4px; }
+.monitor-screen-header svg { width: 18px; height: 18px; }
+.monitor-screen-content { position: absolute; inset: 0; padding: 24px; overflow: auto; overscroll-behavior: contain; touch-action: pan-y; background: var(--studio-light); scrollbar-width: thin; scrollbar-color: var(--studio-muted) var(--studio-paper); }
+.monitor-screen-content:focus-visible { outline: 2px solid var(--studio-teal); outline-offset: -4px; }
+.monitor-screen-content .cv-reader { max-width: 960px; margin: 0 auto; columns: 2 360px; column-gap: 48px; }
+.monitor-screen-content .cv-reader > * { break-inside: avoid; }
+.monitor-screen-content .studio-panel-intro, .monitor-screen-content .studio-editorial-note p, .monitor-screen-content .clinical-detail p { font-size: 14px; line-height: 1.65; }
+.monitor-screen-content .studio-editorial-note { margin-top: 16px; padding: 16px 0; }
+.monitor-screen-content .studio-editorial-note > span { font-size: 11px; }
+.monitor-screen-content .cv-career-row { margin-top: 12px; }
+.monitor-screen-content .studio-panel-footer { min-height: 44px; }
+.monitor-screen-content .clinical-detail summary { min-height: 44px; padding-block: 12px; font-size: 14px; }
+.monitor-screen-reader[data-small='true'] .monitor-screen-content { padding: 12px; }
+.monitor-screen-reader[data-small='true'] .cv-intro { gap: 12px; margin-bottom: 12px; }
+.monitor-screen-reader[data-small='true'] .screen-cv-profile { width: 64px; height: auto; aspect-ratio: 3 / 4; }
+.monitor-screen-reader[data-small='true'] .cv-career-row { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; }
+.monitor-screen-reader[data-short-wide='true'] .monitor-screen-header { inset: 0 0 auto; z-index: 1; border-radius: 0; }
+.monitor-screen-reader[data-short-wide='true'] .monitor-screen-content { top: 44px; }
+.studio[data-selected='ai'] .studio-header { visibility: hidden; pointer-events: none; }
+.studio[data-selected='ai'] .studio-stage { min-height: 0; height: 100dvh; }
