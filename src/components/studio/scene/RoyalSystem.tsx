@@ -6,8 +6,7 @@ import { Block, Rod } from './Primitives';
 import { HallymPlaque } from './HallymPlaque';
 import { SnuhAward } from './SnuhAward';
 import { KomissAward } from './KomissAward';
-import { CertificateFrames } from './CertificateFrames';
-import { WhiskyCollection } from './WhiskyCollection';
+import { AwardCeremonyPhoto, CertificateFrames } from './CertificateFrames';
 
 const WOOD_BASE = new Color(PALETTE.paperLight);
 const WOOD_TINT = new Color(INTERIOR.lightWood).multiply(
@@ -69,9 +68,9 @@ export function RoyalSystem({ wood }: RoyalSystemProps) {
         width={SIDE_BAY_WIDTH} wood={wood} supportX={[1.35, 2.40]} />)}
     </group>
 
-    <Suspense fallback={null}><WhiskyCollection /></Suspense>
     <group name="personal-awards-collection">
       <Suspense fallback={null}><CertificateFrames /></Suspense>
+      <Suspense fallback={null}><AwardCeremonyPhoto /></Suspense>
       <group name="Hallym appreciation display" position={[1.54, 0.82, 3.095]} rotation={[0, Math.PI, 0]}>
         <HallymPlaque />
       </group>

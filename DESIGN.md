@@ -589,3 +589,32 @@ Group the owner's ten whiskies on the negative-X bookcase, five bottles each on 
 ## 76. Whisky on the two highest shelves
 
 Move all ten bottles together to the two highest negative-X shelves, five at 2.401m and five at 2.001m. Lower the second-highest shelf from 2.10m to 2.00m so 35cm bottles clear the top shelf's underside by 3cm, retaining the real bottle proportions. Preserve the shelf footprint, other shelves, all credentials/awards on the opposite bookcase, and the clock below the TV. This placement supersedes section75's lower whisky rows. Bottle realism remains a future refinement; this change only relocates the collection.
+
+## 77. Whisky collection: eight bottles, one shelf
+
+Keep Yamazaki, Hibiki, Ballantine’s 30, Balvenie, Lagavulin, Bowmore, Redbreast and Booker’s together on the highest left shelving bay (Y 2.401). Remove Ballantine’s Limited and LARK from the display. Preserve relative bottle proportions and leave clearance at both ends.
+
+Internet product references establish silhouette, closure and label details. Bottle glass and liquid use scene-lit physical materials; only paper labels are mapped from packshots. Do not project photographed reflections or backgrounds over the body. Hibiki has 24 glass facets and a crystal stopper. Redbreast uses an official 700 ml reference. The cabinet photograph identifies classic cream-label Bowmore 12 and Lagavulin 16; those public product versions replace the newer labels. Bottles alternate slightly front/back within the same shelf. Paper and ink colors are separated in the label shader to remove photographic lighting. Opened neck closures and Hibiki’s low fill reflect the supplied reference. Unverified Booker’s batch information is omitted.
+
+
+## 78. An expandable favorite-whisky cabinet
+
+This supersedes the owned-inventory / eight-on-one-shelf direction. The user approved a separate glazed cabinet and asked for future collection space and freedom to fit the room rather than copy their cabinet photo. Display six favorites only: Lagavulin 16, Booker's, Ballantine's 30, Hibiki Master's Select, Bowmore 17 White Sands, and current blue-label GlenDronach 18. Redbreast, Yamazaki and Balvenie are absent; Bowmore 12 is replaced.
+
+The owner corrected this to an additional .50m × .46m × 2.12m beige-oak cabinet beside the guitar, not a replacement for the bookcase. Restore the full original Royal System (both bays, rails, cabinets and connected lower shelf), its continuous4.8m lightstrip and the prior Mantis position. Place the cabinet at [2.46,.0185,-3.02], rotation PI/2, facing into the room from the right wall beside the guitar. Preserve bottle scale and derive door/light/hardware offsets from the half-width carcass. The furniture movement clamp includes this initial rotation.
+
+WHISKY_CABINET defines cabinet dimensions, world placement and shelf tops; 18 local slots (3 across × 2 deep × 3 levels) leave clearance for standard bottles up to about130mm wide and380mm high. The initial six occupy two staggered slots per level. Internal wood matches INTERIOR.lightWood; frame bronze#514b40 has a matte-metal finish. Two thin glass doors use restrained reflection (opacity.065), without adding a second refractive layer over bottle transmission. Concealed 2700K-like vertical strips respond to room light power and have a real interior on/off button.
+
+Each door pivots90° independently with intentional damping14/s, settling in about.5sec; front-view Left is local+X. Physical pane/handle clicks and local occluded keyboard buttons share the same state. Suppress camera double-click on physical cabinet controls, reject drag gestures as clicks, and immediately close doors while arranging or when reduced motion is active. The cabinet moves/rotates as one item in the existing visit-only furniture layout; rotated closed bounds including pulls remain within the room. No automatic rotation/pulsing, photo panel bottle bodies, invented filler objects, inventory synchronization or new global controls.
+
+## 79. A4 credentials and award ceremony photograph
+
+The degree and both lifetime membership certificates use actual A4 paper:210×297mm portrait for KSNS/SNU and297×210mm landscape for KOMISS. Add an8mm frame face and4mm mat on each side, so the paper itself remains A4. Group all three on the positive-X bookcase shelf at1.82m, with centers X2.225,1.935,1.5925 and Z3.12; retain support feet, original orientations and document textures. Keep clearance between frames, side rails and the shelf above.
+
+Use the user's IMG_0384.jpg as a full, proportional, non-emissive framed print alongside the KOSESS gold award. Paper width.27m, original3395:2633 aspect, same slim aluminium frame and rear support; center[2.185,1.3025,3.12]. Preserve the trophy's centered pose and hover/focus/link behavior.
+
+## 80. Armagnac and tidy monitor-mount cabling
+
+Add Castarède Bas Armagnac XO20 as the seventh bottle using the supplied IMG_0792 reference: tall tapered neck, clear glass, amber spirit, exposed cork and short ridged black cap. Use a reconstructed cream French label only; do not map the photographed hand, room or reflections onto the body. Visual envelope370mm high and84mm diameter, lower shelf rear-center slot4.
+
+Move the existing Mac mini to desk-local[.005,.7735,-.345], beside the monitor-arm mount. Route display and power cables from actual rear ports through the arm's rear guides and behind the desk edge. Preserve stickers, the Claude photograph easter egg, projects routing and movement with the desk; translate its focus target to world[-.055,.815,-1.155].

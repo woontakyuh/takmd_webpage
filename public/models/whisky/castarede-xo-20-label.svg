@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1320" viewBox="0 0 1024 1320">
+  <rect width="1024" height="1320" fill="#f4f0db"/>
+  <g fill="#2d251d" text-anchor="middle" font-family="Times New Roman, Times, serif">
+    <text x="512" y="220" font-size="158" textLength="942" lengthAdjust="spacingAndGlyphs">CASTARÈDE</text>
+    <text x="560" y="310" font-size="48" font-style="italic" textLength="560" lengthAdjust="spacingAndGlyphs">Maison fondée en 1832</text>
+    <text x="512" y="440" font-size="110" textLength="927" lengthAdjust="spacingAndGlyphs">BAS ARMAGNAC</text>
+    <text x="512" y="536" font-size="60" font-style="italic" textLength="840" lengthAdjust="spacingAndGlyphs">Appellation Armagnac Contrôlée</text>
+    <g fill="#561c12" font-weight="bold">
+      <text x="512" y="738" font-size="175">XO</text>
+      <text x="512" y="900" font-size="155" textLength="887" lengthAdjust="spacingAndGlyphs">20 ans d'âge</text>
+    </g>
+    <text x="512" y="1001" font-size="67" textLength="765" lengthAdjust="spacingAndGlyphs">32240 Mauléon d'Armagnac</text>
+    <text x="512" y="1095" font-size="62">(Gers)</text>
+    <text x="100" y="1200" font-size="65">70 cl</text>
+    <text x="913" y="1200" font-size="60">40% vol.</text>
+    <text x="512" y="1250" font-size="40">Produit de France</text>
+  </g>
+</svg>

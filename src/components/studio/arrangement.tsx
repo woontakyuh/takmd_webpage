@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { CameraPose, Point } from './scene/config';
 import type { ExhibitId } from './types';
+import { WHISKY_CABINET } from './scene/WhiskyCabinetLayout';
 
 export const FURNITURE = {
   desk: { label: 'Desk', center: [-0.05, 0, -1.5], radius: 1.02, handle: 1.35 },
@@ -11,16 +12,32 @@ export const FURNITURE = {
   plant: { label: 'Palm', center: [2.18, 0, -0.55], radius: 0.28, handle: 2.15 },
   mantis: { label: 'Mantis', center: [-1.75, 0, 2.62], radius: 0.15, handle: 1.7 },
   signe: { label: 'Signe', center: [-2.49, 0, 2.84], radius: 0.06, handle: 1.6 },
+  whisky: { label: 'Whisky cabinet', center: WHISKY_CABINET.center,
+    radius: Math.hypot(WHISKY_CABINET.width, WHISKY_CABINET.depth) / 2 + .04, handle: 2.25 },
   music: { label: 'Guitar & amp', center: [2.12, 0, -2.1], radius: 0.61, handle: 1.1 },
 } as const satisfies Record<string, { readonly label: string; readonly center: Point; readonly radius: number; readonly handle: number }>;
 export type FurnitureId = keyof typeof FURNITURE;
-export const FURNITURE_IDS: readonly FurnitureId[] = ['desk', 'chair', 'sofa', 'table', 'lounge', 'plant', 'mantis', 'signe', 'music'];
+export const FURNITURE_IDS: readonly FurnitureId[] = ['desk', 'chair', 'sofa', 'table', 'lounge', 'plant', 'mantis', 'signe', 'music', 'whisky'];
 export type FurniturePose = { readonly x: number; readonly z: number; readonly angle: number };
 type Layout = Partial<Record<FurnitureId, FurniturePose>>;
 const ZERO: FurniturePose = { x: 0, z: 0, angle: 0 };
 function clampPose(id: FurnitureId, pose: FurniturePose): FurniturePose {
   const { center, radius } = FURNITURE[id];
   const cosine = Math.abs(Math.cos(pose.angle)), sine = Math.abs(Math.sin(pose.angle));
+  if (id === 'whisky') {
+    const angle = pose.angle + WHISKY_CABINET.rotation;
+    const c = Math.cos(angle), s = Math.sin(angle);
+    const halfWidth = WHISKY_CABINET.width / 2, back = WHISKY_CABINET.depth / 2, front = -back - .03;
+    const minX = -halfWidth * Math.abs(c) + Math.min(front * s, back * s);
+    const maxX = halfWidth * Math.abs(c) + Math.max(front * s, back * s);
+    const minZ = -halfWidth * Math.abs(s) + Math.min(front * c, back * c);
+    const maxZ = halfWidth * Math.abs(s) + Math.max(front * c, back * c);
+    return {
+      x: Math.max(-2.7 - minX - center[0], Math.min(2.78 - maxX - center[0], pose.x)),
+      z: Math.max(-3.32 - minZ - center[2], Math.min(3.27 - maxZ - center[2], pose.z)),
+      angle: pose.angle % (2 * Math.PI),
+    };
+  }
   // The sofa's 1.60 m width runs along z in its designed pose; its back is only 0.445 m from the center.
   const halfX = id === 'sofa' ? 0.4445 * cosine + 0.8001 * sine : radius;
   const halfZ = id === 'sofa' ? 0.8001 * cosine + 0.4445 * sine : radius;

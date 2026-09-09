@@ -65,6 +65,15 @@ function isFormTarget(target: EventTarget | null): boolean {
     && target.closest('input, textarea, select, button, a, [contenteditable="true"], [role="textbox"]') !== null;
 }
 
+function isSceneControl(object: Object3D): boolean {
+  let current: Object3D | null = object;
+  while (current) {
+    if (current.userData.sceneControl === true) return true;
+    current = current.parent;
+  }
+  return false;
+}
+
 function isVisibleSurface(object: Object3D): boolean {
   let current: Object3D | null = object;
   while (current) {
@@ -74,7 +83,7 @@ function isVisibleSurface(object: Object3D): boolean {
   if (!(object instanceof Mesh)) return false;
   const materials = Array.isArray(object.material) ? object.material : [object.material];
   return materials.some(material => material.visible && material.colorWrite
-    && (!material.transparent || material.opacity > 0.1));
+    && (isSceneControl(object) || !material.transparent || material.opacity > 0.1));
 }
 
 export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady }: CameraRigProps) {
@@ -190,6 +199,8 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       cancelSceneSingleAction(gl.domElement);
       event.preventDefault();
       event.stopPropagation();
+      const hit = surfaceAt(event.clientX, event.clientY);
+      if (hit && isSceneControl(hit.object)) return;
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
       const saved = inspectionReturnPose.current;
@@ -201,7 +212,6 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
         };
         return;
       }
-      const hit = surfaceAt(event.clientX, event.clientY);
       if (!hit) {
         orbit.enabled = true;
         return;

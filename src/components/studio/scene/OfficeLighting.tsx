@@ -23,24 +23,24 @@ export function OfficeLighting({ power, palette }: { readonly power: number; rea
 
 function ShelfWash({ power, palette }: { readonly power: number; readonly palette: RoomLightPalette }) {
   return <group name="continuous-4.8m-shelf-lightstrip">
-    {[-1, 1].map(side => <group key={side}>
-      <Block size={[2.4, 0.015, 0.018]} position={[side * 1.2, 0.80, 3.283]}
+    {[{ x: -1.2, width: 2.4 }, { x: 1.2, width: 2.4 }].map(({ x, width }) => <group key={x}>
+      <Block size={[width, 0.015, 0.018]} position={[x, 0.80, 3.283]}
         color={PALETTE.aluminium} radius={0.002} metalness={0.75} roughness={0.4} />
-      <WallWash x={side * 1.2} color={palette.color} power={power} />
+      <WallWash x={x} width={width} color={palette.color} power={power} />
     </group>)}
   </group>;
 }
 
-function WallWash({ x, color, power }: { readonly x: number; readonly color: string; readonly power: number }) {
+function WallWash({ x, width, color, power }: { readonly x: number; readonly width: number; readonly color: string; readonly power: number }) {
   const light = useRef<RectAreaLight>(null);
   useLayoutEffect(() => { light.current?.lookAt(x, 1.22, 3.32); }, [x]);
   return <>
     <mesh position={[x, 0.809, 3.288]} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[2.4, 0.009]} />
+      <planeGeometry args={[width, 0.009]} />
       <meshStandardMaterial color={LIGHTING.reflector} emissive={color} emissiveIntensity={power * 2} />
     </mesh>
     <rectAreaLight ref={light} name={x < 0 ? 'Shelf left wash' : 'Shelf right wash'}
-      position={[x, 0.83, 3.277]} color={color} intensity={power * 15} width={2.4} height={0.028} />
+      position={[x, 0.83, 3.277]} color={color} intensity={power * 15} width={width} height={0.028} />
   </>;
 }
 

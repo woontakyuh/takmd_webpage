@@ -11,37 +11,48 @@ const FRAME = {
   rearFootDepth: 0.076,
 } as const;
 
+const A4 = { short: .210, long: .297 } as const;
+const FRAME_MARGIN = (FRAME.face + FRAME.paperInset) * 2;
+const CREDENTIAL_SHELF_TOP = 1.82;
+
 const CREDENTIALS = [
   {
     id: 'ksns-permanent-membership-2022',
     name: 'KSNS permanent member certificate',
     texture: '/models/personal-certificates/ksns-permanent-membership-2022.webp',
-    width: 0.28,
-    height: 0.38,
-    position: [2.12, 2.26, 3.12],
-    paperRatio: 1049 / 1500,
+    width: A4.short + FRAME_MARGIN,
+    height: A4.long + FRAME_MARGIN,
+    position: [2.225, CREDENTIAL_SHELF_TOP, 3.12],
+    paperSize: [A4.short, A4.long],
   },
   {
     id: 'snu-master-of-science-in-medicine-2018',
     name: 'SNU medicine diploma',
     texture: '/models/personal-certificates/snu-master-of-science-in-medicine-2018.webp',
-    width: 0.30,
-    height: 0.41,
-    position: [1.67, 2.26, 3.12],
-    paperRatio: 1060 / 1484,
+    width: A4.short + FRAME_MARGIN,
+    height: A4.long + FRAME_MARGIN,
+    position: [1.935, CREDENTIAL_SHELF_TOP, 3.12],
+    paperSize: [A4.short, A4.long],
   },
   {
     id: 'komiss-life-membership-2023',
     name: 'KOMISS lifetime certificate',
     texture: '/models/personal-certificates/komiss-life-membership-2023.webp',
-    width: 0.38,
-    height: 0.285,
-    position: [1.875, 1.82, 3.115],
-    paperRatio: 1517 / 1037,
+    width: A4.long + FRAME_MARGIN,
+    height: A4.short + FRAME_MARGIN,
+    position: [1.5925, CREDENTIAL_SHELF_TOP, 3.12],
+    paperSize: [A4.long, A4.short],
   },
 ] as const;
 
-type CredentialSpec = (typeof CREDENTIALS)[number];
+const AWARD_PHOTO = {
+  id: 'kosess-award-ceremony', name: 'KOSESS award ceremony photograph',
+  texture: '/models/award-photo/kosess-ceremony.webp',
+  width: .27 + FRAME_MARGIN, height: .27 * 2633 / 3395 + FRAME_MARGIN,
+  position: [2.185, 1.3025, 3.12], paperSize: [.27, .27 * 2633 / 3395],
+} as const;
+
+type CredentialSpec = (typeof CREDENTIALS)[number] | typeof AWARD_PHOTO;
 
 type FramedCredentialProps = {
   readonly credential: CredentialSpec;
@@ -85,10 +96,7 @@ function preparedTexture(source: Texture) {
 
 export function FramedCredential({ credential, texture }: FramedCredentialProps) {
   const geometry = useMemo(() => frameGeometry(credential.width, credential.height), [credential.height, credential.width]);
-  const openingWidth = credential.width - FRAME.face * 2 - FRAME.paperInset * 2;
-  const openingHeight = credential.height - FRAME.face * 2 - FRAME.paperInset * 2;
-  const paperHeight = Math.min(openingHeight, openingWidth / credential.paperRatio);
-  const paperWidth = paperHeight * credential.paperRatio;
+  const [paperWidth, paperHeight] = credential.paperSize;
   const groundOffset = 0.0018 * Math.cos(FRAME.leanRadians)
     + (FRAME.depth / 2 + 0.0018) * Math.sin(FRAME.leanRadians);
   const hingeHeight = credential.height * 0.62;
@@ -148,4 +156,11 @@ export function CertificateFrames() {
       return texture ? <FramedCredential key={credential.id} credential={credential} texture={texture} /> : null;
     })}
   </group>;
+}
+
+export function AwardCeremonyPhoto() {
+  const source = useTexture(AWARD_PHOTO.texture);
+  const texture = useMemo(() => preparedTexture(source), [source]);
+  useEffect(() => () => texture.dispose(), [texture]);
+  return <FramedCredential credential={AWARD_PHOTO} texture={texture} />;
 }

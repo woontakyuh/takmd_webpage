@@ -48,6 +48,7 @@ export const ROOM = {
   spine: { position: [-2.38, 0.5695, 1.22], height: 0.54, rotation: Math.PI / 2 - 0.12 },
   folio: { position: [0.38, 0.7805, -1.66], rotation: Math.PI - 0.17 },
   monitor: { position: [-0.05, 0.781, -1.2], rotation: Math.PI },
+  macMini: { position: [0.005, 0.7735, -0.345] },
   clock: { position: [0.91, 0.9628, 3.104], rotation: Math.PI, scale: 0.6 },
   gallery: { position: [0, 1.94, 3.245], rotation: Math.PI },
   chair: { position: [-0.2, 0.0185, -2.59], rotation: Math.PI - 0.23 },
@@ -71,7 +72,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   ai: { position: [0.03, 1.255, -2.2], target: [-0.05, 1.155, -1.2], zoom: 1 },
   family: { position: [0.68, 1.16, -2.03], target: [0.67, 0.885, -1.27], zoom: 1 },
   award: { position: [1.875, 1.58, 2.215], target: [1.875, 1.448, 3.06], zoom: 1 },
-  projects: { position: [0.25, 1.35, -2.12], target: [-0.24, 0.815, -1.33], zoom: 1 },
+  projects: { position: [0.435, 1.35, -1.945], target: [-0.055, 0.815, -1.155], zoom: 1 },
   bjj: { position: [-1.25, 1.82, -1.02], target: [-2.505, 1.30, -2.318], zoom: 1 },
   surfing: { position: [0.65, 1.85, -4.25], target: [-2.382, 1.46, -3.01], zoom: 1 },
 };
@@ -89,7 +90,7 @@ export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   ai: FOCUS.ai,
   family: FOCUS.family,
   award: { position: [1.875, 1.60, 2.135], target: [1.875, 1.448, 3.06], zoom: 1 },
-  projects: { position: [0.45, 1.7, -2.5], target: [-0.24, 0.815, -1.33], zoom: 1 },
+  projects: { position: [0.635, 1.7, -2.325], target: [-0.055, 0.815, -1.155], zoom: 1 },
   bjj: { position: [-0.7, 2.05, -0.88], target: [-2.505, 1.30, -2.318], zoom: 1 },
   surfing: { position: [1.05, 2.15, -4.5], target: [-2.382, 1.46, -3.01], zoom: 1 },
 };

@@ -2,11 +2,14 @@ import { RoundedBox } from '@react-three/drei';
 import { useMemo } from 'react';
 import { Quaternion, Vector3 } from 'three';
 import { Cable } from './Cable';
+import { M4_MAC_MINI } from './MacMini';
 import type { Point } from './config';
-import { PALETTE } from './config';
+import { PALETTE, ROOM } from './config';
 import { Block, Rod } from './Primitives';
 
 const MONITOR_TILT = -0.04;
+const MINI_REAR_Y = ROOM.macMini.position[1] + 0.026 - ROOM.monitor.position[1];
+const MINI_REAR_Z = ROOM.macMini.position[2] + ROOM.monitor.position[2] - ROOM.desk.position[2] - M4_MAC_MINI.front - 0.0001;
 
 export const MONITOR_ARM = {
   deskEdgeContact: [-0.15154, -0.0075, -0.138332],
@@ -14,16 +17,25 @@ export const MONITOR_ARM = {
   elbowPivot: [-0.104, 0.208, -0.084],
   vesaPivot: [0, 0.368, -0.066],
   vesaPlate: [0, 0.36802, -0.0495],
-  miniDisplayPort: [0.1885, 0.022, 0.0664],
-  monitorDisplayPort: [0.042, 0.3683, -0.043],
+  miniDisplayPort: [ROOM.macMini.position[0] - 0.0015, MINI_REAR_Y, MINI_REAR_Z],
+  miniPowerPort: [ROOM.macMini.position[0] + 0.044, MINI_REAR_Y, MINI_REAR_Z],
+  monitorDisplayPort: [-0.092, 0.3683, -0.043],
   monitorPowerPort: [0.092, 0.3663, -0.043],
-  underDeskOutlet: [-0.11, -0.153, -0.1],
+  underDeskOutlet: [-0.095, -0.1425, -0.111],
+  miniPowerOutlet: [-0.13, -0.1425, -0.111],
 } as const satisfies Readonly<Record<string, Point>>;
 
 const ARM_JOINTS: readonly Point[] = [
   MONITOR_ARM.basePivot,
   MONITOR_ARM.elbowPivot,
   MONITOR_ARM.vesaPivot,
+];
+
+const ARM_CABLE_ROUTE: readonly Point[] = [
+  [-0.15154, 0.084, -0.171332],
+  ...[0.2, 0.5, 0.8].map(progress => rearCablePoint(MONITOR_ARM.basePivot, MONITOR_ARM.elbowPivot, progress)),
+  [-0.104, 0.208, -0.117],
+  ...[0.2, 0.5, 0.8].map(progress => rearCablePoint(MONITOR_ARM.elbowPivot, MONITOR_ARM.vesaPivot, progress)),
 ];
 
 export function MonitorArm() {
@@ -38,28 +50,39 @@ export function MonitorArm() {
       <VesaPlate />
       <Block size={[0.016, 0.009, 0.003]} position={[...MONITOR_ARM.monitorPowerPort]}
         color={PALETTE.ink} radius={0.001} roughness={0.72} />
+      <Block size={[0.014, 0.007, 0.003]} position={[...MONITOR_ARM.monitorDisplayPort]}
+        color={PALETTE.ink} radius={0.001} roughness={0.72} />
       <Cable points={[
         MONITOR_ARM.miniDisplayPort,
-        [0.18, 0.022, 0.05],
-        [0.035, 0.035, 0.015],
-        [0.045, 0.07, -0.024],
-        [0.045, 0.22, -0.047],
+        [0.0035, MINI_REAR_Y, -0.13],
+        [-0.012, 0.006, -0.165],
+        [-0.09, 0.006, -0.174],
+        [-0.15504, 0.023, -0.172],
+        ...ARM_CABLE_ROUTE.map(([x, y, z]): Point => [x - 0.0055, y, z]),
+        [-0.018, 0.356, -0.106],
+        [-0.034, 0.375, -0.113],
+        [-0.065, 0.375, -0.09],
+        [-0.092, 0.3683, -0.074],
         MONITOR_ARM.monitorDisplayPort,
-      ]} radius={0.0024} />
+      ]} radius={0.0024} segments={96} />
       <Cable points={[
         MONITOR_ARM.monitorPowerPort,
-        [0.045, 0.345, -0.084],
-        [-0.104, 0.208, -0.112],
-        [-0.15, 0.084, -0.14],
-        [-0.15, 0.018, -0.183],
-        [-0.15, -0.15, -0.183],
+        [0.092, 0.3663, -0.075],
+        [0.04, 0.366, -0.103],
+        [0.006, 0.36, -0.103],
+        ...ARM_CABLE_ROUTE.toReversed().map(([x, y, z]): Point => [x + 0.0055, y, z]),
+        [-0.14804, 0.018, -0.183],
+        [-0.14804, -0.145, -0.183],
         MONITOR_ARM.underDeskOutlet,
-      ]} radius={0.0025} />
+      ]} radius={0.0025} segments={96} />
       <Cable points={[
-        [0.234, 0.022, 0.0664], [0.225, 0.014, 0.03],
-        [-0.132, 0.005, -0.05], [-0.149, 0.004, -0.183],
-        [-0.149, -0.15, -0.183], MONITOR_ARM.underDeskOutlet,
-      ]} radius={0.0025} />
+        MONITOR_ARM.miniPowerPort,
+        [0.049, MINI_REAR_Y, -0.137],
+        [0.041, 0.001, -0.183],
+        [-0.08, -0.025, -0.21],
+        [-0.16, -0.055, -0.212],
+        [-0.16, -0.145, -0.212], MONITOR_ARM.miniPowerOutlet,
+      ]} radius={0.0025} segments={72} />
       <Block size={[0.18, 0.04, 0.18]} position={[-0.11, -0.1425, -0.02]} color={PALETTE.ink}
         radius={0.008} roughness={0.72} />
       <CableGuide position={[clampX, clampY - 0.002, clampZ - 0.026]} />
@@ -104,7 +127,7 @@ function ArmLink({ from, to }: { readonly from: Point; readonly to: Point }) {
           radius={0.003} smoothness={3} bevelSegments={2} castShadow receiveShadow>
           <meshStandardMaterial color={PALETTE.graphite} roughness={0.42} metalness={0.72} />
         </RoundedBox>)}
-        {[-0.18, 0.16].map(offset => <CableGuide key={offset} position={[0, length * offset, 0.023]} />)}
+        {[-0.18, 0.16].map(offset => <CableGuide key={offset} position={[0, length * offset, -0.026]} />)}
       </group>
       <Rod from={pistonStart} to={pistonEnd} radius={0.0062} color={PALETTE.steel} metalness={0.8} />
     </>
@@ -155,6 +178,12 @@ function linkFrame(from: Point, to: Point) {
     midpoint: start.add(end).multiplyScalar(0.5),
     quaternion: new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), direction.normalize()),
   };
+}
+
+function rearCablePoint(from: Point, to: Point, progress: number): Point {
+  const { length, midpoint, quaternion } = linkFrame(from, to);
+  const point = new Vector3(0, length * (progress - 0.5), -0.026).applyQuaternion(quaternion).add(midpoint);
+  return [point.x, point.y, point.z];
 }
 
 function pointAlong(from: Point, to: Point, progress: number, zOffset: number): Point {
