@@ -1,5 +1,6 @@
 import { Movable } from './Movable';
 import type { RoomLightPalette } from '../lightingPresets';
+import type { BlindLift } from '../types';
 import { useLayoutEffect, useRef } from 'react';
 import type { RectAreaLight } from 'three';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
@@ -10,6 +11,19 @@ import { LIGHTING, PALETTE, ROOM, WALL_TV } from './config';
 import { useWallTvBacklight } from './hoverReactions';
 
 RectAreaLightUniformsLib.init();
+
+export function WindowDaylight({ daylight, blindLift }: { readonly daylight: number; readonly blindLift: BlindLift }) {
+  const { leftX, window: opening } = ROOM.architecture;
+  return <group name="diffuse-window-daylight">
+    {blindLift.map((lift, side) => {
+      const height = (opening.top - opening.bottom) * lift;
+      return <rectAreaLight key={side} name={`Window daylight ${side}`}
+        position={[leftX + 0.2, opening.bottom + height / 2, opening.centerZ + (side === 0 ? 1 : -1) * opening.width / 4]}
+        rotation={[0, -Math.PI / 2, 0]} width={opening.width / 2 - 0.045} height={Math.max(height, 0.001)}
+        color="#FFF5E6" intensity={height > 0 ? daylight * 3 : 0} />;
+    })}
+  </group>;
+}
 
 export function OfficeLighting({ power, palette }: { readonly power: number; readonly palette: RoomLightPalette }) {
   return <group name="warm-office-lighting">

@@ -10,8 +10,10 @@ type ShadowSnapshot = {
   frame: number;
 };
 
-export function OfficeRenderer({ lighting }: Pick<StudioSceneProps, 'lighting'>) {
+export function OfficeRenderer({ lighting, environmentIntensity }: Pick<StudioSceneProps, 'lighting'> & { readonly environmentIntensity: number }) {
   const gl = useThree(state => state.gl);
+  const scene = useThree(state => state.scene);
+  useLayoutEffect(() => { scene.environmentIntensity = environmentIntensity; }, [scene, environmentIntensity]);
   const snapshots = useRef(new WeakMap<Mesh, ShadowSnapshot>());
   const previousCount = useRef(0);
   const frame = useRef(0);

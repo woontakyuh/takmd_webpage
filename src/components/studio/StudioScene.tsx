@@ -16,35 +16,41 @@ import { Folio } from './scene/Folio';
 import { Displays } from './scene/Displays';
 import { CalendarClock } from './scene/CalendarClock';
 import { RoomSwitches } from './scene/RoomSwitches';
-import { OfficeLighting } from './scene/OfficeLighting';
+import { OfficeLighting, WindowDaylight } from './scene/OfficeLighting';
 import { OfficeLounge } from './scene/OfficeLounge';
 import { PersonalCorner } from './scene/PersonalCorner';
 import { PALETTE, ROOM, TOUR } from './scene/config';
 
+const ROOM_ENVIRONMENT = (
+  <Environment resolution={128} frames={1} environmentIntensity={0.12}>
+    <color attach="background" args={[PALETTE.plaster]} />
+    <Lightformer form="rect" color="#fff8ed" intensity={2} scale={[6, 3, 1]}
+      position={[-4, 2.5, 0]} rotation={[0, Math.PI / 2, 0]} />
+    <Lightformer form="rect" color="#ffffff" intensity={1.5} scale={[4, 4, 1]}
+      position={[0, 5, 0]} rotation={[Math.PI / 2, 0, 0]} />
+    <Lightformer form="rect" color="#ffffff" intensity={1} scale={[3, 3, 1]}
+      position={[3, 2, -4]} rotation={[0, -Math.PI / 4, 0]} />
+  </Environment>
+);
+
 export function StudioScene(props: StudioSceneProps) {
   const { sun, position } = props.lighting;
   const skyFill = MathUtils.smoothstep(sun.altitude, -6, 32);
+  const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
     <Canvas camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
       dpr={[1, props.compact ? 1 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: 'none' }}>
-      <Environment resolution={128} frames={1} environmentIntensity={0.12 + skyFill * 0.32}>
-        <color attach="background" args={[PALETTE.plaster]} />
-        <Lightformer form="rect" color="#fff8ed" intensity={2} scale={[6, 3, 1]}
-          position={[-4, 2.5, 0]} rotation={[0, Math.PI / 2, 0]} />
-        <Lightformer form="rect" color="#ffffff" intensity={1.5} scale={[4, 4, 1]}
-          position={[0, 5, 0]} rotation={[Math.PI / 2, 0, 0]} />
-        <Lightformer form="rect" color="#ffffff" intensity={1} scale={[3, 3, 1]}
-          position={[3, 2, -4]} rotation={[0, -Math.PI / 4, 0]} />
-      </Environment>
-      <ambientLight intensity={0.06 + skyFill * 0.22} color={PALETTE.paperLight} />
+      {ROOM_ENVIRONMENT}
+      <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
       <hemisphereLight args={[sun.skyColor, PALETTE.walnut, 0.10 + skyFill * 0.48]} />
       <directionalLight position={[...position]} intensity={sun.sunIntensity}
         color={sun.sunColor} castShadow shadow-mapSize={[props.compact ? 1024 : 2048, props.compact ? 1024 : 2048]}
         shadow-camera-left={-5} shadow-camera-right={5} shadow-camera-top={6} shadow-camera-bottom={-5}
         shadow-normalBias={0.018} shadow-bias={-0.0001} shadow-radius={3} />
       <directionalLight position={[4, 4, -3]} intensity={0.04 + skyFill * 0.18} color={PALETTE.paperLight} />
+      <WindowDaylight daylight={skyFill} blindLift={props.blindLift} />
       <spotLight name="Room ceiling fill" position={[0, ROOM.architecture.height - 0.13, 0]} intensity={sun.lamp * 0.85} distance={7} decay={2}
         angle={1.3} penumbra={1} color={props.roomPalette.color} />
       <Architecture night={props.night} sky={sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} />
@@ -62,7 +68,7 @@ export function StudioScene(props: StudioSceneProps) {
       <Movable id="desk" handle={false}><Folio {...props} /></Movable>
       <Displays {...props} />
       <CameraRig {...props} />
-      <OfficeRenderer lighting={props.lighting} />
+      <OfficeRenderer lighting={props.lighting} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
     </Canvas>
   );
 }
