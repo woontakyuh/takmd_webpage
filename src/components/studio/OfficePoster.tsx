@@ -11,10 +11,11 @@ export class SceneBoundary extends Component<{
   render() { return this.state.failed ? null : this.props.children; }
 }
 
-export function OfficePoster({ ready, failed, night, onProfile }: {
+export function OfficePoster({ ready, failed, night, interactive, onProfile }: {
   readonly ready: boolean;
   readonly failed: boolean;
   readonly night: boolean;
+  readonly interactive: boolean;
   readonly onProfile: () => void;
 }) {
   const time = night ? 'night' : 'day';
@@ -26,7 +27,7 @@ export function OfficePoster({ ready, failed, night, onProfile }: {
     </picture>
     <div className="office-poster-status" role="status">
       <span>{failed ? 'The interactive office is unavailable.' : 'Opening the office…'}</span>
-      <button type="button" onClick={onProfile}>{failed ? 'Explore the profile' : 'Read the CV while the office opens'}</button>
+      <button type="button" disabled={!interactive} onClick={onProfile}>{failed ? 'Explore the profile' : 'Read the CV while the office opens'}</button>
     </div>
   </div>;
 }
