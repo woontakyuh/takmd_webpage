@@ -1,4 +1,16 @@
-# Office session handoff — 2026-09-09
+# Office session handoff — 2026-09-10
+
+## Current office inspection release
+
+Office changes are committed, pushed and verified on Production through `dc4cd5872d9cb29224fd65f657018bd7ad4dd47d`, Cloudflare `3356c291-b497-4973-8f73-95d89cae092e`. The monitor now approaches head-on and hosts the shared sharp CV inside its real bezel; TV and monitor use X, Escape and same-URL Back. Early loading CV stays in the office and waits for shell hydration before accepting its first click. Personal books show verified YES24/publisher metadata and the actual 2022 CSRS San Diego/Paper23 details. Folio approach is closer and mobile-centered; physical controls and cabinet surfaces support double-click/tap inspection.
+
+The open Isidoro closes only at its free left edge/handle or Close bar. Each of seven actual bottles can move onto the worktop, show sourced information, and return before switching or closing. Four concealed warm strips follow the opening; alpha/Fresnel hollow glass removes the transmission-buffer black flicker. Native mobile/desktop browser checks, build/types and 23 cabinet tests passed. Full release receipt: `.omo/evidence/office-inspection-2026-09-10/release.json`. Public footer visitor counting is already operational (one per tab session, refreshes deduplicated).
+
+## Current Han River landcover increment
+
+After the office release, 1,099 current OSM developed/park/woodland boundaries were applied to the existing elevation mesh. Namsan and riverbank parks are now separate from mapped developed blocks; no satellite pixels are shipped. The shader adds one extra gravel sample but retains the same coverage texture, geometry and 96-mesh/300,796-triangle exterior. Root compared default/window/left/right day/night views; bridge identities, traffic and blinds passed. Sample median frame time was 33.0 ms before /33.2 ms after on the same browser; this is a single local measurement, not a universal performance guarantee. Geographic provenance: `public/models/han-river/LANDCOVER.md`; verification and release receipt: `.omo/evidence/river-landcover-2026-09-10/`.
+
+Remaining scope: finer mapped building density and silhouettes, distant vegetation and approaches beyond the current terrain. This ground pass does not claim a complete photorealistic Han River. User will supply missing lecture PDFs later; 2024-or-earlier slides and administrator-persisted arrangements remain deferred. Corner lamp researched but not installed: Flos IC Lights F1 brushed brass is the first recommendation, outside the cabinet door sweep. Existing reference artifacts remain untouched.
 
 ## TV and standing book reader follow-up
 

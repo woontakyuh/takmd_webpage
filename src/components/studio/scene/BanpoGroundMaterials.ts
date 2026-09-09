@@ -1,38 +1,56 @@
 import * as THREE from 'three';
 import geography from '../../../../public/models/han-river/geography.json';
+import landcover from '../../../../public/models/han-river/landcover.json';
 
-const EXTENT = { west: -3500, south: -200, width: 7000, depth: 6700 };
+const EXTENT = landcover.extent;
+const COVER_SIZE = 1024;
 
-function urbanCoverage() {
+function landCoverage() {
   const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 1024;
+  canvas.width = canvas.height = COVER_SIZE;
   const context = canvas.getContext('2d');
   if (!context) return null;
-  context.fillStyle = '#000'; context.fillRect(0, 0, 1024, 1024);
-  context.fillStyle = context.strokeStyle = '#fff';
+  context.fillStyle = '#000'; context.fillRect(0, 0, COVER_SIZE, COVER_SIZE);
   const point = ([east, north]: readonly number[]) => [
-    (east - EXTENT.west) / EXTENT.width * 1024,
-    (1 - (north - EXTENT.south) / EXTENT.depth) * 1024,
+    (east - EXTENT.west) / EXTENT.width * COVER_SIZE,
+    (1 - (north - EXTENT.south) / EXTENT.depth) * COVER_SIZE,
   ] as const;
+  const path = (ring: readonly (readonly number[])[]) => {
+    ring.forEach((p, i) => { const [x, y] = point(p); if (i) context.lineTo(x, y); else context.moveTo(x, y); });
+    context.closePath();
+  };
+  for (const [features, color] of [[landcover.urban, '#f00'], [landcover.park, '#00f'], [landcover.woodland, '#0f0']] as const) {
+    context.fillStyle = color;
+    for (const feature of features) {
+      context.beginPath();
+      feature.rings.forEach(path);
+      context.fill('evenodd');
+    }
+  }
+  context.fillStyle = context.strokeStyle = '#f00';
   for (const building of geography.buildings) {
     context.beginPath();
-    building.p.forEach((p, i) => { const [x, y] = point(p); if (i) context.lineTo(x, y); else context.moveTo(x, y); });
-    context.closePath(); context.lineWidth = 18 / EXTENT.width * 1024; context.fill(); context.stroke();
+    path(building.p);
+    context.lineWidth = 18 / EXTENT.width * COVER_SIZE; context.fill(); context.stroke();
   }
-  context.lineWidth = 14 / EXTENT.width * 1024;
+  context.lineWidth = 14 / EXTENT.width * COVER_SIZE;
   context.lineCap = context.lineJoin = 'round';
   for (const road of geography.roads) {
     context.beginPath();
     road.forEach((p, i) => { const [x, y] = point(p); if (i) context.lineTo(x, y); else context.moveTo(x, y); });
     context.stroke();
   }
+  context.fillStyle = '#000';
+  context.beginPath();
+  path(geography.banks.flat());
+  context.fill();
   const texture = new THREE.CanvasTexture(canvas);
-  texture.name = 'OSM building forecourts and road coverage';
+  texture.name = 'OSM developed land, parks and woodland coverage';
   return texture;
 }
 
 export function applyBanpoGroundMaterials(model: THREE.Group, gravel: THREE.Texture) {
-  const cover = urbanCoverage();
+  const cover = landCoverage();
   const loader = new THREE.TextureLoader();
   const grass = loader.load('/models/han-river/ground/leafy-grass.webp');
   grass.colorSpace = THREE.SRGBColorSpace;
@@ -60,24 +78,31 @@ export function applyBanpoGroundMaterials(model: THREE.Group, gravel: THREE.Text
       material.normalScale.set(0.04, 0.04); material.roughness = 1; material.metalness = 0;
       if (cover) {
         material.onBeforeCompile = shader => {
-          shader.uniforms.uUrbanCoverage = { value: cover };
+          shader.uniforms.uLandCoverage = { value: cover };
+          shader.uniforms.uLandExtent = { value: new THREE.Vector4(EXTENT.west, EXTENT.south, EXTENT.width, EXTENT.depth) };
           shader.uniforms.uGravel = { value: gravel };
           shader.vertexShader = shader.vertexShader
             .replace('#include <common>', '#include <common>\nvarying vec2 vGroundGeo;')
             .replace('#include <begin_vertex>', '#include <begin_vertex>\nvec3 groundWorld=(modelMatrix*vec4(transformed,1.0)).xyz;vGroundGeo=vec2(-groundWorld.z,-groundWorld.x);');
           shader.fragmentShader = shader.fragmentShader
-            .replace('#include <common>', '#include <common>\nuniform sampler2D uUrbanCoverage;uniform sampler2D uGravel;varying vec2 vGroundGeo;')
+            .replace('#include <common>', '#include <common>\nuniform sampler2D uLandCoverage;uniform sampler2D uGravel;uniform vec4 uLandExtent;varying vec2 vGroundGeo;')
             .replace('#include <map_fragment>', `#include <map_fragment>
-              vec2 coverageUv=(vGroundGeo-vec2(-3500.0,-200.0))/vec2(7000.0,6700.0);
+              vec2 coverageUv=(vGroundGeo-uLandExtent.xy)/uLandExtent.zw;
               float inCoverage=step(0.0,coverageUv.x)*step(0.0,coverageUv.y)*step(coverageUv.x,1.0)*step(coverageUv.y,1.0);
-              float urban=texture2D(uUrbanCoverage,clamp(coverageUv,0.0,1.0)).r*inCoverage;
+              vec3 cover=texture2D(uLandCoverage,clamp(coverageUv,0.0,1.0)).rgb*inCoverage;
               float grain=texture2D(uGravel,vGroundGeo/5.0).r;
+              float groundVariation=texture2D(uGravel,vGroundGeo/80.0).r;
               float grassLuminance=dot(diffuseColor.rgb,vec3(.2126,.7152,.0722));
               float grassDetail=smoothstep(.055,.48,grassLuminance);
               vec3 naturalGreen=mix(vec3(.19,.285,.17),vec3(.43,.535,.38),grassDetail);
-              diffuseColor.rgb=mix(naturalGreen,vec3(.29,.30,.275)*(.86+grain*.2),urban);`);
+              vec3 parkGreen=naturalGreen*(.88+groundVariation*.2);
+              vec3 woodland=mix(vec3(.10,.185,.095),vec3(.235,.33,.17),groundVariation);
+              vec3 mineral=vec3(.29,.30,.275)*(.78+grain*.16+groundVariation*.18);
+              diffuseColor.rgb=mix(naturalGreen,parkGreen,cover.b);
+              diffuseColor.rgb=mix(diffuseColor.rgb,woodland,cover.g);
+              diffuseColor.rgb=mix(diffuseColor.rgb,mineral,cover.r);`);
         };
-        material.customProgramCacheKey = () => 'banpo-geographic-ground-v2';
+        material.customProgramCacheKey = () => 'banpo-geographic-ground-v3';
       }
       material.needsUpdate = true;
     }
