@@ -63,70 +63,132 @@ function rod(start: THREE.Vector3, end: THREE.Vector3, radius: number): THREE.Bu
   return geometry;
 }
 
-function createStructure(definition: BridgeDefinition, length: number, material: THREE.MeshStandardMaterial): THREE.Group {
+function createStructure(
+  definition: BridgeDefinition,
+  length: number,
+  structureMaterial: THREE.MeshStandardMaterial,
+  pierMaterial: THREE.MeshStandardMaterial,
+): THREE.Group {
   const structure = new THREE.Group();
   const structureLabel = definition.kind === 'arch' ? 'blue arch' : definition.kind === 'beam' ? 'wide beam' : 'orange truss';
   structure.name = `${definition.name} ${structureLabel}`;
 
+  const pairedPierRows = definition.kind === 'beam';
+  const pierInstanceCount = definition.piers * (pairedPierRows ? 2 : 1);
   const pierGeometry = new THREE.CylinderGeometry(2.4, 3.6, 24, 8);
-  const piers = new THREE.InstancedMesh(pierGeometry, material, definition.piers);
+  const piers = new THREE.InstancedMesh(pierGeometry, pierMaterial, pierInstanceCount);
+  const capWidth = pairedPierRows ? 20 : 16;
+  const pierCaps = new THREE.InstancedMesh(new THREE.BoxGeometry(capWidth, 1.6, 4.8), pierMaterial, pierInstanceCount);
   const pierMatrix = new THREE.Matrix4();
+  const setPierInstance = (instanceIndex: number, x: number, z: number): void => {
+    pierMatrix.makeTranslation(x, -13, z);
+    piers.setMatrixAt(instanceIndex, pierMatrix);
+    pierMatrix.makeTranslation(x, -1.8, z);
+    pierCaps.setMatrixAt(instanceIndex, pierMatrix);
+  };
   for (let index = 0; index < definition.piers; index += 1) {
-    const progress = (index + 0.5) / definition.piers;
-    pierMatrix.makeTranslation(0, -13, (progress - 0.5) * length);
-    piers.setMatrixAt(index, pierMatrix);
+    const progress = definition.kind === 'arch' ? index / (definition.piers - 1) : (index + 0.5) / definition.piers;
+    const z = (progress - 0.5) * length;
+    if (pairedPierRows) {
+      const rowOffset = definition.width * 0.255;
+      setPierInstance(index * 2, -rowOffset, z);
+      setPierInstance(index * 2 + 1, rowOffset, z);
+    } else {
+      setPierInstance(index, 0, z);
+    }
   }
-  piers.name = `${definition.name} sourced pier rhythm`;
-  structure.add(piers);
+  piers.name = pairedPierRows
+    ? 'Hannam Bridge paired pier rows at 27 support stations'
+    : `${definition.name} sourced pier rhythm`;
+  piers.userData = pairedPierRows
+    ? { longitudinalStations: definition.piers, rowCount: 2, sourceBasis: 'official station count plus aerial-photo pairing' }
+    : { longitudinalStations: definition.piers };
+  pierCaps.name = `${definition.name} concrete transverse pier caps`;
+  pierCaps.userData = { transverseWidthMetres: capWidth, sourceBasis: 'official side-photo visual approximation' };
+  structure.add(piers, pierCaps);
 
   if (definition.kind === 'beam') {
-    const girderGeometry = new THREE.BoxGeometry(2.1, 3.2, length);
-    const girders = new THREE.InstancedMesh(girderGeometry, material, 6);
-    for (let index = 0; index < 6; index += 1) {
-      pierMatrix.makeTranslation(THREE.MathUtils.lerp(-definition.width * 0.42, definition.width * 0.42, index / 5), -2.5, 0);
+    const girderGeometry = new THREE.BoxGeometry(1.8, 3.2, length);
+    const girders = new THREE.InstancedMesh(girderGeometry, structureMaterial, 8);
+    for (let index = 0; index < 8; index += 1) {
+      const deckSide = index < 4 ? -1 : 1;
+      const girderInDeck = index % 4;
+      const deckCentre = deckSide * definition.width * 0.255;
+      pierMatrix.makeTranslation(deckCentre + THREE.MathUtils.lerp(-8.5, 8.5, girderInDeck / 3), -2.5, 0);
       girders.setMatrixAt(index, pierMatrix);
     }
-    girders.name = `${definition.name} six plate girders`;
+    girders.name = `${definition.name} paired plate-girder decks`;
     structure.add(girders);
     return structure;
   }
 
   const steelParts: THREE.BufferGeometry[] = [];
+  let trussPeakLocalZ: number[] = [];
   if (definition.kind === 'arch') {
-    const spans = 4;
+    const spans = definition.piers - 1;
     const spanLength = length / spans;
     for (const side of [-1, 1]) {
       for (let span = 0; span < spans; span += 1) {
         const startZ = -length / 2 + span * spanLength;
         const curve = new THREE.QuadraticBezierCurve3(
-          new THREE.Vector3(side * definition.width * 0.46, 1.5, startZ),
-          new THREE.Vector3(side * definition.width * 0.46, 22, startZ + spanLength / 2),
-          new THREE.Vector3(side * definition.width * 0.46, 1.5, startZ + spanLength),
+          new THREE.Vector3(side * 4.2, 1.5, startZ),
+          new THREE.Vector3(side * 4.2, 15.5, startZ + spanLength / 2),
+          new THREE.Vector3(side * 4.2, 1.5, startZ + spanLength),
         );
-        steelParts.push(new THREE.TubeGeometry(curve, 12, 1.05, 5, false));
-        for (let hanger = 1; hanger < 6; hanger += 1) {
-          const point = curve.getPoint(hanger / 6);
+        steelParts.push(
+          new THREE.TubeGeometry(curve, 10, 0.78, 5, false),
+          rod(new THREE.Vector3(side * 4.2, 1.2, startZ), new THREE.Vector3(side * 4.2, 1.2, startZ + spanLength), 0.42),
+        );
+        for (let hanger = 1; hanger < 4; hanger += 1) {
+          const point = curve.getPoint(hanger / 4);
           steelParts.push(rod(new THREE.Vector3(point.x, 1, point.z), point, 0.42));
         }
+        const crown = curve.getPoint(0.5);
+        if (side === 1) steelParts.push(rod(new THREE.Vector3(-4.2, crown.y, crown.z), new THREE.Vector3(4.2, crown.y, crown.z), 0.34));
       }
     }
   } else {
-    const bays = 16;
-    const bayLength = length / bays;
+    const peakSupportIndices = [0, 2, 4, 6, 8, 10, 12, 14];
+    const peakProgresses = peakSupportIndices.map(index => (index + 0.5) / definition.piers);
+    trussPeakLocalZ = peakProgresses.map(progress => (progress - 0.5) * length);
     for (const side of [-1, 1]) {
-      for (let bay = 0; bay < bays; bay += 1) {
-        const z0 = -length / 2 + bay * bayLength;
-        const z1 = z0 + bayLength;
-        const bottom0 = new THREE.Vector3(side * definition.width * 0.46, 1, z0);
-        const bottom1 = new THREE.Vector3(side * definition.width * 0.46, 1, z1);
-        const top0 = new THREE.Vector3(side * definition.width * 0.46, 15, z0);
-        const top1 = new THREE.Vector3(side * definition.width * 0.46, 15, z1);
-        steelParts.push(rod(top0, top1, 0.68), rod(bottom0, top0, 0.58), rod(bay % 2 === 0 ? bottom0 : top0, bay % 2 === 0 ? top1 : bottom1, 0.52));
+      for (let bay = 0; bay < peakProgresses.length; bay += 1) {
+        const peakProgress = peakProgresses[bay];
+        const previousPeak = peakProgresses[bay - 1];
+        const nextPeak = peakProgresses[bay + 1];
+        const startProgress = previousPeak === undefined ? 0 : (previousPeak + peakProgress) / 2;
+        const endProgress = nextPeak === undefined ? 1 : (peakProgress + nextPeak) / 2;
+        const z0 = (startProgress - 0.5) * length;
+        const peakZ = (peakProgress - 0.5) * length;
+        const z1 = (endProgress - 0.5) * length;
+        const x = side * 4.2;
+        const topNodes = [
+          new THREE.Vector3(x, 4, z0),
+          new THREE.Vector3(x, 10, THREE.MathUtils.lerp(z0, peakZ, 0.5)),
+          new THREE.Vector3(x, 17, peakZ),
+          new THREE.Vector3(x, 10, THREE.MathUtils.lerp(peakZ, z1, 0.5)),
+          new THREE.Vector3(x, 4, z1),
+        ];
+        const bottomNodes = topNodes.map(node => new THREE.Vector3(x, 1, node.z));
+        for (let segment = 0; segment < 4; segment += 1) {
+          steelParts.push(
+            rod(topNodes[segment], topNodes[segment + 1], 0.62),
+            rod(bottomNodes[segment], bottomNodes[segment + 1], 0.48),
+            rod(bottomNodes[segment], topNodes[segment], 0.44),
+            rod(segment % 2 === 0 ? bottomNodes[segment] : topNodes[segment], segment % 2 === 0 ? topNodes[segment + 1] : bottomNodes[segment + 1], 0.42),
+          );
+        }
+        steelParts.push(rod(bottomNodes[4], topNodes[4], 0.44));
       }
     }
   }
-  const steelwork = new THREE.Mesh(merged(definition.name, steelParts), material);
-  steelwork.name = `${definition.name} colored steelwork`;
+  const steelwork = new THREE.Mesh(merged(definition.name, steelParts), structureMaterial);
+  steelwork.name = definition.kind === 'arch'
+    ? 'Dongjak Bridge 13 repeated central tied-arch bays'
+    : 'Dongho Bridge photo-based 8-module central peaked railway truss';
+  steelwork.userData = definition.kind === 'arch'
+    ? { archBayCount: definition.piers - 1, placement: 'centralRailway', sourceBasis: 'photo-based visual approximation' }
+    : { peakedModuleCount: 8, peakSupportIndices: [0, 2, 4, 6, 8, 10, 12, 14], peakLocalZ: trussPeakLocalZ, placement: 'centralRailway', sourceBasis: 'photo-based visual approximation' };
   structure.add(steelwork);
   return structure;
 }
@@ -177,8 +239,23 @@ export function createBanpoBridges() {
     }
     const asphalt = new THREE.MeshStandardMaterial({ color: 0x343a3c, roughness: 0.93 });
     const high = new THREE.Group();
-    high.add(new THREE.Mesh(new THREE.BoxGeometry(definition.width, 2.2, length), asphalt));
-    high.add(createStructure(definition, length, definition.kind === 'beam' ? concrete : steel));
+    if (definition.kind === 'beam') {
+      const centreGap = 1.2;
+      const deckWidth = (definition.width - centreGap) / 2;
+      const decks = new THREE.InstancedMesh(new THREE.BoxGeometry(deckWidth, 2.2, length), asphalt, 2);
+      const deckMatrix = new THREE.Matrix4();
+      const deckOffset = deckWidth / 2 + centreGap / 2;
+      deckMatrix.makeTranslation(-deckOffset, 0, 0);
+      decks.setMatrixAt(0, deckMatrix);
+      deckMatrix.makeTranslation(deckOffset, 0, 0);
+      decks.setMatrixAt(1, deckMatrix);
+      decks.name = 'Hannam Bridge paired road decks';
+      decks.userData = { deckCount: 2, centreGapMetres: centreGap, sourceBasis: 'official width plus aerial-photo pairing' };
+      high.add(decks);
+    } else {
+      high.add(new THREE.Mesh(new THREE.BoxGeometry(definition.width, 2.2, length), asphalt));
+    }
+    high.add(createStructure(definition, length, steel, concrete));
     const lampMatrix = new THREE.Matrix4();
 
     if (definition.kind !== 'beam') {

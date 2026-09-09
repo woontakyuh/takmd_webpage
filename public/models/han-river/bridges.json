@@ -12,7 +12,14 @@
       "databaseTimestamp": "2026-09-09T10:03:21Z"
     },
     "seoulBridgeInventory": "https://news.seoul.go.kr/safe/archives/29950?listPage=1",
-    "seoulHangangMap": "https://hangang.seoul.go.kr/files/2013/12/korean.pdf"
+    "seoulHangangMap": "https://hangang.seoul.go.kr/files/2013/12/korean.pdf",
+    "aerialInspection": {
+      "current": "Naver Map satellite mode inspected 2026-09-09",
+      "urls": ["https://map.naver.com/p/search/한남대교", "https://map.naver.com/p/search/동호대교", "https://map.naver.com/p/search/동작대교"],
+      "evidence": ".omo/evidence/river-bridge-fidelity-2026-09-09/map-observations.md",
+      "earlierPlacementPass": "Google Maps satellite imagery was inspected in an earlier placement pass; current Google tiles did not finish loading",
+      "googleEarth": "not inspected"
+    }
   },
   "bridges": [
     {
@@ -25,6 +32,11 @@
       "renderedAxisGeo": [[37.5061, 126.98025], [37.51445, 126.98286]],
       "renderedAxisLocal": [[-1019.9, 24, 445.3], [-789.4, 24, -484.2]],
       "endpointMethod": "OSM bridge-area long axis clipped to the two visible shoreline polygons in geography.json; approaches beyond the modeled banks are omitted",
+      "visualApproximation": {
+        "primaryPhoto": "https://data.si.re.kr/photo/01l01911ba5000",
+        "modeledSilhouette": "13 short tied-arch bays flanking the central railway, aligned between 14 modeled support stations, with modest transverse concrete pier caps",
+        "precisionLimit": "The repeated short central arches and 16 m visual cap width are photo-derived. Thirteen bays follow the existing modeled support rhythm and are not asserted as an official engineering arch count."
+      },
       "official": {
         "lengthMetres": 1330,
         "roadLanes": 6,
@@ -44,6 +56,11 @@
       "renderedAxisGeo": [[37.523286, 127.016606], [37.530193, 127.010114]],
       "renderedAxisLocal": [[2190.5, 25, -1467.9], [1617.2, 25, -2236.8]],
       "endpointMethod": "midpoints of the two end caps of OSM bridge-area way 870733633",
+      "visualApproximation": {
+        "primaryPhoto": "https://data.si.re.kr/photo/05u03704ba4000",
+        "modeledSilhouette": "two parallel road decks with paired support rows and transverse concrete caps",
+        "precisionLimit": "The two-deck reading comes from the official aerial photograph. The 27 official longitudinal pier positions are instanced as paired visual columns with 20 m visual caps; this does not claim 54 official piers or a measured cap width."
+      },
       "official": {
         "lengthMetres": 919,
         "widthMetres": 51.2,
@@ -64,6 +81,11 @@
       "renderedAxisGeo": [[37.530744, 127.024901], [37.540757, 127.017924]],
       "renderedAxisLocal": [[2923, 26, -2298.1], [2306.9, 26, -3412.7]],
       "endpointMethod": "midpoints of the two end caps of OSM bridge-area way 972539092",
+      "visualApproximation": {
+        "primaryPhoto": "https://data.si.re.kr/photo/04p01502ba5000",
+        "modeledSilhouette": "eight repeated peaked truss modules flanking the central railway, with peaks aligned to alternating modeled support stations and modest transverse concrete pier caps",
+        "precisionLimit": "The oblique photograph is partial and cannot verify a complete truss or pier count. Eight modules, their alternating modeled-support alignment and the 16 m visual cap width are scene approximations, not official engineering counts or dimensions."
+      },
       "official": {
         "lengthMetres": 1220,
         "roadLanes": 4,

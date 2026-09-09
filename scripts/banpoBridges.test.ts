@@ -29,6 +29,60 @@ assert.ok(hannam.position.x > 1_000 && hannam.position.z < -1_000, 'Hannam is up
 assert.ok(dongho.position.x > hannam.position.x && dongho.position.z < hannam.position.z, 'Dongho follows Hannam upstream');
 assert.ok(dongjak.position.x < 0 && dongjak.position.z > -200, 'Dongjak is downstream/west of Banpo');
 
+const dongjakArches = bridges.group.getObjectByName('Dongjak Bridge 13 repeated central tied-arch bays');
+assert.ok(dongjakArches instanceof THREE.Mesh, 'Dongjak uses short tied arches aligned to the 14 support stations');
+assert.equal(dongjakArches.userData.archBayCount, 13, 'Dongjak has one photo-based arch bay between each modeled support station');
+assert.equal(dongjakArches.userData.placement, 'centralRailway', 'Dongjak structural steel is assigned to the central railway');
+dongjakArches.geometry.computeBoundingBox();
+const dongjakArchBounds = dongjakArches.geometry.boundingBox;
+assert.ok(dongjakArchBounds);
+assert.ok(Math.max(Math.abs(dongjakArchBounds.min.x), Math.abs(dongjakArchBounds.max.x)) < 6, 'Dongjak arches flank the central railway instead of the outer road edges');
+const dongjakPiers = bridges.group.getObjectByName('Dongjak Bridge sourced pier rhythm');
+assert.ok(dongjakPiers instanceof THREE.InstancedMesh && dongjakPiers.count === 14);
+const dongjakPierCaps = bridges.group.getObjectByName('Dongjak Bridge concrete transverse pier caps');
+assert.ok(dongjakPierCaps instanceof THREE.InstancedMesh && dongjakPierCaps.count === 14, 'Dongjak piers carry modest concrete transverse caps');
+const supportMatrix = new THREE.Matrix4();
+dongjakPiers.getMatrixAt(0, supportMatrix);
+const firstDongjakSupportZ = new THREE.Vector3().setFromMatrixPosition(supportMatrix).z;
+dongjakPiers.getMatrixAt(13, supportMatrix);
+const lastDongjakSupportZ = new THREE.Vector3().setFromMatrixPosition(supportMatrix).z;
+assert.ok(Math.abs(firstDongjakSupportZ - dongjakArchBounds.min.z) < 2, 'Dongjak first short arch begins at the first support station');
+assert.ok(Math.abs(lastDongjakSupportZ - dongjakArchBounds.max.z) < 2, 'Dongjak last short arch ends at the last support station');
+
+const donghoTruss = bridges.group.getObjectByName('Dongho Bridge photo-based 8-module central peaked railway truss');
+assert.ok(donghoTruss instanceof THREE.Mesh, 'Dongho uses the photographed repeating peaked truss silhouette');
+assert.equal(donghoTruss.userData.peakedModuleCount, 8, 'Dongho records eight partial-view modules as a scene approximation');
+assert.equal(donghoTruss.userData.placement, 'centralRailway', 'Dongho truss is assigned to the central railway');
+assert.deepEqual(donghoTruss.userData.peakSupportIndices, [0, 2, 4, 6, 8, 10, 12, 14], 'Dongho modeled peaks align with alternating modeled support stations');
+const donghoPiers = bridges.group.getObjectByName('Dongho Bridge sourced pier rhythm');
+const donghoPierCaps = bridges.group.getObjectByName('Dongho Bridge concrete transverse pier caps');
+assert.ok(donghoPiers instanceof THREE.InstancedMesh && donghoPiers.count === 16);
+assert.ok(donghoPierCaps instanceof THREE.InstancedMesh && donghoPierCaps.count === 16, 'Dongho piers carry modest concrete transverse caps');
+for (const [peakIndex, supportIndex] of donghoTruss.userData.peakSupportIndices.entries()) {
+  donghoPiers.getMatrixAt(supportIndex, supportMatrix);
+  const supportZ = new THREE.Vector3().setFromMatrixPosition(supportMatrix).z;
+  assert.ok(Math.abs(supportZ - donghoTruss.userData.peakLocalZ[peakIndex]) < 0.01, `Dongho peak ${peakIndex + 1} aligns to modeled support ${supportIndex}`);
+}
+donghoTruss.geometry.computeBoundingBox();
+const donghoTrussBounds = donghoTruss.geometry.boundingBox;
+assert.ok(donghoTrussBounds);
+assert.ok(Math.max(Math.abs(donghoTrussBounds.min.x), Math.abs(donghoTrussBounds.max.x)) < 6, 'Dongho truss flanks the central railway instead of the outer road edges');
+assert.ok(donghoTrussBounds.max.y > 16 && donghoTrussBounds.min.y < 1, 'Dongho truss has a pronounced peaked profile above its bottom chords');
+
+const hannamDecks = bridges.group.getObjectByName('Hannam Bridge paired road decks');
+const hannamSupports = bridges.group.getObjectByName('Hannam Bridge paired pier rows at 27 support stations');
+assert.ok(hannamDecks instanceof THREE.InstancedMesh && hannamDecks.count === 2, 'Hannam reads as two parallel expanded bridge decks');
+assert.ok(hannamSupports instanceof THREE.InstancedMesh && hannamSupports.count === 54, 'Hannam uses paired supports across 27 longitudinal stations');
+assert.equal(hannamDecks.userData.deckCount, 2, 'Hannam records two aerial-photo-derived deck ribbons');
+assert.equal(hannamSupports.userData.longitudinalStations, 27, 'Hannam preserves the official 27-pier longitudinal rhythm');
+assert.equal(hannamSupports.userData.rowCount, 2, 'Hannam support instances are paired under the two deck ribbons');
+const leftDeckMatrix = new THREE.Matrix4();
+const rightDeckMatrix = new THREE.Matrix4();
+hannamDecks.getMatrixAt(0, leftDeckMatrix);
+hannamDecks.getMatrixAt(1, rightDeckMatrix);
+assert.ok(new THREE.Vector3().setFromMatrixPosition(leftDeckMatrix).x < 0, 'Hannam first deck occupies one side of the centre gap');
+assert.ok(new THREE.Vector3().setFromMatrixPosition(rightDeckMatrix).x > 0, 'Hannam second deck occupies the opposite side of the centre gap');
+
 for (const receipt of bridgeReceipt.bridges) {
   const bridge = bridges.group.getObjectByName(receipt.nameEn);
   assert.ok(bridge);
@@ -62,8 +116,18 @@ bridges.setNightMix(1);
 assert.equal(nightLights.material.opacity, 1, 'night lighting reaches full visibility');
 assert.ok(Math.max(nightLights.material.color.r, nightLights.material.color.g, nightLights.material.color.b) > 1, 'night lighting uses an HDR core that survives kilometre-scale viewing');
 
-const dongjakSteel = bridges.group.getObjectByName('Dongjak Bridge colored steelwork');
-const donghoSteel = bridges.group.getObjectByName('Dongho Bridge colored steelwork');
+assert.ok(dongjakPiers.material instanceof THREE.MeshStandardMaterial);
+assert.ok(dongjakPierCaps.material instanceof THREE.MeshStandardMaterial);
+assert.ok(donghoPiers.material instanceof THREE.MeshStandardMaterial);
+assert.ok(donghoPierCaps.material instanceof THREE.MeshStandardMaterial);
+for (const concretePart of [dongjakPiers, dongjakPierCaps, donghoPiers, donghoPierCaps]) {
+  assert.equal(concretePart.material.emissive.getHex(), 0, `${concretePart.name} remains nonemissive at night`);
+}
+assert.notEqual(dongjakPiers.material, dongjakArches.material, 'Dongjak concrete and blue steel use distinct materials');
+assert.notEqual(donghoPiers.material, donghoTruss.material, 'Dongho concrete and orange steel use distinct materials');
+
+const dongjakSteel = dongjakArches;
+const donghoSteel = donghoTruss;
 assert.ok(dongjakSteel instanceof THREE.Mesh && dongjakSteel.material instanceof THREE.MeshStandardMaterial);
 assert.ok(donghoSteel instanceof THREE.Mesh && donghoSteel.material instanceof THREE.MeshStandardMaterial);
 assert.ok(dongjakSteel.material.emissiveIntensity > 0 && donghoSteel.material.emissiveIntensity > 0, 'road-rail steelwork remains subtly legible at night');
@@ -109,4 +173,4 @@ assert.ok(directionDelta.slice(3).every(delta => delta < 0), 'Hannam opposite ca
 
 bridges.dispose();
 assert.equal(bridges.group.children.length, 0, 'dispose releases the bridge scene graph');
-console.log(`Banpo bridge scenarios passed: geography, distinct structures, night lighting, traffic, disposal; ${renderedTriangles} triangles, ${drawCalls} draw calls`);
+console.log(`Banpo bridge scenarios passed: Dongjak 13 central tied-arch bays, Dongho 8 central peaked modules, Hannam 2 decks/54 columns; geography, night lighting, traffic, disposal; ${renderedTriangles} triangles, ${drawCalls} draw calls`);

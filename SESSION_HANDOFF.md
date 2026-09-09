@@ -1,5 +1,15 @@
 # Office session handoff — 2026-09-09
 
+## Bridge fidelity follow-up
+
+Naver satellite aerials and Seoul Institute close photographs informed the revised Dongjak central short arches, Dongho central peaked railway truss, and Hannam paired road decks/support rows. Concrete piers and transverse caps are separate from glowing steel; Dongho peaks align with modeled supports. Geographic axes, overview camera and moving traffic remain intact. Detailed dimensions/counts are explicitly visual approximations where unverified. Full build, TypeScript, structural/lifecycle tests and integrated day/night/traffic browser QA passed. Evidence and the subsequent release receipt live in `.omo/evidence/river-bridge-fidelity-2026-09-09/`; use its `release.json` to verify whether this follow-up is deployed. Distant city/greenery and approaches beyond the modeled banks remain coarse. Administrator layout persistence and 2024-or-earlier slides remain deferred.
+
+## Verified production checkpoint
+
+Committed and pushed through `232506044060ca2cf354bc67b3e588a4616f7e17` on `feat/desk-scene-3d`. An isolated archive of that exact SHA was built and deployed to Cloudflare Pages Production as `58a5986a-c29b-42be-8667-cf2f36eb2b9f`. Live `https://takmd.com/` matches the committed artifact. Twelve HTTP/asset checks and twenty actual browser checks passed, including dense glass storage, cabinet animation, frontal TV/CV readers, slide navigation, HD delivery and mobile controls. Root personally inspected the resulting captures. Full receipt: `.omo/evidence/office-checkpoint-2026-09-09/release.json`.
+
+This release includes the taupe Isidoro corner cabinet, the eight-glass single-compartment arrangement, high-resolution screen readers, initial geographically placed adjacent bridges/landscape detail and updated office entry/share images. Older descriptions below saying these changes are local-only are historical and superseded by this receipt. New bridge silhouette edits after this checkpoint are a separate local pass and are not part of that production SHA.
+
 ## Intermediate checkpoint requested
 
 The owner requested a status report and commit/push/deploy of the cabinet, focused screen readers, river landscape/adjacent bridges, and refreshed entry images. Release evidence is `.omo/evidence/office-checkpoint-2026-09-09/release.json`; that receipt determines the deployed SHA and supersedes older local-only status below once deployment is verified. Individual bridge silhouette corrections remain deferred, as do administrator-persisted arrangements and 2024-or-earlier presentation imports.
