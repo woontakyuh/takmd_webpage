@@ -26,3 +26,9 @@ Input preparation: `scripts/prepare-banpo-geography.py`; initial Blender scene: 
 `scripts/optimize-banpo.mjs` uses glTF Transform 4.5.0 and meshoptimizer 1.0.1. Only tree crowns are simplified (50% target, maximum error 0.0001 of mesh radius); bridge, city and pavilion geometry are preserved. Meshopt compression uses 16-bit positions. Repeating texture coordinates outside 0–1 intentionally remain unquantized.
 
 Water reflections and 56 moving cars remain native Three.js geometry/shading. Day and night use the same mesh. This remains an interim geographic interpretation. The overview is framed across the bridge; detailed facades, greenery and device frame-time targets remain future work. It does not claim a measured view from a particular apartment.
+
+## Adjacent bridges and landscape detail, 2026-09-09
+
+Dongjak, Hannam and Dongho bridge axes were derived from named OpenStreetMap bridge-area ways. [Bridge coordinate and source receipt](./bridges.json) includes the original query, endpoint methods, official Seoul references and ODbL attribution. Google Maps satellite views were inspected as placement references only; no Google aerial imagery is shipped. Piers, railings and steelwork are simplified visual reconstructions, not engineering models.
+
+The closest riverbank trees use a reduced CC0 Poly Haven Tree Small 02 asset, and ground uses CC0 Leafy Grass maps with mapped OSM road/building coverage. See [vegetation sources](./vegetation/SOURCE.md) and [ground sources](./ground/SOURCE.md). Far buildings and vegetation retain the coarse distant representation.

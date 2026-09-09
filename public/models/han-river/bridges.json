@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "origin": [37.5101, 126.9918],
+  "coordinateSystem": "local=[east_metres,elevation_metres,-north_metres]; parent banpo-pilot.glb rotates +PI/2 about Y",
+  "retrievedAt": "2026-09-09T10:03:21Z",
+  "sources": {
+    "geometry": {
+      "provider": "OpenStreetMap contributors via Overpass API",
+      "license": "ODbL 1.0",
+      "url": "https://overpass-api.de/api/interpreter",
+      "query": "[out:json][timeout:25];(way[\"name\"=\"동작대교\"](37.48,126.95,37.56,127.05);way[\"name\"=\"한남대교\"](37.48,126.95,37.56,127.05);way[\"name\"=\"동호대교\"](37.48,126.95,37.56,127.05););out tags geom;",
+      "databaseTimestamp": "2026-09-09T10:03:21Z"
+    },
+    "seoulBridgeInventory": "https://news.seoul.go.kr/safe/archives/29950?listPage=1",
+    "seoulHangangMap": "https://hangang.seoul.go.kr/files/2013/12/korean.pdf"
+  },
+  "bridges": [
+    {
+      "id": "dongjak",
+      "nameKo": "동작대교",
+      "nameEn": "Dongjak Bridge",
+      "osmWayId": 870733632,
+      "osmStructure": "arch",
+      "sourceBoundaryBounds": [[37.5018973, 126.9795282], [37.5184679, 126.9835054]],
+      "renderedAxisGeo": [[37.5061, 126.98025], [37.51445, 126.98286]],
+      "renderedAxisLocal": [[-1019.9, 24, 445.3], [-789.4, 24, -484.2]],
+      "endpointMethod": "OSM bridge-area long axis clipped to the two visible shoreline polygons in geography.json; approaches beyond the modeled banks are omitted",
+      "official": {
+        "lengthMetres": 1330,
+        "roadLanes": 6,
+        "roadRailCombined": true,
+        "lighting": "warm-white primary lighting over blue-toned steel",
+        "factsAndPhotos": "https://culture.seoul.go.kr/night/sub/viewSpot/view.do?listType=list&pageIndex=1&viewId=72",
+        "additionalPhotos": "https://hangang.seoul.go.kr/www/rvrPhoto/detail.do?mid=490&photoSn=108"
+      }
+    },
+    {
+      "id": "hannam",
+      "nameKo": "한남대교",
+      "nameEn": "Hannam Bridge",
+      "osmWayId": 870733633,
+      "osmStructure": "beam",
+      "sourceBoundaryBounds": [[37.5230526, 127.0098302], [37.5303739, 127.0168057]],
+      "renderedAxisGeo": [[37.523286, 127.016606], [37.530193, 127.010114]],
+      "renderedAxisLocal": [[2190.5, 25, -1467.9], [1617.2, 25, -2236.8]],
+      "endpointMethod": "midpoints of the two end caps of OSM bridge-area way 870733633",
+      "official": {
+        "lengthMetres": 919,
+        "widthMetres": 51.2,
+        "roadLanes": 12,
+        "pierCount": 27,
+        "superstructure": "three-span continuous steel plate girder",
+        "factsAndPhotos": "https://futureheritage.seoul.go.kr/futureHeritageMeet/futureHeritage/view.do?htNo=293",
+        "aerialPhoto": "https://data.si.re.kr/photo/05u03704ba4000"
+      }
+    },
+    {
+      "id": "dongho",
+      "nameKo": "동호대교",
+      "nameEn": "Dongho Bridge",
+      "osmWayId": 972539092,
+      "osmStructure": "truss",
+      "sourceBoundaryBounds": [[37.5306888, 127.0177757], [37.5408518, 127.0250577]],
+      "renderedAxisGeo": [[37.530744, 127.024901], [37.540757, 127.017924]],
+      "renderedAxisLocal": [[2923, 26, -2298.1], [2306.9, 26, -3412.7]],
+      "endpointMethod": "midpoints of the two end caps of OSM bridge-area way 972539092",
+      "official": {
+        "lengthMetres": 1220,
+        "roadLanes": 4,
+        "roadRailCombined": true,
+        "lighting": "Taegeuk-themed landscape lighting",
+        "factsAndPhotos": "https://culture.seoul.go.kr/night/sub/viewSpot/view.do?listType=list&pageIndex=5&viewId=32",
+        "archivalPhotos": "https://archives.seoul.go.kr/photo/collection/detail/76"
+      }
+    }
+  ]
+}

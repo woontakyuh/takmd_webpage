@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { createBanpoFacadeDetails } from './BanpoFacadeDetails';
+import { createBanpoBridges } from './BanpoBridges';
+import { applyBanpoGroundMaterials } from './BanpoGroundMaterials';
+import { createBanpoVegetation } from './BanpoVegetation';
 import { createRiverAtmosphere } from './HanRiverAtmosphere';
 import { createHanRiverLandscape } from './HanRiverLandscape';
 import { createRiverTraffic } from './HanRiverTraffic';
@@ -47,6 +51,10 @@ export function createBanpoLandscape() {
   let disposed = false;
   let currentNight = 0;
   let model: THREE.Group | null = null;
+  let facadeDetails: ReturnType<typeof createBanpoFacadeDetails> | null = null;
+  let groundMaterials: ReturnType<typeof applyBanpoGroundMaterials> | null = null;
+  let vegetation: ReturnType<typeof createBanpoVegetation> | null = null;
+  let bridges: ReturnType<typeof createBanpoBridges> | null = null;
   const pilotCameraOffset = new THREE.Vector3(280, 300, -1400);
   const fallbackCameraOffset = new THREE.Vector3(0, 340, 0);
 
@@ -55,6 +63,8 @@ export function createBanpoLandscape() {
     if (!loaded) fallback.setNightMix(currentNight);
     atmosphere.setNightMix(currentNight);
     traffic.setNightMix(currentNight);
+    facadeDetails?.setNightMix(currentNight);
+    bridges?.setNightMix(currentNight);
     fog.color.lerpColors(new THREE.Color(0xc9dce3), new THREE.Color(0x081727), currentNight);
     sky.intensity = THREE.MathUtils.lerp(1.2, 0.25, currentNight);
     sun.intensity = THREE.MathUtils.lerp(2.6, 0.035, currentNight);
@@ -94,6 +104,12 @@ export function createBanpoLandscape() {
     model.rotation.y = Math.PI / 2;
     model.name = 'OSM Banpo and Sebitseom model';
     scene.add(model);
+    groundMaterials = applyBanpoGroundMaterials(model, atmosphere.bankTexture);
+    facadeDetails = createBanpoFacadeDetails();
+    model.add(facadeDetails.group);
+    vegetation = createBanpoVegetation(model);
+    bridges = createBanpoBridges();
+    model.add(bridges.group);
     loaded = true;
     fallback.dispose();
     setNightMix(currentNight);
@@ -109,10 +125,15 @@ export function createBanpoLandscape() {
       if (!loaded) fallback.setTime(seconds);
       atmosphere.setTime(seconds);
       traffic.setTime(seconds);
+      bridges?.setTime(seconds);
     },
     dispose: () => {
       disposed = true;
       if (!loaded) fallback.dispose();
+      vegetation?.dispose();
+      bridges?.dispose();
+      facadeDetails?.dispose();
+      groundMaterials?.dispose();
       if (model) { model.removeFromParent(); disposeModel(model); }
       atmosphere.dispose();
       const waterObject = scene.getObjectByName('Normal-mapped Han River water');
