@@ -31,6 +31,7 @@ def main():
     parser.add_argument('--source', required=True, type=Path, help='Folder containing the meeting PDF folders')
     parser.add_argument('--repo', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--dry-run', action='store_true', help='Check meeting matches without rendering or changing data')
+    parser.add_argument('--filename-prefix', default='', help='Case-sensitive literal filename prefix, e.g. TVPDF_; omitted selects all PDFs')
     args = parser.parse_args()
     source, repo = args.source.resolve(), args.repo.resolve()
     if not source.is_dir():
@@ -40,6 +41,8 @@ def main():
     matched = set()
     for pdf in sorted(source.rglob('*')):
         if not pdf.is_file() or pdf.suffix.lower() != '.pdf':
+            continue
+        if not pdf.name.startswith(args.filename_prefix):
             continue
         presentation = match_presentation(pdf, source, presentations)
         if presentation['id'] in matched:

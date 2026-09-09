@@ -1,0 +1,35 @@
+.office-frame-info {
+  position: fixed; inset: 50% 24px auto auto; z-index: 30;
+  width: 320px; max-width: calc(100vw - 48px); max-height: calc(100dvh - 48px);
+  margin: 0; padding: 24px; transform: translateY(-50%);
+  border: 1px solid var(--studio-line); border-radius: 12px;
+  color: var(--studio-ink); background: var(--studio-light);
+  box-shadow: 0 12px 50px #202d2a14; overflow-y: auto; overscroll-behavior: contain;
+}
+.office-frame-info[open] { animation: office-frame-info-enter var(--studio-panel) var(--studio-ease) both; }
+.office-frame-info-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.office-frame-info-top > span { color: var(--studio-muted); font-size: 11px; letter-spacing: .04em; }
+.office-frame-info h2 { margin: 0; font-size: 28px; font-weight: 500; line-height: 1.4; letter-spacing: -.035em; }
+.office-frame-occasion { margin: 8px 0 24px; font-size: 14px; }
+.office-frame-meta { padding-top: 16px; border-top: 1px solid var(--studio-line); color: var(--studio-muted); font-size: 12px; line-height: 1.65; font-variant-numeric: tabular-nums; }
+.office-frame-meta p { margin: 4px 0 0; overflow-wrap: anywhere; }
+.office-frame-people { margin: 16px 0 0; color: var(--studio-muted); font-size: 11px; }
+.studio[data-selected='family'] .studio-stage .studio-tools,
+.studio[data-selected='award-photo'] .studio-stage .studio-tools { visibility: hidden; pointer-events: none; }
+@keyframes office-frame-info-enter {
+  from { opacity: 0; transform: translate(12px,-50%); }
+  to { opacity: 1; transform: translate(0,-50%); }
+}
+@media (max-width: 759px) {
+  .office-frame-info { inset: auto 16px 16px; width: auto; max-width: none; max-height: 38svh; padding: 16px; transform: none; }
+  .office-frame-info-top { margin-bottom: 8px; }
+  .office-frame-occasion { margin-bottom: 16px; }
+  .office-frame-meta { padding-top: 12px; }
+  @keyframes office-frame-info-enter {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .office-frame-info[open] { animation: none; }
+}

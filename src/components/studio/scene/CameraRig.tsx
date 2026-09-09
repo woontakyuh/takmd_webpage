@@ -292,12 +292,13 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
     targetFov.current = focusFov(selected, compact, size.width, size.height);
-    if (!selected || selected === 'family') {
+    if (!selected) {
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
       return;
     }
-    const xOffset = compact ? 0 : SIDE_READER_SPACE / 2;
+    const compactReader = selected === 'family' || selected === 'award-photo' || selected === 'books';
+    const xOffset = compact ? 0 : (compactReader ? 352 : SIDE_READER_SPACE) / 2;
     const yOffset = compact ? size.height * 0.24 : 0;
     camera.setViewOffset(size.width, size.height, xOffset, yOffset, size.width, size.height);
     camera.updateProjectionMatrix();

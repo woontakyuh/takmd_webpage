@@ -12,7 +12,7 @@ export const FURNITURE = {
   plant: { label: 'Palm', center: [2.18, 0, -0.55], radius: 0.28, handle: 2.15 },
   mantis: { label: 'Mantis', center: [-1.75, 0, 2.62], radius: 0.15, handle: 1.7 },
   signe: { label: 'Signe', center: [-2.49, 0, 2.84], radius: 0.06, handle: 1.6 },
-  whisky: { label: 'Whisky cabinet', center: WHISKY_CABINET.center,
+  whisky: { label: 'Isidoro drinks cabinet', center: WHISKY_CABINET.center,
     radius: Math.hypot(WHISKY_CABINET.width, WHISKY_CABINET.depth) / 2 + .04, handle: 2.25 },
   music: { label: 'Guitar & amp', center: [2.12, 0, -2.1], radius: 0.61, handle: 1.1 },
 } as const satisfies Record<string, { readonly label: string; readonly center: Point; readonly radius: number; readonly handle: number }>;
@@ -27,7 +27,7 @@ function clampPose(id: FurnitureId, pose: FurniturePose): FurniturePose {
   if (id === 'whisky') {
     const angle = pose.angle + WHISKY_CABINET.rotation;
     const c = Math.cos(angle), s = Math.sin(angle);
-    const halfWidth = WHISKY_CABINET.width / 2, back = WHISKY_CABINET.depth / 2, front = -back - .03;
+    const halfWidth = WHISKY_CABINET.width / 2, back = WHISKY_CABINET.depth / 2, front = -back;
     const minX = -halfWidth * Math.abs(c) + Math.min(front * s, back * s);
     const maxX = halfWidth * Math.abs(c) + Math.max(front * s, back * s);
     const minZ = -halfWidth * Math.abs(s) + Math.min(front * c, back * c);

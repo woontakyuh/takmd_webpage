@@ -1,4 +1,4 @@
-import { Component, Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrangementProvider, useArrangement } from './arrangement';
 import { ArrangementControls } from './ArrangementControls';
 import { ReadingPanel } from './ReadingPanel';
@@ -7,6 +7,11 @@ import { OfficeHelp } from './OfficeHelp';
 import { useBlindLift } from './useBlindLift';
 import { OfficeRoomControls, type RoomControl } from './OfficeRoomControls';
 import { MemoryPhoto } from './MemoryPhoto';
+import { BookReader } from './BookReader';
+import { PERSONAL_BOOKS, type PersonalBookId } from './personalBooks';
+import { PhotoFrameInfo } from './PhotoFrameInfo';
+import { VisitorCount } from './VisitorCount';
+import { OfficePoster, SceneBoundary } from './OfficePoster';
 import { PHOTO_MEMORIES, selectFamilyPhoto, type PhotoMemory } from './photoMemories';
 import type { ExhibitId, HaloSettings, StudioContent } from './types';
 import { featuredPresentation, mediaForPaper, orderedPapers, talkMedia } from './collection';
@@ -26,15 +31,11 @@ const exhibits = [
   { id: 'education', label: 'Talks', detail: 'Conferences & lectures' },
 ] as const satisfies readonly { readonly id: ExhibitId; readonly label: string; readonly detail: string }[];
 const socialLinks = [
+  { label: 'Email', detail: 'woontak.yuh@gmail.com', href: PERSONAL_LINKS.email },
   { label: 'YouTube', detail: '@tak_md · Shorts', href: PERSONAL_LINKS.youtube },
   { label: 'LinkedIn', detail: 'Woon Tak Yuh', href: PERSONAL_LINKS.linkedin },
   { label: 'Instagram', detail: '@tak_md', href: PERSONAL_LINKS.instagram },
 ] as const;
-class SceneBoundary extends Component<{ readonly children: ReactNode }, { readonly failed: boolean }> {
-  state = { failed: false };
-  static getDerivedStateFromError() { return { failed: true }; }
-  render() { return this.state.failed ? <div className="studio-scene-error"><p>The office could not load.</p><p>The collection and all reading links are still available below.</p></div> : this.props.children; }
-}
 
 export function StudioExperience(content: StudioContent) {
   return <ArrangementProvider><OfficeExperience {...content} /></ArrangementProvider>;
@@ -44,10 +45,11 @@ function OfficeExperience(content: StudioContent) {
   const progress = useRef(0);
   const returnFocus = useRef<HTMLElement | null>(null);
   const [selected, setSelected] = useState<ExhibitId | null>(null);
+  const [selectedBook, setSelectedBook] = useState<PersonalBookId>(PERSONAL_BOOKS[0].id);
+  const [bookPageIndex, setBookPageIndex] = useState(0);
   const [familyPhoto] = useState(selectFamilyPhoto);
   const [memory, setMemory] = useState<PhotoMemory | null>(null);
   const openMemory = useCallback(() => { if (!arrangement.editing) setMemory(PHOTO_MEMORIES.ppomppu); }, [arrangement.editing]);
-  const openAwardPhoto = useCallback(() => { if (!arrangement.editing) setMemory(PHOTO_MEMORIES['kosess-award']); }, [arrangement.editing]);
   const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 }>({ sequence: 0, view: 0 });
   const [lightMode, setLightMode] = useState<LightMode>('local');
   const localLighting = useOfficeLight(lightMode);
@@ -73,6 +75,8 @@ function OfficeExperience(content: StudioContent) {
   const night = (lighting?.sun.daylight ?? 1) < 0.35;
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
+  const [sceneFailed, setSceneFailed] = useState(false);
+  const onSceneError = useCallback(() => setSceneFailed(true), []);
   const [explored, setExplored] = useState(false);
   const [compact, setCompact] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -86,7 +90,9 @@ function OfficeExperience(content: StudioContent) {
   const publication = content.publications.find(paper => paper.id === paperId) ?? null;
   const presentation = content.presentations.find(talk => talk.id === talkId) ?? null;
   const slides = talkMedia.find(media => media.id === talkId)?.slides ?? [];
-  const collection = { publication, paperMedia: mediaForPaper(publication), paperTurn, paperDirection, presentation, talkSlide: slides[talkSlideIndex] ?? null };
+  const collection = { publication, paperMedia: mediaForPaper(publication), paperTurn, paperDirection,
+    paperIndex: Math.max(0, orderedPapers(content.publications).findIndex(paper => paper.id === paperId)),
+    paperCount: content.publications.length, presentation, talkSlide: slides[talkSlideIndex] ?? null };
   const selectPaper = useCallback((id: string) => {
     const papers = orderedPapers(content.publications);
     const nextIndex = papers.findIndex(paper => paper.id === id);
@@ -120,7 +126,6 @@ function OfficeExperience(content: StudioContent) {
   const featuredTalk = featuredPresentation(content.presentations);
   const open = useCallback((id: ExhibitId) => {
     if (arrangement.editing) return;
-    if (id === 'family') { setMemory(familyPhoto); setExplored(true); return; }
     if (id === 'surfing') {
       window.open(PERSONAL_LINKS.instagram, '_blank', 'noopener,noreferrer');
       setExplored(true);
@@ -130,7 +135,9 @@ function OfficeExperience(content: StudioContent) {
     returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id}`);
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
     setExplored(true); setSelected(id);
-  }, [featuredTalk?.id, arrangement.editing, familyPhoto]);
+  }, [featuredTalk?.id, arrangement.editing]);
+  const openAwardPhoto = useCallback(() => open('award-photo'), [open]);
+  const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(0); open('books'); };
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const exhibit = query.get('exhibit');
@@ -147,13 +154,7 @@ function OfficeExperience(content: StudioContent) {
     setSelected(null);
     requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
   }, []);
-  useEffect(() => {
-    if (selected !== 'family' || memory) return;
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') close(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [selected, close, memory]);
-  const onReady = useCallback(() => setReady(true), []);
+  const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
   const goToView = (view: 0 | 1 | 2) => {
     setExplored(true);
     setSelected(null);
@@ -166,12 +167,14 @@ function OfficeExperience(content: StudioContent) {
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
-        <SceneBoundary>{mounted && lighting && <Suspense fallback={<div className="studio-loading" role="status">Opening the office…</div>}>
-          <Scene familyPhotoSrc={familyPhoto.src} progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClaudeSticker={openMemory} onAwardPhoto={openAwardPhoto} onPaperStep={onPaperStep} onTalk={selectTalk} onReady={onReady} />
+        <SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
+          <Scene selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} familyPhotoSrc={familyPhoto.src} progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClaudeSticker={openMemory} onAwardPhoto={openAwardPhoto} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary>
+        <OfficePoster ready={ready} failed={sceneFailed} night={night} />
+        <button className="office-secret-trigger" id="studio-exhibit-books" onClick={() => selectBook(selectedBook)}>Browse personal books</button>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
         <button className="office-secret-trigger" id="studio-exhibit-award" onClick={() => open('award')}>Inspect the gold award</button>
-        <button className="office-secret-trigger" onClick={openAwardPhoto}>View the KOSESS award photograph</button>
+        <button className="office-secret-trigger" id="studio-exhibit-award-photo" onClick={openAwardPhoto}>View the KOSESS award photograph</button>
         <a className="office-secret-trigger" href={PERSONAL_LINKS.hospital} target="_blank" rel="noopener noreferrer">Davos Hospital · physician coat (opens in a new tab)</a>
       </div>
       <header className="studio-header">
@@ -179,7 +182,6 @@ function OfficeExperience(content: StudioContent) {
         <nav aria-label="Office navigation"><a href="/cv">Living CV</a><a href="/contact">Contact <span aria-hidden="true">↗</span></a></nav>
       </header>
       <div className="studio-tools">
-        {selected === 'family' && <button onClick={close} aria-label="Close photo frame"><OfficeIcon name="close" /><span>Back to the office</span></button>}
         <button onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>
         <button onClick={() => setLightMode(value => value === 'local' ? 'day' : value === 'day' ? 'evening' : 'local')}
           aria-label={lightMode === 'local' ? 'Local light · Preview daylight' : lightMode === 'day' ? 'Daylight preview · Preview evening' : 'Evening preview · Return to local light'}
@@ -208,11 +210,11 @@ function OfficeExperience(content: StudioContent) {
             {exhibits.map(item => <button className="studio-exhibit" id={`studio-exhibit-${item.id}`} key={item.id} aria-label={`${item.label}: ${item.detail}`} aria-pressed={selected === item.id} onClick={() => open(item.id)}><OfficeIcon name={item.id === 'ai' ? 'cv' : item.id} /><span>{item.label}<small>{item.detail}</small></span></button>)}
             <a className="studio-exhibit studio-exhibit-workshop" href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer" aria-label="Education: Workshops & training (opens in a new tab)"><OfficeIcon name="workshop" /><span>Education<small>Workshops & training ↗</small></span></a>
             <button className="studio-exhibit" id="studio-exhibit-projects" aria-pressed={selected === 'projects'} onClick={() => open('projects')}><OfficeIcon name="projects" /><span>AI projects<small>Builds, talks & papers</small></span></button>
-            <button className="studio-exhibit" popoverTarget="office-social-links" aria-controls="office-social-links" aria-haspopup="dialog"><OfficeIcon name="social" /><span>Connect<small>YouTube & social</small></span></button>
+            <button className="studio-exhibit" popoverTarget="office-social-links" aria-controls="office-social-links" aria-haspopup="dialog"><OfficeIcon name="social" /><span>Connect<small>Email & social</small></span></button>
           </nav>
-          <div id="office-social-links" className="office-social-links" popover="auto" role="dialog" aria-label="Social media">
-            <div className="office-social-heading"><span>Social media</span><button popoverTarget="office-social-links" popoverTargetAction="hide" aria-label="Close social media links"><OfficeIcon name="close" /></button></div>
-            {socialLinks.map(link => <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer"><span>{link.label}<small>{link.detail}</small></span><span aria-hidden="true">↗</span></a>)}
+          <div id="office-social-links" className="office-social-links" popover="auto" role="dialog" aria-label="Connect">
+            <div className="office-social-heading"><span>Connect</span><button popoverTarget="office-social-links" popoverTargetAction="hide" aria-label="Close Connect links"><OfficeIcon name="close" /></button></div>
+            {socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer"><span>{link.label}<small>{link.detail}</small></span><span aria-hidden="true">↗</span></a>)}
           </div>
         </div>
         <a className="office-index" href="#office-reading">Browse the work <span aria-hidden="true">↓</span></a>
@@ -223,8 +225,10 @@ function OfficeExperience(content: StudioContent) {
       <div className="studio-notes-heading"><p className="studio-kicker">From the desk</p><h2 id="studio-notes-heading">Practice shapes<br /><em>the questions.</em></h2><a className="studio-text-link" href="/research">Research archive ↗</a></div>
       <div className="studio-notes-list">{content.publications.slice(0, 3).map(p => <a key={`${p.doiUrl}-${p.title}`} href={p.doiUrl || '/research'} target={p.doiUrl ? '_blank' : undefined} rel={p.doiUrl ? 'noreferrer' : undefined}><span className="studio-meta">{p.journal} / {p.year}</span><h3>{p.title}</h3><span className="studio-notes-arrow" aria-hidden="true">↗</span></a>)}</div>
     </section>
-    <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/credits">Scene credits</a></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer">Education<small>Workshops & training ↗</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
-    <ReadingPanel {...content} selected={selected === 'family' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
+    <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/credits">Scene credits</a><VisitorCount /></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer">Education<small>Workshops & training ↗</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
+    <ReadingPanel {...content} selected={selected === 'family' || selected === 'award-photo' || selected === 'books' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
+    {(selected === 'family' || selected === 'award-photo') && <PhotoFrameInfo memory={selected === 'family' ? familyPhoto : PHOTO_MEMORIES['kosess-award']} onClose={close} />}
+    {selected === 'books' && <BookReader selectedBook={selectedBook} pageIndex={bookPageIndex} onBookSelect={selectBook} onPageChange={setBookPageIndex} onClose={close} />}
     {memory && <MemoryPhoto memory={memory} onClose={() => setMemory(null)} />}
   </div>;
 }

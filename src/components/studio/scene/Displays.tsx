@@ -10,11 +10,14 @@ import { Interactive } from './Interactive';
 import { MonitorArm } from './MonitorArm';
 import { Block } from './Primitives';
 import { ScreenBarHalo2 } from './ScreenBarHalo2';
-import { useDocumentTexture, useWorkstationTexture } from './CollectionTextures';
+import { useWorkstationTexture } from './CollectionTextures';
+import { useTvPresentationTexture } from './TvPresentationTexture';
+import { tvPreviews } from './tvPreviews';
+import { TvSlideTargets } from './TvSlideTargets';
 import { MONITOR, MOTION, PALETTE, ROOM, WALL_TV } from './config';
 import { setWallTvContentColors, setWallTvHovered, useWallTvBacklight } from './hoverReactions';
 
-type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk'>;
+type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide'>;
 type RgbTotals = { red: number; green: number; blue: number; count: number };
 
 const TV_CONTENT_FALLBACK = ['#9D998F', '#9AA7A4'] as const;
@@ -40,66 +43,49 @@ function sampleTvEdge(data: Uint8ClampedArray, width: number, height: number, st
   return `#${toHex(totals.red / totals.count)}${toHex(totals.green / totals.count)}${toHex(totals.blue / totals.count)}`;
 }
 
-function loadTvContentColors(source: string, onColors: (colors: readonly [string, string]) => void) {
-  const image = new Image();
-  image.crossOrigin = 'anonymous';
-  image.onload = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 24;
-    canvas.height = 16;
-    const context = canvas.getContext('2d', { willReadFrequently: true });
-    if (!context) {
-      onColors(TV_CONTENT_FALLBACK);
-      return;
-    }
-    try {
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
-      const left = sampleTvEdge(pixels, canvas.width, canvas.height, 0, 4);
-      const right = sampleTvEdge(pixels, canvas.width, canvas.height, canvas.width - 4, canvas.width);
-      onColors(left && right ? [left, right] : TV_CONTENT_FALLBACK);
-    } catch {
-      onColors(TV_CONTENT_FALLBACK);
-    }
-  };
-  image.onerror = () => onColors(TV_CONTENT_FALLBACK);
-  image.src = source;
-  return () => {
-    image.onload = null;
-    image.onerror = null;
-  };
+function sampleTvContentColors(source: HTMLCanvasElement) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 24; canvas.height = 16;
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  if (!context) return;
+  context.drawImage(source, 0, 0, canvas.width, canvas.height);
+  const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+  const left = sampleTvEdge(pixels, canvas.width, canvas.height, 0, 4);
+  const right = sampleTvEdge(pixels, canvas.width, canvas.height, canvas.width - 4, canvas.width);
+  setWallTvContentColors(left && right ? [left, right] : TV_CONTENT_FALLBACK);
 }
 
-export function Displays({ selected, onSelect, reducedMotion, halo, presentations, collection, onTalk }: DisplaysProps) {
+export function Displays({ selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide }: DisplaysProps) {
   const monitorMaterial = useRef<MeshStandardMaterial>(null);
   const tvMaterial = useRef<MeshStandardMaterial>(null);
   const { hovered: tvHovered } = useWallTvBacklight();
   const monitorHovered = useRef(false);
   useFrame((_, delta) => {
     if (tvMaterial.current) {
-      const target = tvHovered ? 0.5 : 0.1;
+      const target = tvHovered || selected === 'education' ? 0.5 : 0.1;
       tvMaterial.current.emissiveIntensity = reducedMotion ? target
         : MathUtils.damp(tvMaterial.current.emissiveIntensity, target, MOTION.object, delta);
     }
     if (!monitorMaterial.current) return;
-    const targetBrightness = monitorHovered.current ? 0.5 : 0.1;
+    const targetBrightness = monitorHovered.current || selected === 'ai' ? 0.5 : 0.1;
     monitorMaterial.current.emissiveIntensity = reducedMotion ? targetBrightness
       : MathUtils.damp(monitorMaterial.current.emissiveIntensity, targetBrightness, MOTION.object, delta);
   });
   const monitor = useWorkstationTexture();
-  const today = new Date().toISOString().slice(0, 10);
   const featured = featuredPresentation(presentations);
   const talk = collection.presentation ?? featured;
   const navigation = presentationNavigation(presentations, talk?.id);
   const cover = collection.presentation ? collection.talkSlide?.src : talkMedia.find(media => media.id === featured?.id)?.slides[0]?.src;
-  const board = useDocumentTexture({ image: cover ?? null, title: talk?.topic || talk?.title || 'Talks & teaching', eyebrow: collection.presentation ? `${collection.presentation.date} / ${collection.presentation.date > today ? 'UPCOMING' : 'TALKS & TEACHING'}` : 'TALKS & TEACHING / FROM THE OFFICE', detail: talk ? `${talk.title} / ${talk.venue}` : 'Select a presentation to explore the work.', dark: true });
+  const board = useTvPresentationTexture({ cover: cover ?? null, talk, presentations });
   useEffect(() => {
-    if (!cover) {
-      setWallTvContentColors(TV_CONTENT_FALLBACK);
-      return;
-    }
-    return loadTvContentColors(cover, setWallTvContentColors);
-  }, [cover]);
+    const sample = () => {
+      const image: unknown = board.image;
+      if (image instanceof HTMLCanvasElement) sampleTvContentColors(image);
+    };
+    board.onUpdate = sample;
+    sample();
+    return () => { board.onUpdate = null; };
+  }, [board]);
   return (
     <group>
       <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
@@ -118,12 +104,13 @@ export function Displays({ selected, onSelect, reducedMotion, halo, presentation
         <group name={WALL_TV.model}>
           <Block size={[WALL_TV.width, WALL_TV.height, WALL_TV.depth]} color={PALETTE.graphite} radius={0.005} roughness={0.32} metalness={0.5} />
           <mesh name="Wall TV screen" position={[0, 0.003, WALL_TV.depth / 2 + 0.001]}><planeGeometry args={[WALL_TV.screenWidth, WALL_TV.screenHeight]} /><meshStandardMaterial ref={tvMaterial} map={board} emissiveMap={board} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
+          {selected === 'education' && <TvSlideTargets {...tvPreviews(cover ?? null, talk, presentations)} talkId={talk?.id} onTalk={onTalk} onSlide={onTalkSlide} />}
           <mesh position={[WALL_TV.width / 2 - 0.034, -WALL_TV.height / 2 + 0.008, 0.017]}><sphereGeometry args={[0.0015, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         </group>
         {selected === 'education' && <Html center position={[0, -WALL_TV.height / 2 - 0.09, 0.045]} zIndexRange={[15, 10]}>
           <nav className="wall-tv-controls" aria-label="Wall TV presentations" onPointerDown={event => event.stopPropagation()} onWheel={event => event.stopPropagation()}>
             <button aria-label="Previous presentation on wall TV" disabled={!navigation.previous} onClick={() => { if (navigation.previous) onTalk(navigation.previous.id); }}>←</button>
-            <span>Presentation {navigation.index + 1} / {navigation.total}</span>
+            <span>Event {navigation.index + 1} / {navigation.total}</span>
             <button aria-label="Next presentation on wall TV" disabled={!navigation.next} onClick={() => { if (navigation.next) onTalk(navigation.next.id); }}>→</button>
           </nav>
         </Html>}

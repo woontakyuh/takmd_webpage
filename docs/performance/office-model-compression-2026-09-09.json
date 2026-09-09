@@ -1,0 +1,134 @@
+{
+  "date": "2026-09-09",
+  "method": "Lossless Meshopt byte stream version 0, ATTRIBUTES or order-preserving INDICES, filter NONE; four Fender PNG images optionally converted to lossless WebP",
+  "geometrySimplified": false,
+  "geometryReordered": false,
+  "accessorValuesChanged": false,
+  "materialValuesChanged": false,
+  "imageDimensionsChanged": false,
+  "decoder": "App three-stdlib MeshoptDecoder via Drei default useGLTF",
+  "encoder": "meshoptimizer 1.2.0",
+  "imageEncoder": "sharp 0.34.5, WebP lossless true, effort 6, metadata retained",
+  "assets": [
+    {
+      "path": "public/models/fender/stratocaster-sunburst.glb",
+      "originalBytes": 10783264,
+      "compressedBytes": 7272452,
+      "savedBytes": 3510812,
+      "originalSha256": "9cbafc12c6117a64cf22b3de80a9443339eb084aaae194f409e69a2d415696ee",
+      "compressedSha256": "3ccc37af81ad00f3866a592790c7f49cca7d160fd55d159a439218d9532fde85",
+      "exactDecodedBufferViews": 6,
+      "exactDecodedWebpImages": 4,
+      "imageVerification": [
+        {
+          "bufferView": 5,
+          "imageIndex": 1,
+          "pixelSha256": "cad1ba43cf69b7a7eaf76a380360588016df5bbc1b054b7e4d8867a470c9c01a",
+          "format": "raw",
+          "width": 2048,
+          "height": 2048,
+          "channels": 3,
+          "depth": "uchar",
+          "premultiplied": false,
+          "size": 12582912
+        },
+        {
+          "bufferView": 6,
+          "imageIndex": 2,
+          "pixelSha256": "566b0b2aba539dc5c27fcdbaade013144ec5ef20dd245cfa63446ed5a97a856c",
+          "format": "raw",
+          "width": 2048,
+          "height": 2048,
+          "channels": 3,
+          "depth": "uchar",
+          "premultiplied": false,
+          "size": 12582912
+        },
+        {
+          "bufferView": 8,
+          "imageIndex": 4,
+          "pixelSha256": "3620c9f6257da724efa547408b604898fc5feac131389ea443f7e05ab88094a7",
+          "format": "raw",
+          "width": 2048,
+          "height": 2048,
+          "channels": 3,
+          "depth": "uchar",
+          "premultiplied": false,
+          "size": 12582912
+        },
+        {
+          "bufferView": 9,
+          "imageIndex": 5,
+          "pixelSha256": "3716d8f95b7b80a600cc92bae6bc612f48dbd46d0e07e1dfbb1c0f6fb2e139bb",
+          "format": "raw",
+          "width": 2048,
+          "height": 2048,
+          "channels": 3,
+          "depth": "uchar",
+          "premultiplied": false,
+          "size": 12582912
+        }
+      ]
+    },
+    {
+      "path": "public/models/beosound-theatre/beosound-theatre-table.glb",
+      "originalBytes": 5003812,
+      "compressedBytes": 2605024,
+      "savedBytes": 2398788,
+      "originalSha256": "ac92ff14d9f544278a8ca9881a494455a73bf309e1f49826241f377f011e998f",
+      "compressedSha256": "3303c47bafabf1909dfb0de474e5fa8ae4ac2d34816d1f1b0a6f680649bfcc1a",
+      "exactDecodedBufferViews": 24,
+      "exactDecodedWebpImages": 0,
+      "imageVerification": []
+    },
+    {
+      "path": "public/models/garments/physician-coat.glb",
+      "originalBytes": 4362856,
+      "compressedBytes": 3851720,
+      "savedBytes": 511136,
+      "originalSha256": "cd62988998d454bd14b4394ed0d6377d36633ecad4dd9cc0f9a4cd0bdcd5f539",
+      "compressedSha256": "722db7c98ab8e5f42ffc6e0633c9d5e68b83d6f85038970125dd10af4eca9e4a",
+      "exactDecodedBufferViews": 7,
+      "exactDecodedWebpImages": 0,
+      "imageVerification": []
+    },
+    {
+      "path": "public/models/garments/control-gi.glb",
+      "originalBytes": 4056288,
+      "compressedBytes": 3448332,
+      "savedBytes": 607956,
+      "originalSha256": "bee2beb10cbcf0363f146a3a8d474722a8fcba01079621b07fc4f7234e975242",
+      "compressedSha256": "fac4efa70a5f1db1ea3d03ff74dc4e1ebdd3bbd52d0cd6cce81df11dc9ec3002",
+      "exactDecodedBufferViews": 7,
+      "exactDecodedWebpImages": 0,
+      "imageVerification": []
+    },
+    {
+      "path": "public/models/eames/lounge.glb",
+      "originalBytes": 1825288,
+      "compressedBytes": 1344800,
+      "savedBytes": 480488,
+      "originalSha256": "b37e319475249a97f15567d7fa492cae9061a42812768bb115d0e0a71a33b161",
+      "compressedSha256": "9a7516dc324bebfc196b049c43e6ff86ca4406618e5097de6e2a44ccf32301a0",
+      "exactDecodedBufferViews": 45,
+      "exactDecodedWebpImages": 0,
+      "imageVerification": []
+    },
+    {
+      "path": "public/models/eames/ottoman.glb",
+      "originalBytes": 897400,
+      "compressedBytes": 705204,
+      "savedBytes": 192196,
+      "originalSha256": "c2393802ecc28afc81dde19acfc69e892d86ded51560b063261af84dbeac9a45",
+      "compressedSha256": "c290b34485db151113f2fa754084c1978b0769226f9bf19e35a8a0603b22509a",
+      "exactDecodedBufferViews": 19,
+      "exactDecodedWebpImages": 0,
+      "imageVerification": []
+    }
+  ],
+  "totals": {
+    "originalBytes": 26928908,
+    "compressedBytes": 19227532,
+    "savedBytes": 7701376
+  }
+}

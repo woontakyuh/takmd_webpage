@@ -1,5 +1,15 @@
 # Office session handoff — 2026-09-09
 
+## Latest continuation · Office media and loading
+
+The current finishing batch includes seven photographed personal books with pull/open/return interaction, two physical electronic-frame inspectors, the connected research folio and shifting paper stacks, the corrected IJSS preview, warm mineral walls/floor, USM underside lighting, selected-screen brightness, actual-office sharing/loading images, lossless model compression and a committed-lifecycle Banpo loader. Connect includes the existing public email. A Cloudflare D1 footer visit counter counts one browser-tab session; local Astro preview intentionally hides it because it does not run Pages Functions.
+
+2026 curated TV media includes seven complete PDF decks (107 pages) and eight Spine Summit Faculty/Cadaver Instructor photographs. `TVPDF_*.pdf` identifies a slide deck; `TVIMG/` inside a dated meeting folder identifies event photos. Both are explicit imports, not a Dropbox watcher. The owner subsequently completed 2025 material: 11 PDF decks across 10 events (201 pages) have been imported in this finishing pass. Three internal staff ID/contact areas were masked only in publication copies; source PDFs and author names remain unchanged. 2024 and earlier are explicitly deferred. TV image previews and in-screen arrows change the current page; the controls beneath the television change the event. See `docs/PRESENTATION_PDFS.md`. One private remote-control session URL in KOMISS page 12 was masked only in the public derivative; Dropbox originals are unchanged.
+
+The guitar-side cabinet now follows the Poltrona Frau Isidoro: muted olive gray exterior, Canaletto walnut interior, articulated opening and bar tools. Official closed dimensions are 71 × 51 × 117 cm. The measured procedural reconstruction is at [1.45, 0.0185, -2.55], rotation 0; body click or the local keyboard-accessible control opens/closes it. Arrange closes it before moving, and placement remains visit-only. Preserve the existing bookcase and guitar. Its lower bottle bay is displayed open rather than reproducing every internal storage door.
+
+Final screenshots, tests, performance and release receipt are in `.omo/evidence/office-entry-2026-09-09/`. The release receipt is the source of truth for commit, remote and live provider verification. Port4322 still serves built `dist`, so rebuild after editing. Do not revive old static photo modals or clear the photographed book/certificate/award collections. Han River skyline fidelity and administrator-persisted furniture layouts remain deferred.
+
 ## Latest continuation · Han River pilot
 
 The earlier office work plus raised right-side awards and warmer daylight is now committed, pushed and deployed at full SHA `9d3bfaffbb42ee16478b3254318be2d29bb22f1f`. Cloudflare deployment `9767ddaa`; receipt `.omo/evidence/daylight-warmth-2026-09-09/release.json` verifies live HTML, JS and browser checks.

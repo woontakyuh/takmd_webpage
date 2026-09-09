@@ -3,7 +3,11 @@ import talkRecords from '../../data/studio-talk-media.json';
 import type { PaperMedia, Presentation, Publication, TalkMedia } from './types';
 
 export const paperMedia: readonly PaperMedia[] = paperRecords;
-export const talkMedia: readonly TalkMedia[] = talkRecords;
+export const talkMedia: readonly TalkMedia[] = talkRecords.map((record): TalkMedia => {
+  const kind = record.kind;
+  if (kind !== undefined && kind !== 'full' && kind !== 'selected' && kind !== 'photos') throw new Error(`Invalid presentation media kind: ${kind}`);
+  return { ...record, kind };
+});
 export const FEATURED_DOI = '10.3390/bioengineering10121363';
 export const FOLIO_ASSETS = { page: '/studio/future-endoscopy-page.jpg', figure: '/studio/camera-sensors.jpg' } as const;
 

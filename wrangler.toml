@@ -1,3 +1,19 @@
 name = "takmdwebpage"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "./dist"
+
+[vars]
+VISITOR_COUNTER_ENABLED = "false"
+
+[[d1_databases]]
+binding = "VISITOR_DB"
+database_name = "takmd-visitor-counter"
+database_id = "31e3554b-ae75-4867-a393-4a95367763df"
+
+[env.production.vars]
+VISITOR_COUNTER_ENABLED = "true"
+
+[[env.production.d1_databases]]
+binding = "VISITOR_DB"
+database_name = "takmd-visitor-counter"
+database_id = "31e3554b-ae75-4867-a393-4a95367763df"

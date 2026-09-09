@@ -3,8 +3,10 @@ import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ExtrudeGeometry, SRGBColorSpace, Shape } from 'three';
 import type { Texture } from 'three';
+import type { StudioSceneProps } from '../types';
 import { useArrangement } from '../arrangement';
 import { scheduleSceneSingleAction } from './sceneGesture';
+import { DigitalPhotoFrame } from './DigitalPhotoFrame';
 
 const FRAME = {
   face: 0.008,
@@ -55,7 +57,7 @@ const AWARD_PHOTO = {
   position: [2.01, 1.3025, 3.12], paperSize: [.27, .27 * 2633 / 3395],
 } as const;
 
-type CredentialSpec = (typeof CREDENTIALS)[number] | typeof AWARD_PHOTO;
+type CredentialSpec = (typeof CREDENTIALS)[number];
 
 type FramedCredentialProps = {
   readonly credential: CredentialSpec;
@@ -161,17 +163,15 @@ export function CertificateFrames() {
   </group>;
 }
 
-export function AwardCeremonyPhoto({ onOpen }: { readonly onOpen: () => void }) {
-  const source = useTexture(AWARD_PHOTO.texture);
-  const texture = useMemo(() => preparedTexture(source), [source]);
+export function AwardCeremonyPhoto({ onOpen, selected, reducedMotion }: { readonly onOpen: () => void } & Pick<StudioSceneProps, 'selected' | 'reducedMotion'>) {
   const canvas = useThree(state => state.gl.domElement);
   const { editing } = useArrangement();
   const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
   useCursor(hovered && !editing);
-  useEffect(() => () => texture.dispose(), [texture]);
-  return <group name="Award photo interaction"
-    onPointerEnter={event => { event.stopPropagation(); setHovered(true); }}
+  useEffect(() => { if (editing) setHovered(false); }, [editing]);
+  return <group name="Award photo interaction" position={[...AWARD_PHOTO.position]} rotation={[0, Math.PI, 0]}
+    onPointerEnter={event => { if (editing) return; event.stopPropagation(); setHovered(true); }}
     onPointerLeave={() => setHovered(false)}
     onPointerDown={event => {
       event.stopPropagation();
@@ -186,6 +186,7 @@ export function AwardCeremonyPhoto({ onOpen }: { readonly onOpen: () => void }) 
       if (editing || !start || event.delta >= 5 || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 5) return;
       scheduleSceneSingleAction(canvas, onOpen);
     }}>
-    <FramedCredential credential={AWARD_PHOTO} texture={texture} />
+    <DigitalPhotoFrame src={AWARD_PHOTO.texture} width={AWARD_PHOTO.width} height={AWARD_PHOTO.height}
+      hovered={hovered} active={selected === 'award-photo'} reducedMotion={reducedMotion} />
   </group>;
 }

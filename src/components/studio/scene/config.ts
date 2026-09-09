@@ -30,7 +30,7 @@ export const GOLD_AWARD = { satin: '#D6B77A', edge: '#C7A15A', mirror: '#D9AD4A'
 export const INTERIOR = {
   oak: '#A78A67', oakLight: '#C3AA85', oakShadow: '#6A513B', ivory: '#F1EDE4',
   plaster: '#E3DCD0', sand: '#D5C7B1', upholstery: '#D5C8B6', bronze: '#51493E',
-  stone: '#DED8CB', microcement: '#D5D2CA', lightWood: '#B6A184',
+  stone: '#DED8CB', microcement: '#DFDAD0', lightWood: '#B6A184',
 } as const;
 
 export type Point = readonly [number, number, number];
@@ -67,11 +67,13 @@ export const TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
 ];
 
 export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
+  books: { position: [-1.65, 2.38, 1.65], target: [-1.875, 2.15, 2.62], zoom: 1 },
   spine: { position: [-0.45, 1.6, 0.17], target: [-2.38, 0.9, 1.22], zoom: 1 },
   research: { position: [0.08, 1.9, -2.92], target: [0.38, 0.8, -1.66], zoom: 1 },
   education: { position: [-0.42, 2.20, 1.15], target: [0, 1.90, 3.22], zoom: 1 },
   ai: { position: [0.03, 1.255, -2.2], target: [-0.05, 1.155, -1.2], zoom: 1 },
-  family: { position: [0.68, 1.16, -2.03], target: [0.67, 0.885, -1.27], zoom: 1 },
+  family: { position: [0.604, 0.96, -1.74], target: [0.67, 0.87, -1.27], zoom: 1 },
+  'award-photo': { position: [2.01, 1.51, 2.64], target: [2.01, 1.42, 3.11], zoom: 1 },
   award: { position: [ROOM.award.position[0], 1.58, 2.215], target: [ROOM.award.position[0], 1.448, 3.06], zoom: 1 },
   projects: { position: [0.435, 1.35, -1.945], target: [-0.055, 0.815, -1.155], zoom: 1 },
   bjj: { position: [-1.25, 1.82, -1.02], target: [-2.505, 1.30, -2.318], zoom: 1 },
@@ -85,11 +87,13 @@ export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
 ];
 
 export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
+  books: FOCUS.books,
   spine: { position: [-0.3, 1.9, -0.28], target: [-2.38, 0.9, 1.22], zoom: 1 },
   research: { position: [-0.05, 2.5, -2.92], target: [0.38, 0.8, -1.66], zoom: 1 },
   education: { position: [-0.55, 2.40, 0.2], target: [0, 1.90, 3.22], zoom: 1 },
   ai: FOCUS.ai,
   family: FOCUS.family,
+  'award-photo': FOCUS['award-photo'],
   award: { position: [ROOM.award.position[0], 1.60, 2.135], target: [ROOM.award.position[0], 1.448, 3.06], zoom: 1 },
   projects: { position: [0.635, 1.7, -2.325], target: [-0.055, 0.815, -1.155], zoom: 1 },
   bjj: { position: [-0.7, 2.05, -0.88], target: [-2.505, 1.30, -2.318], zoom: 1 },
@@ -102,10 +106,17 @@ export const SIDE_READER_SPACE = 438;
 
 export function focusFov(id: ExhibitId | null, compact: boolean, width: number, height: number): number {
   const base = width < height ? 60 : 42;
-  if (id !== 'ai') return base;
-  const availableWidth = Math.max(32, width - (compact ? 32 : SIDE_READER_SPACE + 32));
-  const pose = FOCUS.ai;
+  if (id === 'family' || id === 'award-photo' || id === 'books') {
+    const pose = FOCUS[id];
+    const distance = Math.hypot(...pose.position.map((value, index) => value - pose.target[index]));
+    const availableWidth = Math.max(32, width - (compact ? 48 : 400));
+    const frameWidth = id === 'family' ? 0.286 : id === 'books' ? 0.44 : 0.334;
+    return Math.max(base, 2 * Math.atan(frameWidth * height / (2 * distance * availableWidth)) * 180 / Math.PI);
+  }
+  if (id !== 'ai' && id !== 'education') return base;
+  const availableWidth = Math.max(32, width - (compact ? 48 : SIDE_READER_SPACE + 56));
+  const pose = compact ? MOBILE_FOCUS[id] : FOCUS[id];
   const distance = Math.hypot(...pose.position.map((value, index) => value - pose.target[index]));
-  const fitted = 2 * Math.atan(0.8 * height / (2 * distance * availableWidth)) * 180 / Math.PI;
+  const fitted = 2 * Math.atan((id === 'education' ? 2.45 : 0.8) * height / (2 * distance * availableWidth)) * 180 / Math.PI;
   return Math.max(base, fitted);
 }

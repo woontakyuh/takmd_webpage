@@ -20,7 +20,7 @@ export function Furniture({ familyPhotoSrc, lamp, reducedMotion, selected, onSel
       <Movable id="chair"><group position={[...chair.position]} rotation={[0, chair.rotation, 0]}>
         <OfficeChair reducedMotion={reducedMotion} />
       </group></Movable>
-      <OfficeStorage wood={wood} lamp={lamp} reducedMotion={reducedMotion} onAwardPhoto={onAwardPhoto} />
+      <OfficeStorage wood={wood} lamp={lamp} selected={selected} reducedMotion={reducedMotion} onAwardPhoto={onAwardPhoto} />
       <Movable id="music"><group position={[...ROOM.music.position]} rotation={[0, ROOM.music.rotation, 0]}>
         <group position={[-(FENDER_MUSIC_CORNER_BOUNDS.min[0] + FENDER_MUSIC_CORNER_BOUNDS.max[0]) / 2, 0, 0]}>
           <FenderMusicCorner />

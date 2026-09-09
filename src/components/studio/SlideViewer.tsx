@@ -8,9 +8,10 @@ type Props = {
   readonly index: number;
   readonly onSlide: (index: number) => void;
   readonly onClose: () => void;
+  readonly mediaLabel?: 'slide' | 'photo';
 };
 
-export function SlideViewer({ title, slides, index, onSlide, onClose }: Props) {
+export function SlideViewer({ title, slides, index, onSlide, onClose, mediaLabel = 'slide' }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const element = dialog.current;
@@ -27,10 +28,10 @@ export function SlideViewer({ title, slides, index, onSlide, onClose }: Props) {
       if (event.key === 'ArrowLeft' && index > 0) { event.preventDefault(); onSlide(index - 1); }
       if (event.key === 'ArrowRight' && index < slides.length - 1) { event.preventDefault(); onSlide(index + 1); }
     }}>
-    <header><h2 id="slide-viewer-title">{title}</h2><button onClick={onClose} aria-label="Close slide viewer">×</button></header>
+    <header><h2 id="slide-viewer-title">{title}</h2><button onClick={onClose} aria-label={`Close ${mediaLabel} viewer`}>×</button></header>
     <figure><img src={slide.src} alt={slide.caption} width={slide.width ?? 1920} height={slide.height ?? 1080} decoding="async" /></figure>
-    <footer><button disabled={index === 0} onClick={() => onSlide(index - 1)} aria-label="Previous slide in viewer">←</button>
+    <footer><button disabled={index === 0} onClick={() => onSlide(index - 1)} aria-label={`Previous ${mediaLabel} in viewer`}>←</button>
       <span role="status">{index + 1} / {slides.length}</span>
-      <button disabled={index === slides.length - 1} onClick={() => onSlide(index + 1)} aria-label="Next slide in viewer">→</button></footer>
+      <button disabled={index === slides.length - 1} onClick={() => onSlide(index + 1)} aria-label={`Next ${mediaLabel} in viewer`}>→</button></footer>
   </dialog>, document.body);
 }

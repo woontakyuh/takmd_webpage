@@ -25,13 +25,13 @@ export function WindowDaylight({ daylight, blindLift }: { readonly daylight: num
   </group>;
 }
 
-export function OfficeLighting({ power, palette }: { readonly power: number; readonly palette: RoomLightPalette }) {
+export function OfficeLighting({ power, palette, tvFocused }: { readonly power: number; readonly palette: RoomLightPalette; readonly tvFocused: boolean }) {
   return <group name="warm-office-lighting">
     <Movable id="mantis"><MantisFloor power={power} color={palette.color} /></Movable>
     <Movable id="signe"><SigneFloor power={power} palette={palette} /></Movable>
     <UnderStorageWash power={power} color={palette.gradient[0]} />
     <ShelfWash palette={palette} power={power} />
-    <TvBacklight power={power} />
+    <TvBacklight power={power} focused={tvFocused} />
   </group>;
 }
 
@@ -58,10 +58,10 @@ function WallWash({ x, width, color, power }: { readonly x: number; readonly wid
   </>;
 }
 
-function TvBacklight({ power }: { readonly power: number }) {
+function TvBacklight({ power, focused }: { readonly power: number; readonly focused: boolean }) {
   const inset = 0.04;
   const { hovered, colors } = useWallTvBacklight();
-  const brightness = Math.max(power, 0.18) * (hovered ? 1.55 : 1);
+  const brightness = Math.max(power, 0.18) * (hovered || focused ? 1.55 : 1);
   return <group name="TV rear four-edge gradient lightstrip" position={[...ROOM.gallery.position]}>
     {([-1, 1] as const).map(side => <group key={side}>
       <RearStrip position={[0, side * (WALL_TV.height / 2 - inset), 0.025]}
@@ -82,10 +82,19 @@ function RearStrip({ position, width, height, color, power }: {
 }
 
 function UnderStorageWash({ power, color }: { readonly power: number; readonly color: string }) {
-  const light = useRef<RectAreaLight>(null);
-  useLayoutEffect(() => { light.current?.lookAt(-2.12, 0, 0.55); }, []);
-  return <group name="USM concealed underside lightstrip">
-    <Block size={[0.018, 0.012, 2.88]} position={[-2.35, 0.195, 0.55]} color={PALETTE.aluminium} radius={0.002} />
-    <rectAreaLight ref={light} name="USM floating floor wash" position={[-2.35, 0.185, 0.55]} width={2.88} height={0.025} intensity={power * 12} color={color} />
+  const { width, height, depth } = ROOM.credenza;
+  const length = width - 0.13;
+  const sourceY = height - 0.35 - 0.0105;
+  return <group name="USM concealed underside lightstrip" position={[...ROOM.credenza.position]}>
+    <Block size={[0.022, 0.008, length]} position={[0, sourceY + 0.0045, 0]}
+      color={PALETTE.aluminium} radius={0.002} metalness={0.7} roughness={0.5} />
+    <mesh name="USM warm diffusing strip" position={[0, sourceY, 0]} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
+      <planeGeometry args={[length, 0.014]} />
+      <meshStandardMaterial color={LIGHTING.reflector} emissive={color} emissiveIntensity={power * 2.8} roughness={0.7} />
+    </mesh>
+    <rectAreaLight name="USM downward floor wash" position={[0, sourceY - 0.001, 0]}
+      rotation={[-Math.PI / 2, 0, Math.PI / 2]} width={length} height={0.014} intensity={power * 22} color={color} />
+    <rectAreaLight name="USM floor reflected underside fill" position={[0, 0.015, 0]}
+      rotation={[Math.PI / 2, 0, Math.PI / 2]} width={length} height={depth - 0.07} intensity={power * 0.34} color={color} />
   </group>;
 }

@@ -22,7 +22,7 @@ const titles = {
 } as const;
 
 type Props = StudioContent & {
-  readonly selected: ExhibitId | null;
+  readonly selected: Exclude<ExhibitId, 'family' | 'award-photo' | 'books'> | null;
   readonly collection: OfficeCollection;
   readonly onPaper: (id: string) => void;
   readonly onTalk: (id: string | null) => void;

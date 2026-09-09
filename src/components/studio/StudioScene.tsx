@@ -1,3 +1,4 @@
+import { BookshelfBooks } from './scene/BookshelfBooks';
 import { Movable } from './scene/Movable';
 import { Canvas } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
@@ -55,9 +56,10 @@ export function StudioScene(props: StudioSceneProps) {
         angle={1.3} penumbra={1} color={props.roomPalette.color} />
       <Architecture night={props.night} sky={sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} />
       <Furniture familyPhotoSrc={props.familyPhotoSrc} lamp={sun.lamp} halo={props.halo} onHaloControls={props.onHaloControls} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} onAwardPhoto={props.onAwardPhoto} />
+      <BookshelfBooks selected={props.selected} selectedBook={props.selectedBook} pageIndex={props.bookPageIndex} reducedMotion={props.reducedMotion} onBookSelect={props.onBookSelect} />
       <OfficeLounge />
       <RoomSwitches onControl={props.onRoomControl} />
-      <OfficeLighting palette={props.roomPalette} power={sun.lamp} />
+      <OfficeLighting palette={props.roomPalette} power={sun.lamp} tvFocused={props.selected === 'education'} />
       <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={ROOM.award.position} rotation={ROOM.award.rotation}
         focused={props.selected === 'award'} reducedMotion={props.reducedMotion} onSelect={() => props.onSelect('award')} />
       <PersonalCorner {...props} />

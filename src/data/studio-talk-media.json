@@ -1,99 +1,2322 @@
 [
   {
     "id": "33b908af25b980699b05c85e9c87f69f",
+    "kind": "full",
     "slides": [
       {
-        "src": "/studio/talks/2026-06-27-ai-augmented-spine/slide-01.jpg",
-        "caption": "Title slide: My AI-Augmented Spine Practice",
-        "thumbnail": "/studio/talks/2026-06-27-ai-augmented-spine/slide-01.thumb.webp",
-        "width": 1684,
-        "height": 1190
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0001.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0001.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 1",
+        "width": 1920,
+        "height": 1357
       },
       {
-        "src": "/studio/talks/2026-06-27-ai-augmented-spine/slide-03.jpg",
-        "caption": "Introduction: surgeon perspective and scope of the AI workflow talk",
-        "thumbnail": "/studio/talks/2026-06-27-ai-augmented-spine/slide-03.thumb.webp",
-        "width": 1684,
-        "height": 1190
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0002.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0002.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 2",
+        "width": 1920,
+        "height": 1357
       },
       {
-        "src": "/studio/talks/2026-06-27-ai-augmented-spine/slide-05.jpg",
-        "caption": "Concept slide: traditional clinical and research workflow bottlenecks",
-        "thumbnail": "/studio/talks/2026-06-27-ai-augmented-spine/slide-05.thumb.webp",
-        "width": 1684,
-        "height": 1190
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0003.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0003.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0004.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0004.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0005.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0005.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0006.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0006.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0007.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0007.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0008.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0008.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0009.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0009.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0010.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0010.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0011.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0011.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/page-0012.webp",
+        "thumbnail": "/studio/talks/full/33b908af25b980699b05c85e9c87f69f/e8d5be507bc4/thumb-0012.webp",
+        "caption": "Busan-Ulsan-Gyeongnam Spine Symposium - Slide 12",
+        "width": 1920,
+        "height": 1357
       }
     ]
   },
   {
     "id": "320908af25b980f38995e684de308401",
+    "kind": "full",
     "slides": [
       {
-        "src": "/studio/talks/2026-06-06-claude-ai-research/slide-01.jpg",
-        "caption": "Title slide: Research Methodology in Neurosurgery Using Claude AI",
-        "thumbnail": "/studio/talks/2026-06-06-claude-ai-research/slide-01.thumb.webp",
-        "width": 1921,
-        "height": 1080
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0001.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0001.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0002.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0002.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0003.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0003.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0004.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0004.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0005.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0005.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0006.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0006.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0007.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0007.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0008.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0008.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0009.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0009.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0010.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0010.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0011.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0011.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0012.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0012.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0013.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0013.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0014.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0014.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0015.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0015.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0016.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0016.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 16",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0017.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0017.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 17",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0018.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0018.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 18",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0019.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0019.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 19",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0020.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0020.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 20",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0021.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0021.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 21",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0022.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0022.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 22",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0023.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0023.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 23",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/page-0024.webp",
+        "thumbnail": "/studio/talks/full/320908af25b980f38995e684de308401/9ebbb3d1bda4/thumb-0024.webp",
+        "caption": "KNS Basic & Digital Convergence Research Joint Meeting - Slide 24",
+        "width": 1920,
+        "height": 1357
       }
     ]
   },
   {
     "id": "33a908af25b980849210fec32e7391fd",
+    "kind": "full",
     "slides": [
       {
-        "src": "/studio/talks/2026-05-29-komiss-ai-workflow/slide-01.jpg",
-        "caption": "Title slide: AI-Enhanced Surgical Workflow: LLMs and Agentic System in MISS",
-        "thumbnail": "/studio/talks/2026-05-29-komiss-ai-workflow/slide-01.thumb.webp",
-        "width": 1921,
-        "height": 1080
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0001.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0001.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0002.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0002.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0003.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0003.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0004.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0004.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0005.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0005.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0006.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0006.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0007.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0007.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0008.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0008.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0009.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0009.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0010.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0010.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0011.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0011.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0012.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0012.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0013.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0013.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/page-0014.webp",
+        "thumbnail": "/studio/talks/full/33a908af25b980849210fec32e7391fd/1b419e9869a0/thumb-0014.webp",
+        "caption": "KOMISS Spring Symposium & Cadaver Workshop - Slide 14",
+        "width": 1920,
+        "height": 1357
       }
     ]
   },
   {
     "id": "2c7908af25b980ecabfaea73c5b098fd",
+    "kind": "full",
     "slides": [
       {
-        "src": "/studio/talks/2026-05-08-wcmisst/slide-01.jpg",
-        "caption": "Title slide: Breaking Barriers: Feasibility and Safety of Endoscopic Resection for Spinal Tumors",
-        "thumbnail": "/studio/talks/2026-05-08-wcmisst/slide-01.thumb.webp",
-        "width": 1684,
-        "height": 1190
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0001.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0001.webp",
+        "caption": "WCMISST - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0002.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0002.webp",
+        "caption": "WCMISST - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0003.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0003.webp",
+        "caption": "WCMISST - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0004.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0004.webp",
+        "caption": "WCMISST - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0005.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0005.webp",
+        "caption": "WCMISST - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0006.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0006.webp",
+        "caption": "WCMISST - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0007.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0007.webp",
+        "caption": "WCMISST - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0008.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0008.webp",
+        "caption": "WCMISST - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0009.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0009.webp",
+        "caption": "WCMISST - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0010.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0010.webp",
+        "caption": "WCMISST - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0011.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0011.webp",
+        "caption": "WCMISST - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0012.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0012.webp",
+        "caption": "WCMISST - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0013.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0013.webp",
+        "caption": "WCMISST - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0014.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0014.webp",
+        "caption": "WCMISST - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0015.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0015.webp",
+        "caption": "WCMISST - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0016.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0016.webp",
+        "caption": "WCMISST - Slide 16",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/page-0017.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b980ecabfaea73c5b098fd/fa85bdffd2be/thumb-0017.webp",
+        "caption": "WCMISST - Slide 17",
+        "width": 1920,
+        "height": 1357
       }
     ]
   },
   {
     "id": "22d908af25b980db8fcbfc369cfd8fdb",
+    "kind": "full",
     "slides": [
       {
-        "src": "/studio/talks/2026-07-09-kass-ube/slide-01.jpg",
-        "caption": "Title slide: Right-Sided Approach Mastery and Level-Adaptive Decision-Making Strategies",
-        "thumbnail": "/studio/talks/2026-07-09-kass-ube/slide-01.thumb.webp",
-        "width": 1684,
-        "height": 1191
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0001.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0001.webp",
+        "caption": "KASS 2026 - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0002.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0002.webp",
+        "caption": "KASS 2026 - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0003.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0003.webp",
+        "caption": "KASS 2026 - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0004.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0004.webp",
+        "caption": "KASS 2026 - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0005.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0005.webp",
+        "caption": "KASS 2026 - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0006.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0006.webp",
+        "caption": "KASS 2026 - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0007.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0007.webp",
+        "caption": "KASS 2026 - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0008.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0008.webp",
+        "caption": "KASS 2026 - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0009.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0009.webp",
+        "caption": "KASS 2026 - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0010.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0010.webp",
+        "caption": "KASS 2026 - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0011.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0011.webp",
+        "caption": "KASS 2026 - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0012.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0012.webp",
+        "caption": "KASS 2026 - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0013.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0013.webp",
+        "caption": "KASS 2026 - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/page-0014.webp",
+        "thumbnail": "/studio/talks/full/22d908af25b980db8fcbfc369cfd8fdb/0a0e438a4c24/thumb-0014.webp",
+        "caption": "KASS 2026 - Slide 14",
+        "width": 1920,
+        "height": 1357
       }
     ]
   },
   {
     "id": "18f908af25b980cbbc62f8a899f130dd",
+    "kind": "full",
     "slides": [
       {
-        "src": "/studio/talks/2025-05-03-llm-peer-review/slide-01.jpg",
-        "caption": "Title slide: Strategies for Integrating LLM into the Peer-Review Process",
-        "thumbnail": "/studio/talks/2025-05-03-llm-peer-review/slide-01.thumb.webp",
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0001.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0001.webp",
+        "caption": "Neurospine Symposium - Slide 1",
         "width": 1920,
-        "height": 1080
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0002.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0002.webp",
+        "caption": "Neurospine Symposium - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0003.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0003.webp",
+        "caption": "Neurospine Symposium - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0004.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0004.webp",
+        "caption": "Neurospine Symposium - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0005.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0005.webp",
+        "caption": "Neurospine Symposium - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0006.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0006.webp",
+        "caption": "Neurospine Symposium - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0007.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0007.webp",
+        "caption": "Neurospine Symposium - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0008.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0008.webp",
+        "caption": "Neurospine Symposium - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0009.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0009.webp",
+        "caption": "Neurospine Symposium - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0010.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0010.webp",
+        "caption": "Neurospine Symposium - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0011.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0011.webp",
+        "caption": "Neurospine Symposium - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0012.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0012.webp",
+        "caption": "Neurospine Symposium - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0013.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0013.webp",
+        "caption": "Neurospine Symposium - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0014.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0014.webp",
+        "caption": "Neurospine Symposium - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0015.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0015.webp",
+        "caption": "Neurospine Symposium - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0016.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0016.webp",
+        "caption": "Neurospine Symposium - Slide 16",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0017.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0017.webp",
+        "caption": "Neurospine Symposium - Slide 17",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0018.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0018.webp",
+        "caption": "Neurospine Symposium - Slide 18",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0019.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0019.webp",
+        "caption": "Neurospine Symposium - Slide 19",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0020.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0020.webp",
+        "caption": "Neurospine Symposium - Slide 20",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0021.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0021.webp",
+        "caption": "Neurospine Symposium - Slide 21",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0022.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0022.webp",
+        "caption": "Neurospine Symposium - Slide 22",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0023.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0023.webp",
+        "caption": "Neurospine Symposium - Slide 23",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0024.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0024.webp",
+        "caption": "Neurospine Symposium - Slide 24",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0025.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0025.webp",
+        "caption": "Neurospine Symposium - Slide 25",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0026.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0026.webp",
+        "caption": "Neurospine Symposium - Slide 26",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/page-0027.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980cbbc62f8a899f130dd/8a9fa23108c4/thumb-0027.webp",
+        "caption": "Neurospine Symposium - Slide 27",
+        "width": 1920,
+        "height": 1357
       }
     ]
   },
   {
     "id": "28f908af25b9800ebe70dc0ae420adbb",
+    "kind": "full",
     "slides": [
       {
-        "src": "/studio/talks/2025-10-16-kns-ai-colleague/slide-01.jpg",
-        "caption": "Title slide: Generative AI in Neurosurgical General Care — AI, Our Daily Colleague",
-        "thumbnail": "/studio/talks/2025-10-16-kns-ai-colleague/slide-01.thumb.webp",
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0001.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0001.webp",
+        "caption": "KNS 2025 - Slide 1",
         "width": 1920,
-        "height": 1080
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0002.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0002.webp",
+        "caption": "KNS 2025 - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0003.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0003.webp",
+        "caption": "KNS 2025 - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0004.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0004.webp",
+        "caption": "KNS 2025 - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0005.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0005.webp",
+        "caption": "KNS 2025 - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0006.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0006.webp",
+        "caption": "KNS 2025 - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0007.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0007.webp",
+        "caption": "KNS 2025 - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0008.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0008.webp",
+        "caption": "KNS 2025 - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0009.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0009.webp",
+        "caption": "KNS 2025 - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0010.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0010.webp",
+        "caption": "KNS 2025 - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0011.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0011.webp",
+        "caption": "KNS 2025 - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0012.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0012.webp",
+        "caption": "KNS 2025 - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/page-0013.webp",
+        "thumbnail": "/studio/talks/full/28f908af25b9800ebe70dc0ae420adbb/c2939e2b9ac5/thumb-0013.webp",
+        "caption": "KNS 2025 - Slide 13",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "2c7908af25b980edbfc6df234f22a8f1",
+    "kind": "photos",
+    "role": "Faculty",
+    "slides": [
+      {
+        "src": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/photo-0001.webp",
+        "thumbnail": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/thumb-0001.webp",
+        "caption": "Spine Summit — Faculty teaching at the endoscopic spine course",
+        "width": 1920,
+        "height": 1440
+      },
+      {
+        "src": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/photo-0002.webp",
+        "thumbnail": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/thumb-0002.webp",
+        "caption": "Spine Summit — Small-group course discussion",
+        "width": 1920,
+        "height": 1440
+      },
+      {
+        "src": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/photo-0003.webp",
+        "thumbnail": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/thumb-0003.webp",
+        "caption": "Spine Summit — Discussion at the training station",
+        "width": 1440,
+        "height": 1920
+      },
+      {
+        "src": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/photo-0004.webp",
+        "thumbnail": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/thumb-0004.webp",
+        "caption": "Spine Summit — Hands-on endoscopic spine instruction",
+        "width": 1920,
+        "height": 1440
+      },
+      {
+        "src": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/photo-0005.webp",
+        "thumbnail": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/thumb-0005.webp",
+        "caption": "Spine Summit — Endoscopic technique demonstration",
+        "width": 1920,
+        "height": 1440
+      },
+      {
+        "src": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/photo-0006.webp",
+        "thumbnail": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/thumb-0006.webp",
+        "caption": "Spine Summit — Teaching at the laboratory station",
+        "width": 1920,
+        "height": 1440
+      },
+      {
+        "src": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/photo-0007.webp",
+        "thumbnail": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/thumb-0007.webp",
+        "caption": "Spine Summit — Participant practice during the course",
+        "width": 1920,
+        "height": 1440
+      },
+      {
+        "src": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/photo-0008.webp",
+        "thumbnail": "/studio/talks/photos/2c7908af25b980edbfc6df234f22a8f1/e2ac6f945422/thumb-0008.webp",
+        "caption": "Spine Summit — Special Course 4: The Endoscopic Spine",
+        "width": 1920,
+        "height": 1440
+      }
+    ]
+  },
+  {
+    "id": "2cb908af25b980b08e5de837952f7e16",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0001.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0001.webp",
+        "caption": "KOMISS Executive Workshop - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0002.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0002.webp",
+        "caption": "KOMISS Executive Workshop - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0003.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0003.webp",
+        "caption": "KOMISS Executive Workshop - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0004.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0004.webp",
+        "caption": "KOMISS Executive Workshop - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0005.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0005.webp",
+        "caption": "KOMISS Executive Workshop - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0006.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0006.webp",
+        "caption": "KOMISS Executive Workshop - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0007.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0007.webp",
+        "caption": "KOMISS Executive Workshop - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0008.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0008.webp",
+        "caption": "KOMISS Executive Workshop - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0009.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0009.webp",
+        "caption": "KOMISS Executive Workshop - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0010.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0010.webp",
+        "caption": "KOMISS Executive Workshop - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0011.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0011.webp",
+        "caption": "KOMISS Executive Workshop - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0012.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0012.webp",
+        "caption": "KOMISS Executive Workshop - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0013.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0013.webp",
+        "caption": "KOMISS Executive Workshop - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0014.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0014.webp",
+        "caption": "KOMISS Executive Workshop - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0015.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0015.webp",
+        "caption": "KOMISS Executive Workshop - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0016.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0016.webp",
+        "caption": "KOMISS Executive Workshop - Slide 16",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/page-0017.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980b08e5de837952f7e16/2ffd8b4b95be/thumb-0017.webp",
+        "caption": "KOMISS Executive Workshop - Slide 17",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "2c7908af25b98068a470e39388a403e4",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/page-0001.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/thumb-0001.webp",
+        "caption": "2026 WUBES meeting - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/page-0002.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/thumb-0002.webp",
+        "caption": "2026 WUBES meeting - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/page-0003.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/thumb-0003.webp",
+        "caption": "2026 WUBES meeting - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/page-0004.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/thumb-0004.webp",
+        "caption": "2026 WUBES meeting - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/page-0005.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/thumb-0005.webp",
+        "caption": "2026 WUBES meeting - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/page-0006.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/thumb-0006.webp",
+        "caption": "2026 WUBES meeting - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/page-0007.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/thumb-0007.webp",
+        "caption": "2026 WUBES meeting - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/page-0008.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/thumb-0008.webp",
+        "caption": "2026 WUBES meeting - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/page-0009.webp",
+        "thumbnail": "/studio/talks/full/2c7908af25b98068a470e39388a403e4/20cae2d508da/thumb-0009.webp",
+        "caption": "2026 WUBES meeting - Slide 9",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "11f908af25b9803ab955ce75d0ec24dd",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0001.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0001.webp",
+        "caption": "NeuroTrauma focus - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0002.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0002.webp",
+        "caption": "NeuroTrauma focus - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0003.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0003.webp",
+        "caption": "NeuroTrauma focus - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0004.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0004.webp",
+        "caption": "NeuroTrauma focus - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0005.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0005.webp",
+        "caption": "NeuroTrauma focus - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0006.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0006.webp",
+        "caption": "NeuroTrauma focus - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0007.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0007.webp",
+        "caption": "NeuroTrauma focus - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0008.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0008.webp",
+        "caption": "NeuroTrauma focus - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0009.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0009.webp",
+        "caption": "NeuroTrauma focus - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0010.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0010.webp",
+        "caption": "NeuroTrauma focus - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0011.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0011.webp",
+        "caption": "NeuroTrauma focus - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0012.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0012.webp",
+        "caption": "NeuroTrauma focus - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0013.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0013.webp",
+        "caption": "NeuroTrauma focus - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0014.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0014.webp",
+        "caption": "NeuroTrauma focus - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0015.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0015.webp",
+        "caption": "NeuroTrauma focus - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0016.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0016.webp",
+        "caption": "NeuroTrauma focus - Slide 16",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0017.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0017.webp",
+        "caption": "NeuroTrauma focus - Slide 17",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0018.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0018.webp",
+        "caption": "NeuroTrauma focus - Slide 18",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0019.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0019.webp",
+        "caption": "NeuroTrauma focus - Slide 19",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0020.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0020.webp",
+        "caption": "NeuroTrauma focus - Slide 20",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0021.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0021.webp",
+        "caption": "NeuroTrauma focus - Slide 21",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0022.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0022.webp",
+        "caption": "NeuroTrauma focus - Slide 22",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0023.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0023.webp",
+        "caption": "NeuroTrauma focus - Slide 23",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0024.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0024.webp",
+        "caption": "NeuroTrauma focus - Slide 24",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0025.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0025.webp",
+        "caption": "NeuroTrauma focus - Slide 25",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0026.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0026.webp",
+        "caption": "NeuroTrauma focus - Slide 26",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0027.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0027.webp",
+        "caption": "NeuroTrauma focus - Slide 27",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0028.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0028.webp",
+        "caption": "NeuroTrauma focus - Slide 28",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0029.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0029.webp",
+        "caption": "NeuroTrauma focus - Slide 29",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/page-0030.webp",
+        "thumbnail": "/studio/talks/full/11f908af25b9803ab955ce75d0ec24dd/d5da13d79a48/thumb-0030.webp",
+        "caption": "NeuroTrauma focus - Slide 30",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "18c908af25b980b6b436e189b233b958",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0001.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0001.webp",
+        "caption": "KOSESS Executive Workshop - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0002.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0002.webp",
+        "caption": "KOSESS Executive Workshop - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0003.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0003.webp",
+        "caption": "KOSESS Executive Workshop - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0004.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0004.webp",
+        "caption": "KOSESS Executive Workshop - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0005.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0005.webp",
+        "caption": "KOSESS Executive Workshop - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0006.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0006.webp",
+        "caption": "KOSESS Executive Workshop - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0007.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0007.webp",
+        "caption": "KOSESS Executive Workshop - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0008.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0008.webp",
+        "caption": "KOSESS Executive Workshop - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0009.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0009.webp",
+        "caption": "KOSESS Executive Workshop - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0010.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0010.webp",
+        "caption": "KOSESS Executive Workshop - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0011.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0011.webp",
+        "caption": "KOSESS Executive Workshop - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0012.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0012.webp",
+        "caption": "KOSESS Executive Workshop - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0013.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0013.webp",
+        "caption": "KOSESS Executive Workshop - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0014.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0014.webp",
+        "caption": "KOSESS Executive Workshop - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0015.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0015.webp",
+        "caption": "KOSESS Executive Workshop - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0016.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0016.webp",
+        "caption": "KOSESS Executive Workshop - Slide 16",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0017.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0017.webp",
+        "caption": "KOSESS Executive Workshop - Slide 17",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0018.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0018.webp",
+        "caption": "KOSESS Executive Workshop - Slide 18",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0019.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0019.webp",
+        "caption": "KOSESS Executive Workshop - Slide 19",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0020.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0020.webp",
+        "caption": "KOSESS Executive Workshop - Slide 20",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0021.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0021.webp",
+        "caption": "KOSESS Executive Workshop - Slide 21",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0022.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0022.webp",
+        "caption": "KOSESS Executive Workshop - Slide 22",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0023.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0023.webp",
+        "caption": "KOSESS Executive Workshop - Slide 23",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0024.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0024.webp",
+        "caption": "KOSESS Executive Workshop - Slide 24",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0025.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0025.webp",
+        "caption": "KOSESS Executive Workshop - Slide 25",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/page-0026.webp",
+        "thumbnail": "/studio/talks/full/18c908af25b980b6b436e189b233b958/75808b4d47ee/thumb-0026.webp",
+        "caption": "KOSESS Executive Workshop - Slide 26",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "18f908af25b980fdbc6dfa5830dc13bc",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0001.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0001.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0002.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0002.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0003.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0003.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0004.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0004.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0005.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0005.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0006.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0006.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0007.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0007.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0008.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0008.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0009.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0009.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0010.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0010.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0011.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0011.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0012.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0012.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0013.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0013.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0014.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0014.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0015.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0015.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0016.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0016.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 16",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0017.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0017.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 17",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/page-0018.webp",
+        "thumbnail": "/studio/talks/full/18f908af25b980fdbc6dfa5830dc13bc/c87886495e28/thumb-0018.webp",
+        "caption": "Korean Society of Geriatric Neurosurgery Annual Meeting - Slide 18",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "1d7908af25b9809c8f30db60b1f2f982",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/page-0001.webp",
+        "thumbnail": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/thumb-0001.webp",
+        "caption": "KOMISS Advanced Spinal Course Symposium - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/page-0002.webp",
+        "thumbnail": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/thumb-0002.webp",
+        "caption": "KOMISS Advanced Spinal Course Symposium - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/page-0003.webp",
+        "thumbnail": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/thumb-0003.webp",
+        "caption": "KOMISS Advanced Spinal Course Symposium - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/page-0004.webp",
+        "thumbnail": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/thumb-0004.webp",
+        "caption": "KOMISS Advanced Spinal Course Symposium - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/page-0005.webp",
+        "thumbnail": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/thumb-0005.webp",
+        "caption": "KOMISS Advanced Spinal Course Symposium - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/page-0006.webp",
+        "thumbnail": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/thumb-0006.webp",
+        "caption": "KOMISS Advanced Spinal Course Symposium - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/page-0007.webp",
+        "thumbnail": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/thumb-0007.webp",
+        "caption": "KOMISS Advanced Spinal Course Symposium - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/page-0008.webp",
+        "thumbnail": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/thumb-0008.webp",
+        "caption": "KOMISS Advanced Spinal Course Symposium - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/page-0009.webp",
+        "thumbnail": "/studio/talks/full/1d7908af25b9809c8f30db60b1f2f982/6482f20a1547/thumb-0009.webp",
+        "caption": "KOMISS Advanced Spinal Course Symposium - Slide 9",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "1d1908af25b9805d9696fb9ba4ccc593",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0001.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0001.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0002.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0002.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0003.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0003.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0004.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0004.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0005.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0005.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0006.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0006.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0007.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0007.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0008.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0008.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0009.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0009.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0010.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0010.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0011.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0011.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0012.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0012.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0013.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0013.webp",
+        "caption": "KOSESS Annual Meeting - Free paper - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0014.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0014.webp",
+        "caption": "KOSESS Annual Meeting - Lecture - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0015.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0015.webp",
+        "caption": "KOSESS Annual Meeting - Lecture - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0016.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0016.webp",
+        "caption": "KOSESS Annual Meeting - Lecture - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0017.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0017.webp",
+        "caption": "KOSESS Annual Meeting - Lecture - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0018.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0018.webp",
+        "caption": "KOSESS Annual Meeting - Lecture - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0019.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0019.webp",
+        "caption": "KOSESS Annual Meeting - Lecture - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/page-0020.webp",
+        "thumbnail": "/studio/talks/full/1d1908af25b9805d9696fb9ba4ccc593/2eba801b8731/thumb-0020.webp",
+        "caption": "KOSESS Annual Meeting - Lecture - Slide 7",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "1b3908af25b980ac808fe3d0081e2cf2",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0001.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0001.webp",
+        "caption": "ASIA Spine 2025 - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0002.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0002.webp",
+        "caption": "ASIA Spine 2025 - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0003.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0003.webp",
+        "caption": "ASIA Spine 2025 - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0004.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0004.webp",
+        "caption": "ASIA Spine 2025 - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0005.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0005.webp",
+        "caption": "ASIA Spine 2025 - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0006.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0006.webp",
+        "caption": "ASIA Spine 2025 - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0007.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0007.webp",
+        "caption": "ASIA Spine 2025 - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0008.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0008.webp",
+        "caption": "ASIA Spine 2025 - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0009.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0009.webp",
+        "caption": "ASIA Spine 2025 - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0010.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0010.webp",
+        "caption": "ASIA Spine 2025 - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0011.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0011.webp",
+        "caption": "ASIA Spine 2025 - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0012.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0012.webp",
+        "caption": "ASIA Spine 2025 - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0013.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0013.webp",
+        "caption": "ASIA Spine 2025 - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0014.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0014.webp",
+        "caption": "ASIA Spine 2025 - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0015.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0015.webp",
+        "caption": "ASIA Spine 2025 - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/page-0016.webp",
+        "thumbnail": "/studio/talks/full/1b3908af25b980ac808fe3d0081e2cf2/afb387b66912/thumb-0016.webp",
+        "caption": "ASIA Spine 2025 - Slide 16",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "1ec908af25b98051904fe502642a6389",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0001.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0001.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0002.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0002.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0003.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0003.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0004.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0004.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0005.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0005.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0006.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0006.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0007.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0007.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0008.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0008.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0009.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0009.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0010.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0010.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0011.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0011.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0012.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0012.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0013.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0013.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0014.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0014.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0015.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0015.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/page-0016.webp",
+        "thumbnail": "/studio/talks/full/1ec908af25b98051904fe502642a6389/4bf88662fdae/thumb-0016.webp",
+        "caption": "Nanoori 22nd Anniversary Symposium - Slide 16",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
+  },
+  {
+    "id": "255908af25b9803990dac9fda2be6d71",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0001.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0001.webp",
+        "caption": "KOMISS Annual Meeting - Slide 1",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0002.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0002.webp",
+        "caption": "KOMISS Annual Meeting - Slide 2",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0003.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0003.webp",
+        "caption": "KOMISS Annual Meeting - Slide 3",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0004.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0004.webp",
+        "caption": "KOMISS Annual Meeting - Slide 4",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0005.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0005.webp",
+        "caption": "KOMISS Annual Meeting - Slide 5",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0006.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0006.webp",
+        "caption": "KOMISS Annual Meeting - Slide 6",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0007.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0007.webp",
+        "caption": "KOMISS Annual Meeting - Slide 7",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0008.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0008.webp",
+        "caption": "KOMISS Annual Meeting - Slide 8",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0009.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0009.webp",
+        "caption": "KOMISS Annual Meeting - Slide 9",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0010.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0010.webp",
+        "caption": "KOMISS Annual Meeting - Slide 10",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0011.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0011.webp",
+        "caption": "KOMISS Annual Meeting - Slide 11",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0012.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0012.webp",
+        "caption": "KOMISS Annual Meeting - Slide 12",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0013.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0013.webp",
+        "caption": "KOMISS Annual Meeting - Slide 13",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0014.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0014.webp",
+        "caption": "KOMISS Annual Meeting - Slide 14",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0015.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0015.webp",
+        "caption": "KOMISS Annual Meeting - Slide 15",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0016.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0016.webp",
+        "caption": "KOMISS Annual Meeting - Slide 16",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0017.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0017.webp",
+        "caption": "KOMISS Annual Meeting - Slide 17",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0018.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0018.webp",
+        "caption": "KOMISS Annual Meeting - Slide 18",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0019.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0019.webp",
+        "caption": "KOMISS Annual Meeting - Slide 19",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0020.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0020.webp",
+        "caption": "KOMISS Annual Meeting - Slide 20",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0021.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0021.webp",
+        "caption": "KOMISS Annual Meeting - Slide 21",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0022.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0022.webp",
+        "caption": "KOMISS Annual Meeting - Slide 22",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0023.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0023.webp",
+        "caption": "KOMISS Annual Meeting - Slide 23",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0024.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0024.webp",
+        "caption": "KOMISS Annual Meeting - Slide 24",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0025.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0025.webp",
+        "caption": "KOMISS Annual Meeting - Slide 25",
+        "width": 1920,
+        "height": 1357
+      },
+      {
+        "src": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/page-0026.webp",
+        "thumbnail": "/studio/talks/full/255908af25b9803990dac9fda2be6d71/73a8e9157c27/thumb-0026.webp",
+        "caption": "KOMISS Annual Meeting - Slide 26",
+        "width": 1920,
+        "height": 1357
       }
     ]
   }

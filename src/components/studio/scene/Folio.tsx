@@ -7,6 +7,8 @@ import type { OfficeCollection, StudioSceneProps } from '../types';
 import { useDocumentTexture } from './CollectionTextures';
 import { beginFolioTurn, settleFolioTurn } from './folioTurn';
 import type { FolioTurnState } from './folioTurn';
+import { FOLIO, folioBindingPose, folioStackLayers } from './folioGeometry';
+import { FolioStack } from './FolioStack';
 import { Interactive } from './Interactive';
 import { Block } from './Primitives';
 import { usePrintedTexture } from './Textures';
@@ -17,6 +19,7 @@ type FolioProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onPaperStep'
 
 type FolioPaper = {
   readonly id: string;
+  readonly index: number;
   readonly image: string | null;
   readonly title: string;
   readonly eyebrow: string;
@@ -28,6 +31,7 @@ function paperFromCollection(collection: OfficeCollection): FolioPaper {
   const media = collection.paperMedia;
   return {
     id: publication?.id ?? 'research-folio',
+    index: collection.paperIndex,
     image: media?.pageImage ?? null,
     title: publication?.title ?? 'Research folio',
     eyebrow: `${publication?.journal ?? 'TAKMD'} / ${publication?.year ?? ''}`,
@@ -40,12 +44,13 @@ const CLICK_DRAG_THRESHOLD = 5;
 export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress, collection }: FolioProps) {
   const canvas = useThree(state => state.gl.domElement);
   const cover = useRef<Group>(null);
+  const spine = useRef<Group>(null);
   const leaf = useRef<Group>(null);
   const leafSequence = useRef<number | null>(null);
   const pointerStart = useRef<{ readonly pointerId: number; readonly x: number; readonly y: number; readonly direction: 1 | -1 } | null>(null);
   const linen = usePrintedTexture('linen');
   const coverPrint = usePrintedTexture('folio');
-  const incoming = useMemo(() => paperFromCollection(collection), [collection.paperMedia, collection.publication]);
+  const incoming = useMemo(() => paperFromCollection(collection), [collection.paperMedia, collection.publication, collection.paperIndex]);
   const [folio, setFolio] = useState<FolioTurnState<FolioPaper>>(() => ({ kind: 'rest', displayed: incoming }));
   const [coverHovered, setCoverHovered] = useState(false);
   const observedTurn = useRef(collection.paperTurn);
@@ -54,6 +59,11 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress
   const leafPaper = activeTurn?.leaf ?? folio.displayed;
   const baseTexture = useDocumentTexture(basePaper);
   const leafTexture = useDocumentTexture(leafPaper);
+  const stacks = folioStackLayers(folio, collection.paperCount);
+  const sheetThickness = FOLIO.pageThickness / Math.max(1, collection.paperCount);
+  const leftThickness = stacks.left * sheetThickness;
+  const rightThickness = stacks.right * sheetThickness;
+  const turningThickness = stacks.turning * sheetThickness;
 
   const beginPaperStep = (direction: 1 | -1) => (event: ThreeEvent<PointerEvent>) => {
     if (selected !== 'research') return;
@@ -120,16 +130,25 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress
   }, [activeTurn]);
 
   useFrame((_, delta) => {
-    if (!cover.current || !leaf.current) return;
+    if (!cover.current || !spine.current || !leaf.current) return;
     const value = progress.current ?? 0;
     const approach = reducedMotion ? Number(value >= 0.7) : MathUtils.smoothstep(value, 0.5, 0.95);
     const tourAngle = approach * Math.PI;
     const hoverAngle = coverHovered ? Math.PI / 9 : 0;
     const coverAngle = selected === 'research' ? Math.PI : Math.max(tourAngle, hoverAngle);
     cover.current.rotation.z = reducedMotion ? coverAngle : MathUtils.damp(cover.current.rotation.z, coverAngle, MOTION.object, delta);
+    const binding = folioBindingPose(cover.current.rotation.z);
+    cover.current.position.set(binding.coverX, binding.coverY, 0);
+    spine.current.rotation.z = binding.spineAngle;
     if (!activeTurn || reducedMotion) return;
     const nextAngle = MathUtils.damp(leaf.current.rotation.z, activeTurn.target, MOTION.object, delta);
     leaf.current.rotation.z = nextAngle;
+    const transfer = nextAngle / Math.PI;
+    leaf.current.position.set(
+      MathUtils.lerp(FOLIO.rightPageX, binding.coverX - 0.03, transfer),
+      MathUtils.lerp(FOLIO.paperBaseY + rightThickness, FOLIO.coverLiningY + leftThickness, transfer) + turningThickness / 2 + 0.001,
+      0,
+    );
     if (Math.abs(nextAngle - activeTurn.target) < 0.008) {
       leaf.current.rotation.z = activeTurn.target;
       setFolio(current => current.kind === 'turn' && current.sequence === activeTurn.sequence ? settleFolioTurn(current) : current);
@@ -138,27 +157,30 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress
   return <Interactive id="research" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.folio.position} rotation={ROOM.folio.rotation} onHoverChange={setCoverHovered}>
     <group scale={0.3}>
     <Block size={[1.03, 0.024, 1.36]} color={PALETTE.linen} texture={linen} radius={0.006} roughness={0.96} />
-    <Block size={[0.97, 0.047, 1.29]} position={[0.014, 0.036, 0]} color={PALETTE.paperLight} radius={0.003} />
-    {[0.025, 0.033, 0.043, 0.053].map(y => <Block key={y} size={[0.971, 0.001, 1.29]} position={[0.014, y, 0]} color={PALETTE.line} radius={0.0004} />)}
-    <mesh name="Folio next page" position={[0.03, 0.063, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow
+    <group name="Folio connected spine" ref={spine} position={[FOLIO.hingeX, 0, 0]}>
+      <Block size={[0.022, FOLIO.spineHeight, 1.36]} position={[0, FOLIO.spineHeight / 2, 0]} color={PALETTE.linen} texture={linen} radius={0.006} roughness={0.96} />
+    </group>
+    <FolioStack thickness={rightThickness} centerX={0} baseY={FOLIO.paperBaseY} />
+    <mesh name="Folio next page" position={[0, FOLIO.paperBaseY + rightThickness + 0.001, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow
       onPointerDown={beginPaperStep(1)} onPointerCancel={cancelPaperStep} onPointerUp={stepPaper(1)}>
       <planeGeometry args={[0.93, 1.25]} /><meshStandardMaterial map={baseTexture} roughness={0.95} />
     </mesh>
-    <group ref={leaf} position={[-0.49, 0.066, 0]}>
-      <Block size={[0.97, 0.002, 1.29]} position={[0.49, 0, 0]} color={PALETTE.paperLight} radius={0.0004} />
-      <mesh name="Folio turning next page" position={[0.49, 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow
+    <group name="Folio turning leaf" ref={leaf} position={[FOLIO.rightPageX, FOLIO.paperBaseY + rightThickness, 0]}>
+      <Block size={[0.97, Math.max(0.001, turningThickness), 1.29]} position={[0.485, 0, 0]} color={PALETTE.paperLight} radius={0.0004} />
+      <mesh name="Folio turning next page" position={[0.485, turningThickness / 2 + 0.0005, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow
         onPointerDown={beginPaperStep(1)} onPointerCancel={cancelPaperStep} onPointerUp={stepPaper(1)}>
         <planeGeometry args={[0.93, 1.25]} /><meshStandardMaterial map={leafTexture} roughness={0.95} />
       </mesh>
-      <mesh name="Folio turning previous page" position={[0.49, -0.002, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow
+      <mesh name="Folio turning previous page" position={[0.485, -turningThickness / 2 - 0.0005, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow
         onPointerDown={beginPaperStep(-1)} onPointerCancel={cancelPaperStep} onPointerUp={stepPaper(-1)}>
         <planeGeometry args={[0.93, 1.25]} /><meshStandardMaterial color={PALETTE.paperLight} roughness={0.95} />
       </mesh>
     </group>
-    <group ref={cover} position={[-0.515, 0.074, 0]}>
+    <group name="Folio front cover" ref={cover} position={[FOLIO.hingeX, FOLIO.spineHeight, 0]}>
       <Block size={[1.03, 0.018, 1.36]} position={[0.515, 0, 0]} color={PALETTE.linen} texture={linen} radius={0.004} roughness={0.95} />
       <mesh name="Folio cover print" position={[0.52, 0.0095, -0.12]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[0.7, 0.72]} /><meshStandardMaterial map={coverPrint} roughness={0.95} /></mesh>
-      <mesh name="Folio previous page" position={[0.515, -0.0095, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow
+      <FolioStack thickness={leftThickness} centerX={0.515} baseY={-FOLIO.coverLiningY} underside />
+      <mesh name="Folio previous page" position={[0.515, -FOLIO.coverLiningY - leftThickness - 0.001, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow
         onPointerDown={beginPaperStep(-1)} onPointerCancel={cancelPaperStep} onPointerUp={stepPaper(-1)}>
         <planeGeometry args={[0.97, 1.29]} /><meshStandardMaterial color={PALETTE.paperLight} roughness={0.95} />
       </mesh>

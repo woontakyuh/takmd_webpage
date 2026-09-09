@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { Color } from 'three';
 import type { Texture } from 'three';
+import type { StudioSceneProps } from '../types';
 import { INTERIOR, PALETTE } from './config';
 import { Block, Rod } from './Primitives';
 import { HallymPlaque } from './HallymPlaque';
@@ -33,7 +34,7 @@ const SHORT_RAIL_X = [0] as const;
 const LEFT_LEVELS = [1.3, 1.7, 2.0, 2.4] as const;
 const RIGHT_LEVELS = [AWARD_SHELF_TOP, 1.82, 2.26] as const;
 
-type RoyalSystemProps = { readonly wood: Texture; readonly onAwardPhoto: () => void };
+type RoyalSystemProps = { readonly wood: Texture; readonly onAwardPhoto: () => void } & Pick<StudioSceneProps, 'selected' | 'reducedMotion'>;
 type CabinetKind = 'push' | 'sliding' | 'drawers';
 type ShelfProps = {
   readonly centerX: number;
@@ -43,7 +44,7 @@ type ShelfProps = {
   readonly supportX?: readonly number[];
 };
 
-export function RoyalSystem({ wood, onAwardPhoto }: RoyalSystemProps) {
+export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: RoyalSystemProps) {
   return <group name="poul-cadovius-royal-system-tv-wall">
     <group name="solid-walnut-wall-rails">
       {FULL_RAIL_X.map(x => <WallRail key={x} x={x} centerY={1.56} height={2} wood={wood} />)}
@@ -70,7 +71,7 @@ export function RoyalSystem({ wood, onAwardPhoto }: RoyalSystemProps) {
 
     <group name="personal-awards-collection">
       <Suspense fallback={null}><CertificateFrames /></Suspense>
-      <Suspense fallback={null}><AwardCeremonyPhoto onOpen={onAwardPhoto} /></Suspense>
+      <Suspense fallback={null}><AwardCeremonyPhoto onOpen={onAwardPhoto} selected={selected} reducedMotion={reducedMotion} /></Suspense>
       <group name="Hallym appreciation display" position={[-1.54, LEFT_LEVELS[0], 3.095]} rotation={[0, Math.PI, 0]}>
         <HallymPlaque />
       </group>

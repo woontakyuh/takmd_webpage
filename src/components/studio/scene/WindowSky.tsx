@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Color, HalfFloatType, MathUtils, PerspectiveCamera, Vector2, Vector4, WebGLRenderTarget,
 } from 'three';
@@ -52,7 +52,13 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
   const { leftX, window: opening } = ROOM.architecture;
   const centerY = (opening.top + opening.bottom) / 2;
   const nightMix = nightMixFor(colors);
-  const exterior = useMemo(() => createBanpoLandscape(), []);
+  const [exterior, setExterior] = useState<ReturnType<typeof createBanpoLandscape> | null>(null);
+  useEffect(() => {
+    // Start network and GPU work only after React commits, not on abandoned Suspense attempts.
+    const landscape = createBanpoLandscape();
+    setExterior(landscape);
+    return () => landscape.dispose();
+  }, []);
   const output = useMemo(() => new WebGLRenderTarget(1, 1, { type: HalfFloatType, samples: 2 }), []);
   const exteriorCamera = useMemo(() => new PerspectiveCamera(), []);
   const saved = useMemo(() => ({ viewport: new Vector4(), scissor: new Vector4() }), []);
@@ -68,11 +74,11 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
     ) },
   }), [leftX, opening.bottom, opening.centerZ, opening.top, opening.width, output]);
 
-  useEffect(() => { exterior.setNightMix(nightMix); }, [exterior, nightMix]);
-  useEffect(() => () => { exterior.dispose(); output.dispose(); }, [exterior, output]);
+  useEffect(() => { exterior?.setNightMix(nightMix); }, [exterior, nightMix]);
+  useEffect(() => () => output.dispose(), [output]);
 
   useFrame(({ camera, gl, clock }) => {
-    if (!(camera instanceof PerspectiveCamera)) return;
+    if (!exterior || !(camera instanceof PerspectiveCamera)) return;
     gl.getDrawingBufferSize(uniforms.uResolution.value);
     const { x: width, y: height } = uniforms.uResolution.value;
     if (output.width !== width || output.height !== height) output.setSize(width, height);

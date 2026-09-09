@@ -1,9 +1,10 @@
+import type { PersonalBookId } from './personalBooks';
 import type { RefObject } from 'react';
 import type { RoomLightPalette } from './lightingPresets';
 import type { RoomControl } from './OfficeRoomControls';
 import type { OfficeLight } from './localTime';
 
-export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing' | 'projects' | 'family' | 'award';
+export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing' | 'projects' | 'family' | 'award' | 'award-photo' | 'books';
 
 export type Publication = {
   readonly id: string;
@@ -31,7 +32,7 @@ export type PaperMedia = {
 };
 
 export type TalkSlide = { readonly src: string; readonly caption: string; readonly thumbnail?: string; readonly width?: number; readonly height?: number };
-export type TalkMedia = { readonly id: string; readonly slides: readonly TalkSlide[]; readonly kind?: 'full' | 'selected' };
+export type TalkMedia = { readonly id: string; readonly slides: readonly TalkSlide[]; readonly kind?: 'full' | 'selected' | 'photos'; readonly role?: string };
 export type ProjectId = 'imaging' | 'workflow';
 
 export type OfficeCollection = {
@@ -39,6 +40,8 @@ export type OfficeCollection = {
   readonly paperMedia: PaperMedia | null;
   readonly paperTurn: number;
   readonly paperDirection: 1 | -1;
+  readonly paperIndex: number;
+  readonly paperCount: number;
   readonly presentation: Presentation | null;
   readonly talkSlide: TalkSlide | null;
 };
@@ -52,6 +55,9 @@ export type HaloSettings = {
 export type BlindLift = readonly [number, number];
 
 export type StudioSceneProps = {
+  readonly selectedBook: PersonalBookId;
+  readonly bookPageIndex: number;
+  readonly onBookSelect: (id: PersonalBookId) => void;
   readonly familyPhotoSrc: string;
   readonly progress: RefObject<number>;
   readonly selected: ExhibitId | null;
@@ -73,6 +79,7 @@ export type StudioSceneProps = {
   readonly onPaperStep: (direction: 1 | -1) => void;
   readonly onReady: () => void;
   readonly onTalk: (id: string | null) => void;
+  readonly onTalkSlide: (index: number) => void;
 };
 
 export type StudioContent = {
