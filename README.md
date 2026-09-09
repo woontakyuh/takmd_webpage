@@ -2,7 +2,7 @@
 
 Public branding site and living CV for Woon Tak Yuh, MD.
 
-The homepage is an editable 3D office. Drag to orbit, scroll or pinch to zoom, use guided views, and open four exhibits. The research folio displays the actual first page of all 29 published papers; the teaching board and workstation connect to their reading panels. A mechanical calendar clock follows the visitor’s local time, with daylight and evening previews. `/cv` remains the living record. Existing content pages and the previous `/v2` scene remain available.
+The homepage is an editable 3D office. Drag to orbit, scroll or pinch to zoom, use guided views, and open four exhibits. The research folio displays available first pages and publication details; the teaching board and workstation connect to their reading panels. A mechanical calendar clock follows the visitor’s local time, with daylight and evening previews. `/cv` remains the living record. Existing content pages and the previous `/v2` scene remain available.
 
 ## Commands
 
@@ -28,6 +28,8 @@ bun run fetch:data
 ```
 
 These commands require `NOTION_TOKEN`, either in the environment or in `~/.journal_alert_env`.
+
+Notion edits are not live: `build` and `deploy` use the saved snapshots. After publication changes, run `bun run fetch:publications`, review the JSON diff, then build, commit, push, and deploy. First-author and corresponding-author counts are independent because a paper can have both roles.
 
 Generated files:
 

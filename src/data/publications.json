@@ -1,7 +1,47 @@
 {
-  "generatedAt": "2026-04-07T03:08:32.846Z",
-  "count": 29,
+  "generatedAt": "2026-09-09T13:54:50.221Z",
+  "count": 31,
   "publications": [
+    {
+      "id": "32d908af",
+      "title": "Risk Factors for Persistent Neurological Deterioration After Biportal Endoscopic Posterior Decompression for Multilevel Cervical Myelopathy: The 'Structural Mismatch' Concept",
+      "shortTitle": "Risk Factors for Persistent Neurological Deterioration…",
+      "journal": "JMISST",
+      "year": 2026,
+      "date": "2026-08-06",
+      "firstAuthor": [
+        "김지연"
+      ],
+      "corresponding": [
+        "여운탁"
+      ],
+      "coAuthors": [],
+      "role": "corresponding",
+      "doi": "10.21182/jmisst.2026.03300",
+      "doiUrl": "https://doi.org/10.21182/jmisst.2026.03300"
+    },
+    {
+      "id": "32d908af",
+      "title": "Large Language Model and Pediatric Neurosurgery - A Neurosurgeon's Perspective on the Artificial Nervous System",
+      "shortTitle": "Large Language Model and Pediatric Neurosurgery - A…",
+      "journal": "JKNS",
+      "year": 2026,
+      "date": "2026-07-01",
+      "firstAuthor": [
+        "여운탁"
+      ],
+      "corresponding": [
+        "여운탁"
+      ],
+      "coAuthors": [
+        "최일",
+        "유승준",
+        "김태신"
+      ],
+      "role": "first",
+      "doi": "10.3340/jkns.2026.0029",
+      "doiUrl": "https://doi.org/10.3340/jkns.2026.0029"
+    },
     {
       "id": "32d908af",
       "title": "UBE Removal of a Cervical Extradural Schwannoma at the C1-2 Level",

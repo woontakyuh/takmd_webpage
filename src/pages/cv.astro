@@ -4,15 +4,14 @@ import { academicInterests, currentRoles, career, educationPrograms, awards, pro
 import Layout from '../layouts/Layout.astro';
 import presentationsData from '../data/presentations.json';
 import publicationsData from '../data/publications.json';
+import { countPublicationRoles, publicationRoles } from '../data/publicationAuthorship';
 import surgerySummary from '../data/public-surgery-summary.json';
 
 const publications = publicationsData.publications;
 const presentations = presentationsData.presentations;
 const latestPublications = publications.slice(0, 8);
 const latestPresentations = presentations.slice(0, 10);
-const firstAuthorCount = publications.filter((publication) => publication.role === 'first').length;
-const correspondingCount = publications.filter((publication) => publication.role === 'corresponding').length;
-const coauthorCount = publications.filter((publication) => publication.role === 'coauthor').length;
+const { first: firstAuthorCount, corresponding: correspondingCount, coauthor: coauthorCount } = countPublicationRoles(publications);
 
 const publicationYears = Array.from(new Set(publications.map((publication) => publication.year))).sort((a, b) => b - a);
 const presentationYears = Array.from(new Set(presentations.map((presentation) => presentation.year))).sort((a, b) => b - a);
@@ -92,7 +91,7 @@ const presentationYears = Array.from(new Set(presentations.map((presentation) =>
           <SectionHeader
             eyebrow="Publications"
             title="Research output"
-            description="A year-organized publication record synced from the existing publications JSON."
+            description="Published work and contributions as first author, corresponding author, and coauthor."
             href="/research"
             linkText="Research page"
           />
@@ -110,6 +109,7 @@ const presentationYears = Array.from(new Set(presentations.map((presentation) =>
               <p class="mt-2 text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">Coauthor</p>
             </div>
           </div>
+          <p class="mt-3 text-xs text-[var(--color-text-muted)]">Authorship roles may overlap. Updated <time datetime={publicationsData.generatedAt}>{publicationsData.generatedAt.slice(0, 10)}</time>.</p>
           <div class="mt-5 flex flex-wrap gap-2">
             {publicationYears.map((year) => (
               <span class="tag">{year}</span>
@@ -133,9 +133,11 @@ const presentationYears = Array.from(new Set(presentations.map((presentation) =>
                     </a>
                   </h3>
                   <div class="mt-2 flex flex-wrap gap-2">
-                    <span class:list={['tag', publication.role === 'first' ? 'tag-current' : publication.role === 'corresponding' ? 'tag-research' : '']}>
-                      {publication.role}
-                    </span>
+                    {publicationRoles(publication).map((role) => (
+                      <span class:list={['tag', role === 'first' ? 'tag-current' : role === 'corresponding' ? 'tag-research' : '']}>
+                        {role}
+                      </span>
+                    ))}
                     {publication.doi && <span class="tag">DOI {publication.doi}</span>}
                   </div>
                 </div>

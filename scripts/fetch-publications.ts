@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import { countPublicationRoles, PUBLICATION_OWNER } from "../src/data/publicationAuthorship";
 
 /**
  * Build-time script: Fetches all Published papers from Notion "연구DB",
@@ -11,7 +12,7 @@ import { fileURLToPath } from "node:url";
 const DATABASE_ID = "c222e1a3-0c07-4227-bb6c-b26365cd0509";
 const API_VERSION = "2022-06-28";
 const API_BASE = "https://api.notion.com/v1";
-const OWNER = "여운탁";
+const OWNER = PUBLICATION_OWNER;
 
 if (!process.env.NOTION_TOKEN) {
   const fs = await import("fs");
@@ -192,11 +193,7 @@ async function main() {
     .filter((p): p is Publication => p !== null)
     .sort((a, b) => b.date.localeCompare(a.date));
 
-  // Count by role
-  const byRole = publications.reduce((acc, p) => {
-    acc[p.role] = (acc[p.role] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const byRole = countPublicationRoles(publications);
 
   console.log(`\nValid publications: ${publications.length}`);
   console.log(`  First author: ${byRole.first ?? 0}`);

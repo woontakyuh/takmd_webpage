@@ -4,11 +4,11 @@ import SectionHeader from '../components/SectionHeader.astro';
 import { ResearchProfile } from '../components/studio/ResearchProfile';
 import Layout from '../layouts/Layout.astro';
 import publicationsData from '../data/publications.json';
+import { countPublicationRoles, publicationRoles } from '../data/publicationAuthorship';
 
 const publications = publicationsData.publications;
 const recentPublications = publications.slice(0, 8);
-const firstAuthorCount = publications.filter((publication) => publication.role === 'first').length;
-const correspondingCount = publications.filter((publication) => publication.role === 'corresponding').length;
+const { first: firstAuthorCount, corresponding: correspondingCount } = countPublicationRoles(publications);
 
 const researchLanes = [
   {
@@ -55,7 +55,7 @@ const researchLanes = [
         <ResearchProfile />
         <p class="text-sm leading-6 text-[var(--color-text-secondary)]">
           This site's publication archive: {publications.length} papers · {firstAuthorCount} first-author · {correspondingCount} corresponding-author.<br />
-          Publication record updated <time datetime={publicationsData.generatedAt}>{publicationsData.generatedAt.slice(0, 10)}</time>.
+          Authorship roles may overlap. Publication record updated <time datetime={publicationsData.generatedAt}>{publicationsData.generatedAt.slice(0, 10)}</time>.
         </p>
       </div>
     </section>
@@ -99,9 +99,11 @@ const researchLanes = [
                     </a>
                   </h2>
                   <div class="mt-2 flex flex-wrap gap-2">
-                    <span class:list={['tag', publication.role === 'first' ? 'tag-current' : publication.role === 'corresponding' ? 'tag-research' : '']}>
-                      {publication.role}
-                    </span>
+                    {publicationRoles(publication).map((role) => (
+                      <span class:list={['tag', role === 'first' ? 'tag-current' : role === 'corresponding' ? 'tag-research' : '']}>
+                        {role}
+                      </span>
+                    ))}
                     <span class="tag">{publication.doi}</span>
                   </div>
                 </div>
