@@ -48,11 +48,11 @@ export function StudioScene(props: StudioSceneProps) {
       <spotLight name="Room ceiling fill" position={[0, ROOM.architecture.height - 0.13, 0]} intensity={sun.lamp * 0.85} distance={7} decay={2}
         angle={1.3} penumbra={1} color={props.roomPalette.color} />
       <Architecture night={props.night} sky={sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} />
-      <Furniture lamp={sun.lamp} halo={props.halo} onHaloControls={props.onHaloControls} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} />
+      <Furniture familyPhotoSrc={props.familyPhotoSrc} lamp={sun.lamp} halo={props.halo} onHaloControls={props.onHaloControls} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} onAwardPhoto={props.onAwardPhoto} />
       <OfficeLounge />
       <RoomSwitches onControl={props.onRoomControl} />
       <OfficeLighting palette={props.roomPalette} power={sun.lamp} />
-      <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={[1.875, 1.3025, 3.09]} rotation={Math.PI}
+      <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={ROOM.award.position} rotation={ROOM.award.rotation}
         focused={props.selected === 'award'} reducedMotion={props.reducedMotion} onSelect={() => props.onSelect('award')} />
       <PersonalCorner {...props} />
       <CalendarClock reducedMotion={props.reducedMotion} />

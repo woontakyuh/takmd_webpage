@@ -33,7 +33,7 @@ const SHORT_RAIL_X = [0] as const;
 const LEFT_LEVELS = [1.3, 1.7, 2.0, 2.4] as const;
 const RIGHT_LEVELS = [AWARD_SHELF_TOP, 1.82, 2.26] as const;
 
-type RoyalSystemProps = { readonly wood: Texture };
+type RoyalSystemProps = { readonly wood: Texture; readonly onAwardPhoto: () => void };
 type CabinetKind = 'push' | 'sliding' | 'drawers';
 type ShelfProps = {
   readonly centerX: number;
@@ -43,7 +43,7 @@ type ShelfProps = {
   readonly supportX?: readonly number[];
 };
 
-export function RoyalSystem({ wood }: RoyalSystemProps) {
+export function RoyalSystem({ wood, onAwardPhoto }: RoyalSystemProps) {
   return <group name="poul-cadovius-royal-system-tv-wall">
     <group name="solid-walnut-wall-rails">
       {FULL_RAIL_X.map(x => <WallRail key={x} x={x} centerY={1.56} height={2} wood={wood} />)}
@@ -70,7 +70,7 @@ export function RoyalSystem({ wood }: RoyalSystemProps) {
 
     <group name="personal-awards-collection">
       <Suspense fallback={null}><CertificateFrames /></Suspense>
-      <Suspense fallback={null}><AwardCeremonyPhoto /></Suspense>
+      <Suspense fallback={null}><AwardCeremonyPhoto onOpen={onAwardPhoto} /></Suspense>
       <group name="Hallym appreciation display" position={[1.54, 0.82, 3.095]} rotation={[0, Math.PI, 0]}>
         <HallymPlaque />
       </group>

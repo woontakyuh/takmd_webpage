@@ -4,8 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils, SRGBColorSpace, Vector3 } from 'three';
 import type { MeshStandardMaterial } from 'three';
 import type { StudioSceneProps } from '../types';
-import photos from '../../../data/photo-frame.json';
-import { profileImage } from '../../../data/cv';
 import { Interactive } from './Interactive';
 import { Block } from './Primitives';
 import { ROOM } from './config';
@@ -41,23 +39,13 @@ function Photograph({ src, hovered, reducedMotion }: { readonly src: string; rea
   return <mesh position={[0, 0, 0.0102]}><planeGeometry args={[width, height]} /><meshStandardMaterial ref={material} map={texture} emissiveMap={texture} emissive="#ffffff" emissiveIntensity={0.1} roughness={0.4} /></mesh>;
 }
 
-export function FamilyPhoto(props: Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion'>) {
+export function FamilyPhoto(props: Pick<StudioSceneProps, 'familyPhotoSrc' | 'selected' | 'onSelect' | 'reducedMotion'>) {
   const [hovered, setHovered] = useState(false);
-  const [photo] = useState(() => {
-    const choices: readonly { readonly src: string }[] = photos;
-    if (!choices.length) return profileImage;
-    let previous: string | null = null;
-    try { previous = sessionStorage.getItem('takmd-frame-photo'); } catch { /* Storage can be unavailable in private browsing. */ }
-    const candidates = choices.length > 1 ? choices.filter(item => item.src !== previous) : choices;
-    const selected = candidates[Math.floor(Math.random() * candidates.length)].src;
-    try { sessionStorage.setItem('takmd-frame-photo', selected); } catch { /* Photo selection remains available without storage. */ }
-    return selected;
-  });
   return <Interactive id="family" {...props} position={[-0.72, 0.0185 + ROOM.desk.height, -0.23]} rotation={0.13} onHoverChange={setHovered}>
     <group name="photo-frame-body" position={[0, FRAME_CENTER_Y, 0]} rotation={[FRAME_TILT, 0, 0]}>
       <Block size={[0.246, 0.19, 0.018]} color="#30332F" radius={0.0025} roughness={0.48} />
       <Block size={[0.23, 0.174, 0.001]} position={[0, 0, 0.0095]} color="#151815" radius={0.0004} />
-      <Photograph src={photo} hovered={hovered} reducedMotion={props.reducedMotion} />
+      <Photograph src={props.familyPhotoSrc} hovered={hovered} reducedMotion={props.reducedMotion} />
     </group>
     <group name="photo-frame-hinged-easel">
       <mesh name="photo-frame-easel-hinge" position={EASEL_HINGE} rotation={[0, 0, Math.PI / 2]} castShadow>

@@ -52,6 +52,7 @@ export type HaloSettings = {
 export type BlindLift = readonly [number, number];
 
 export type StudioSceneProps = {
+  readonly familyPhotoSrc: string;
   readonly progress: RefObject<number>;
   readonly selected: ExhibitId | null;
   readonly night: boolean;
@@ -68,6 +69,7 @@ export type StudioSceneProps = {
   readonly presentations: readonly Presentation[];
   readonly onSelect: (id: ExhibitId) => void;
   readonly onClaudeSticker: () => void;
+  readonly onAwardPhoto: () => void;
   readonly onPaperStep: (direction: 1 | -1) => void;
   readonly onReady: () => void;
   readonly onTalk: (id: string | null) => void;

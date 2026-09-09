@@ -1,7 +1,10 @@
-import { useTexture } from '@react-three/drei';
-import { useEffect, useMemo } from 'react';
+import { useCursor, useTexture } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ExtrudeGeometry, SRGBColorSpace, Shape } from 'three';
 import type { Texture } from 'three';
+import { useArrangement } from '../arrangement';
+import { scheduleSceneSingleAction } from './sceneGesture';
 
 const FRAME = {
   face: 0.008,
@@ -49,7 +52,7 @@ const AWARD_PHOTO = {
   id: 'kosess-award-ceremony', name: 'KOSESS award ceremony photograph',
   texture: '/models/award-photo/kosess-ceremony.webp',
   width: .27 + FRAME_MARGIN, height: .27 * 2633 / 3395 + FRAME_MARGIN,
-  position: [2.185, 1.3025, 3.12], paperSize: [.27, .27 * 2633 / 3395],
+  position: [2.01, 1.3025, 3.12], paperSize: [.27, .27 * 2633 / 3395],
 } as const;
 
 type CredentialSpec = (typeof CREDENTIALS)[number] | typeof AWARD_PHOTO;
@@ -158,9 +161,31 @@ export function CertificateFrames() {
   </group>;
 }
 
-export function AwardCeremonyPhoto() {
+export function AwardCeremonyPhoto({ onOpen }: { readonly onOpen: () => void }) {
   const source = useTexture(AWARD_PHOTO.texture);
   const texture = useMemo(() => preparedTexture(source), [source]);
+  const canvas = useThree(state => state.gl.domElement);
+  const { editing } = useArrangement();
+  const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
+  const [hovered, setHovered] = useState(false);
+  useCursor(hovered && !editing);
   useEffect(() => () => texture.dispose(), [texture]);
-  return <FramedCredential credential={AWARD_PHOTO} texture={texture} />;
+  return <group name="Award photo interaction"
+    onPointerEnter={event => { event.stopPropagation(); setHovered(true); }}
+    onPointerLeave={() => setHovered(false)}
+    onPointerDown={event => {
+      event.stopPropagation();
+      pointerStart.current = event.button === 0 && event.isPrimary && !event.shiftKey && !event.ctrlKey && !event.metaKey && !event.altKey
+        ? { x: event.clientX, y: event.clientY } : null;
+    }}
+    onPointerCancel={() => { pointerStart.current = null; }}
+    onClick={event => {
+      event.stopPropagation();
+      const start = pointerStart.current;
+      pointerStart.current = null;
+      if (editing || !start || event.delta >= 5 || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 5) return;
+      scheduleSceneSingleAction(canvas, onOpen);
+    }}>
+    <FramedCredential credential={AWARD_PHOTO} texture={texture} />
+  </group>;
 }

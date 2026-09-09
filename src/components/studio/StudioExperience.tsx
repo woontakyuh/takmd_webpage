@@ -7,6 +7,7 @@ import { OfficeHelp } from './OfficeHelp';
 import { useBlindLift } from './useBlindLift';
 import { OfficeRoomControls, type RoomControl } from './OfficeRoomControls';
 import { MemoryPhoto } from './MemoryPhoto';
+import { PHOTO_MEMORIES, selectFamilyPhoto, type PhotoMemory } from './photoMemories';
 import type { ExhibitId, HaloSettings, StudioContent } from './types';
 import { featuredPresentation, mediaForPaper, orderedPapers, talkMedia } from './collection';
 import { useOfficeLight, LocalClockReadout } from './OfficeTime';
@@ -43,8 +44,10 @@ function OfficeExperience(content: StudioContent) {
   const progress = useRef(0);
   const returnFocus = useRef<HTMLElement | null>(null);
   const [selected, setSelected] = useState<ExhibitId | null>(null);
-  const [memoryOpen, setMemoryOpen] = useState(false);
-  const openMemory = useCallback(() => { if (!arrangement.editing) setMemoryOpen(true); }, [arrangement.editing]);
+  const [familyPhoto] = useState(selectFamilyPhoto);
+  const [memory, setMemory] = useState<PhotoMemory | null>(null);
+  const openMemory = useCallback(() => { if (!arrangement.editing) setMemory(PHOTO_MEMORIES.ppomppu); }, [arrangement.editing]);
+  const openAwardPhoto = useCallback(() => { if (!arrangement.editing) setMemory(PHOTO_MEMORIES['kosess-award']); }, [arrangement.editing]);
   const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 }>({ sequence: 0, view: 0 });
   const [lightMode, setLightMode] = useState<LightMode>('local');
   const localLighting = useOfficeLight(lightMode);
@@ -117,6 +120,7 @@ function OfficeExperience(content: StudioContent) {
   const featuredTalk = featuredPresentation(content.presentations);
   const open = useCallback((id: ExhibitId) => {
     if (arrangement.editing) return;
+    if (id === 'family') { setMemory(familyPhoto); setExplored(true); return; }
     if (id === 'surfing') {
       window.open(PERSONAL_LINKS.instagram, '_blank', 'noopener,noreferrer');
       setExplored(true);
@@ -126,7 +130,7 @@ function OfficeExperience(content: StudioContent) {
     returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id}`);
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
     setExplored(true); setSelected(id);
-  }, [featuredTalk?.id, arrangement.editing]);
+  }, [featuredTalk?.id, arrangement.editing, familyPhoto]);
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const exhibit = query.get('exhibit');
@@ -144,11 +148,11 @@ function OfficeExperience(content: StudioContent) {
     requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
   }, []);
   useEffect(() => {
-    if (selected !== 'family' || memoryOpen) return;
+    if (selected !== 'family' || memory) return;
     const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') close(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selected, close, memoryOpen]);
+  }, [selected, close, memory]);
   const onReady = useCallback(() => setReady(true), []);
   const goToView = (view: 0 | 1 | 2) => {
     setExplored(true);
@@ -163,10 +167,11 @@ function OfficeExperience(content: StudioContent) {
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <SceneBoundary>{mounted && lighting && <Suspense fallback={<div className="studio-loading" role="status">Opening the office…</div>}>
-          <Scene progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClaudeSticker={openMemory} onPaperStep={onPaperStep} onTalk={selectTalk} onReady={onReady} />
+          <Scene familyPhotoSrc={familyPhoto.src} progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClaudeSticker={openMemory} onAwardPhoto={openAwardPhoto} onPaperStep={onPaperStep} onTalk={selectTalk} onReady={onReady} />
         </Suspense>}</SceneBoundary>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
         <button className="office-secret-trigger" id="studio-exhibit-award" onClick={() => open('award')}>Inspect the gold award</button>
+        <button className="office-secret-trigger" onClick={openAwardPhoto}>View the KOSESS award photograph</button>
         <a className="office-secret-trigger" href={PERSONAL_LINKS.hospital} target="_blank" rel="noopener noreferrer">Davos Hospital · physician coat (opens in a new tab)</a>
       </div>
       <header className="studio-header">
@@ -220,6 +225,6 @@ function OfficeExperience(content: StudioContent) {
     </section>
     <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/credits">Scene credits</a></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer">Education<small>Workshops & training ↗</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
     <ReadingPanel {...content} selected={selected === 'family' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
-    {memoryOpen && <MemoryPhoto onClose={() => setMemoryOpen(false)} />}
+    {memory && <MemoryPhoto memory={memory} onClose={() => setMemory(null)} />}
   </div>;
 }

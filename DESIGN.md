@@ -618,3 +618,11 @@ Use the user's IMG_0384.jpg as a full, proportional, non-emissive framed print a
 Add Castarède Bas Armagnac XO20 as the seventh bottle using the supplied IMG_0792 reference: tall tapered neck, clear glass, amber spirit, exposed cork and short ridged black cap. Use a reconstructed cream French label only; do not map the photographed hand, room or reflections onto the body. Visual envelope370mm high and84mm diameter, lower shelf rear-center slot4.
 
 Move the existing Mac mini to desk-local[.005,.7735,-.345], beside the monitor-arm mount. Route display and power cables from actual rear ports through the arm's rear guides and behind the desk edge. Preserve stickers, the Claude photograph easter egg, projects routing and movement with the desk; translate its focus target to world[-.055,.815,-1.155].
+
+## 81. Balanced award pair and ceremony photo viewer
+
+Center the combined trophy and photograph silhouette on the1.05m shelf at X1.875. Translate both objects175mm toward the bay center, preserving their56mm clear gap: trophy X1.70, photo X2.01. Keep sizes, shelf contact, depth, materials and the surrounding certificates unchanged; retarget desktop/mobile trophy focus to its new X.
+
+Clicking the physical photograph opens the existing ivory photo-memory dialog with the full uncropped ceremony image, “Best Shorts Award”, “KOSESS 정기학술대회”, and “2026.08.29 · 서울성모병원”. Date and venue are verified from the owner's Notion event record; the photograph confirms the award name. Reuse the existing dialog sizing, caption hierarchy, backdrop, close button, Escape dismissal, focus return and reduced-motion-safe immediate opening. Preserve the separate 뽐뿌방 afterparty content. Add a keyboard-accessible photo trigger; ignore orbit drags and Arrange-mode activation, and retain double-click inspection. No new motion or surface tokens.
+
+The desk family frame opens the same viewer, using the exact photo selected for this visit; keyboard “Photo frame” uses that same selection. Show “가족과 함께”, with the owner-confirmed “AO Spine Fellowship”, “2025.08.05”, and “Keio University Mita Campus”. Caption metadata is keyed to this specific photo source; future photos must not inherit its date or location. Preserve its physical frame, lighting-aware hover and double-click inspection.

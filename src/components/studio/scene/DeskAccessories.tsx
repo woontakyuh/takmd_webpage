@@ -9,10 +9,10 @@ import { ScreenBarHalo2Dial } from './ScreenBarHalo2';
 
 const DESK_TOP = 0.0185 + ROOM.desk.height;
 
-export function DeskAccessories({ selected, onSelect, reducedMotion, onClaudeSticker, halo, onHaloControls }: Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onClaudeSticker' | 'reducedMotion' | 'halo' | 'onHaloControls'>) {
+export function DeskAccessories({ familyPhotoSrc, selected, onSelect, reducedMotion, onClaudeSticker, halo, onHaloControls }: Pick<StudioSceneProps, 'familyPhotoSrc' | 'selected' | 'onSelect' | 'onClaudeSticker' | 'reducedMotion' | 'halo' | 'onHaloControls'>) {
   return (
     <group>
-      <FamilyPhoto selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} />
+      <FamilyPhoto familyPhotoSrc={familyPhotoSrc} selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} />
       <WirelessKeyboard position={[0, DESK_TOP, 0.1]} />
       <MxMasterMouse position={[0.31, DESK_TOP, 0.1]} />
       <ScreenBarHalo2Dial position={[0.74, DESK_TOP, -0.29]} halo={halo} onHaloControls={onHaloControls} />
