@@ -1,0 +1,225 @@
+import bpy, math, json, random
+from mathutils import Vector
+from mathutils.geometry import tessellate_polygon
+D = json.loads(r'''__GEOGRAPHY_JSON__''')
+random.seed(19)
+for ob in list(bpy.data.objects): bpy.data.objects.remove(ob, do_unlink=True)
+scene = bpy.context.scene
+scene.unit_settings.system = 'METRIC'
+scene.unit_settings.scale_length = 1
+scene.render.engine = 'BLENDER_EEVEE'
+scene.render.resolution_x = 1100
+scene.render.resolution_y = 650
+scene.render.resolution_percentage = 100
+scene.render.image_settings.file_format = 'PNG'
+scene.render.image_settings.media_type = 'IMAGE'
+scene.world = bpy.data.worlds.new('Han River clear daylight')
+scene.world.use_nodes = True
+scene.world.node_tree.nodes['Background'].inputs[0].default_value = (.40,.56,.70,1)
+scene.world.node_tree.nodes['Background'].inputs[1].default_value = .65
+materials = {}
+batches = {}
+def material(name, rgb, rough=.8, metal=0, emission=0):
+    m=bpy.data.materials.new(name);m.diffuse_color=(*rgb,1);m.use_nodes=True
+    bs=m.node_tree.nodes.get('Principled BSDF');bs.inputs['Base Color'].default_value=(*rgb,1)
+    bs.inputs['Roughness'].default_value=rough;bs.inputs['Metallic'].default_value=metal
+    bs.inputs['Emission Color'].default_value=(*rgb,1);bs.inputs['Emission Strength'].default_value=emission
+    materials[name]=m;return m
+material('Riverbank concrete',(.39,.43,.41))
+material('Upper deck concrete',(.50,.53,.52))
+material('Bridge steel shadow',(.19,.25,.26),.6,.2)
+material('Asphalt',(.12,.15,.16))
+material('Lane paint',(.72,.72,.62))
+material('Railings',(.43,.49,.49),.35,.5)
+material('Glass blue green',(.13,.27,.30),.22,.35)
+material('Sevit silver ribbons',(.69,.73,.72),.35,.55)
+material('Island boardwalk',(.33,.28,.21))
+material('Roof terraces',(.41,.45,.44))
+material('Window lights',(.98,.67,.33),.4,0,2)
+material('Bridge lights',(.99,.73,.41),.4,0,3)
+material('Park paths',(.49,.49,.43))
+material('Namsan tower',(.70,.73,.70),.48,.12)
+for i in range(7): material('Foliage '+str(i),(.12+i*.009,.21+i*.012,.14+i*.008))
+for i in range(5): material('Terrain '+str(i),(.19+i*.019,.28+i*.012,.19+i*.018))
+for k,tint in enumerate([(.63,.63,.58),(.49,.55,.57),(.69,.68,.61),(.37,.45,.47)]):
+    m=material('North bank facade '+str(k),tint,.68,.06)
+    size=128;px=[];ep=[]
+    for y in range(size):
+        for x in range(size):
+            bay=x//32;floor=y//32;xx=x%32;yy=y%32
+            glass=5<xx<25 and 6<yy<25
+            rgb=(.13+k*.012,.21+k*.013,.25+k*.014) if glass else tint
+            if glass and xx>22:rgb=(.25,.32,.32)
+            if yy<2:rgb=tuple(v*.78 for v in tint)
+            noise=(random.random()-.5)*.018
+            px.extend([max(0,v+noise) for v in rgb]+[1])
+            lit=glass and ((bay*17+floor*31+k*7)%9 in [1,3])
+            ep.extend([.9 if lit else 0,.58 if lit else 0,.28 if lit else 0,1])
+    im=bpy.data.images.new('Facade masonry and glazing '+str(k),width=size,height=size)
+    im.pixels=px;im.pack()
+    em=bpy.data.images.new('Facade evening windows '+str(k),width=size,height=size)
+    em.pixels=ep;em.pack()
+    nodes=m.node_tree.nodes;bs=nodes.get('Principled BSDF')
+    tex=nodes.new('ShaderNodeTexImage');tex.image=im;tex.extension='REPEAT'
+    et=nodes.new('ShaderNodeTexImage');et.image=em;et.extension='REPEAT'
+    m.node_tree.links.new(tex.outputs['Color'],bs.inputs['Base Color'])
+    m.node_tree.links.new(et.outputs['Color'],bs.inputs['Emission Color'])
+    bs.inputs['Emission Strength'].default_value=0
+
+def append(name, mat, vertices, faces, uvs=None):
+    key=(name,mat)
+    v,f,u=batches.setdefault(key,([],[],[]));offset=len(v)
+    v.extend(vertices);f.extend([tuple(offset+i for i in face) for face in faces])
+    for face in faces:
+        u.extend([uvs[i] if uvs else (vertices[i][0]/15,vertices[i][1]/15) for i in face])
+
+def box(name, mat, center, dims, yaw=0):
+    cx,cy,cz=center;dx,dy,dz=[d/2 for d in dims];c,s=math.cos(yaw),math.sin(yaw)
+    vs=[]
+    for x,y,z in [(-dx,-dy,-dz),(dx,-dy,-dz),(dx,dy,-dz),(-dx,dy,-dz),(-dx,-dy,dz),(dx,-dy,dz),(dx,dy,dz),(-dx,dy,dz)]:
+        vs.append((cx+x*c-y*s,cy+x*s+y*c,cz+z))
+    append(name,mat,vs,[(0,3,2,1),(4,5,6,7),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7)])
+
+def segment(name,mat,a,b,width,height):
+    a,b=Vector(a),Vector(b);delta=b-a
+    box(name,mat,(a+b)/2,(width,delta.length,height),-math.atan2(delta.x,delta.y))
+
+def cylinder(name,mat,x,y,z,radius,height,segments=10,top=None):
+    top=radius if top is None else top;vs=[]
+    for h,r in [(z,radius),(z+height,top)]:
+        vs.extend([(x+r*math.cos(i*math.tau/segments),y+r*math.sin(i*math.tau/segments),h) for i in range(segments)])
+    fs=[tuple(reversed(range(segments))),tuple(range(segments,segments*2))]
+    fs.extend([(i,(i+1)%segments,(i+1)%segments+segments,i+segments) for i in range(segments)])
+    append(name,mat,vs,fs)
+
+def polygon_solid(name,mat,poly,bottom,height):
+    n=len(poly)
+    vs=[(x,y,z) for z in [bottom,bottom+height] for x,y in poly]
+    fs=[tuple(range(n,n*2)),tuple(reversed(range(n)))]
+    fs.extend([(i,(i+1)%n,(i+1)%n+n,i+n) for i in range(n)])
+    append(name,mat,vs,fs)
+
+T=D['terrain'];rows=len(T);cols=len(T[0])
+for iy in range(rows-1):
+    for ix in range(cols-1):
+        values=[T[iy][ix],T[iy][ix+1],T[iy+1][ix+1],T[iy+1][ix]]
+        if max(values)<0:continue
+        x=-3500+ix*100;y=-200+iy*100
+        vs=[(x,y,values[0]),(x+100,y,values[1]),(x+100,y+100,values[2]),(x,y+100,values[3])]
+        shade=min(4,max(0,int(sum(values)/4/75)))
+        append('SRTM north bank and Namsan','Terrain '+str(shade),vs,[(0,1,2),(0,2,3)])
+for bank in D['banks']:
+    for a,b in zip(bank,bank[1:]):
+        segment('Mapped river edge','Riverbank concrete',(*a,4),(*b,4),5,6)
+        segment('Riverside promenade','Park paths',(*a,7.2),(*b,7.2),8,.4)
+        d=Vector((b[0]-a[0],b[1]-a[1],0));length=d.length
+        for n in range(int(length/28)):
+            t=(n+.5)/max(1,int(length/28));x=a[0]+d.x*t;y=a[1]+d.y*t
+            cylinder('Riverbank tree canopies','Foliage '+str(n%7),x,y,8,3.6,7,8,top=1.2)
+
+for index,b in enumerate(D['buildings']):
+    poly=b['p'];n=len(poly);z=b['z'];h=b['h'];mat='North bank facade '+str(index%4)
+    for a,c in zip(poly,poly[1:]+poly[:1]):
+        length=math.dist(a,c)
+        vs=[(*a,z),(*c,z),(*c,z+h),(*a,z+h)]
+        append('Mapped Seoul building facades',mat,vs,[(0,1,2,3)],[(0,0),(length/14,0),(length/14,h/12.2),(0,h/12.2)])
+    append('Mapped Seoul rooflines','Roof terraces',[(x,y,z+h) for x,y in poly],[tuple(range(n))])
+    if h>32:
+        cx=sum(p[0] for p in poly)/n;cy=sum(p[1] for p in poly)/n
+        box('Lift housings','Roof terraces',(cx,cy,z+h+1.8),(5,7,3.6))
+for road in D['roads']:
+    for a,b in zip(road,road[1:]):
+        if 700 < (a[1]+b[1])/2 < 2100:
+            segment('North bank mapped roads','Asphalt',(*a,18),(*b,18),12,.22)
+
+start=Vector((611,-65,20));end=Vector((166,1445,20))
+delta=end-start;length=delta.length;direction=delta.normalized();side=Vector((direction.y,-direction.x,0))
+segment('Banpo upper roadway','Upper deck concrete',start,end,25,2.2)
+segment('Banpo asphalt','Asphalt',start+Vector((0,0,1.13)),end+Vector((0,0,1.13)),23,.06)
+for lateral in [-10.5,-6.8,-3.4,0,3.4,6.8,10.5]:
+    for d in range(0,int(length),16):
+        a=start+direction*d+side*lateral+Vector((0,0,1.18))
+        segment('Banpo lane markings','Lane paint',a,a+direction*7,.12,.025)
+for lateral in [-12.15,12.15]:
+    a=start+side*lateral;b=end+side*lateral
+    for z in [21.5,22.1]:segment('Banpo guardrails','Railings',(a.x,a.y,z),(b.x,b.y,z),.20,.25)
+    segment('Banpo continuous warm lights','Bridge lights',(a.x,a.y,19.7),(b.x,b.y,19.7),.20,.25)
+    for d in range(0,int(length),35):
+        p=start+direction*d+side*lateral
+        cylinder('Banpo light poles','Railings',p.x,p.y,21.2,.12,7,6)
+        segment('Banpo lamp arms','Railings',(p.x,p.y,28.2),(p.x-side.x*2,p.y-side.y*2,28.2),.18,.18)
+        box('Banpo lamp heads','Bridge lights',(p.x-side.x*2,p.y-side.y*2,28.1),(.65,1,.18))
+    for d in range(0,int(length),6):
+        p=start+direction*d+side*lateral
+        box('Banpo railing uprights','Railings',(p.x,p.y,21.8),(.16,.16,1.2))
+for lateral in [-8,-3,3,8]:
+    segment('Banpo longitudinal girders','Bridge steel shadow',start+side*lateral-Vector((0,0,2)),end+side*lateral-Vector((0,0,2)),1.25,2)
+for d in range(45,int(length)-30,30):
+    p=start+direction*d
+    for lateral in [-7.4,7.4]:
+        q=p+side*lateral;cylinder('Banpo paired concrete piers','Upper deck concrete',q.x,q.y,-1,1.45,18.5,12,top=1.35)
+    segment('Banpo pier caps','Upper deck concrete',p-side*11-Vector((0,0,2.5)),p+side*11-Vector((0,0,2.5)),2.5,1.6)
+low_start=start+direction*150;low_end=start+direction*1170
+for i in range(40):
+    t0=i/40;t1=(i+1)/40
+    def low(t):
+        p=low_start.lerp(low_end,t);p.z=5.4+6.5*math.exp(-((t-.68)/.13)**2);return p
+    a,b=low(t0),low(t1)
+    segment('Jamsu lower crossing','Upper deck concrete',a,b,18,.85)
+    for lateral in [-8.7,8.7]:
+        segment('Jamsu parapets','Railings',a+side*lateral+Vector((0,0,.8)),b+side*lateral+Vector((0,0,.8)),.22,.7)
+
+for island in D['islands']:
+    poly=island['p'];name=island['name'];polygon_solid('Sebitseom floating island footprints','Island boardwalk',poly,.6,2.6)
+    cx=sum(p[0] for p in poly)/len(poly);cy=sum(p[1] for p in poly)/len(poly)
+    rx=(max(p[0] for p in poly)-min(p[0] for p in poly))*.40
+    ry=(max(p[1] for p in poly)-min(p[1] for p in poly))*.40
+    height=25 if name=='가빛섬' else 14 if name=='채빛섬' else 10
+    vs=[];N=48;levels=9
+    def shell(j,i):
+        t=j/levels;a=i/N*math.tau;bulge=.75+.24*math.sin(t*math.pi)
+        return (cx+rx*math.cos(a)*bulge+height*t*.13,cy+ry*math.sin(a)*bulge,3.2+t*height)
+    for j in range(levels+1):vs.extend([shell(j,i) for i in range(N)])
+    fs=[]
+    for j in range(levels):
+        for i in range(N):fs.append((j*N+i,j*N+(i+1)%N,(j+1)*N+(i+1)%N,(j+1)*N+i))
+    fs.append(tuple(range(levels*N,(levels+1)*N)))
+    append('Sebitseom curved glass pavilions','Glass blue green',vs,fs)
+    for j in [0,2,4,6,8,9]:
+        for i in range(N):segment('Sevit horizontal ribbons','Sevit silver ribbons',shell(j,i),shell(j,(i+1)%N),.45,.38)
+    for i in range(0,N,3):
+        for j in range(levels):segment('Sevit diagonal ribs','Sevit silver ribbons',shell(j,i+j),shell(j+1,i+j+1),.38,.28)
+    for i in range(N):segment('Sevit warm interior','Window lights',shell(1,i),shell(1,(i+1)%N),.32,.65)
+    end=(cx,cy-min(ry+15,45),3.5);segment('Sevit access walkways','Park paths',(cx,end[1]-40,6),end,5,.65)
+
+tx,ty=-343,4550;tz=D['towerBase']
+cylinder('N Seoul Tower pedestal','Namsan tower',tx,ty,tz,16,10,24)
+cylinder('N Seoul Tower shaft','Namsan tower',tx,ty,tz+10,7,118,24,top=4)
+for z,r,h in [(120,17,5),(125,21,13),(138,17,4),(142,8,5)]:
+    cylinder('N Seoul Tower observation decks','Glass blue green' if z==125 else 'Namsan tower',tx,ty,tz+z,r,h,32)
+cylinder('N Seoul Tower antenna','Namsan tower',tx,ty,tz+147,3.3,89.7,12,top=.3)
+for z in [190,223]:cylinder('Tower aviation lights','Bridge lights',tx,ty,tz+z,1.2,1.1,8)
+
+objects=[]
+for (name,mat),(verts,faces,uvs) in batches.items():
+    mesh=bpy.data.meshes.new(name);mesh.from_pydata(verts,[],faces);mesh.update()
+    ob=bpy.data.objects.new(name,mesh);scene.collection.objects.link(ob);ob.data.materials.append(materials[mat]);objects.append(ob)
+    uv=mesh.uv_layers.new(name='UVMap')
+    for i,value in enumerate(uvs):uv.data[i].uv=value
+    if name.startswith('SRTM'):
+        for p in mesh.polygons:p.use_smooth=True
+
+watermat=material('Preview water',(.07,.19,.25),.17,.35)
+mesh=bpy.data.meshes.new('Preview river surface');mesh.from_pydata([(-3500,-200,0),(3500,-200,0),(3500,6800,0),(-3500,6800,0)],[],[(0,1,2,3)])
+ob=bpy.data.objects.new('Preview river surface',mesh);scene.collection.objects.link(ob);ob.data.materials.append(watermat)
+for name,kind,location,power,color in [('Sun','SUN',(-800,-1200,1800),2.4,(1,.92,.78)),('Sky fill','SUN',(500,600,1800),.5,(.65,.8,1))]:
+    light=bpy.data.lights.new(name,kind);light.energy=power;light.color=color
+    light.angle=.08;ob=bpy.data.objects.new(name,light);scene.collection.objects.link(ob);ob.location=location
+    ob.rotation_euler=(Vector((0,1200,0))-ob.location).to_track_quat('-Z','Y').to_euler()
+camdata=bpy.data.cameras.new('Office window 70m camera');cam=bpy.data.objects.new('Office window 70m camera',camdata);scene.collection.objects.link(cam)
+cam.location=(0,-120,70);cam.rotation_euler=(Vector((350,1300,50))-cam.location).to_track_quat('-Z','Y').to_euler();camdata.lens=30;camdata.clip_end=15000;scene.camera=cam
+scene.view_settings.view_transform='Khronos PBR Neutral'
+for n in ['Bridge lights','Window lights']:
+    materials[n].node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value=.1
+preview=artifacts.file(name='banpo-pilot-day.png',media_type='image/png');scene.render.filepath=preview.path;bpy.ops.render.render(write_still=True);preview.publish()
+result={'buildings':len(D['buildings']),'objects':len(objects),'polygons':sum(len(o.data.polygons) for o in objects),'camera':list(cam.location),'origin':D['origin'],'source':'OSM / Mapzen SRTM; building heights without tags estimated; landmarks reference modeled'}

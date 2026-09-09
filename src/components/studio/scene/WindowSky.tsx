@@ -1,9 +1,9 @@
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import {
   Color, HalfFloatType, MathUtils, PerspectiveCamera, Vector2, Vector4, WebGLRenderTarget,
 } from 'three';
-import { createHanRiverLandscape } from './HanRiverLandscape';
+import { createBanpoLandscape } from './BanpoLandscape';
 import { ROOM } from './config';
 
 const vertexShader = `
@@ -49,11 +49,10 @@ type WindowSkyProps = {
 };
 
 export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
-  const compact = useThree(state => state.size.width < 760);
   const { leftX, window: opening } = ROOM.architecture;
   const centerY = (opening.top + opening.bottom) / 2;
   const nightMix = nightMixFor(colors);
-  const exterior = useMemo(createHanRiverLandscape, []);
+  const exterior = useMemo(() => createBanpoLandscape(), []);
   const output = useMemo(() => new WebGLRenderTarget(1, 1, { type: HalfFloatType, samples: 2 }), []);
   const exteriorCamera = useMemo(() => new PerspectiveCamera(), []);
   const saved = useMemo(() => ({ viewport: new Vector4(), scissor: new Vector4() }), []);
@@ -78,9 +77,7 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
     const { x: width, y: height } = uniforms.uResolution.value;
     if (output.width !== width || output.height !== height) output.setSize(width, height);
     exteriorCamera.copy(camera);
-    const overviewDistance = Math.hypot(camera.position.x - leftX, camera.position.z - opening.centerZ);
-    const overviewBlend = compact ? MathUtils.smoothstep(overviewDistance, 4, 12) : 0;
-    exteriorCamera.position.y += MathUtils.lerp(340, 620, overviewBlend);
+    exteriorCamera.position.add(exterior.cameraOffset);
     exteriorCamera.far = 12000;
     exteriorCamera.updateProjectionMatrix();
     exteriorCamera.updateMatrixWorld();
@@ -110,7 +107,7 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
     }
   }, 0.5);
 
-  return <mesh name="Yeouido Han River outlook" position={[-24, centerY, opening.centerZ]}
+  return <mesh name="Banpo Han River outlook" position={[-24, centerY, opening.centerZ]}
     rotation={[0, Math.PI / 2, 0]} frustumCulled={false} renderOrder={-100}
     raycast={() => undefined}>
     <planeGeometry args={[180, 84]} />

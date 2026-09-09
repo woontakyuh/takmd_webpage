@@ -7,7 +7,7 @@ interface RiverTrafficOptions {
   readonly subtle: boolean;
 }
 
-function createRiverTraffic(scene: THREE.Scene, { start, end, subtle }: RiverTrafficOptions) {
+export function createRiverTraffic(scene: THREE.Scene, { start, end, subtle }: RiverTrafficOptions) {
   const length = start.distanceTo(end);
   const time = { value: 0 };
   const group = new THREE.Group();
