@@ -1,13 +1,13 @@
 import { Html } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import type { Texture } from 'three';
+import type { Group, Texture } from 'three';
 import { useArrangement } from '../arrangement';
 import { PALETTE } from './config';
 import { IsidoroBarware } from './IsidoroBarware';
 import { IsidoroFixedHalf } from './IsidoroCabinetGeometry';
-import { IsidoroWorktop, WhiskyCabinetDoor, useCabinetAction } from './WhiskyCabinetDoor';
+import { IsidoroWorktop, WhiskyCabinetDoor, useCabinetAction, useIsidoroMotion } from './WhiskyCabinetDoor';
 import { WHISKY_CABINET } from './WhiskyCabinetLayout';
 
 type WhiskyCabinetProps = {
@@ -21,6 +21,9 @@ export function WhiskyCabinet({ wood, reducedMotion, children }: WhiskyCabinetPr
   const narrow = useThree(state => state.size.width < 760);
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
+  const doorPivot = useRef<Group>(null);
+  const worktopPivot = useRef<Group>(null);
+  useIsidoroMotion(doorPivot, worktopPivot, open, reducedMotion, editing);
   const toggle = useCallback(() => { if (!editing) setOpen(value => !value); }, [editing]);
   const { hovered, handlers } = useCabinetAction({ disabled: editing, onActivate: toggle });
   useEffect(() => { if (editing) setOpen(false); }, [editing]);
@@ -35,13 +38,14 @@ export function WhiskyCabinet({ wood, reducedMotion, children }: WhiskyCabinetPr
       open: open && !editing,
     }} {...handlers}>
     <IsidoroFixedHalf wood={wood}>
-      <group name="complete seven-bottle whisky and Armagnac collection">{children}</group>
       <IsidoroBarware />
     </IsidoroFixedHalf>
-    <WhiskyCabinetDoor open={open} reducedMotion={reducedMotion} wood={wood}
-      disabled={editing} onActivate={toggle} />
-    <IsidoroWorktop open={open} reducedMotion={reducedMotion} wood={wood} disabled={editing} />
-    <Html center position={[0, narrow ? -0.12 : 0.76, -0.31]} zIndexRange={[17, 11]}>
+    <WhiskyCabinetDoor open={open} pivot={doorPivot} wood={wood}
+      disabled={editing} onActivate={toggle}>
+      <group name="complete seven-bottle whisky and Armagnac collection">{children}</group>
+    </WhiskyCabinetDoor>
+    <IsidoroWorktop open={open} pivot={worktopPivot} wood={wood} disabled={editing} />
+    <Html center position={[0, narrow ? -0.12 : 1.25, -0.31]} zIndexRange={[17, 11]}>
       <div role="group" aria-label="Poltrona Frau Isidoro drinks cabinet"
         onFocusCapture={() => setFocused(true)}
         onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}

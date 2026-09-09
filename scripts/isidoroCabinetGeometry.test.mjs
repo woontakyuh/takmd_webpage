@@ -4,9 +4,10 @@ import { ROOM } from '../src/components/studio/scene/config';
 import { WHISKY_BOTTLES } from '../src/components/studio/scene/WhiskyBottleSpecs';
 import {
   ISIDORO_DIMENSIONS,
+  ISIDORO_OPEN_ANGLE,
   ISIDORO_BOTTLE_DECK_TOP,
-  ISIDORO_FIXED_HALF_OFFSET_Z,
-  ISIDORO_WORKTOP_HEIGHT,
+  ISIDORO_BOTTLE_SHELF_TOP,
+  ISIDORO_BOTTLE_SHELF_HEIGHT,
   WHISKY_CABINET,
   isidoroFootprint,
   rotateFootprint,
@@ -39,7 +40,7 @@ describe('Isidoro cabinet measured layout', () => {
     }, ROOM.desk.position, ROOM.desk.rotation);
 
     for (let step = 0; step <= 12; step += 1) {
-      const angle = Math.PI * step / 12;
+      const angle = ISIDORO_OPEN_ANGLE * step / 12;
       const cabinet = rotateFootprint(isidoroFootprint(angle), WHISKY_CABINET.center, WHISKY_CABINET.rotation);
       expect(cabinet.minX).toBeGreaterThanOrEqual(-2.7);
       expect(cabinet.maxX).toBeLessThanOrEqual(2.78);
@@ -58,20 +59,36 @@ describe('Isidoro cabinet measured layout', () => {
     expect(forwardX * toDeskX + forwardZ * toDeskZ).toBeGreaterThan(0);
   });
 
-  test('fits all seven real bottles below the worktop without overlap', () => {
+
+  test('sits against the side wall and opens only 90 degrees along the back wall', () => {
+    const closed = rotateFootprint(isidoroFootprint(0), WHISKY_CABINET.center, WHISKY_CABINET.rotation);
+    const open = rotateFootprint(isidoroFootprint(ISIDORO_OPEN_ANGLE), WHISKY_CABINET.center, WHISKY_CABINET.rotation);
+    expect(ISIDORO_OPEN_ANGLE).toBe(Math.PI / 2);
+    expect(2.78 - closed.maxX).toBeGreaterThanOrEqual(0.02);
+    expect(2.78 - closed.maxX).toBeLessThanOrEqual(0.06);
+    expect(open.minZ + 3.32).toBeGreaterThanOrEqual(0.04);
+    expect(open.minZ + 3.32).toBeLessThanOrEqual(0.09);
+    expect(open.minX).toBeLessThan(closed.minX);
+  });
+
+  test('fits all seven real bottles on the two moving-half shelves without overlap', () => {
     expect(WHISKY_BOTTLES).toHaveLength(7);
     expect(WHISKY_BOTTLES.some(({ name }) => name.includes('Armagnac'))).toBe(true);
+    expect(WHISKY_BOTTLES.filter(({ position }) => position[1] === ISIDORO_BOTTLE_SHELF_TOP)).toHaveLength(3);
+    expect(WHISKY_BOTTLES.filter(({ position }) => position[1] === ISIDORO_BOTTLE_DECK_TOP)).toHaveLength(4);
     for (const bottle of WHISKY_BOTTLES) {
       const [x, y, z] = bottle.position;
-      const cabinetZ = ISIDORO_FIXED_HALF_OFFSET_Z + z;
       expect(Math.abs(x) + bottle.radius).toBeLessThan(WHISKY_CABINET.width / 2 - 0.025);
-      expect(cabinetZ - bottle.radius).toBeGreaterThanOrEqual(0.005);
-      expect(cabinetZ + bottle.radius).toBeLessThanOrEqual(WHISKY_CABINET.depth / 2 - 0.025);
-      expect(y).toBe(ISIDORO_BOTTLE_DECK_TOP);
-      expect(y + bottle.height).toBeLessThan(ISIDORO_WORKTOP_HEIGHT - 0.02);
+      expect(z - bottle.radius).toBeGreaterThanOrEqual(-0.085);
+      expect(z + bottle.radius).toBeLessThanOrEqual(0.11);
+      expect([ISIDORO_BOTTLE_DECK_TOP, ISIDORO_BOTTLE_SHELF_TOP]).toContain(y);
+      const ceiling = y === ISIDORO_BOTTLE_DECK_TOP ? ISIDORO_BOTTLE_SHELF_HEIGHT - 0.009 : 1.145;
+      expect(y + bottle.height).toBeLessThan(ceiling - 0.02);
     }
     for (const [index, bottle] of WHISKY_BOTTLES.entries()) {
       for (const other of WHISKY_BOTTLES.slice(index + 1)) {
+        if (bottle.position[1] + bottle.height < other.position[1]
+          || other.position[1] + other.height < bottle.position[1]) continue;
         const distance = Math.hypot(bottle.position[0] - other.position[0], bottle.position[2] - other.position[2]);
         expect(distance).toBeGreaterThanOrEqual(bottle.radius + other.radius + 0.01);
       }

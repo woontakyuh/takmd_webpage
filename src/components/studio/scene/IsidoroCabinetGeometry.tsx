@@ -1,9 +1,12 @@
-import type { ReactNode } from 'react';
+import { useEffect, useMemo, type ReactNode } from 'react';
+import { useTexture } from '@react-three/drei';
+import { CatmullRomCurve3, RepeatWrapping, Vector2, Vector3 } from 'three';
 import type { Texture } from 'three';
 import { INTERIOR, PALETTE } from './config';
 import { Block, Rod } from './Primitives';
 import {
   ISIDORO_BOTTLE_DECK_TOP,
+  ISIDORO_BOTTLE_SHELF_HEIGHT,
   ISIDORO_DIMENSIONS,
   ISIDORO_FIXED_HALF_OFFSET_Z,
   ISIDORO_WORKTOP_HEIGHT,
@@ -11,7 +14,7 @@ import {
 
 const HALF_DEPTH = ISIDORO_DIMENSIONS.depth / 2;
 const PANEL = 0.025;
-const LEATHER = PALETTE.linen;
+const LEATHER = '#A69583';
 const FABRIC = INTERIOR.sand;
 const CHROME = PALETTE.aluminiumEdge;
 
@@ -31,39 +34,65 @@ function ChromeRail({ y, interiorSide }: { readonly y: number; readonly interior
   </group>;
 }
 
+function useLeatherGrain() {
+  const [normal, roughness] = useTexture(['/textures/isidoro/leather-normal.webp', '/textures/isidoro/leather-roughness.webp']);
+  const maps = useMemo(() => [normal, roughness].map(source => {
+    const map = source.clone();
+    map.wrapS = map.wrapT = RepeatWrapping;
+    map.repeat.set(2.3, 3.7);
+    map.anisotropy = 4;
+    return map;
+  }), [normal, roughness]);
+  useEffect(() => () => maps.forEach(map => map.dispose()), [maps]);
+  return { normalMap: maps[0], roughnessMap: maps[1], normalScale: new Vector2(0.2, 0.2) };
+}
+
+function LeatherSeam({ z }: { readonly z: number }) {
+  const curve = useMemo(() => {
+    const points: Vector3[] = [];
+    for (let corner = 0; corner < 4; corner++) {
+      const angle = corner * Math.PI / 2;
+      const cx = corner === 0 || corner === 3 ? 0.317 : -0.317;
+      const cy = corner < 2 ? 1.105 : 0.085;
+      for (let step = 0; step <= 8; step++) {
+        const t = angle + step / 8 * Math.PI / 2;
+        points.push(new Vector3(cx + Math.cos(t) * 0.016, cy + Math.sin(t) * 0.016, z));
+      }
+    }
+    return new CatmullRomCurve3(points, true);
+  }, [z]);
+  return <mesh name="fine leather perimeter seam">
+    <tubeGeometry args={[curve, 96, 0.00085, 5, true]} />
+    <meshStandardMaterial color="#82715f" roughness={0.84} />
+  </mesh>;
+}
+
 function HalfShell({ interiorSide, moving = false, wood, children }: HalfProps) {
   const outsideZ = -interiorSide * (HALF_DEPTH / 2 - PANEL / 2);
-  const openingZ = interiorSide * (HALF_DEPTH / 2 - 0.009);
+  const leather = useLeatherGrain();
   return <group name={moving ? 'opening leather trunk half' : 'fixed leather trunk half'}>
     <Block size={[ISIDORO_DIMENSIONS.width, ISIDORO_DIMENSIONS.height - 0.04, PANEL]}
-      position={[0, 0.595, outsideZ]} color={LEATHER} radius={0.022} roughness={0.79} />
+      position={[0, 0.595, outsideZ]} color={LEATHER} radius={0.022} roughness={0.83} material={leather} />
     <Block size={[ISIDORO_DIMENSIONS.width - 0.055, ISIDORO_DIMENSIONS.height - 0.095, 0.012]}
       position={[0, 0.59, outsideZ + interiorSide * 0.019]} color={FABRIC} radius={0.015} roughness={0.94} />
     {[-1, 1].map(side => <Block key={side} size={[PANEL, ISIDORO_DIMENSIONS.height - 0.07, HALF_DEPTH]}
       position={[side * (ISIDORO_DIMENSIONS.width - PANEL) / 2, 0.595, 0]}
-      color={LEATHER} radius={0.018} roughness={0.8} />)}
+      color={LEATHER} radius={0.018} roughness={0.83} material={leather} />)}
     <Block size={[ISIDORO_DIMENSIONS.width, PANEL, HALF_DEPTH]} position={[0, 1.1575, 0]}
-      color={LEATHER} radius={0.018} roughness={0.8} />
+      color={LEATHER} radius={0.018} roughness={0.83} material={leather} />
     <Block size={[ISIDORO_DIMENSIONS.width, PANEL, HALF_DEPTH]} position={[0, 0.0475, 0]}
-      color={LEATHER} radius={0.014} roughness={0.82} />
+      color={LEATHER} radius={0.014} roughness={0.83} material={leather} />
     <Block size={[0.64, 0.06, HALF_DEPTH - 0.035]}
       position={[0, ISIDORO_BOTTLE_DECK_TOP - 0.03, 0]}
       color={PALETTE.walnut} texture={wood} radius={0.005} roughness={0.52} />
-    {[ISIDORO_WORKTOP_HEIGHT, 0.92].map(y => <group key={y} name={`Canaletto walnut shelf ${y}`}>
+    {(moving ? [ISIDORO_BOTTLE_SHELF_HEIGHT] : [ISIDORO_WORKTOP_HEIGHT, 0.92]).map(y => <group key={y} name={`Canaletto walnut shelf ${y}`}>
       <Block size={[0.64, 0.018, HALF_DEPTH - 0.035]} position={[0, y, 0]}
         color={PALETTE.walnut} texture={wood} radius={0.004} roughness={0.5} />
       <ChromeRail y={y + 0.038} interiorSide={interiorSide} />
     </group>)}
     <Block size={[0.64, 0.405, 0.022]} position={[0, 0.31, outsideZ + interiorSide * 0.023]}
       color={PALETTE.walnutDark} texture={wood} radius={0.007} roughness={0.54} />
-    {moving && <group name="walnut storage fronts" position={[0, 0, openingZ]}>
-      <Block size={[0.64, 0.325, 0.02]} position={[0, 0.295, 0]}
-        color={PALETTE.walnut} texture={wood} radius={0.006} roughness={0.5} />
-      <Block size={[0.64, 0.012, 0.024]} position={[0, 0.49, 0.003]}
-        color={PALETTE.walnutDark} radius={0.003} roughness={0.55} />
-      <Block size={[0.09, 0.012, 0.012]} position={[0, 0.405, interiorSide * 0.014]}
-        color={PALETTE.ink} radius={0.005} roughness={0.62} />
-    </group>}
+    <LeatherSeam z={-interiorSide * (HALF_DEPTH / 2 + 0.0009)} />
     {children}
     <group name={moving ? 'swivel castors' : 'fixed feet'}>
       {[-0.29, 0.29].map(x => <group key={x} position={[x, 0.022, outsideZ]}>
@@ -84,9 +113,11 @@ export function IsidoroFixedHalf({ wood, children }: { readonly wood: Texture; r
   </group>;
 }
 
-export function IsidoroOpeningHalf({ wood }: { readonly wood: Texture }) {
+export function IsidoroOpeningHalf({ wood, children }: { readonly wood: Texture; readonly children: ReactNode }) {
   return <group position={[ISIDORO_DIMENSIONS.width / 2, 0, -HALF_DEPTH / 2]}>
-    <HalfShell interiorSide={1} moving wood={wood} />
+    <HalfShell interiorSide={1} moving wood={wood}>
+      <group name="bottle collection with unmirrored labels" scale={[-1, 1, 1]}>{children}</group>
+    </HalfShell>
     <group name="Pelle Frau carry handle" position={[0.29, 0.62, -HALF_DEPTH / 2 - 0.012]}>
       <Rod from={[-0.018, -0.11, 0]} to={[-0.045, -0.075, -0.022]} radius={0.007} color={CHROME} metalness={0.84} />
       <Rod from={[-0.045, -0.075, -0.022]} to={[-0.045, 0.075, -0.022]} radius={0.012} color={LEATHER} />

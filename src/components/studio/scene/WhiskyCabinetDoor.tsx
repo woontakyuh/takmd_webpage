@@ -1,5 +1,6 @@
 import { useCursor } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
+import type { ReactNode, RefObject } from 'react';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { MathUtils } from 'three';
@@ -8,7 +9,7 @@ import { PALETTE } from './config';
 import { IsidoroOpeningHalf } from './IsidoroCabinetGeometry';
 import { Block, Rod } from './Primitives';
 import { cancelSceneSingleAction, scheduleSceneSingleAction } from './sceneGesture';
-import { ISIDORO_DIMENSIONS, ISIDORO_WORKTOP_HEIGHT } from './WhiskyCabinetLayout';
+import { ISIDORO_DIMENSIONS, ISIDORO_OPEN_ANGLE, ISIDORO_WORKTOP_HEIGHT } from './WhiskyCabinetLayout';
 
 type ActionOptions = {
   readonly disabled: boolean;
@@ -19,6 +20,7 @@ type DoorProps = ActionOptions & {
   readonly open: boolean;
   readonly reducedMotion: boolean;
   readonly wood: Texture;
+  readonly children: ReactNode;
 };
 type Gesture = { readonly id: number; readonly x: number; readonly y: number };
 
@@ -100,46 +102,56 @@ export function useCabinetAction({ disabled, onActivate, onHoverChange }: Action
   };
 }
 
-function useHingedRotation(ref: React.RefObject<Group | null>, axis: 'x' | 'y', target: number,
-  reducedMotion: boolean, disabled: boolean) {
+export function useIsidoroMotion(door: RefObject<Group | null>, worktop: RefObject<Group | null>,
+  open: boolean, reducedMotion: boolean, disabled: boolean) {
   const invalidate = useThree(state => state.invalidate);
   useLayoutEffect(() => {
-    if (ref.current && (disabled || reducedMotion)) ref.current.rotation[axis] = target;
+    if ((reducedMotion || disabled) && door.current && worktop.current) {
+      door.current.rotation.y = open && !disabled ? -ISIDORO_OPEN_ANGLE : 0;
+      worktop.current.rotation.x = open && !disabled ? 0 : Math.PI / 2;
+    }
     invalidate();
-  }, [axis, disabled, invalidate, reducedMotion, ref, target]);
+  }, [disabled, door, invalidate, open, reducedMotion, worktop]);
   useFrame((state, delta) => {
-    const group = ref.current;
-    if (!group || group.rotation[axis] === target) return;
-    const angle = MathUtils.damp(group.rotation[axis], target, 9, delta);
-    group.rotation[axis] = Math.abs(angle - target) < 0.0015 ? target : angle;
-    group.userData.angle = group.rotation[axis];
-    state.invalidate();
+    if (!door.current || !worktop.current) return;
+    const leaf = door.current, top = worktop.current;
+    const desiredOpen = open && !disabled;
+    const topUp = Math.abs(top.rotation.x - Math.PI / 2) < 0.0015;
+    const leafOpen = Math.abs(leaf.rotation.y + ISIDORO_OPEN_ANGLE) < 0.0015;
+    const leafTarget = desiredOpen ? -ISIDORO_OPEN_ANGLE : topUp ? 0 : leaf.rotation.y;
+    const topTarget = desiredOpen && leafOpen ? 0 : Math.PI / 2;
+    let moving = false;
+    for (const [group, axis, target] of [[leaf, 'y', leafTarget], [top, 'x', topTarget]] as const) {
+      if (group.rotation[axis] !== target) {
+        const angle = MathUtils.damp(group.rotation[axis], target, 9, delta);
+        group.rotation[axis] = Math.abs(angle - target) < 0.0015 ? target : angle;
+        moving = true;
+      }
+      group.userData.angle = group.rotation[axis];
+    }
+    if (moving) state.invalidate();
   });
 }
 
-export function WhiskyCabinetDoor({ open, reducedMotion, wood, ...action }: DoorProps) {
-  const pivot = useRef<Group>(null);
+export function WhiskyCabinetDoor({ open, wood, pivot, children, ...action }: Omit<DoorProps, 'reducedMotion'> & { readonly pivot: RefObject<Group | null> }) {
   const { hovered, handlers } = useCabinetAction(action);
-  const target = open && !action.disabled ? Math.PI : 0;
-  useHingedRotation(pivot, 'y', target, reducedMotion, action.disabled);
+  const target = open && !action.disabled ? -ISIDORO_OPEN_ANGLE : 0;
   return <group ref={pivot} name="Isidoro book-opening mobile half"
-    position={[-ISIDORO_DIMENSIONS.width / 2, 0, 0]}
+    position={[ISIDORO_DIMENSIONS.width / 2, 0, 0]}
     userData={{ sceneControl: true, open: open && !action.disabled, angle: target }} {...handlers}>
-    <IsidoroOpeningHalf wood={wood} />
+    <group scale={[-1, 1, 1]}><IsidoroOpeningHalf wood={wood}>{children}</IsidoroOpeningHalf></group>
     {[0.23, 0.94].map(y => <Rod key={y} from={[0, y, -0.015]} to={[0, y, 0.015]}
       radius={0.006} color={hovered ? PALETTE.aluminiumEdge : PALETTE.steel} metalness={0.9} />)}
   </group>;
 }
 
-export function IsidoroWorktop({ open, reducedMotion, wood, disabled }: {
+export function IsidoroWorktop({ open, wood, disabled, pivot }: {
   readonly open: boolean;
-  readonly reducedMotion: boolean;
+  readonly pivot: RefObject<Group | null>;
   readonly wood: Texture;
   readonly disabled: boolean;
 }) {
-  const pivot = useRef<Group>(null);
   const target = open && !disabled ? 0 : Math.PI / 2;
-  useHingedRotation(pivot, 'x', target, reducedMotion, disabled);
   return <group ref={pivot} name="fold-down Canaletto walnut worktop"
     position={[0, ISIDORO_WORKTOP_HEIGHT + 0.015, 0]} rotation={[Math.PI / 2, 0, 0]}
     userData={{ open: open && !disabled, angle: target }}>

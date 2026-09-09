@@ -17,12 +17,15 @@ export const ISIDORO_DIMENSIONS = {
 export const ISIDORO_WORKTOP_HEIGHT = 0.61;
 export const ISIDORO_FIXED_HALF_OFFSET_Z = ISIDORO_DIMENSIONS.depth / 4;
 export const ISIDORO_BOTTLE_DECK_TOP = 0.12;
+export const ISIDORO_BOTTLE_SHELF_HEIGHT = 0.72;
+export const ISIDORO_BOTTLE_SHELF_TOP = ISIDORO_BOTTLE_SHELF_HEIGHT + 0.009;
+export const ISIDORO_OPEN_ANGLE = Math.PI / 2;
 
 export const WHISKY_CABINET = {
   ...ISIDORO_DIMENSIONS,
-  center: [1.63, 0.0185, -2.9],
-  rotation: Math.PI,
-  shelfTops: [0.1, ISIDORO_WORKTOP_HEIGHT, 0.91],
+  center: [2.50, 0.0185, -2.66],
+  rotation: Math.PI / 2,
+  shelfTops: [ISIDORO_BOTTLE_DECK_TOP, ISIDORO_BOTTLE_SHELF_TOP, ISIDORO_WORKTOP_HEIGHT + 0.009, 0.929],
 } as const satisfies typeof ISIDORO_DIMENSIONS & {
   readonly center: Point;
   readonly rotation: number;
@@ -30,13 +33,13 @@ export const WHISKY_CABINET = {
 };
 
 export const WHISKY_CABINET_SLOTS = [
-  [-0.245, ISIDORO_BOTTLE_DECK_TOP, -0.06],
-  [-0.082, ISIDORO_BOTTLE_DECK_TOP, -0.06],
-  [0.082, ISIDORO_BOTTLE_DECK_TOP, -0.06],
-  [0.245, ISIDORO_BOTTLE_DECK_TOP, -0.06],
-  [-0.16, ISIDORO_BOTTLE_DECK_TOP, 0.055],
-  [0, ISIDORO_BOTTLE_DECK_TOP, 0.055],
-  [0.16, ISIDORO_BOTTLE_DECK_TOP, 0.055],
+  [-0.15, ISIDORO_BOTTLE_SHELF_TOP, 0],
+  [0, ISIDORO_BOTTLE_SHELF_TOP, 0],
+  [-0.21, ISIDORO_BOTTLE_DECK_TOP, 0],
+  [-0.07, ISIDORO_BOTTLE_DECK_TOP, 0],
+  [0.07, ISIDORO_BOTTLE_DECK_TOP, 0],
+  [0.21, ISIDORO_BOTTLE_DECK_TOP, 0],
+  [0.15, ISIDORO_BOTTLE_SHELF_TOP, 0],
 ] as const satisfies readonly Point[];
 
 function bounds(points: readonly (readonly [number, number])[]): Footprint {
@@ -58,12 +61,13 @@ export function isidoroFootprint(openAngle: number): Footprint {
   ] as const;
   const moving = movingClosed.map(([x, z]) => {
     const offsetX = x + halfWidth;
-    return [-halfWidth + offsetX * cosine + z * sine, -offsetX * sine + z * cosine] as const;
+    // Mirrored hinge: the mobile half folds toward the wall behind the desk.
+    return [halfWidth - offsetX * cosine - z * sine, -offsetX * sine + z * cosine] as const;
   });
   const fixed = [
     [-halfWidth, 0], [-halfWidth, halfDepth], [halfWidth, 0], [halfWidth, halfDepth],
   ] as const;
-  const worktopProjection = 0.32 * Math.sin(openAngle / 2);
+  const worktopProjection = openAngle >= ISIDORO_OPEN_ANGLE - 0.002 ? 0.32 : 0;
   const worktop = openAngle > 0
     ? [[-0.31, -worktopProjection], [-0.31, 0], [0.31, -worktopProjection], [0.31, 0]] as const
     : [];

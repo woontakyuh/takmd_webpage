@@ -19,7 +19,7 @@ export function WhiskyCollection() {
     {WHISKY_BOTTLES.map((bottle, index) => {
       const texture = textures[index];
       return texture ? <group key={bottle.name} name={bottle.name}
-        position={bottle.position} rotation={[0, Math.PI, 0]}>
+        position={bottle.position}>
         <WhiskyBottleBody bottle={bottle} />
         {bottle.labels.map((label, labelIndex) => <WhiskyBottleLabel key={labelIndex}
           bottle={bottle} label={label} texture={texture} />)}
