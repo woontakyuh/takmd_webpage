@@ -1,5 +1,13 @@
 # Office session handoff — 2026-09-09
 
+## Latest continuation · Han River pilot
+
+The earlier office work plus raised right-side awards and warmer daylight is now committed, pushed and deployed at full SHA `9d3bfaffbb42ee16478b3254318be2d29bb22f1f`. Cloudflare deployment `9767ddaa`; receipt `.omo/evidence/daylight-warmth-2026-09-09/release.json` verifies live HTML, JS and browser checks.
+
+The user subsequently accepted the Banpo interim scene and explicitly requested commit/push/deploy despite the known building/greenery limitations. Banpo now loads at `/` as well as the earlier `?river=banpo` URL. The unchanged office overview sees the bridge through a fixed exterior observer translation. Check `.omo/evidence/banpo-release-2026-09-09/release.json` for the resulting commit, push, provider and live verification; `docs/han-river-pilot-status-2026-09-09.md` records limitations and next work. Do not call it photorealistic. Higgsfield project revision 3 and editable `.blend` remain in the previous pilot evidence. Rebuild dist after source edits because port 4322 runs Astro preview.
+
+The remainder below preserves the earlier reboot handoff.
+
 ## Latest user intent
 
 Finish the approved office changes, commit/push/deploy, then pause for the owner's manual Mac mini reboot. Resume visual review afterward. Do not reboot the computer automatically.
