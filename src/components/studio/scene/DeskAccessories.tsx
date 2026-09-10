@@ -15,7 +15,7 @@ export function DeskAccessories({ familyPhotoSrc, selected, onSelect, reducedMot
       <FamilyPhoto familyPhotoSrc={familyPhotoSrc} selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} />
       <WirelessKeyboard position={[0, DESK_TOP, 0.1]} />
       <MxMasterMouse position={[0.31, DESK_TOP, 0.1]} />
-      <ScreenBarHalo2Dial position={[0.74, DESK_TOP, -0.29]} halo={halo} onHaloControls={onHaloControls} />
+      <ScreenBarHalo2Dial position={[ROOM.macMini.position[0] + 0.13, DESK_TOP, ROOM.macMini.position[2]]} halo={halo} onHaloControls={onHaloControls} />
       <Interactive id="projects" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.macMini.position}><MacMini position={[0, 0, 0]} onClaudeSticker={onClaudeSticker} /></Interactive>
     </group>
   );
