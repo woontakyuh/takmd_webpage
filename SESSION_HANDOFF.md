@@ -1,5 +1,17 @@
 # Office session handoff — 2026-09-10
 
+## Ordered office refinements after CV concept review
+
+The owner rejected all three portrait concepts. The canonical CV component, stylesheet and original profile image remain unchanged. Closing the monitor now shows the cover in the office; reopening resumes the saved reading position. Desktop, portrait and landscape regression checks passed.
+
+The Isidoro uses a quiet handle marker and its physical free edge instead of visible Open/Close bar labels. Cabinet and bottle inspection frame the furniture more closely, with the English information card next to it or below it in portrait. Closed liquid geometry, a meniscus and environment-probe refraction/absorption replace unfiltered see-through liquid. This is a real-time room-probe approximation, not full refraction of nearby geometry. The magnetic whisky lecture uses the existing approved 26-slide KOSESS Executive Workshop derivative, 22 February 2025; its View on TV action opens that exact lecture in the same office document.
+
+The expanded TV contains a year/date archive, the original high-resolution slide or event photo, in-screen page arrows, thumbnails and lecture information. Narrow screens reveal the archive through Lectures. X leaves the last slide on the physical TV; one later click reopens it. The empty bookshelf chooser panel is removed, leaving only X until a physical book is selected. Book, whisky and photograph descriptions are English while original document titles/content and the Ppomppu Easter egg remain untouched. Profile branding is hidden during book/photo reading so Overview stays clear.
+
+Local verification includes 47 geometry/interaction tests, TypeScript, production build and public-boundary checks; three-viewport TV and monitor interaction checks; 23 English information checks; cabinet motion/optics and magnetic lecture checks. Root personally used the cabinet, magnetic card, TV tree/slide controls and physical bookshelf flow in the browser. LSP could not run because the configured Biome provider is not installed; installation was previously declined. Evidence: `.omo/evidence/cv-photo-concepts-2026-09-10/`. The release receipt at `release.json` in that folder is authoritative for the exact committed/pushed/deployed SHA and live verification; do not infer deployment from this handoff alone.
+
+Han River skyline and vegetation work remains deferred until this office pass is reviewed. Missing user lecture files, 2024-or-earlier slide imports and administrator-persisted arrangements remain separate deferred scope. Unrelated untracked reference/design files and rejected public assets are preserved locally and excluded from this release. Historical checkpoints below are superseded by the current release receipt when present.
+
 ## Persistent office and cabinet interaction update
 
 The current update keeps owned content inside one persistent office document/canvas, including legacy URL entries. A physical first click approaches and the next activates; X/Back returns one level. The canonical monitor CV stays mounted from overview to reading, and its early-loading counterpart transfers scroll to the live monitor. PC arrows pan the room, repeated double-clicks zoom further, and the initial hint omits lighting controls.

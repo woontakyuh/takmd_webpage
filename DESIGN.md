@@ -734,3 +734,17 @@ Select bottles directly in the cabinet. The current bottle returns while the nex
 The award-photo approach and reader frame the complete photograph and adjacent YouTube Gold Button together. Share one responsive pair geometry between the camera FOV and the caption placement. Present the original award title, occasion, date and venue immediately below the pair in a small borderless caption with a 44px X; do not reserve a separate right-side card. Keep the family photograph treatment unchanged.
 
 The open cabinet camera fits both halves and its worktop within the viewport, including mobile landscape and the bottom bottle information card. Activating the cabinet from any direction moves the camera to its interior-facing inspection pose. Prevent document scrolling while approaching or inspecting so moving physical controls cannot scroll the room canvas out of view.
+
+### Ordered office refinements, September 2026
+
+Keep the existing CV portrait and canonical layout; all three proposed portrait treatments were rejected. Outside the reader the monitor shows its cover. Reopening restores the last reading position.
+
+Cabinet controls are physical: an 8px quiet handle marker inside a 44px target replaces Open/Close labels; the opened outer edge closes the cabinet and interior contents remain independently selectable. Fit the open cabinet and selected bottle tightly within the viewport, beside a nearby 300px information column on desktop and above it on narrow portrait screens. Keep the existing paper, ink and teal tokens, native X, Overview, Escape and reduced-motion behavior.
+
+Whisky bodies use a separate closed liquid volume with a shallow meniscus and path-dependent absorption. Refracted rays sample the existing room environment probe, an approximation that avoids a second render of the room and prevents the unfiltered local background from showing through. Preserve the existing bottle shapes, labels, glass rims and cabinet lighting. Judge the liquid against actual product references in day and night views without introducing black flashes or an extra rendering pipeline.
+
+A small matte print of the actual KOSESS whisky lecture cover is attached with two restrained metal magnets to the closed cabinet. Selecting it approaches that physical print and opens sharp slide navigation in the room. A TV action selects the exact existing lecture and stays within the persistent office.
+
+In the enlarged television, a narrow left lecture browser groups real events by year and date. The right side contains the original slide, page arrows, thumbnails and concise event/slide context. On narrow screens the lecture list opens on demand to protect slide area. Closing retains the selected slide on the physical TV; slide controls operate only in the enlarged reader. Keep the actual television bezel and camera transition, avoiding a detached full-screen website.
+
+The bookshelf approach contains only the physical books and a compact exit control, without the redundant choose-a-book information panel. Once a book is open its meaningful bibliographic information remains available. Interface and descriptive text use English; original Korean book titles/pages and presentation slides retain their language. The Ppomppu room Easter egg remains unchanged.
