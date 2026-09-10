@@ -1,7 +1,7 @@
 .office-book-reader h2 { font-size: 24px; word-break: keep-all; overflow-wrap: anywhere; text-wrap: pretty; }
 .office-book-reader .office-frame-occasion { margin-bottom: 8px; }
 .office-book-publication { margin: 0 0 16px; color: var(--studio-muted); font-size: 12px; line-height: 1.65; }
-.office-book-info { margin-top: 12px; font-size: 12px; line-height: 1.65; }
+.office-book-info { margin-top: 12px; font-family: var(--studio-editorial); font-size: 16px; line-height: 1.65; }
 .office-book-info p { margin: 0 0 8px; overflow-wrap: anywhere; text-wrap: pretty; }
 .office-book-info a { display: inline-flex; align-items: center; min-height: 44px; color: var(--studio-teal); text-underline-offset: 4px; }
 .office-book-details summary { min-height: 44px; align-content: center; cursor: pointer; }
@@ -31,7 +31,7 @@
   .office-book-catalog { margin-top: 12px; }
 }
 
-.office-book-reader .office-frame-info-top { position: sticky; top: -24px; z-index: 1; background: var(--studio-light); }
+.office-book-reader .office-frame-info-top { position: relative; z-index: 1; background: transparent; }
 @media (max-width: 759px) { .office-book-reader .office-frame-info-top { top: -16px; } }
 
 .office-frame-info.office-bookshelf-exit {

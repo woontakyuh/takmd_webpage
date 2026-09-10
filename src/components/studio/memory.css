@@ -10,6 +10,7 @@
 .office-memory-meta { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 12px; margin: 0; color: var(--studio-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
 .office-memory-meta > span { border-left: 1px solid var(--studio-line); padding-left: 12px; }
 .office-memory-people { margin: 12px 0 0; color: var(--studio-muted); font-size: 11px; }
-.office-secret-trigger:not(:focus) { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.office-secret-trigger:focus { position: absolute; z-index: 10; top: 112px; left: 50%; transform: translateX(-50%); min-height: 44px; padding: 8px 16px; border: 1px solid var(--studio-line); border-radius: 4px; color: var(--studio-ink); background: var(--studio-light); }
+.office-secret-trigger:not(:focus-visible) { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.office-secret-trigger:focus-visible { position: absolute; z-index: 10; top: 72px; left: 50%; transform: translateX(-50%); min-height: 44px; padding: 8px 0; border: 0; border-radius: 0; color: var(--studio-ink); background: transparent; font: 18px/1.4 var(--studio-editorial); text-decoration: underline; text-underline-offset: 5px; outline: none; }
+.studio[data-night='true'] .office-secret-trigger:focus-visible { color: #f8f6f0; text-shadow: 0 1px 4px #111; }
 @media (max-width: 759px) { .office-memory { padding: 12px 16px 20px; } }

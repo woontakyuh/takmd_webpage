@@ -10,6 +10,7 @@
   --studio-soft: #769b88; --studio-clay: #ac5737; --studio-line: #cbcdc3;
   --studio-ease: cubic-bezier(.22,1,.36,1); --studio-micro: 180ms; --studio-panel: 360ms; --studio-leaf: 520ms;
   --studio-sans: 'Manrope Variable', 'Avenir Next', sans-serif;
+  --studio-editorial: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
   font-family: var(--studio-sans); color: var(--studio-ink); background: var(--studio-paper);
   font-size: 16px; line-height: 1.65; letter-spacing: -.015em;
 }
@@ -283,8 +284,8 @@
 .office-device-shortcuts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
 .office-device-shortcuts button { min-height: 36px; padding: 6px 9px; border: 1px solid var(--studio-line); border-radius: 6px; color: var(--studio-ink); background: transparent; font: inherit; cursor: pointer; }
 
-.office-approach-actions { position: fixed; right: 16px; bottom: 16px; z-index: 26; display: flex; gap: 8px; align-items: center; padding: 8px; background: var(--studio-light); color: var(--studio-ink); border: 1px solid var(--studio-line); border-radius: 4px; }
-.office-approach-actions > button { min-height: 44px; padding-inline: 12px; font-size: 13px; }
+.office-approach-actions { position: fixed; right: 16px; bottom: 16px; z-index: 26; display: flex; gap: 8px; align-items: center; color: var(--studio-ink); }
+.office-approach-actions > button { min-height: 44px; padding-inline: 12px; border: 0; background: transparent; font: 400 16px/1.4 var(--studio-editorial); }
 
 .studio:is([data-selected], [data-inspecting]) .studio-stage { min-height: 0; height: 100dvh; }
 html:has(.studio:is([data-selected], [data-inspecting])),

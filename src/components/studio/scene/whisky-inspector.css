@@ -1,24 +1,24 @@
 .whisky-inspector {
   position: absolute; transform: translateY(-50%);
   box-sizing: border-box;
-  padding: 24px; border: 1px solid var(--studio-line); border-radius: 12px;
-  color: var(--studio-ink); background: var(--studio-light); box-shadow: 0 12px 50px #202d2a14;
+  padding: 24px; border: 0; border-radius: 0;
+  color: var(--studio-ink); background: transparent; box-shadow: none;
   font: 400 14px/1.65 Manrope, sans-serif; pointer-events: auto; overflow-y: auto; overscroll-behavior: contain;
   animation: whisky-inspector-enter var(--studio-panel) var(--studio-ease) both;
 }
 .whisky-inspector-top { display: flex; justify-content: space-between; gap: 12px; color: var(--studio-muted); font-size: 11px; }
-.whisky-inspector h2 { margin: 16px 0 4px; font-size: 24px; font-weight: 500; line-height: 1.2; letter-spacing: -.035em; }
+.whisky-inspector h2 { margin: 16px 0 4px; font-family: var(--studio-editorial); font-size: 27px; font-weight: 400; line-height: 1.2; letter-spacing: -.015em; }
 .whisky-inspector .whisky-expression { margin: 0 0 20px; font-size: 12px; }
 .whisky-inspector dl { margin: 0 0 16px; padding: 12px 0; border-block: 1px solid var(--studio-line); font-size: 12px; }
 .whisky-inspector dl div { display: flex; justify-content: space-between; gap: 12px; }
 .whisky-inspector dt { color: var(--studio-muted); }
 .whisky-inspector dd { margin: 0; text-align: right; }
-.whisky-inspector p { margin: 12px 0; }
+.whisky-inspector p { margin: 12px 0; font-family: var(--studio-editorial); font-size: 16px; line-height: 1.65; }
 .whisky-inspector a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--studio-teal); font-size: 12px; }
 .whisky-inspector-actions { display: grid; gap: 8px; margin-top: 12px; }
 .whisky-inspector button, .whisky-inspector select, .whisky-cabinet-controls select {
   box-sizing: border-box; min-height: 44px; width: 100%; min-width: 0; padding: 8px;
-  border: 1px solid var(--studio-line); border-radius: 4px; background: var(--studio-light); color: var(--studio-ink); font: inherit; font-size: 12px;
+  border: 0; border-radius: 0; background: transparent; color: inherit; font: inherit; font-size: 12px;
 }
 .whisky-inspector button { cursor: pointer; }
 .whisky-inspector button:disabled { cursor: default; opacity: .6; }
@@ -47,7 +47,9 @@
 .whisky-cabinet-exit:focus-visible { outline: 2px solid var(--studio-teal); outline-offset: 0; border-radius: 4px; }
 @media (prefers-reduced-motion: reduce) { .whisky-cabinet-controls { transition: none; } }
 
-.whisky-inspector-top { position: sticky; top: -24px; z-index: 1; align-items: center; margin-top: -12px; background: var(--studio-light); }
+.whisky-inspector-top { position: relative; z-index: 1; align-items: center; margin-top: -12px; background: transparent; }
+.whisky-inspector-actions button { text-align: left; text-decoration: underline; text-underline-offset: 4px; }
+.studio[data-night='true'] .whisky-inspector { color: #f8f6f0; --studio-muted: #d5d2c8; text-shadow: 0 1px 4px #111; }
 .whisky-inspector-top button { width: 44px; flex: 0 0 44px; border: 0; padding: 12px; }
 .whisky-inspector-top svg { width: 18px; height: 18px; }
 @media (max-width: 759px) { .whisky-inspector-top { top: -16px; margin-top: -8px; } }
