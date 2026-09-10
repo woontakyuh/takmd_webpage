@@ -133,7 +133,7 @@ export function GoldAward({ channelUrl, focused, reducedMotion, onSelect, positi
         <PhotoDecal texture={textures.logo} position={[-0.00065, 0.07565, 0.005]}
           size={[296 / 1536 * ARTWORK.width, 356 / 2304 * ARTWORK.height]} />
         <PhotoDecal texture={textures.ink} position={[0, 0, 0.00765]} size={[ARTWORK.width, ARTWORK.height]} ink />
-        <GoldAwardGlow hovered={hovered} reducedMotion={reducedMotion} />
+        <GoldAwardGlow hovered={hovered} focused={focused} reducedMotion={reducedMotion} />
         <BackPlate grain={grain} />
       </group>
     </group>

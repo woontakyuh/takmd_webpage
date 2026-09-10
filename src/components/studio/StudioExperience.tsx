@@ -151,7 +151,8 @@ function OfficeExperience(content: StudioContent) {
   const openLoadingProfile = () => open('ai');
   const approach = (id: ExhibitId) => {
     if (arrangement.editing) return;
-    if (id === 'ai' || (id === 'education' && talkId !== null) || navigation.current.current.focused === id) open(id);
+    if (id === 'award') openAwardPhoto();
+    else if (id === 'ai' || id === 'family' || id === 'award-photo' || (id === 'education' && talkId !== null) || navigation.current.current.focused === id) open(id);
     else { setExplored(true); navigation.go({ focused: id, selected: null, details: null }); }
   };
   const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(0); open('books'); };
@@ -242,7 +243,9 @@ function OfficeExperience(content: StudioContent) {
         {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
         <button className="office-secret-trigger" id="studio-exhibit-books" onClick={approachBookshelf}>Browse personal books</button>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
-        <button className="office-secret-trigger" id="studio-exhibit-award" onClick={() => open('award')}>Inspect the gold award</button>
+        {selected === 'award-photo'
+          ? <a className="office-secret-trigger" id="studio-exhibit-award" href={PERSONAL_LINKS.awardShort} target="_blank" rel="noopener noreferrer">Watch the award-winning Short on YouTube (opens in a new tab)</a>
+          : <button className="office-secret-trigger" id="studio-exhibit-award" onClick={openAwardPhoto}>Inspect the gold award</button>}
         <button className="office-secret-trigger" id="studio-exhibit-award-photo" onClick={openAwardPhoto}>View the KOSESS award photograph</button>
         <a className="office-secret-trigger" href={PERSONAL_LINKS.hospital} target="_blank" rel="noopener noreferrer">Davos Hospital · physician coat (opens in a new tab)</a>
       </div>

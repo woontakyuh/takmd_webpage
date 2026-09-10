@@ -2,6 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import type { ShaderMaterial } from 'three';
 import { AdditiveBlending } from 'three';
+import { useArrangement } from '../arrangement';
 
 const vertexShader = `
   varying vec2 vUv;
@@ -27,19 +28,21 @@ const fragmentShader = `
   }
 `;
 
-export function GoldAwardGlow({ hovered, reducedMotion }: {
-  readonly hovered: boolean; readonly reducedMotion: boolean;
+export function GoldAwardGlow({ hovered, focused, reducedMotion }: {
+  readonly hovered: boolean; readonly focused: boolean; readonly reducedMotion: boolean;
 }) {
+  const { editing } = useArrangement();
+  const visible = !editing && (hovered || focused);
   const material = useRef<ShaderMaterial>(null);
   const uniforms = useMemo(() => ({ strength: { value: 0 }, phase: { value: 0 }, moving: { value: 1 } }), []);
   useFrame((_, delta) => {
     if (!material.current) return;
     const active = material.current.uniforms;
-    active.strength.value = hovered ? 1 : 0;
+    active.strength.value = visible ? hovered ? 1 : 0.55 : 0;
     active.moving.value = reducedMotion ? 0 : 1;
-    active.phase.value = hovered && !reducedMotion ? (active.phase.value + delta / 1.8) % 1 : 0;
+    active.phase.value = visible && !reducedMotion ? (active.phase.value + delta / (hovered ? 1.8 : 4.8)) % 1 : 0;
   });
-  return <mesh name="Gold award hover glow" visible={hovered} position={[-0.001, 0.076, 0.008]} raycast={() => {}}>
+  return <mesh name="Gold award hover glow" visible={visible} position={[-0.001, 0.076, 0.008]} raycast={() => {}}>
     <planeGeometry args={[0.122, 0.107]} />
     <shaderMaterial ref={material} uniforms={uniforms} vertexShader={vertexShader} fragmentShader={fragmentShader}
       transparent blending={AdditiveBlending} depthWrite={false} toneMapped={false} />

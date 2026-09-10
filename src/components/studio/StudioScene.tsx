@@ -76,7 +76,7 @@ export function StudioScene(props: StudioSceneProps) {
       <RoomSwitches onControl={props.onRoomControl} />
       <OfficeLighting palette={props.roomPalette} power={sun.lamp} tvFocused={props.selected === 'education'} />
       <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={ROOM.award.position} rotation={ROOM.award.rotation}
-        focused={props.selected === 'award'} reducedMotion={props.reducedMotion} onSelect={() => props.onSelect('award')} />
+        focused={props.selected === 'award-photo'} reducedMotion={props.reducedMotion} onSelect={props.onAwardPhoto} />
       <PersonalCorner {...props} />
       <CalendarClock reducedMotion={props.reducedMotion} />
       <Movable id="plant"><Greenery reducedMotion={props.reducedMotion} /></Movable>

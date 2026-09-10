@@ -7,7 +7,6 @@ import { ResearchFolio } from './ResearchFolio';
 import { OfficeIcon } from './OfficeIcon';
 import { AiReader } from './AiReader';
 import { PersonalReader } from './PersonalReader';
-import { PERSONAL_LINKS } from './personal';
 
 const titles = {
   spine: 'Precision, in practice.',
@@ -90,11 +89,6 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
         </div>
         <h2 id="studio-panel-title">{detailsPath ? officeDetailsTitle(detailsPath) : selected ? titles[selected] : ''}</h2>
         {detailsPath && <OfficeDetails path={detailsPath} publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}
-        {selected === 'award' && <>
-          <p className="studio-panel-intro">Select the polished gold play button to watch the award-winning Short.</p>
-          <a className="studio-panel-footer" href={PERSONAL_LINKS.awardShort} target="_blank" rel="noopener noreferrer"
-            aria-label="Watch the award-winning Short on YouTube (opens in a new tab)">Watch the Short <span aria-hidden="true">↗</span></a>
-        </>}
         {selected === 'research' && <ResearchFolio publications={publications} updatedAt={updatedAt} publication={collection.publication} media={collection.paperMedia} direction={collection.paperDirection} onPaper={id => { onPaper(id); resetScroll(); }} />}
         {selected === 'spine' && <OfficeDetails path="/ube" publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}
         {selected === 'education' && <TeachingReader presentations={presentations} selected={collection.presentation} onSelect={id => { onTalk(id); resetScroll(); }} slideIndex={talkSlideIndex} onSlide={onTalkSlide} updatedAt={presentationsUpdatedAt} />}

@@ -10,10 +10,11 @@ const EXHIBITS: readonly string[] = ['spine', 'research', 'education', 'ai', 'bj
 const isExhibit = (value: string | null): value is ExhibitId => value !== null && EXHIBITS.includes(value);
 
 export function officeViewFromUrl(url: URL): OfficeView {
-  const exhibit = url.searchParams.get('exhibit');
+  const requested = url.searchParams.get('exhibit');
+  const exhibit = requested === 'award' ? 'award-photo' : requested;
   return {
     focused: isExhibit(exhibit) ? exhibit : null,
-    selected: isExhibit(exhibit) && url.searchParams.get('stage') !== 'approach' ? exhibit : null,
+    selected: isExhibit(exhibit) && (exhibit === 'award-photo' || exhibit === 'family' || url.searchParams.get('stage') !== 'approach') ? exhibit : null,
     details: url.searchParams.get('detail'),
   };
 }
