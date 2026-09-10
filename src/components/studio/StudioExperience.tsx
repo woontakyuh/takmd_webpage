@@ -55,7 +55,7 @@ function OfficeExperience(content: StudioContent) {
   const monitorScroll = useRef({ scrollTop: 0 });
   const setSelected = useCallback((id: ExhibitId | null) => navigation.go({ focused: id, selected: id, details: null }), [navigation.go]);
   const [selectedBook, setSelectedBook] = useState<PersonalBookId>(PERSONAL_BOOKS[0].id);
-  const [bookPageIndex, setBookPageIndex] = useState(0);
+  const [bookPageIndex, setBookPageIndex] = useState(-1);
   const [bookshelfVisit, setBookshelfVisit] = useState(0);
   const [bookshelfReady, setBookshelfReady] = useState(false);
   const [familyPhoto] = useState(selectFamilyPhoto);
@@ -155,7 +155,7 @@ function OfficeExperience(content: StudioContent) {
     else if (id === 'ai' || id === 'family' || id === 'award-photo' || (id === 'education' && talkId !== null) || navigation.current.current.focused === id) open(id);
     else { setExplored(true); navigation.go({ focused: id, selected: null, details: null }); }
   };
-  const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(0); open('books'); };
+  const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(-1); open('books'); };
   const approachBookshelf = () => { setBookshelfReady(false); setBookshelfVisit(visit => visit + 1); open('bookshelf'); };
   const stepBook = useCallback((direction: 1 | -1) => {
     if (selected !== 'books') return;
