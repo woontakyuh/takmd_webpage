@@ -2,8 +2,7 @@ import { Html } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-import { Vector3 } from 'three';
-import type { Group, Object3D, Texture } from 'three';
+import type { Group, Texture } from 'three';
 import { OfficeIcon } from '../OfficeIcon';
 import { useArrangement } from '../arrangement';
 import { IsidoroBarware } from './IsidoroBarware';
@@ -31,11 +30,9 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const { editing } = useArrangement();
   const size = useThree(state => state.size);
   const [open, setOpen] = useState(false);
-  const [focused, setFocused] = useState(false);
   const [selection, setSelection] = useState<WhiskyInspectionState>(null);
   const cabinet = useRef<Group>(null);
-  const handle = useRef<Object3D | null>(null);
-  const handlePoint = useRef(new Vector3());
+  const opening = useRef(false);
   const closing = useRef(false);
   const { inspection, setInspection } = useSceneInspection();
   const lectureActive = inspection?.id === 'whisky-lecture';
@@ -44,7 +41,12 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const ready = useIsidoroMotion(doorPivot, worktopPivot, open, reducedMotion, editing);
   const barware = useRef<Group>(null);
   const bottles = useRef<Group>(null);
-  useFrame(() => {
+  useFrame(({ camera }) => {
+    if (opening.current && inspection?.id === 'whisky-cabinet'
+      && Math.hypot(...inspection.position.map((value, index) => value - camera.position.getComponent(index))) < 0.035) {
+      opening.current = false;
+      setOpen(true);
+    }
     const exposed = (open && !editing) || (doorPivot.current?.rotation.y ?? 0) !== 0;
     if (barware.current) barware.current.visible = exposed;
     if (bottles.current) bottles.current.visible = exposed;
@@ -56,8 +58,8 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const toggle = useCallback(() => {
     if (editing) return;
     if (!open) {
+      opening.current = true;
       approachCabinet();
-      if (approached) setOpen(true);
       return;
     }
     if (open && selection) {
@@ -65,8 +67,8 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       setSelection(current => returnWhiskyBottle(current, true));
       approachCabinet();
     } else setOpen(value => !value);
-  }, [approached, approachCabinet, editing, open, selection]);
-  const { hovered, handlers } = useCabinetAction({ disabled: editing, onActivate: toggle });
+  }, [approachCabinet, editing, open, selection]);
+  const { handlers } = useCabinetAction({ disabled: editing, onActivate: toggle });
   const chooseBottle = useCallback((id: WhiskyBottleId) => {
     if (!ready || !cabinet.current) return;
     closing.current = false;
@@ -86,7 +88,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     setInspection(null);
   }, [setInspection]);
   useEffect(() => {
-    if (editing) { closing.current = false; setOpen(false); setSelection(null); }
+    if (editing) { opening.current = false; closing.current = false; setOpen(false); setSelection(null); }
   }, [editing]);
   useEffect(() => {
     if (selection || !closing.current) return;
@@ -95,6 +97,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   }, [selection]);
   useEffect(() => {
     if (approached) return;
+    opening.current = false;
     closing.current = true;
     setSelection(current => returnWhiskyBottle(current, true));
     if (!selection) setOpen(false);
@@ -117,7 +120,6 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     const pose = inspection.id.startsWith('whisky:') ? whiskyInspectionPose(cabinet.current, size) : whiskyCabinetPose(cabinet.current, size);
     setInspection({ id: inspection.id, ...pose });
   }, [approached, inspection, setInspection, size]);
-  const controlsVisible = !editing && !lectureActive && (hovered || focused || approached);
   return <group ref={cabinet} name="Poltrona Frau Isidoro drinks cabinet"
     userData={{
       product: 'Poltrona Frau Isidoro',
@@ -146,23 +148,10 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       </group>
     </WhiskyCabinetDoor>
     <IsidoroWorktop open={open} pivot={worktopPivot} wood={wood} disabled={editing} />
-    <Html center zIndexRange={[17, 11]} calculatePosition={(_object, camera, viewport) => {
-      handle.current ??= cabinet.current?.getObjectByName('Pelle Frau carry handle') ?? null;
-      if (!handle.current) return [-100, -100];
-      handle.current.updateWorldMatrix(true, false);
-      const point = handle.current.localToWorld(handlePoint.current.set(-0.045, 0, -0.022)).project(camera);
-      return [Math.max(22, Math.min(viewport.width - 22, (point.x + 1) * viewport.width / 2 + 24)),
-        Math.max(22, Math.min(viewport.height - 22, (1 - point.y) * viewport.height / 2))];
-    }}>
-      <div className="whisky-cabinet-controls" role="group" aria-label="Poltrona Frau Isidoro drinks cabinet"
-        onFocusCapture={() => setFocused(true)}
-        onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
-        onPointerEnter={() => setFocused(true)} onPointerLeave={() => setFocused(false)}
-        onPointerDown={event => event.stopPropagation()} onDoubleClick={event => event.stopPropagation()}
-        style={{ opacity: editing || lectureActive ? 0 : controlsVisible ? 1 : 0.6, pointerEvents: editing || lectureActive ? 'none' : 'auto' }}>
-        <button className="whisky-handle-marker" type="button" disabled={editing || lectureActive} aria-label={`${open ? 'Close' : 'Open'} Isidoro drinks cabinet`}
-          aria-expanded={open} onClick={toggle}><span aria-hidden="true" /></button>
-      </div>
+    <Html fullscreen zIndexRange={[17, 11]} style={{ pointerEvents: 'none' }}
+      calculatePosition={(_object, _camera, viewport) => [viewport.width / 2, viewport.height / 2]}>
+      <button className="office-secret-trigger" type="button" disabled={editing || lectureActive}
+        aria-expanded={open} onClick={toggle}>{open ? 'Close' : 'Open'} Isidoro drinks cabinet</button>
     </Html>
     {approached && !selection && <Html fullscreen zIndexRange={[18, 12]} style={{ pointerEvents: 'none' }}
       calculatePosition={(_object, _camera, viewport) => [viewport.width / 2, viewport.height / 2]}>

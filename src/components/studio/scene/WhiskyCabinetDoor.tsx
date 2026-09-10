@@ -6,7 +6,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { MathUtils } from 'three';
 import type { Group, Texture } from 'three';
 import { PALETTE } from './config';
-import { IsidoroOpeningHalf } from './IsidoroCabinetGeometry';
+import { IsidoroGripMarker, IsidoroOpeningHalf } from './IsidoroCabinetGeometry';
 import { Block, Rod } from './Primitives';
 import { cancelSceneSingleAction, scheduleSceneSingleAction } from './sceneGesture';
 import { ISIDORO_DIMENSIONS, ISIDORO_OPEN_ANGLE, ISIDORO_WORKTOP_HEIGHT } from './WhiskyCabinetLayout';
@@ -145,9 +145,10 @@ export function WhiskyCabinetDoor({ open, wood, pivot, children, exterior, ...ac
   return <group ref={pivot} name="Isidoro book-opening mobile half"
     position={[ISIDORO_DIMENSIONS.width / 2, 0, 0]}
     userData={{ open: open && !action.disabled, angle: target }} {...(!open ? handlers : {})}>
-    <group scale={[-1, 1, 1]}><IsidoroOpeningHalf wood={wood}>{children}</IsidoroOpeningHalf></group>
+    <group scale={[-1, 1, 1]}><IsidoroOpeningHalf wood={wood} marker={!open && !action.disabled}>{children}</IsidoroOpeningHalf></group>
     {exterior}
     {open && <group name="Isidoro left outer edge and leather handle close target" {...handlers}>
+      {!action.disabled && <group position={[-0.7105, 0.62, -0.1275]} rotation={[0, -Math.PI / 2, 0]}><IsidoroGripMarker /></group>}
       <mesh position={[-0.6975, 0.595, -0.1275]}>
         <boxGeometry args={[0.050, 1.12, 0.285]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />

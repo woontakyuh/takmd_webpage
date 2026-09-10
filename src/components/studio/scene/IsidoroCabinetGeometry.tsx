@@ -113,7 +113,7 @@ export function IsidoroFixedHalf({ wood, children }: { readonly wood: Texture; r
   </group>;
 }
 
-export function IsidoroOpeningHalf({ wood, children }: { readonly wood: Texture; readonly children: ReactNode }) {
+export function IsidoroOpeningHalf({ wood, children, marker }: { readonly wood: Texture; readonly children: ReactNode; readonly marker: boolean }) {
   return <group position={[ISIDORO_DIMENSIONS.width / 2, 0, -HALF_DEPTH / 2]}>
     <HalfShell interiorSide={1} moving wood={wood}>
       <group name="bottle collection with unmirrored labels" scale={[-1, 1, 1]}>{children}</group>
@@ -122,6 +122,7 @@ export function IsidoroOpeningHalf({ wood, children }: { readonly wood: Texture;
       <Rod from={[-0.018, -0.11, 0]} to={[-0.045, -0.075, -0.022]} radius={0.007} color={CHROME} metalness={0.84} />
       <Rod from={[-0.045, -0.075, -0.022]} to={[-0.045, 0.075, -0.022]} radius={0.012} color={LEATHER} />
       <Rod from={[-0.045, 0.075, -0.022]} to={[-0.018, 0.11, 0]} radius={0.007} color={CHROME} metalness={0.84} />
+      {marker && <group position={[-0.045, 0, -0.0345]} rotation={[0, Math.PI, 0]}><IsidoroGripMarker /></group>}
     </group>
     {[0.34, 0.83].map(y => <group key={y} name="chrome combination snap lock"
       position={[0.31, y, -HALF_DEPTH / 2 - 0.014]}>
@@ -129,5 +130,18 @@ export function IsidoroOpeningHalf({ wood, children }: { readonly wood: Texture;
       {[-0.016, 0, 0.016].map(offset => <Block key={offset} size={[0.024, 0.009, 0.005]}
         position={[0, offset, -0.011]} color={PALETTE.ink} radius={0.002} roughness={0.35} />)}
     </group>)}
+  </group>;
+}
+
+export function IsidoroGripMarker() {
+  return <group name="Isidoro grip marker">
+    <mesh>
+      <circleGeometry args={[0.006, 24]} />
+      <meshBasicMaterial color={PALETTE.teal} />
+    </mesh>
+    <mesh>
+      <ringGeometry args={[0.006, 0.008, 24]} />
+      <meshBasicMaterial color={PALETTE.paperLight} />
+    </mesh>
   </group>;
 }
