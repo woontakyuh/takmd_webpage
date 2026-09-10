@@ -5,6 +5,7 @@ import {
 } from 'three';
 import { createBanpoLandscape } from './BanpoLandscape';
 import { ROOM } from './config';
+import { createWindowRegionProjector, cropExteriorCamera } from './WindowRenderRegion';
 
 const vertexShader = `
   varying vec3 vWorldPosition;
@@ -19,6 +20,7 @@ const vertexShader = `
 const fragmentShader = `
   uniform sampler2D uExterior;
   uniform vec2 uResolution;
+  uniform vec2 uOrigin;
   uniform float uPortalX;
   uniform vec4 uPortalBounds;
   varying vec3 vWorldPosition;
@@ -30,7 +32,7 @@ const fragmentShader = `
     vec3 portalPoint = cameraPosition + ray * portalDistance;
     if (portalPoint.z < uPortalBounds.x || portalPoint.z > uPortalBounds.y
       || portalPoint.y < uPortalBounds.z || portalPoint.y > uPortalBounds.w) discard;
-    gl_FragColor = texture2D(uExterior, gl_FragCoord.xy / uResolution);
+    gl_FragColor = texture2D(uExterior, (gl_FragCoord.xy - uOrigin) / uResolution);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
@@ -69,9 +71,12 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
       new Vector3(leftX + 0.05, opening.top, opening.centerZ + opening.width / 2),
     ),
   }), [leftX, opening.bottom, opening.top, opening.centerZ, opening.width]);
+  const regionFor = useMemo(() => createWindowRegionProjector(visibility.opening), [visibility]);
+  const bufferSize = useMemo(() => new Vector2(), []);
   const uniforms = useMemo(() => ({
     uExterior: { value: output.texture },
     uResolution: { value: new Vector2(1, 1) },
+    uOrigin: { value: new Vector2() },
     uPortalX: { value: leftX - 0.04 },
     uPortalBounds: { value: new Vector4(
       opening.centerZ - opening.width / 2,
@@ -90,13 +95,17 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
     visibility.matrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     visibility.frustum.setFromProjectionMatrix(visibility.matrix);
     if (!visibility.frustum.intersectsBox(visibility.opening)) return;
-    gl.getDrawingBufferSize(uniforms.uResolution.value);
-    const { x: width, y: height } = uniforms.uResolution.value;
-    if (output.width !== width || output.height !== height) output.setSize(width, height);
+    gl.getDrawingBufferSize(bufferSize);
+    const { x: width, y: height } = bufferSize;
+    const region = regionFor(camera, width, height);
+    uniforms.uResolution.value.set(region.width, region.height);
+    uniforms.uOrigin.value.set(region.x, height - region.y - region.height);
+    if (output.width !== region.width || output.height !== region.height) output.setSize(region.width, region.height);
     exteriorCamera.copy(camera);
     exteriorCamera.position.add(exterior.cameraOffset);
     exteriorCamera.far = 12000;
     exteriorCamera.updateProjectionMatrix();
+    cropExteriorCamera(exteriorCamera, region, width, height);
     exteriorCamera.updateMatrixWorld();
     exterior.setTime(reducedMotion ? 0 : clock.elapsedTime);
 

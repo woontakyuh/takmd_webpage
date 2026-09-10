@@ -1,5 +1,5 @@
 import { Html } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Vector3 } from 'three';
@@ -42,6 +42,13 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const doorPivot = useRef<Group>(null);
   const worktopPivot = useRef<Group>(null);
   const ready = useIsidoroMotion(doorPivot, worktopPivot, open, reducedMotion, editing);
+  const barware = useRef<Group>(null);
+  const bottles = useRef<Group>(null);
+  useFrame(() => {
+    const exposed = (open && !editing) || (doorPivot.current?.rotation.y ?? 0) !== 0;
+    if (barware.current) barware.current.visible = exposed;
+    if (bottles.current) bottles.current.visible = exposed;
+  });
   const approached = inspection?.id === 'whisky-cabinet' || inspection?.id.startsWith('whisky:') === true;
   const approachCabinet = useCallback(() => {
     if (cabinet.current) setInspection({ id: 'whisky-cabinet', ...whiskyCabinetPose(cabinet.current, size) });
@@ -124,13 +131,15 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       onPointerDown: stopInteriorClick, onPointerUp: stopInteriorClick, onClick: stopInteriorClick,
     })}>
     <IsidoroFixedHalf wood={wood}>
+      <group ref={barware} name="Enclosed Isidoro barware">
       <IsidoroBarware />
       <IsidoroInteriorLighting lowerShelf={0.905} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />
+      </group>
     </IsidoroFixedHalf>
     <WhiskyCabinetDoor open={open} pivot={doorPivot} wood={wood}
       exterior={<Suspense fallback={null}><WhiskyLectureCard open={open} disabled={editing} /></Suspense>}
       disabled={editing} onActivate={toggle}>
-      <group name="complete seven-bottle whisky and Armagnac collection">
+      <group ref={bottles} name="complete seven-bottle whisky and Armagnac collection">
         <Suspense fallback={null}><WhiskyCollection cabinet={cabinet} selection={selection}
           enabled={ready && !editing} reducedMotion={reducedMotion || editing} onSelect={chooseBottle} onReturned={returned} /></Suspense>
         <IsidoroInteriorLighting lowerShelf={0.705} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />

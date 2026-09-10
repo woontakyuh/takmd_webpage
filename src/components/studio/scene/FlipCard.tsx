@@ -79,10 +79,10 @@ export function FlipCard({ value, size, position, reducedMotion }: Props) {
       <meshStandardMaterial map={face.flipping ? previous.color : current.color} emissiveMap={face.flipping ? previous.numerals : current.numerals} emissive={CLOCK.numeral} emissiveIntensity={0.42} roughness={0.9} />
     </mesh>
     {face.flipping && <group ref={leaf} position={[0, 0, 0.002]}>
-      <mesh geometry={halves[0]} position={[0, height / 4, 0.0005]} castShadow>
+      <mesh geometry={halves[0]} position={[0, height / 4, 0.0005]}>
         <meshStandardMaterial map={previous.color} emissiveMap={previous.numerals} emissive={CLOCK.numeral} emissiveIntensity={0.42} roughness={0.9} />
       </mesh>
-      <mesh geometry={halves[1]} position={[0, height / 4, -0.0005]} rotation={[Math.PI, 0, 0]} castShadow>
+      <mesh geometry={halves[1]} position={[0, height / 4, -0.0005]} rotation={[Math.PI, 0, 0]}>
         <meshStandardMaterial map={current.color} emissiveMap={current.numerals} emissive={CLOCK.numeral} emissiveIntensity={0.42} roughness={0.9} />
       </mesh>
     </group>}

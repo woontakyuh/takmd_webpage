@@ -2,6 +2,7 @@ import { BookshelfBooks } from './scene/BookshelfBooks';
 import { Movable } from './scene/Movable';
 import { Canvas } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
+import { useEffect, useRef, useState } from 'react';
 import { MathUtils, PCFSoftShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { GoldAward } from './scene/GoldAward';
@@ -35,11 +36,25 @@ const ROOM_ENVIRONMENT = (
 );
 
 export function StudioScene(props: StudioSceneProps) {
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [visible, setVisible] = useState(true);
+  useEffect(() => {
+    let inViewport = true;
+    const update = () => setVisible(inViewport && !document.hidden);
+    const observer = new IntersectionObserver(entries => {
+      inViewport = entries.some(entry => entry.isIntersecting);
+      update();
+    });
+    if (canvas.current) observer.observe(canvas.current);
+    document.addEventListener('visibilitychange', update);
+    update();
+    return () => { observer.disconnect(); document.removeEventListener('visibilitychange', update); };
+  }, []);
   const { sun, position } = props.lighting;
   const skyFill = MathUtils.smoothstep(sun.altitude, -6, 32);
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
-    <Canvas frameloop={props.paused && props.ready ? 'never' : 'always'} camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
+    <Canvas ref={canvas} frameloop={!visible || (props.paused && props.ready) ? 'never' : 'always'} camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
       dpr={[1, props.selected === 'books' ? 2 : props.compact ? 1 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
