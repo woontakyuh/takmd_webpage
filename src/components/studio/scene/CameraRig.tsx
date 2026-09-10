@@ -373,7 +373,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     }
     const compactReader = selected === 'family' || selected === 'books' || selected === 'bookshelf';
     const xOffset = compact ? 0 : (compactReader ? 352 : SIDE_READER_SPACE) / 2;
-    const yOffset = compact ? size.height * 0.24 : 0;
+    const yOffset = compact ? size.height * (selected === 'research' ? 0.16 : 0.24) : 0;
     camera.setViewOffset(size.width, size.height, xOffset, yOffset, size.width, size.height);
     camera.updateProjectionMatrix();
     return () => {

@@ -70,7 +70,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   bookshelf: { position: [-1.875, 2.12, 2.35], target: [-1.875, 2.145, 3.004], zoom: 1 },
   books: { position: [-1.80, 1.64, 1.87], target: [-1.80, 1.25, 2.15], zoom: 1 },
   spine: { position: [-0.45, 1.6, 0.17], target: [-2.38, 0.9, 1.22], zoom: 1 },
-  research: { position: [0.3404624, 1.5433712, -2.4836712], target: [0.5432, 0.8, -1.632], zoom: 1 },
+  research: { position: [0.2874, 1.2297, -2.15], target: [0.405, 0.7985, -1.656], zoom: 1 },
   education: { position: [0, 1.943, 1.02], target: [0, 1.943, 3.22], zoom: 1 },
   ai: { position: [0.03, 1.255, -2.2], target: [-0.05, 1.155, -1.2], zoom: 1 },
   family: { position: [0.604, 0.96, -1.74], target: [0.67, 0.87, -1.27], zoom: 1 },
@@ -91,7 +91,7 @@ export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   bookshelf: FOCUS.bookshelf,
   books: FOCUS.books,
   spine: { position: [-0.3, 1.9, -0.28], target: [-2.38, 0.9, 1.22], zoom: 1 },
-  research: { position: [0.232588, 2.0294672, -2.5434376], target: [0.5432, 0.8, -1.632], zoom: 1 },
+  research: { position: [0.3215, 1.5566, -1.9865], target: [0.392, 0.7985, -1.658], zoom: 1 },
   education: FOCUS.education,
   ai: FOCUS.ai,
   family: FOCUS.family,
@@ -116,6 +116,13 @@ export function focusFov(id: ExhibitId | null, compact: boolean, width: number, 
   if (id === 'education') {
     const distance = ROOM.gallery.position[2] - WALL_TV.depth / 2 - .001 - FOCUS.education.position[2];
     return 2 * Math.atan(WALL_TV.screenWidth * height / (2 * distance * tvReadingSize(width, height))) * 180 / Math.PI;
+  }
+  if (id === 'research') {
+    const pose = compact ? MOBILE_FOCUS.research : FOCUS.research;
+    const distance = Math.hypot(...pose.position.map((value, index) => value - pose.target[index]));
+    const availableWidth = Math.max(32, width - (compact ? 44 : SIDE_READER_SPACE + 64));
+    const pageWidth = compact ? 0.4 : 0.44;
+    return Math.max(base, 2 * Math.atan(pageWidth * height / (2 * distance * availableWidth)) * 180 / Math.PI);
   }
   if (id === 'family' || id === 'award-photo' || id === 'books') {
     const pose = FOCUS[id];

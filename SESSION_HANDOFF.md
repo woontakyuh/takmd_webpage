@@ -2,7 +2,7 @@
 
 ## Current physical refinements — 10 September evening
 
-The Halo 2 dial is beside the Mac mini at the back of the desk. Every personal book starts at its closed cover, including books with photographed inner pages; cover/next opens the content. Research folio focus is closer and centered on the complete open spread, with separate desktop/mobile distances that preserve both page edges.
+The Halo 2 dial is beside the Mac mini at the back of the desk. Every personal book starts at its closed cover, including books with photographed inner pages; cover/next opens the content. Research folio focus now centers on the printed right page, about 1.7 times wider on both desktop and mobile than the complete-spread framing. Blank left-cover area may extend beyond the viewport; its visible inner portion still accepts previous-page clicks. Responsive FOV keeps the printed page clear of the details panel. On mobile, the details panel is limited to 32dvh and the paper is viewed more from above, leaving the upper two-thirds for the book; details still scroll and expand. New evidence and release receipt: `.omo/evidence/folio-readable-2026-09-10/`. Measured performance diagnosis and the prioritized follow-up plan: `docs/office-performance-2026-09-10.md`; no diagnostic quality reductions are shipped.
 
 The complete focused gold plaque opens the original winning Short, matching its full-plaque hover. Distant plaque/photo clicks still approach the same pair and show the caption. Cabinet grip markers have been removed entirely; real handle/free-edge pointer targets remain. The A3 magnetic sheet is tilted four degrees with subtle static paper curl/crease, and becomes flat in its sharp slide viewer.
 
