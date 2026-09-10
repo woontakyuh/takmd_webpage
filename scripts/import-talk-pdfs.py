@@ -32,6 +32,16 @@ PROTECTED_DECKS = {
         'public_digest': '73a8e9157c27',
         'pages': {21},
     },
+    '375908af25b9809bace8c400da57f817': {
+        'source_sha256': '33cf07e56651b0347a22404faa75c3d10aa921bbffb96d04f46cc29f196f361c',
+        'public_digest': '4cacc0225e1b',
+        'pages': {14, 22},
+    },
+    '37b908af25b980e2bcaaf32b9487ba87': {
+        'source_sha256': '471d2cc108d899a913d5d08deeb3272fc9d74293fa713fa1f8e2c1802dc1c072',
+        'public_digest': '20a38f2b3f9d',
+        'pages': {5, 11},
+    },
 }
 
 

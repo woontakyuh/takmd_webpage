@@ -68,6 +68,27 @@ Both August KOSESS titles already belong to ID `1d1908af25b9805d9696fb9ba4ccc593
 
 Geriatric ERAS page 14, Nanoori page 11, and November KOMISS page 21 repeat an internal project screenshot. Only employee-number, email/extension, and mobile-contact cells were masked in temporary publication copies. Names, roles, headings, and clinical content remain visible. Future imports of these exact sources must repeat those narrow masks. Only the resulting page images and thumbnails enter public assets; original PDFs remain unchanged in Dropbox. The import receipt records source and derivative hashes, exact rectangles, page order, and checks that unrelated meeting records remain unchanged.
 
+## Completed incoming additions, September 10, 2026
+
+The next inventory found four new curated PDFs (51 pages), no updated earlier PDFs, and no added or updated photos. All 18 previously imported PDF sources and all eight Spine Summit photo sources were byte-identical to their earlier receipts. The dedicated incoming folder contained no PDFs. No supplied `TVPDF_` or `TVIMG` source remains unmatched or pending.
+
+| Existing meeting date | Meeting | New curated source | Pages | Presentation ID |
+| --- | --- | --- | --- | --- |
+| 2025-07-10 | KASS 2025 | TVPDF_KASS2025.pdf | 7 | `1d4908af25b9800ebf57cd2ce51d47d5` |
+| 2025-11-06 | ThaiSMISST 2025 | TVPDF_ThaiSMISST.pdf | 10 | `256908af25b98023b8beeb0cc3d039cc` |
+| 2026-06-04 | Wills Memorial Hospital AI Workflow Lecture | TVPDF_wiltse.pdf | 23 | `375908af25b9809bace8c400da57f817` |
+| 2026-07-02 | GeneCker AI Lecture | TVPDF_genecker.pdf | 11 | `37b908af25b980e2bcaaf32b9487ba87` |
+
+ThaiSMISST's folder is dated November 7; the deck's cover identifies the November 5–8 meeting and its slide date is November 8. Its speaker and exact title match the existing November 6 presentation record. Explicit ID metadata retains that existing event date. GeneCker's cover confirms its July 2, 2026 lecture and the title “AI, Data, Context, Memory, and AX.”
+
+Every new page was visually reviewed. Wills page 14 masks only manuscript-title cells in an internal editor/reviewer table, and page 22 masks only the private remote-control session address. GeneCker page 5 masks only a third-party recipient address, and page 11 masks only the personal mobile-contact line; the public website and speaker email remain visible. Private publication copies preserve all other content and page order. For GeneCker page 11, a temporary vector cover avoids image-decoder changes outside the mask; only flattened WebP images are public. None of the publication PDFs or source PDFs enters `public/`.
+
+These four audited pages retain 1920px images and 320px thumbnails with no HD copy. The importer's source-hash contracts retain those approved pages on repeat imports and reject changed protected sources. Earlier approved masks, combined-deck order, and photo framing remain unchanged. Evidence, exact source/publication hashes, mask rectangles, source comparison, and asset checks are recorded in `.omo/evidence/office-performance-river-2026-09-10/lectures/`.
+
+Register each protected public page in `src/components/studio/publicSlideSource.ts` as well as the importer. The TV, teaching reader, enlarged viewer, and whisky lecture card share this HD-source boundary. Run `bun test scripts/publicSlideSource.test.ts` after imports: it checks every manifest slide/photo against files on disk, verifies protected pages use standard images with no HD derivative, and confirms unprotected complete-deck pages retain HD images.
+
+The integrated 2025/2026 collection now contains 22 curated PDFs, presented as 21 complete event decks with 359 pages, plus the existing eight-photo Spine Summit collection. The original 2024-and-earlier deferral remains in place. Events without a supplied curated deck remain metadata-only; this import does not infer public content from other files in their meeting folders.
+
 ## Dedicated incoming folder
 
 Place one publication-ready deck per meeting under:
@@ -88,7 +109,7 @@ python3 scripts/import-talk-pdfs.py --source '/absolute/path/to/홈페이지 발
 bun run build
 ```
 
-Requires Python with Pillow and Poppler (`pdfinfo`, `pdftoppm`). The bundled Codex Python runtime has Pillow. The importer renders from the PDF at up to 3840px, writes an on-demand `.hd.webp` reader image, a 1920px room image and separate 320px thumbnails, merges the public slide manifest, and skips unchanged decks. Four audited pages retain their approved 1920px images with no HD copy. Explicit source-hash contracts preserve their existing public pages on repeat imports and reject a changed protected source until its redactions are reviewed. Unknown or ambiguous meetings are rejected before manifest changes. Original PDFs remain in Dropbox and are not copied into the public build.
+Requires Python with Pillow and Poppler (`pdfinfo`, `pdftoppm`). The bundled Codex Python runtime has Pillow. The importer renders from the PDF at up to 3840px, writes an on-demand `.hd.webp` reader image, a 1920px room image and separate 320px thumbnails, merges the public slide manifest, and skips unchanged decks. Eight audited pages retain their approved 1920px images with no HD copy. Explicit source-hash contracts preserve their existing public pages on repeat imports and reject a changed protected source until its redactions are reviewed. Unknown or ambiguous meetings are rejected before manifest changes. Original PDFs remain in Dropbox and are not copied into the public build.
 
 The reader displays one page and preloads its next page. Thumbnail navigation uses the separate small images. Focused TV and larger slide readers choose the HD image for large or high-density displays; room textures retain the smaller image. The HD image is requested only for the selected reading page, not for every page at entry. Meeting navigation on the wall TV and in the detail reader shares the same selected meeting; changing meetings resets to slide 1.
 
