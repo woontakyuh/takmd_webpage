@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { MONITOR_CV_HEIGHT, MONITOR_CV_WIDTH, MonitorCvSurface } from './MonitorCvSurface';
 import type { MonitorScrollState } from './MonitorCvSurface';
+import { activeOfficePosterVariant } from './officePosterConfig';
 import { MONITOR } from './scene/config';
 
 type Props = {
@@ -9,11 +10,6 @@ type Props = {
   readonly onClose: () => void;
   readonly scrollState?: MonitorScrollState;
 };
-
-const POSTER_MONITOR = {
-  desktop: { width: 1440, height: 900, x: 739, y: 483, across: [89, -21], down: [2, 70] },
-  mobile: { width: 390, height: 844, x: 165, y: 424, across: [39, -2], down: [0, 24] },
-} as const;
 
 export function LoadingMonitorReader({ publicationCount, presentationCount, onClose, scrollState }: Props) {
   const frame = useRef<HTMLDivElement>(null);
@@ -24,13 +20,14 @@ export function LoadingMonitorReader({ publicationCount, presentationCount, onCl
     const element = bezel.current;
     const poster = overlay.current?.closest('.studio')?.querySelector('.office-poster img');
     if (!element || !poster || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const source = window.matchMedia('(max-width: 759px)').matches ? POSTER_MONITOR.mobile : POSTER_MONITOR.desktop;
+    const source = activeOfficePosterVariant(media => window.matchMedia(media).matches);
+    if (!source) return;
     const image = poster.getBoundingClientRect();
     const target = element.getBoundingClientRect();
     const fit = Math.max(image.width / source.width, image.height / source.height);
-    const x = image.left + (image.width - source.width * fit) / 2 + source.x * fit - target.left;
-    const y = image.top + (image.height - source.height * fit) / 2 + source.y * fit - target.top;
-    const transform = `matrix(${source.across[0] * fit / target.width}, ${source.across[1] * fit / target.width}, ${source.down[0] * fit / target.height}, ${source.down[1] * fit / target.height}, ${x}, ${y})`;
+    const x = image.left + (image.width - source.width * fit) / 2 + source.monitor.x * fit - target.left;
+    const y = image.top + (image.height - source.height * fit) / 2 + source.monitor.y * fit - target.top;
+    const transform = `matrix(${source.monitor.across[0] * fit / target.width}, ${source.monitor.across[1] * fit / target.width}, ${source.monitor.down[0] * fit / target.height}, ${source.monitor.down[1] * fit / target.height}, ${x}, ${y})`;
     const motion = getComputedStyle(element);
     const panelDuration = motion.getPropertyValue('--studio-panel').trim();
     const animation = element.animate([{ transform, opacity: 0.65 }, { offset: 0.25, opacity: 1 }, { transform: 'none', opacity: 1 }], {

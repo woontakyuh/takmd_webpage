@@ -18,9 +18,11 @@ type Props = {
   readonly onTalk: (id: string | null) => void;
   readonly onSlide: (index: number) => void;
   readonly onClose: () => void;
+  readonly treeScrollOffset?: number;
+  readonly onTreeScrollOffset?: (offset: number) => void;
 };
 
-export function TvScreenReader({ active, hovered, talk, slide, presentations, onTalk, onSlide, onClose }: Props) {
+export function TvScreenReader({ active, hovered, talk, slide, presentations, onTalk, onSlide, onClose, treeScrollOffset, onTreeScrollOffset }: Props) {
   const size = useThree(state => state.size);
   const width = tvReadingSize(size.width, size.height);
   const small = width < 700;
@@ -96,7 +98,8 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
         <button aria-label="Show lecture information" aria-expanded={infoOpen} onClick={() => { setInfoOpen(value => !value); setRailOpen(false); }}>About</button>
       </header>}
       <div className="tv-screen-content">
-        <TvLectureTree presentations={presentations} selected={talk?.id} onSelect={id => { onTalk(id); setRailOpen(false); setInfoOpen(false); }} />
+        <TvLectureTree presentations={presentations} selected={talk?.id} scrollOffset={treeScrollOffset} onScrollOffset={onTreeScrollOffset}
+          onSelect={id => { onTalk(id); setRailOpen(false); setInfoOpen(false); }} />
         <div className="tv-screen-stage">
         <div className="tv-screen-image" data-photos={photos}>
           {activeSlide && source ? <>

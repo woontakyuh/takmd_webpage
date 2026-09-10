@@ -1,24 +1,28 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { Presentation } from '../types';
 
-export function TvLectureTree({ presentations, selected, onSelect }: {
+export function TvLectureTree({ presentations, selected, onSelect, scrollOffset = 0, onScrollOffset }: {
   readonly presentations: readonly Presentation[];
   readonly selected: string | undefined;
   readonly onSelect: (id: string) => void;
+  readonly scrollOffset?: number;
+  readonly onScrollOffset?: (offset: number) => void;
 }) {
   const tree = useRef<HTMLElement>(null);
+  const initialScrollOffset = useRef(scrollOffset);
   const attachTree = useCallback((element: HTMLElement | null) => {
     tree.current = element;
     if (!element) return;
     const observer = new IntersectionObserver(entries => {
       if (!entries.some(entry => entry.isIntersecting)) return;
-      element.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'nearest' });
+      if (initialScrollOffset.current === 0) element.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'nearest' });
       observer.disconnect();
     });
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
   const selectedYear = presentations.find(talk => talk.id === selected)?.date.slice(0, 4);
+  const previousSelectedYear = useRef(selectedYear);
   const [expanded, setExpanded] = useState<readonly string[]>(selectedYear ? [selectedYear] : []);
   const years = useMemo(() => {
     const ordered = presentations.toSorted((a, b) => b.date.localeCompare(a.date));
@@ -27,14 +31,31 @@ export function TvLectureTree({ presentations, selected, onSelect }: {
         .map(date => ({ date, talks: ordered.filter(talk => talk.date === date) })),
     }));
   }, [presentations]);
+  useLayoutEffect(() => {
+    const element = tree.current;
+    if (element) element.scrollTop = initialScrollOffset.current * element.clientHeight;
+  }, []);
   useEffect(() => {
-    if (selectedYear) setExpanded(current => current.includes(selectedYear) ? current : [...current, selectedYear]);
-  }, [selectedYear]);
+    if (!selectedYear) return;
+    setExpanded([selectedYear]);
+    if (previousSelectedYear.current !== selectedYear) {
+      const element = tree.current;
+      if (element) element.scrollTop = 0;
+      onScrollOffset?.(0);
+    }
+    previousSelectedYear.current = selectedYear;
+  }, [onScrollOffset, selectedYear]);
   useEffect(() => {
-    tree.current?.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'nearest' });
-  }, [expanded, selected]);
+    const frame = requestAnimationFrame(() => {
+      const element = tree.current;
+      if (initialScrollOffset.current === 0) element?.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'nearest' });
+      if (element) onScrollOffset?.(element.scrollTop / Math.max(1, element.clientHeight));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [expanded, onScrollOffset, selected]);
 
-  return <nav ref={attachTree} className="tv-lecture-tree" aria-label="Lectures by year and date">
+  return <nav ref={attachTree} className="tv-lecture-tree" aria-label="Lectures by year and date"
+    onScroll={event => onScrollOffset?.(event.currentTarget.scrollTop / Math.max(1, event.currentTarget.clientHeight))}>
     <p className="tv-lecture-index-label">LECTURE ARCHIVE</p>
     {years.map(({ year, dates }) => <div key={year} className="tv-lecture-year">
       <button className="tv-lecture-year-toggle" aria-expanded={expanded.includes(year)} aria-controls={`tv-year-${year}`}

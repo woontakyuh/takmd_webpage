@@ -1,6 +1,6 @@
 .office-poster { position: absolute; inset: 0; z-index: 2; background: var(--studio-paper); opacity: 1; transition: opacity 450ms ease, visibility 450ms; pointer-events: none; }
 .office-poster picture, .office-poster img { display: block; width: 100%; height: 100%; }
-.office-poster img { object-fit: cover; }
+.office-poster img { object-fit: cover; object-position: center; }
 .office-poster[data-ready="true"] { opacity: 0; visibility: hidden; }
 .office-poster-status { position: absolute; left: 50%; bottom: 180px; transform: translateX(-50%); display: grid; gap: 5px; width: max-content; max-width: calc(100% - 32px); padding: 12px 18px; border: 1px solid var(--studio-line); border-radius: 10px; background: color-mix(in srgb, var(--studio-light) 88%, transparent); color: var(--studio-ink); font-size: 12px; text-align: center; pointer-events: auto; }
 .office-poster-status button { border: 0; padding: 10px 4px; min-height: 44px; background: transparent; color: var(--studio-muted); font: inherit; font-size: 11px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }

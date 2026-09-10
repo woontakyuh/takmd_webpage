@@ -1,4 +1,5 @@
 import { Component, type ReactNode } from 'react';
+import { OFFICE_POSTER_MANIFEST } from './officePosterConfig';
 import './office-poster.css';
 
 export class SceneBoundary extends Component<{
@@ -19,11 +20,15 @@ export function OfficePoster({ ready, failed, night, interactive, onProfile }: {
   readonly onProfile: () => void;
 }) {
   const time = night ? 'night' : 'day';
+  const fallback = OFFICE_POSTER_MANIFEST.variants.at(-1);
+  if (!fallback) return null;
   return <div className="office-poster" data-ready={ready && !failed} data-failed={failed} aria-hidden={ready && !failed}>
     <picture>
-      <source media="(max-width: 759px)" srcSet={`/studio/office-preview-${time}-mobile.webp`} />
-      <img src={`/studio/office-preview-${time}.webp`} alt="The TakMD office overlooking the Han River"
-        width="1440" height="900" fetchPriority="high" decoding="async" />
+      {OFFICE_POSTER_MANIFEST.variants.slice(0, -1).map(variant => variant.media
+        ? <source key={variant.id} media={variant.media} srcSet={time === 'night' ? variant.nightSrc : variant.daySrc} />
+        : null)}
+      <img src={time === 'night' ? fallback.nightSrc : fallback.daySrc} alt="The TakMD office overlooking the Han River"
+        width={fallback.width} height={fallback.height} fetchPriority="high" decoding="async" />
     </picture>
     <div className="office-poster-status" role="status">
       <span>{failed ? 'The interactive office is unavailable.' : 'Opening the office…'}</span>
