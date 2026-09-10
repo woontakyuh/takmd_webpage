@@ -281,3 +281,10 @@
 @media (max-width: 759px) { .office-device-panel { right: 8px; bottom: 8px; width: min(280px,calc(100vw - 16px)); max-height: calc(100dvh - 24px); } }
 .office-device-shortcuts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
 .office-device-shortcuts button { min-height: 36px; padding: 6px 9px; border: 1px solid var(--studio-line); border-radius: 6px; color: var(--studio-ink); background: transparent; font: inherit; cursor: pointer; }
+
+.office-approach-actions { position: fixed; right: 16px; bottom: 16px; z-index: 26; display: flex; gap: 8px; align-items: center; padding: 8px; background: var(--studio-light); color: var(--studio-ink); border: 1px solid var(--studio-line); border-radius: 4px; }
+.office-approach-actions > button { min-height: 44px; padding-inline: 12px; font-size: 13px; }
+
+.studio:is([data-selected], [data-inspecting]) .studio-stage { min-height: 0; height: 100dvh; }
+html:has(.studio:is([data-selected], [data-inspecting])),
+body:has(.studio:is([data-selected], [data-inspecting])) { overflow: clip; }

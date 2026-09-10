@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { aiProjects, hasAiSignal } from '../../data/ai-projects';
+import { ProjectReader } from './ProjectReader';
 import type { Presentation, Publication } from './types';
 
 type Props = {
@@ -9,21 +11,31 @@ type Props = {
 };
 
 export function AiReader({ publications, presentations, onPaper, onTalk }: Props) {
+  const [selected, setSelected] = useState<'workflow' | 'imaging' | 'spinoscopy' | null>(null);
   const talks = presentations.filter(talk => hasAiSignal(`${talk.title} ${talk.topic}`));
   const papers = publications.filter(paper => hasAiSignal(paper.title));
+  if (selected === 'workflow' || selected === 'imaging') return <ProjectReader selected={selected} onSelect={setSelected} publications={publications} onPaper={onPaper} />;
+  if (selected === 'spinoscopy') return <div className="ai-reader">
+    <button className="reader-back" type="button" onClick={() => setSelected(null)}>← All AI work</button>
+    <p className="studio-kicker">Clinical AI side project</p><h3 className="reader-detail-title">K-Spinoscopy dashboard</h3>
+    <p className="studio-panel-intro">A real dashboard project for the K-Spinoscopy work.</p>
+    <section className="studio-editorial-note"><span>Project note</span><h3>In development.</h3><p>This project is listed as active work. A public project note is being prepared.</p></section>
+    <a className="studio-panel-footer" href="/ai-workflow">AI workflow study<span aria-hidden="true">→</span></a>
+  </div>;
 
   return <div className="ai-reader">
     <p className="studio-panel-intro">Projects, lectures, and research exploring AI in practice.</p>
+    <div className="office-detail-metrics"><div><strong>{talks.length}</strong><span>AI-related talks</span></div><div><strong>{papers.length}</strong><span>AI-related papers</span></div><div><strong>{aiProjects.length}</strong><span>Documented side projects</span></div></div>
 
     <section className="studio-editorial-note" aria-labelledby="ai-projects-heading">
       <span>Side projects</span>
       <h3 id="ai-projects-heading">Projects.</h3>
-      <div className="reader-list">{aiProjects.map(project => <a className="reader-record-button" href={project.href} key={project.href}>
+      <div className="reader-list">{aiProjects.map(project => <button className="reader-record-button" type="button" onClick={() => setSelected(project.id === 'workflow' ? 'workflow' : 'spinoscopy')} key={project.href}>
         <span className="studio-kicker">{project.eyebrow}</span>
         <strong>{project.title}</strong>
         <span>{project.description}</span>
         <span className="reader-row-arrow" aria-hidden="true">↗</span>
-      </a>)}</div>
+      </button>)}</div>
     </section>
 
     <section className="studio-editorial-note" aria-labelledby="ai-talks-heading">

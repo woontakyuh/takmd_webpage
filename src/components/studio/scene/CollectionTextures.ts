@@ -88,52 +88,51 @@ export function useWorkstationTexture() {
     canvas.width = 2560; canvas.height = 1440;
     const context = canvas.getContext('2d');
     if (context) {
-      context.scale(4 / 3, 4 / 3);
-      context.fillStyle = PALETTE.paperLight; context.fillRect(0, 0, 1920, 1080);
-      context.fillStyle = PALETTE.teal; context.fillRect(80, 66, 42, 3);
-      context.font = '21px Arial'; context.fillText('CURRICULUM VITAE  /  TAKMD', 142, 78);
-      context.fillStyle = PALETTE.ink; context.font = '68px Georgia';
-      context.fillText('Woon Tak Yuh, MD.', 80, 184);
-      context.font = '25px Arial'; context.fillStyle = PALETTE.muted;
-      context.fillText('Neurosurgeon · Research · Teaching', 83, 234);
-      context.font = '23px Arial'; context.fillText(currentRoles[0], 83, 277);
-      context.fillStyle = PALETTE.teal; context.font = '20px Arial';
-      context.fillText('ACADEMIC INTERESTS', 80, 320);
-      context.fillStyle = PALETTE.ink; context.font = '29px Arial';
-      academicInterests.forEach((interest, index) => context.fillText(interest, 80, 363 + index * 42));
-      context.strokeStyle = PALETTE.line; context.lineWidth = 2;
-      context.beginPath(); context.moveTo(80, 482); context.lineTo(1180, 482); context.stroke();
-      context.fillStyle = PALETTE.teal; context.font = '20px Arial';
-      context.fillText('ACADEMIC & PROFESSIONAL ACTIVITIES', 80, 527);
-      const drawActivityText = (text: string, x: number, y: number) => {
+      context.scale(2560 / 1440, 1440 / 810);
+      context.textBaseline = 'top';
+      context.fillStyle = PALETTE.paperLight; context.fillRect(0, 0, 1440, 810);
+      context.fillStyle = PALETTE.teal; context.fillRect(60, 55, 32, 2);
+      context.font = '16px Arial'; context.fillText('CURRICULUM VITAE / TAKMD', 107, 44);
+      context.fillStyle = PALETTE.ink; context.font = '51px Georgia';
+      context.fillText('Woon Tak Yuh, MD.', 60, 91);
+      context.font = '19px Arial'; context.fillStyle = PALETTE.muted;
+      context.fillText('Neurosurgeon · Research · Teaching', 60, 162);
+      context.font = '17px Arial'; context.fillText(currentRoles[0], 60, 202);
+      context.fillStyle = PALETTE.teal; context.font = '15px Arial';
+      context.fillText('ACADEMIC INTERESTS', 60, 226);
+      context.fillStyle = PALETTE.ink; context.font = '22px Arial';
+      academicInterests.forEach((interest, index) => context.fillText(interest, 60, 259 + index * 31.9));
+      context.fillStyle = PALETTE.line; context.fillRect(60, 362, 825, 1);
+      context.fillStyle = PALETTE.teal; context.font = '15px Arial';
+      context.fillText('ACADEMIC & PROFESSIONAL ACTIVITIES', 60, 386);
+      const drawActivityText = (text: string, x: number, y: number, leading: number) => {
         let line = '';
         let baseline = y;
         for (const word of text.split(/\s+/)) {
           const next = line ? `${line} ${word}` : word;
-          if (line && context.measureText(next).width > 530) {
+          if (line && context.measureText(next).width > 396.5) {
             context.fillText(line, x, baseline);
-            baseline += 31;
+            baseline += leading;
             line = word;
           } else line = next;
         }
         context.fillText(line, x, baseline);
-        return baseline + 32;
+        return baseline + leading;
       };
-      const columnBaselines: [number, number] = [570, 570];
+      const columnBaselines: [number, number] = [423, 423];
       activities.forEach((activity, index) => {
         const column = index < 5 ? 0 : 1;
-        const x = column === 0 ? 80 : 650;
+        const x = column === 0 ? 60 : 488.5;
         const y = columnBaselines[column];
         context.fillStyle = PALETTE.ink;
-        context.font = activity.organization === 'Neurospine' || activity.organization === 'JMISST' ? 'italic 26px Georgia' : '25px Arial';
-        const roleY = drawActivityText(activity.organization, x, y);
-        context.fillStyle = PALETTE.muted; context.font = '23px Arial';
-        columnBaselines[column] = drawActivityText(activity.role, x, roleY) + 16;
+        context.font = activity.organization === 'Neurospine' || activity.organization === 'JMISST' ? 'italic 17px Georgia' : '17px Arial';
+        const roleY = drawActivityText(activity.organization, x, y, 20.4);
+        context.fillStyle = PALETTE.muted; context.font = '16px Arial';
+        columnBaselines[column] = drawActivityText(activity.role, x, roleY + 3, 19.2) + 8;
       });
-      context.fillStyle = PALETTE.line; context.fillRect(80, 1014, 1760, 1);
-      context.fillStyle = PALETTE.teal; context.font = '20px Arial';
-      context.fillText('CAREER · EDUCATION · PUBLICATIONS · TEACHING', 80, 1055);
-
+      context.fillStyle = PALETTE.line; context.fillRect(60, 756, 1320, 1);
+      context.fillStyle = PALETTE.teal; context.font = '15px Arial';
+      context.fillText('CAREER · EDUCATION · PUBLICATIONS · TEACHING', 60, 772);
     }
     const result = new CanvasTexture(canvas); result.colorSpace = SRGBColorSpace; result.anisotropy = anisotropy;
     return result;
@@ -145,11 +144,8 @@ export function useWorkstationTexture() {
       if (!active || !(texture.image instanceof HTMLCanvasElement)) return;
       const context = texture.image.getContext('2d');
       if (!context) return;
-      const scale = Math.min(560 / portrait.naturalWidth, (560 * 4 / 3) / portrait.naturalHeight);
-      const width = portrait.naturalWidth * scale;
-      const height = portrait.naturalHeight * scale;
       context.imageSmoothingQuality = 'high';
-      context.drawImage(portrait, 1280 + (560 - width) / 2, 170 + (560 * 4 / 3 - height) / 2, width, height);
+      context.drawImage(portrait, 960, 128, 420, 560);
       texture.needsUpdate = true;
     };
     portrait.src = profileImage;

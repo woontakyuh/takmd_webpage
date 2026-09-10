@@ -1,5 +1,15 @@
 # Office session handoff — 2026-09-10
 
+## Persistent office and cabinet interaction update
+
+The current update keeps owned content inside one persistent office document/canvas, including legacy URL entries. A physical first click approaches and the next activates; X/Back returns one level. The canonical monitor CV stays mounted from overview to reading, and its early-loading counterpart transfers scroll to the live monitor. PC arrows pan the room, repeated double-clicks zoom further, and the initial hint omits lighting controls.
+
+Cabinet opening recenters the camera on the interior even when activated from behind or the side. Viewport fitting and document scroll clipping keep the cabinet and controls visible on portrait/tablet/landscape. Bottles exchange concurrently through physical clicks with no chooser dropdown. Glass has weighted reflective rims/bases and analytic liquid absorption; it remains a real-time approximation rather than full optical refraction. Source links are explicit, including specialist secondary sources for Hibiki Master's Select and Bowmore White Sands.
+
+The award photograph and neighboring gold plaque share one camera composition, with original award/date/venue information in a small borderless caption below the shelf. Family photo treatment remains unchanged. Root personally clicked the photo and X in the browser. Types, 46 unit tests, build/public boundary checks, mobile navigation/early CV, 46 native reader views, 9 link flows, 6 legacy entries, physical cabinet gestures, and 22 award checks passed. Independent functional and visual/CJK lanes approved. Authoritative deployment/remote/live receipt: `.omo/evidence/office-navigation-2026-09-10/release.json`; consult that receipt before claiming this update is deployed. Superseded red diagnosis files remain clearly marked in that evidence folder.
+
+No new corner lamp is installed; current alternatives include Santa & Cole TMM and Noguchi Akari 10A. Han River fine skyline/vegetation, missing user lecture assets, and admin-saved arrangements remain separate deferred scope. Historical release checkpoints follow.
+
 ## Current office inspection release
 
 Office changes are committed, pushed and verified on Production through `dc4cd5872d9cb29224fd65f657018bd7ad4dd47d`, Cloudflare `3356c291-b497-4973-8f73-95d89cae092e`. The monitor now approaches head-on and hosts the shared sharp CV inside its real bezel; TV and monitor use X, Escape and same-URL Back. Early loading CV stays in the office and waits for shell hydration before accepting its first click. Personal books show verified YES24/publisher metadata and the actual 2022 CSRS San Diego/Paper23 details. Folio approach is closer and mobile-centered; physical controls and cabinet surfaces support double-click/tap inspection.

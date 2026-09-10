@@ -33,3 +33,27 @@
 @media (prefers-reduced-motion: reduce) {
   .office-frame-info[open] { animation: none; }
 }
+
+.office-frame-info--award-pair {
+  inset: var(--award-caption-top, 68dvh) auto auto 50%;
+  width: min(560px, calc(100vw - 48px)); max-width: none; max-height: none;
+  padding: 0 48px 0 0; border: 0; border-radius: 0; transform: translateX(-50%);
+  background: transparent; box-shadow: none; overflow: visible;
+}
+.office-frame-info--award-pair[open] { animation-name: office-award-caption-enter; }
+.office-frame-info--award-pair .office-frame-info-top { margin: 0; }
+.office-frame-info--award-pair .office-frame-info-top > span { display: none; }
+.office-frame-info--award-pair .office-frame-info-top button { position: absolute; top: 0; right: 0; border: 0; color: inherit; }
+.office-frame-info--award-pair .office-frame-info-top button:hover { background: transparent; opacity: .65; }
+.office-frame-info--award-pair h2 { font-size: 18px; line-height: 1.4; }
+.office-frame-info--award-pair .office-frame-occasion { margin: 4px 0 0; font-size: 12px; line-height: 1.65; }
+.office-frame-info--award-pair .office-frame-meta {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px;
+  margin-top: 4px; padding: 0; border: 0; color: inherit;
+}
+.office-frame-info--award-pair .office-frame-meta p { margin: 0; }
+.studio[data-night='true'] .office-frame-info--award-pair { color: var(--studio-light); text-shadow: 0 1px 2px var(--studio-ink); }
+@keyframes office-award-caption-enter {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}

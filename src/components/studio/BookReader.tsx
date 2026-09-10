@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { OfficeIcon } from './OfficeIcon';
 import { personalBook, PERSONAL_BOOKS } from './personalBooks';
 import { PERSONAL_BOOK_INFO } from './personalBookInfo';
@@ -18,23 +18,13 @@ export function BookReader({ selectedBook, pageIndex, browsingShelf, shelfReady,
   const dialogRef = useRef<HTMLDialogElement>(null);
   const catalogRef = useRef<HTMLDetailsElement>(null);
   const selectionFocusFrame = useRef<number | null>(null);
-  const closing = useRef(false);
   const book = personalBook(selectedBook);
   const info = PERSONAL_BOOK_INFO[selectedBook];
-  const close = useCallback(() => {
-    if (closing.current) return;
-    closing.current = true;
-    if (window.history.state?.officeBooks) window.history.back();
-    else onClose();
-  }, [onClose]);
+  const close = onClose;
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
     const previousFocus = document.activeElement;
-    closing.current = false;
-    window.history.pushState({ ...window.history.state, officeBooks: true }, '', window.location.href);
-    const onBack = () => onClose();
-    window.addEventListener('popstate', onBack);
     dialog.show();
     const focusFrame = requestAnimationFrame(() => {
       dialog.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true });
@@ -50,11 +40,6 @@ export function BookReader({ selectedBook, pageIndex, browsingShelf, shelfReady,
       if (selectionFocusFrame.current !== null) cancelAnimationFrame(selectionFocusFrame.current);
       dialog.close();
       window.removeEventListener('keydown', onKey);
-      window.removeEventListener('popstate', onBack);
-      if (window.history.state?.officeBooks) {
-        const { officeBooks, ...state } = window.history.state;
-        window.history.replaceState(state, '', window.location.href);
-      }
       if (previousFocus instanceof HTMLElement && previousFocus.isConnected) previousFocus.focus({ preventScroll: true });
     };
   }, [close, onClose]);

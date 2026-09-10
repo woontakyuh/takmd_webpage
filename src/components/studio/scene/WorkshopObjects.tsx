@@ -1,3 +1,5 @@
+import type { ExhibitId } from '../types';
+import { requestOfficePath } from '../officeNavigation';
 import { Html, useCursor, useGLTF } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
@@ -15,13 +17,15 @@ const CLICK_DRAG_THRESHOLD = 5;
 const CABINET_TOP = ROOM.credenza.position[1] + ROOM.credenza.height;
 
 type WorkshopLinkProps = {
+  readonly focused: ExhibitId | null;
+  readonly onApproach: () => void;
   readonly label: string;
   readonly position: Point;
   readonly route: `/workshops/${string}`;
   readonly children: ReactNode;
 };
 
-function WorkshopLink({ label, position, route, children }: WorkshopLinkProps) {
+function WorkshopLink({ focused, onApproach, label, position, route, children }: WorkshopLinkProps) {
   const canvas = useThree(state => state.gl.domElement);
   const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
@@ -48,7 +52,7 @@ function WorkshopLink({ label, position, route, children }: WorkshopLinkProps) {
         pointerStart.current = null;
         if (!start || event.delta >= CLICK_DRAG_THRESHOLD
           || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= CLICK_DRAG_THRESHOLD) return;
-        scheduleSceneSingleAction(canvas, () => window.location.assign(route));
+        scheduleSceneSingleAction(canvas, () => focused === 'spine' ? requestOfficePath(route) : onApproach());
       }}
     >
       {children}
@@ -157,20 +161,20 @@ function EndoscopeTray() {
   );
 }
 
-export function WorkshopObjects() {
+export function WorkshopObjects({ focused, onApproach }: { readonly focused: ExhibitId | null; readonly onApproach: () => void }) {
   const dummy = workshops[0];
   const cadaver = workshops[1];
   const animal = workshops[2];
 
   return (
     <group rotation={[0, 0, 0]}>
-      <WorkshopLink label={dummy.title} route={`/workshops/${dummy.slug}`} position={[-2.38, CABINET_TOP + 0.014, 0.70]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} label={dummy.title} route={`/workshops/${dummy.slug}`} position={[-2.38, CABINET_TOP + 0.014, 0.70]}>
         <TrainingDummy />
       </WorkshopLink>
-      <WorkshopLink label={cadaver.title} route={`/workshops/${cadaver.slug}`} position={[-2.38, CABINET_TOP, 0.19]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} label={cadaver.title} route={`/workshops/${cadaver.slug}`} position={[-2.38, CABINET_TOP, 0.19]}>
         <EndoscopeTray />
       </WorkshopLink>
-      <WorkshopLink label={animal.title} route={`/workshops/${animal.slug}`} position={[-2.37, CABINET_TOP, -0.31]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} label={animal.title} route={`/workshops/${animal.slug}`} position={[-2.37, CABINET_TOP, -0.31]}>
         <PigPlush />
       </WorkshopLink>
     </group>

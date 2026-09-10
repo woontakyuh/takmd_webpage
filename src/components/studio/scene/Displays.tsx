@@ -1,6 +1,6 @@
 import { Movable } from './Movable';
 import { useFrame } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MathUtils } from 'three';
 import type { MeshStandardMaterial } from 'three';
 import { featuredPresentation, talkMedia } from '../collection';
@@ -17,7 +17,7 @@ import { MONITOR_SCREEN } from './monitorReading';
 import { MONITOR, MOTION, PALETTE, ROOM, WALL_TV } from './config';
 import { setWallTvContentColors, setWallTvHovered, useWallTvBacklight } from './hoverReactions';
 
-type DisplaysProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose'>;
+type DisplaysProps = Pick<StudioSceneProps, 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'>;
 type RgbTotals = { red: number; green: number; blue: number; count: number };
 
 const TV_CONTENT_FALLBACK = ['#9D998F', '#9AA7A4'] as const;
@@ -55,11 +55,11 @@ function sampleTvContentColors(source: HTMLCanvasElement) {
   setWallTvContentColors(left && right ? [left, right] : TV_CONTENT_FALLBACK);
 }
 
-export function Displays({ selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose }: DisplaysProps) {
+export function Displays({ ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll }: DisplaysProps) {
   const monitorMaterial = useRef<MeshStandardMaterial>(null);
   const tvMaterial = useRef<MeshStandardMaterial>(null);
   const { hovered: tvHovered } = useWallTvBacklight();
-  const monitorHovered = useRef(false);
+  const [monitorHovered, setMonitorHovered] = useState(false);
   useFrame((_, delta) => {
     if (tvMaterial.current) {
       const target = tvHovered || selected === 'education' ? 0.5 : 0.1;
@@ -67,7 +67,7 @@ export function Displays({ selected, onSelect, reducedMotion, halo, presentation
         : MathUtils.damp(tvMaterial.current.emissiveIntensity, target, MOTION.object, delta);
     }
     if (!monitorMaterial.current) return;
-    const targetBrightness = monitorHovered.current || selected === 'ai' ? 0.5 : 0.1;
+    const targetBrightness = monitorHovered || selected === 'ai' ? 0.5 : 0.1;
     monitorMaterial.current.emissiveIntensity = reducedMotion ? targetBrightness
       : MathUtils.damp(monitorMaterial.current.emissiveIntensity, targetBrightness, MOTION.object, delta);
   });
@@ -88,13 +88,13 @@ export function Displays({ selected, onSelect, reducedMotion, halo, presentation
   return (
     <group>
       <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
-        position={ROOM.monitor.position} rotation={ROOM.monitor.rotation} onHoverChange={hovered => { monitorHovered.current = hovered; }}>
+        position={ROOM.monitor.position} rotation={ROOM.monitor.rotation} onHoverChange={setMonitorHovered}>
         <MonitorArm />
         <group position={MONITOR_SCREEN.mount} rotation={[MONITOR_SCREEN.tilt, 0, 0]}>
           <Block size={[MONITOR.width, MONITOR.height, 0.027]} radius={0.008} color={PALETTE.ink} roughness={0.3} metalness={0.25} />
           <Block size={[0.3, 0.26, 0.035]} position={[0, 0, -0.025]} color={PALETTE.ink} radius={0.028} />
           <mesh name="Desk monitor screen" position={MONITOR_SCREEN.surface}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshStandardMaterial ref={monitorMaterial} map={monitor} emissiveMap={monitor} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
-          {selected === 'ai' && <MonitorScreenReader publicationCount={collection.paperCount} presentationCount={presentations.length} onClose={onClose} />}
+          {<MonitorScreenReader active={selected === 'ai' && ready} hovered={monitorHovered} scrollState={monitorScroll} publicationCount={collection.paperCount} presentationCount={presentations.length} onClose={onClose} />}
           <mesh position={[0.332, -0.203, 0.015]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
           <ScreenBarHalo2 power={halo.power} temperature={halo.temperature} />
         </group>

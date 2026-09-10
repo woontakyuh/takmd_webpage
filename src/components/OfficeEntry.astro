@@ -1,0 +1,17 @@
+---
+import { StudioExperience } from './studio/StudioExperience';
+import './studio/studio.css';
+import publicationsData from '../data/publications.json';
+import presentationsData from '../data/presentations.json';
+const publications = publicationsData.publications.map(p => ({
+  id: p.doiUrl || p.title, title: p.title, journal: p.journal, year: p.year, role: p.role, doiUrl: p.doiUrl,
+}));
+const presentations = presentationsData.presentations.map(p => ({
+  id: p.id, title: p.name, date: p.date, venue: p.place, topic: p.topics.map(topic => topic.replace(/(\S)“/g, '$1 “')).join(' · '),
+}));
+---
+<main id="main-content">
+  <StudioExperience client:load publications={publications} presentations={presentations}
+    updatedAt={publicationsData.generatedAt.slice(0, 10)} presentationsUpdatedAt={presentationsData.generatedAt.slice(0, 10)} />
+  <noscript><p class="studio-noscript">Enable JavaScript to explore the interactive office. Contact: <a href="mailto:woontak.yuh@gmail.com">woontak.yuh@gmail.com</a></p></noscript>
+</main>

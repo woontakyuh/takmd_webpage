@@ -1,6 +1,6 @@
 import { Html } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { presentationNavigation, talkMedia } from '../collection';
 import { publicHighResolutionSlide } from '../publicSlideSource';
 import { OfficeIcon } from '../OfficeIcon';
@@ -32,22 +32,14 @@ export function TvScreenReader({ talk, slide, presentations, onTalk, onSlide, on
   const source = activeSlide && (media?.kind === 'full' ? publicHighResolutionSlide(activeSlide) ?? activeSlide.src : activeSlide.src);
   const navigation = presentationNavigation(presentations, talk?.id);
   const photos = media?.kind === 'photos';
-  const close = useCallback(() => {
-    if (window.history.state?.officeTv) window.history.back();
-    else onClose();
-  }, [onClose]);
+  const close = onClose;
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    window.history.pushState({ ...window.history.state, officeTv: true }, '', window.location.href);
-    const onBack = () => onClose();
-    window.addEventListener('popstate', onBack);
     returnButton.current?.focus({ preventScroll: true });
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener('popstate', onBack);
-      if (window.history.state?.officeTv) window.history.back();
     };
   }, [onClose]);
 
@@ -105,6 +97,7 @@ export function TvScreenReader({ talk, slide, presentations, onTalk, onSlide, on
           </button>)}
         </nav>}
       </div>
+      <a className="tv-screen-teaching-link" href="/education#overview">Teaching & training</a>
       <nav className="tv-screen-paging" aria-label={photos ? 'Navigate event photos' : 'Navigate presentation slides'}>
         {small && slides.length > 1
           ? <button aria-label="Toggle slide thumbnails" aria-expanded={railOpen} onClick={() => setRailOpen(value => !value)}><span role="status">{current + 1}/{slides.length}</span></button>

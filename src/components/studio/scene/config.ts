@@ -74,7 +74,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   education: { position: [0, 1.943, 1.02], target: [0, 1.943, 3.22], zoom: 1 },
   ai: { position: [0.03, 1.255, -2.2], target: [-0.05, 1.155, -1.2], zoom: 1 },
   family: { position: [0.604, 0.96, -1.74], target: [0.67, 0.87, -1.27], zoom: 1 },
-  'award-photo': { position: [2.01, 1.51, 2.64], target: [2.01, 1.42, 3.11], zoom: 1 },
+  'award-photo': { position: [1.876, 1.58, 2.08], target: [1.876, 1.45, 3.09], zoom: 1 },
   award: { position: [ROOM.award.position[0], 1.58, 2.215], target: [ROOM.award.position[0], 1.448, 3.06], zoom: 1 },
   projects: { position: [0.435, 1.35, -1.945], target: [-0.055, 0.815, -1.155], zoom: 1 },
   bjj: { position: [-1.25, 1.82, -1.02], target: [-2.505, 1.30, -2.318], zoom: 1 },

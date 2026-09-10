@@ -55,6 +55,9 @@ export type HaloSettings = {
 export type BlindLift = readonly [number, number];
 
 export type StudioSceneProps = {
+  readonly ready: boolean;
+  readonly focused: ExhibitId | null;
+  readonly monitorScroll: { scrollTop: number };
   readonly selectedBook: PersonalBookId;
   readonly bookPageIndex: number;
   readonly onBookSelect: (id: PersonalBookId) => void;

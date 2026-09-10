@@ -1,44 +1,92 @@
-import { academicInterests, awards, career, currentRoles, educationPrograms, profileImage } from '../../data/cv';
+import { academicInterests, activities, awards, career, currentRoles, educationPrograms, profileImage } from '../../data/cv';
+import publicationsData from '../../data/publications.json';
+import presentationsData from '../../data/presentations.json';
+import surgerySummary from '../../data/public-surgery-summary.json';
+import { countPublicationRoles, publicationRoles } from '../../data/publicationAuthorship';
 
-export function CvReader({ publicationCount, presentationCount, inScreen = false }: {
+const authorship = countPublicationRoles(publicationsData.publications);
+
+type Props = {
   readonly publicationCount: number;
   readonly presentationCount: number;
   readonly inScreen?: boolean;
-}) {
-  return <div className="cv-reader">
-    <div className="cv-intro">
-      <img className="screen-cv-profile" src={profileImage} alt="Woon Tak Yuh, MD." width="960" height="1280" />
-      <p className="studio-panel-intro"><strong>Woon Tak Yuh, MD.</strong><br />Endoscopic spine surgery<br />Research · Teaching</p>
+};
+
+export function CvReader({ publicationCount, presentationCount, inScreen = false }: Props) {
+  return <article className="cv-reader" data-in-screen={inScreen}>
+    <header className="monitor-cv-cover">
+      <p className="monitor-cv-eyebrow">Curriculum Vitae / TakMD</p>
+      <div className="monitor-cv-identity">
+        <h1>Woon Tak Yuh, MD.</h1>
+        <p>Neurosurgeon · Research · Teaching</p>
+        <p className="monitor-cv-appointment">{currentRoles[0]}</p>
+      </div>
+      <section className="monitor-cv-interests" aria-label="Academic interests">
+        <h2>Academic interests</h2>
+        {academicInterests.map(interest => <p key={interest}>{interest}</p>)}
+      </section>
+      <section className="monitor-cv-activities" aria-label="Academic and professional activities">
+        <h2>Academic & professional activities</h2>
+        <div className="monitor-cv-activity-columns">{[activities.slice(0, 5), activities.slice(5)].map((column, index) =>
+          <div key={index}>{column.map(activity => <div className="monitor-cv-activity" key={activity.organization}>
+            <p data-journal={activity.organization === 'Neurospine' || activity.organization === 'JMISST'}>{activity.organization}</p>
+            <p>{activity.role}</p>
+          </div>)}</div>)}
+        </div>
+      </section>
+      <img className="monitor-cv-portrait" src={profileImage} alt="Woon Tak Yuh, MD" width="960" height="1280" draggable={false} />
+      <p className="monitor-cv-cover-footer">Career · Education · Publications · Teaching</p>
+    </header>
+    <div className="monitor-cv-details">
+      <section className="monitor-cv-metrics" aria-label="Career in numbers">
+        <div><strong>{publicationCount}</strong><span>Publications</span><p>{authorship.first} first · {authorship.corresponding} corresponding · {authorship.coauthor} coauthor</p></div>
+        <div><strong>{presentationCount}</strong><span>Presentations</span><p>Talks, workshops and teaching</p></div>
+        <div><strong>{surgerySummary.totalCases.toLocaleString()}</strong><span>Clinical cases</span></div>
+        <div><strong>80+</strong><span>Surgeons trained</span><p>Across 15+ countries</p></div>
+      </section>
+      <div className="monitor-cv-detail-columns">
+        <section className="monitor-cv-section">
+          <h2>Career & education</h2>
+          {career.map(item => <div className="monitor-cv-timeline" key={`${item.year}-${item.text}`}>
+            <span>{item.year}</span><p>{item.text}</p>
+          </div>)}
+        </section>
+        <div>
+          <section className="monitor-cv-section">
+            <h2>Teaching & training</h2>
+            {educationPrograms.map(item => <div className="monitor-cv-training" key={item.title}>
+              <p className="monitor-cv-meta">{item.meta}</p><h3>{item.title}</h3><p>{item.description}</p>
+            </div>)}
+          </section>
+          <section className="monitor-cv-section">
+            <h2>Awards</h2>
+            {awards.map(item => <div className="monitor-cv-timeline" key={`${item.year}-${item.text}`}>
+              <span>{item.year}</span><p>{item.text}</p>
+            </div>)}
+          </section>
+        </div>
+      </div>
+      <section className="monitor-cv-section">
+        <div className="monitor-cv-section-heading"><h2>Publications</h2><a href="/research">Explore research ↗</a></div>
+        <p className="monitor-cv-meta">{authorship.first} first author · {authorship.corresponding} corresponding author · {authorship.coauthor} coauthor. Roles may overlap.</p>
+        <p className="monitor-cv-meta">Updated <time dateTime={publicationsData.generatedAt}>{publicationsData.generatedAt.slice(0, 10)}</time></p>
+        {publicationsData.publications.map(publication => <div className="monitor-cv-record" key={publication.doi || publication.title}>
+          <div><span>{publication.year}</span><p className="monitor-cv-meta">{publication.journal}</p></div>
+          <div><h3><a href={publication.doiUrl} target="_blank" rel="noreferrer">{publication.title}</a></h3>
+            <p className="monitor-cv-meta">{publicationRoles(publication).join(' · ')}</p>
+          </div>
+        </div>)}
+      </section>
+      <section className="monitor-cv-section">
+        <div className="monitor-cv-section-heading"><h2>Presentations</h2><a href="/education">Explore education ↗</a></div>
+        {presentationsData.presentations.map(presentation => <div className="monitor-cv-record" key={presentation.id}>
+          <div><span>{presentation.date}</span><p className="monitor-cv-meta">{presentation.place}</p></div>
+          <div><h3>{presentation.url ? <a href={presentation.url} target="_blank" rel="noreferrer">{presentation.name}</a> : presentation.name}</h3>
+            {presentation.topics.map(topic => <p key={topic}>{topic}</p>)}
+          </div>
+        </div>)}
+      </section>
+      <footer className="monitor-cv-footer"><span>Woon Tak Yuh, MD.</span><a href="/contact">Get in touch ↗</a></footer>
     </div>
-    {!inScreen && <a className="studio-panel-footer" href="/cv">Open the complete CV <span>↗</span></a>}
-    <section className="studio-editorial-note">
-      <span>Academic interests</span>
-      <div className="reader-list">{academicInterests.map(interest => <p key={interest}>{interest}</p>)}</div>
-    </section>
-    <section className="studio-editorial-note">
-      <span>Appointment & activities</span>
-      <div className="reader-list">{currentRoles.map(role => <p key={role}>{role}</p>)}</div>
-    </section>
-    <section className="studio-editorial-note">
-      <span>Career & education</span>
-      {career.map(item => <div className="cv-career-row" key={`${item.year}-${item.text}`}>
-        <span className="studio-meta">{item.year}</span><p>{item.text}</p>
-      </div>)}
-    </section>
-    <section className="studio-editorial-note">
-      <span>Awards</span>
-      {awards.map(item => <div className="cv-career-row" key={`${item.year}-${item.text}`}>
-        <span className="studio-meta">{item.year}</span><p>{item.text}</p>
-      </div>)}
-    </section>
-    <section className="studio-editorial-note">
-      <span>Teaching & training</span>
-      {educationPrograms.map(item => <details className="clinical-detail" key={item.title}>
-        <summary>{item.title}</summary><p className="studio-meta">{item.meta}</p><p>{item.description}</p>
-      </details>)}
-    </section>
-    <a className="studio-panel-footer" href="/research">{publicationCount} publications <span>↗</span></a>
-    <a className="studio-panel-footer" href="/education">{presentationCount} presentations <span>↗</span></a>
-    <a className="studio-panel-footer" href="/contact">Get in touch <span>↗</span></a>
-  </div>;
+  </article>;
 }

@@ -1,9 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { OfficeIcon } from './OfficeIcon';
 import type { PhotoMemory } from './photoMemories';
+import { awardPairReadingLayout } from './scene/awardPairReading';
 import './photo-frame-info.css';
 
-export function PhotoFrameInfo({ memory, onClose }: { readonly memory: PhotoMemory; readonly onClose: () => void }) {
+export function PhotoFrameInfo({ memory, onClose, variant = 'frame' }: {
+  readonly memory: PhotoMemory;
+  readonly onClose: () => void;
+  readonly variant?: 'frame' | 'award-pair';
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -25,7 +30,18 @@ export function PhotoFrameInfo({ memory, onClose }: { readonly memory: PhotoMemo
     };
   }, [memory.src, onClose]);
 
-  return <dialog ref={dialogRef} className="office-frame-info" aria-labelledby="office-frame-title"
+  useEffect(() => {
+    if (variant !== 'award-pair') return;
+    const placeCaption = () => {
+      const layout = awardPairReadingLayout(window.innerWidth, window.innerHeight);
+      dialogRef.current?.style.setProperty('--award-caption-top', `${layout.captionTop}px`);
+    };
+    placeCaption();
+    window.addEventListener('resize', placeCaption);
+    return () => window.removeEventListener('resize', placeCaption);
+  }, [variant]);
+
+  return <dialog ref={dialogRef} className={`office-frame-info${variant === 'award-pair' ? ' office-frame-info--award-pair' : ''}`} aria-labelledby="office-frame-title"
     aria-describedby="office-frame-description" aria-modal="false" lang="ko"
     onCancel={event => { event.preventDefault(); onClose(); }}>
     <div className="office-frame-info-top">

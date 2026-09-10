@@ -66,10 +66,10 @@ export function StudioScene(props: StudioSceneProps) {
       <CalendarClock reducedMotion={props.reducedMotion} />
       <Movable id="plant"><Greenery reducedMotion={props.reducedMotion} /></Movable>
       <SpineExhibit {...props} />
-      <WorkshopObjects />
+      <WorkshopObjects focused={props.focused} onApproach={() => props.onSelect('spine')} />
       <Movable id="desk" handle={false}><Folio {...props} /></Movable>
       <Displays {...props} />
-      <CameraRig {...props} />
+      <CameraRig {...props} reading={props.selected !== null} selected={props.focused ?? props.selected} />
       <OfficeRenderer lighting={props.lighting} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
     </Canvas>
   );

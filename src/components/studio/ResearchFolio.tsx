@@ -86,7 +86,7 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
       <p className="studio-meta" role="status">{filtered.length} papers in this archive · Updated {updatedAt}</p>
       <div className="studio-publications">{filtered.map(paper => <button className="reader-record-button" key={paper.id} onClick={() => selectPaper(paper)}><span className="studio-paper-meta"><span>{paper.journal} / {paper.year}</span><span>{mediaForPaper(paper) ? 'First page' : 'Details'}</span></span><strong>{paper.title}</strong><span>{authorRole(paper.role)} · Open in the folio ↗</span></button>)}</div>
       {filtered.length === 0 && <div className="studio-empty"><p>No papers match that search.</p><button className="studio-text-link" onClick={() => { setQuery(''); setYear('all'); }}>Clear filters ↗</button></div>}
-      <a className="studio-panel-footer" href="/research">Explore the research archive <span>↗</span></a>
+      <a className="studio-panel-footer" href="/research#overview">Research interests & authorship <span>↗</span></a>
     </>}
   </div>;
 }

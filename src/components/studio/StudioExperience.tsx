@@ -8,6 +8,9 @@ import { useBlindLift } from './useBlindLift';
 import { OfficeRoomControls, type RoomControl } from './OfficeRoomControls';
 import { MemoryPhoto } from './MemoryPhoto';
 import { BookReader } from './BookReader';
+import { useOfficeNavigation } from './useOfficeNavigation';
+import { OFFICE_HOME, officePathView } from './officeNavigation';
+import { LoadingMonitorReader } from './LoadingMonitorReader';
 import { PERSONAL_BOOKS, personalBook, type PersonalBookId } from './personalBooks';
 import { bookPageAfter } from './personalBookInteraction';
 import { PhotoFrameInfo } from './PhotoFrameInfo';
@@ -47,8 +50,10 @@ function OfficeExperience(content: StudioContent) {
   const { inspection } = useSceneInspection();
   const progress = useRef(0);
   const returnFocus = useRef<HTMLElement | null>(null);
-  const [selected, setSelected] = useState<ExhibitId | null>(null);
-  const [loadingProfile, setLoadingProfile] = useState(false);
+  const navigation = useOfficeNavigation();
+  const { selected, focused, details } = navigation.view;
+  const monitorScroll = useRef({ scrollTop: 0 });
+  const setSelected = useCallback((id: ExhibitId | null) => navigation.go({ focused: id, selected: id, details: null }), [navigation.go]);
   const [selectedBook, setSelectedBook] = useState<PersonalBookId>(PERSONAL_BOOKS[0].id);
   const [bookPageIndex, setBookPageIndex] = useState(0);
   const [bookshelfVisit, setBookshelfVisit] = useState(0);
@@ -83,6 +88,7 @@ function OfficeExperience(content: StudioContent) {
   const [ready, setReady] = useState(false);
   const [sceneFailed, setSceneFailed] = useState(false);
   const onSceneError = useCallback(() => setSceneFailed(true), []);
+  const [zoomed, setZoomed] = useState(false);
   const [explored, setExplored] = useState(false);
   const [compact, setCompact] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -109,7 +115,7 @@ function OfficeExperience(content: StudioContent) {
     paperIdRef.current = id;
     setPaperDirection(nextIndex >= currentIndex ? 1 : -1);
     setPaperId(id); setPaperTurn(turn => turn + 1);
-  }, [content.publications]);
+  }, [content.publications, setSelected]);
   const onPaperStep = useCallback((direction: 1 | -1) => {
     const papers = orderedPapers(content.publications);
     const index = papers.findIndex(paper => paper.id === paperIdRef.current);
@@ -132,21 +138,18 @@ function OfficeExperience(content: StudioContent) {
   const featuredTalk = featuredPresentation(content.presentations);
   const open = useCallback((id: ExhibitId) => {
     if (arrangement.editing) return;
-    if (id === 'surfing') {
-      window.open(PERSONAL_LINKS.instagram, '_blank', 'noopener,noreferrer');
-      setExplored(true);
-      return;
-    }
     const active = document.activeElement;
     returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id === 'bookshelf' ? 'books' : id}`);
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
-    setLoadingProfile(false); setExplored(true); setSelected(id);
-  }, [featuredTalk?.id, arrangement.editing]);
+    setExplored(true); setSelected(id);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [featuredTalk?.id, arrangement.editing, setSelected]);
   const openAwardPhoto = useCallback(() => open('award-photo'), [open]);
-  const openLoadingProfile = () => {
-    setSelected(null);
-    setLoadingProfile(true);
-    returnFocus.current = document.getElementById('studio-exhibit-ai');
+  const openLoadingProfile = () => open('ai');
+  const approach = (id: ExhibitId) => {
+    if (arrangement.editing) return;
+    if (navigation.current.current.focused === id) open(id);
+    else { setExplored(true); navigation.go({ focused: id, selected: null, details: null }); }
   };
   const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(0); open('books'); };
   const approachBookshelf = () => { setBookshelfReady(false); setBookshelfVisit(visit => visit + 1); open('bookshelf'); };
@@ -160,34 +163,65 @@ function OfficeExperience(content: StudioContent) {
     if (exhibit === 'education') {
       const talk = content.presentations.find(item => item.id === query.get('talk'));
       if (talk) setTalkId(talk.id);
-      open('education');
     } else if (exhibit === 'research') {
       const paper = content.publications.find(item => item.id === query.get('paper') || item.doiUrl === query.get('paper'));
-      if (paper) { selectPaper(paper.id); open('research'); }
+      if (paper) { setPaperId(paper.id); paperIdRef.current = paper.id; }
     }
-  }, [content.presentations, content.publications, open, selectPaper]);
-  const close = useCallback(() => {
-    setLoadingProfile(false);
-    setSelected(null);
-    requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
   }, []);
+  const close = useCallback(() => {
+    navigation.close();
+    requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
+  }, [navigation.close]);
+
+  useEffect(() => {
+    const navigate = (href: string) => {
+      const url = new URL(href, window.location.href);
+      if (url.origin !== window.location.origin && url.origin !== 'https://takmd.com') return false;
+      const next = officePathView(url.pathname + url.search + url.hash, navigation.current.current);
+      if (!next) return false;
+      setExplored(true);
+      if (next.selected === 'education') setTalkId(value => value ?? featuredTalk?.id ?? null);
+      navigation.go(next);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      return true;
+    };
+    const onLink = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+      const anchor = event.target instanceof Element ? event.target.closest('a[href]') : null;
+      if (!(anchor instanceof HTMLAnchorElement) || anchor.hasAttribute('download') || anchor.getAttribute('href')?.startsWith('#')) return;
+      if (navigate(anchor.href)) { event.preventDefault(); event.stopPropagation(); }
+    };
+    const onNavigate = (event: Event) => { if (event instanceof CustomEvent && typeof event.detail === 'string') navigate(event.detail); };
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented || document.querySelector('dialog[open]')) return;
+      if (navigation.current.current.focused || navigation.current.current.details) { event.preventDefault(); close(); }
+    };
+    document.addEventListener('click', onLink, true);
+    const onZoomed = (event: Event) => { if (event instanceof CustomEvent) setZoomed(event.detail === true); };
+    window.addEventListener('office:zoomed', onZoomed);
+    window.addEventListener('office:navigate', onNavigate);
+    window.addEventListener('keydown', onEscape);
+    return () => { window.removeEventListener('office:zoomed', onZoomed); document.removeEventListener('click', onLink, true); window.removeEventListener('office:navigate', onNavigate); window.removeEventListener('keydown', onEscape); };
+  }, [navigation.go, navigation.current, close, featuredTalk?.id]);
+  useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
   const goToView = (view: 0 | 1 | 2) => {
     setExplored(true);
-    setSelected(null);
+    navigation.go(OFFICE_HOME);
     progress.current = view / 2;
     setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
   };
 
-  return <div className="studio" data-night={night} data-selected={selected} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
+  return <div className="studio" data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
     <section className="studio-stage" aria-label="TakMD's office">
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={open} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={openAwardPhoto} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+          <Scene ready={ready} focused={focused} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary>
         <OfficePoster ready={ready} failed={sceneFailed} night={night} interactive={mounted} onProfile={openLoadingProfile} />
+        {selected === 'ai' && (!ready || sceneFailed) && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
         <button className="office-secret-trigger" id="studio-exhibit-books" onClick={approachBookshelf}>Browse personal books</button>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
         <button className="office-secret-trigger" id="studio-exhibit-award" onClick={() => open('award')}>Inspect the gold award</button>
@@ -225,7 +259,7 @@ function OfficeExperience(content: StudioContent) {
           <p id="office-collection-hint" className="office-collection-hint">Swipe to browse all seven <span aria-hidden="true">→</span></p>
           <nav className="studio-exhibits" aria-label="Office collection" aria-describedby="office-collection-hint">
             {exhibits.map(item => <button className="studio-exhibit" id={`studio-exhibit-${item.id}`} key={item.id} aria-label={`${item.label}: ${item.detail}`} aria-pressed={selected === item.id} onClick={() => item.id === 'ai' && (!ready || sceneFailed) ? openLoadingProfile() : open(item.id)}><OfficeIcon name={item.id === 'ai' ? 'cv' : item.id} /><span>{item.label}<small>{item.detail}</small></span></button>)}
-            <a className="studio-exhibit studio-exhibit-workshop" href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer" aria-label="Education: Workshops & training (opens in a new tab)"><OfficeIcon name="workshop" /><span>Education<small>Workshops & training ↗</small></span></a>
+            <a className="studio-exhibit studio-exhibit-workshop" href="/education#overview" aria-label="Education: Workshops & training"><OfficeIcon name="workshop" /><span>Education<small>Workshops & training</small></span></a>
             <button className="studio-exhibit" id="studio-exhibit-projects" aria-pressed={selected === 'projects'} onClick={() => open('projects')}><OfficeIcon name="projects" /><span>AI projects<small>Builds, talks & papers</small></span></button>
             <button className="studio-exhibit" popoverTarget="office-social-links" aria-controls="office-social-links" aria-haspopup="dialog"><OfficeIcon name="social" /><span>Connect<small>Email & social</small></span></button>
           </nav>
@@ -242,9 +276,11 @@ function OfficeExperience(content: StudioContent) {
       <div className="studio-notes-heading"><p className="studio-kicker">From the desk</p><h2 id="studio-notes-heading">Practice shapes<br /><em>the questions.</em></h2><a className="studio-text-link" href="/research">Research archive ↗</a></div>
       <div className="studio-notes-list">{content.publications.slice(0, 3).map(p => <a key={`${p.doiUrl}-${p.title}`} href={p.doiUrl || '/research'} target={p.doiUrl ? '_blank' : undefined} rel={p.doiUrl ? 'noreferrer' : undefined}><span className="studio-meta">{p.journal} / {p.year}</span><h3>{p.title}</h3><span className="studio-notes-arrow" aria-hidden="true">↗</span></a>)}</div>
     </section>
-    <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/credits">Scene credits</a><VisitorCount /></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href={PERSONAL_LINKS.workshop} target="_blank" rel="noopener noreferrer">Education<small>Workshops & training ↗</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
-    <ReadingPanel {...content} selected={loadingProfile ? 'ai' : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
-    {(selected === 'family' || selected === 'award-photo') && <PhotoFrameInfo memory={selected === 'family' ? familyPhoto : PHOTO_MEMORIES['kosess-award']} onClose={close} />}
+    <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/knowledge">Knowledge</a><a href="/media">Media</a><a href="/credits">Scene credits</a><VisitorCount /></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href="/education#overview">Education<small>Workshops & training</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
+    <ReadingPanel {...content} detailsPath={details} selected={details ? null : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
+    {zoomed && <div className="office-approach-actions"><button className="studio-icon-button" onClick={() => window.dispatchEvent(new Event('office:zoom-close'))} aria-label="Return from closer view"><OfficeIcon name="close" /></button></div>}
+    {!zoomed && !selected && focused && !details && <div className="office-approach-actions"><button className="studio-icon-button" onClick={close} aria-label="Return to previous office view"><OfficeIcon name="close" /></button><button onClick={() => open(focused)}>Open {focused === 'ai' ? 'monitor' : focused === 'education' ? 'TV' : 'object'}</button></div>}
+    {(selected === 'family' || selected === 'award-photo') && <PhotoFrameInfo memory={selected === 'family' ? familyPhoto : PHOTO_MEMORIES['kosess-award']} variant={selected === 'award-photo' ? 'award-pair' : 'frame'} onClose={close} />}
     {(selected === 'books' || selected === 'bookshelf') && <BookReader selectedBook={selectedBook} pageIndex={bookPageIndex} browsingShelf={selected === 'bookshelf'} shelfReady={bookshelfReady} onBookSelect={selectBook} onPageChange={setBookPageIndex} onClose={close} />}
     {memory && <MemoryPhoto memory={memory} onClose={() => setMemory(null)} />}
   </div>;

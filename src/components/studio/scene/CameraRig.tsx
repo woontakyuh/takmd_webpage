@@ -11,9 +11,11 @@ import type { CameraPose } from './config';
 import { cancelSceneSingleAction, zoomPoseForPoint } from './sceneGesture';
 import { useSceneInspection } from './SceneInspection';
 import { monitorReadingPose, monitorReadingFov } from './monitorReading';
+import { isSceneKeyboardEvent, panCameraWithArrow } from './cameraKeyboard';
+import { awardPairReadingFov, awardPairReadingLayout } from './awardPairReading';
 
 type CameraRigProps = Pick<StudioSceneProps,
-  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit'>;
+  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit'> & { readonly reading: boolean };
 
 type SavedPose = {
   readonly position: Vector3;
@@ -28,9 +30,7 @@ type Transition = {
 };
 
 const CAMERA_TOLERANCE = 0.002;
-const KEY_ROTATION_STEP = 0.08;
 const KEY_ZOOM_SCALE = 1 / 1.12;
-const KEY_PAN_STEP = 0.04;
 const FREE_ORBIT_LIMITS = { minDistance: 0.10, maxDistance: 15, minPolarAngle: 0.3, maxPolarAngle: Math.PI / 2 } as const;
 const FOCUSED_ORBIT_LIMITS = { minDistance: 0.08, maxDistance: 5.5, minPolarAngle: 0.35, maxPolarAngle: 1.52 } as const;
 
@@ -62,11 +62,6 @@ function applyOrbitLimits(orbit: OrbitControlsImpl, focused: boolean): void {
   orbit.maxPolarAngle = limits.maxPolarAngle;
 }
 
-function isFormTarget(target: EventTarget | null): boolean {
-  return target instanceof HTMLElement
-    && target.closest('input, textarea, select, button, a, [contenteditable="true"], [role="textbox"]') !== null;
-}
-
 function isSceneControl(object: Object3D): boolean {
   let current: Object3D | null = object;
   while (current) {
@@ -88,10 +83,11 @@ function isVisibleSurface(object: Object3D): boolean {
     && (isSceneControl(object) || !material.transparent || material.opacity > 0.1));
 }
 
-export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit }: CameraRigProps) {
+export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit, reading }: CameraRigProps) {
   const { editing, layout } = useArrangement();
   const { inspection, setInspection } = useSceneInspection();
   const screenFocused = selected === 'education' || selected === 'ai';
+  const screenReading = screenFocused && reading;
   const { camera, size, gl, raycaster, scene, setFrameloop } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const transition = useRef<Transition | null>(null);
@@ -152,8 +148,8 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     if (value.kind === 'return') savedFreePose.current = null;
     if (value.kind === 'restore-inspection') inspectionReturnPose.current = null;
     if (value.kind === 'restore-object') objectReturnPose.current = null;
-    orbit.enabled = !screenFocused && !editing;
-  }, [camera, selected, screenFocused, editing]);
+    orbit.enabled = !screenReading && !editing;
+  }, [camera, selected, screenFocused, screenReading, editing]);
 
   useLayoutEffect(() => {
     const orbit = controls.current;
@@ -208,22 +204,30 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     let lastTap: { time: number; x: number; y: number } | null = null;
     let touchZoomTime = 0;
     const inspectAt = (x: number, y: number) => {
-      if (editing || screenFocused) return;
+      if (editing || screenReading) return;
       cancelSceneSingleAction(gl.domElement);
       const hit = surfaceAt(x, y);
       if (!hit) return;
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
-      const saved = inspectionReturnPose.current;
-      if (saved) {
-        transition.current = { kind: 'restore-inspection', position: saved.position.clone(), target: saved.target.clone() };
-        return;
-      }
-      inspectionReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
+      if (!inspectionReturnPose.current) inspectionReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
+      window.dispatchEvent(new CustomEvent('office:zoomed', { detail: true }));
       const pose = zoomPoseForPoint(camera.position, hit.point);
       transition.current = { kind: 'inspect', position: pose.position, target: pose.target };
       userMoved.current = true;
     };
+    const restoreZoom = () => {
+      const saved = inspectionReturnPose.current;
+      if (!saved) return;
+      orbit.enabled = false;
+      transition.current = { kind: 'restore-inspection', position: saved.position.clone(), target: saved.target.clone() };
+      window.dispatchEvent(new CustomEvent('office:zoomed', { detail: false }));
+    };
+    const escapeZoom = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && inspectionReturnPose.current) { event.preventDefault(); event.stopImmediatePropagation(); restoreZoom(); }
+    };
+    window.addEventListener('office:zoom-close', restoreZoom);
+    window.addEventListener('keydown', escapeZoom, true);
     const handleDoubleClick = (event: MouseEvent) => {
       if (event.button !== 0 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey
         || performance.now() - touchZoomTime < 500) return;
@@ -259,13 +263,15 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     canvas.addEventListener('pointercancel', cancelTouch, true);
     return () => {
       cancelSceneSingleAction(canvas);
+      window.removeEventListener('office:zoom-close', restoreZoom);
+      window.removeEventListener('keydown', escapeZoom, true);
       canvas.removeEventListener('dblclick', handleDoubleClick, true);
       canvas.removeEventListener('pointerdown', touchDown, true);
       canvas.removeEventListener('pointermove', touchMove, true);
       canvas.removeEventListener('pointerup', touchUp);
       canvas.removeEventListener('pointercancel', cancelTouch, true);
     };
-  }, [camera, gl, surfaceAt, editing, screenFocused]);
+  }, [camera, gl, surfaceAt, editing, screenReading]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -294,6 +300,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const orbit = controls.current;
     if (!orbit || previousSelected.current === selected) return;
     inspectionReturnPose.current = null;
+    window.dispatchEvent(new CustomEvent('office:zoomed', { detail: false }));
     if (selected) {
       if (!previousSelected.current) {
         savedFreePose.current = {
@@ -350,13 +357,20 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
-    targetFov.current = selected === 'ai' ? monitorReadingFov(size.width, size.height) : focusFov(selected, compact, size.width, size.height);
+    targetFov.current = selected === 'ai' ? monitorReadingFov(size.width, size.height)
+      : selected === 'award-photo' ? awardPairReadingFov(size.width, size.height)
+      : focusFov(selected, compact, size.width, size.height);
     if (!selected || screenFocused) {
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
       return;
     }
-    const compactReader = selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf';
+    if (selected === 'award-photo') {
+      camera.setViewOffset(size.width, size.height, 0, awardPairReadingLayout(size.width, size.height).offsetY, size.width, size.height);
+      camera.updateProjectionMatrix();
+      return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
+    }
+    const compactReader = selected === 'family' || selected === 'books' || selected === 'bookshelf';
     const xOffset = compact ? 0 : (compactReader ? 352 : SIDE_READER_SPACE) / 2;
     const yOffset = compact ? size.height * 0.24 : 0;
     camera.setViewOffset(size.width, size.height, xOffset, yOffset, size.width, size.height);
@@ -373,21 +387,10 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const keyTarget = wrapper instanceof HTMLElement ? wrapper : gl.domElement;
     if (!orbit) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (editing || !orbit.enabled || isFormTarget(event.target)) return;
+      if (selected || editing || transition.current || !orbit.enabled
+        || !isSceneKeyboardEvent(event, keyTarget, gl.domElement)) return;
       let handled = true;
-      if (event.shiftKey && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
-        if (!orbit.enablePan) return;
-        const horizontal = event.key === 'ArrowLeft' || event.key === 'ArrowRight';
-        const sign = event.key === 'ArrowLeft' || event.key === 'ArrowDown' ? -1 : 1;
-        const offset = new Vector3().setFromMatrixColumn(camera.matrix, horizontal ? 0 : 1)
-          .multiplyScalar(camera.position.distanceTo(orbit.target) * KEY_PAN_STEP * sign);
-        camera.position.add(offset);
-        orbit.target.add(offset);
-      } else switch (event.key) {
-        case 'ArrowLeft': orbit.setAzimuthalAngle(orbit.getAzimuthalAngle() + KEY_ROTATION_STEP); break;
-        case 'ArrowRight': orbit.setAzimuthalAngle(orbit.getAzimuthalAngle() - KEY_ROTATION_STEP); break;
-        case 'ArrowUp': orbit.setPolarAngle(orbit.getPolarAngle() - KEY_ROTATION_STEP); break;
-        case 'ArrowDown': orbit.setPolarAngle(orbit.getPolarAngle() + KEY_ROTATION_STEP); break;
+      switch (event.key) {
         case '+':
         case '=': {
           const bounds = gl.domElement.getBoundingClientRect();
@@ -400,7 +403,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
           zoomAt(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2, 1 / KEY_ZOOM_SCALE);
           break;
         }
-        default: handled = false;
+        default: handled = orbit.enablePan && panCameraWithArrow(camera, orbit.target, event.key);
       }
       if (!handled) return;
       event.preventDefault();
@@ -409,9 +412,9 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     };
     keyTarget.addEventListener('keydown', handleKeyDown);
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
-  }, [camera, gl, zoomAt, editing]);
+  }, [camera, gl, zoomAt, editing, selected]);
 
-  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && !screenFocused; }, [editing, screenFocused]);
+  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && !screenReading; }, [editing, screenReading]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;
