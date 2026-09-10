@@ -12,7 +12,7 @@ export const AWARD_INSET_NAME = 'Gold award polished play-button inset';
 
 type Gesture = {
   readonly pointerId: number; readonly x: number; readonly y: number;
-  readonly focused: boolean; readonly inset: boolean;
+  readonly focused: boolean;
 };
 type Options = {
   readonly focused: boolean; readonly reducedMotion: boolean;
@@ -106,7 +106,7 @@ export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSele
         event.stopPropagation();
         setRegion(null);
         gesture.current = event.button !== 0 || !event.isPrimary || modified(event) ? null
-          : { pointerId: event.pointerId, x: event.clientX, y: event.clientY, focused, inset: event.object.name === AWARD_INSET_NAME };
+          : { pointerId: event.pointerId, x: event.clientX, y: event.clientY, focused };
       },
       onPointerCancel: () => { gesture.current = null; setRegion(null); },
       onPointerUp: (event: ThreeEvent<PointerEvent>) => {
@@ -118,7 +118,7 @@ export function useAwardInteraction({ focused, reducedMotion, channelUrl, onSele
           || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= CLICK_THRESHOLD) return;
         if (!focused) {
           scheduleSceneSingleAction(canvas, onSelect);
-        } else if (start.inset && event.object.name === AWARD_INSET_NAME) {
+        } else {
           scheduleSceneSingleAction(canvas, () => window.open(channelUrl, '_blank', 'noopener,noreferrer'));
         }
       },
