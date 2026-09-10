@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import type { CanopyPlacement } from './BanpoCanopyPlacement';
+import canopyPlacements from '../../../../public/models/han-river/vegetation/canopy-placements.json';
 
 interface CanopyIndexChange {
   readonly geometry: THREE.BufferGeometry;
@@ -12,7 +14,7 @@ export interface BanpoVegetation {
   readonly dispose: () => void;
 }
 
-export const BANPO_REPLACEMENT_TREES = [
+const FORMER_BANK_TREES = [
   [829.45, 398.65], [802.8, 378.75], [853.175, 421.7166666667],
   [874.325, 443.75], [770.95, 363.3], [895.475, 465.7833333333],
   [916.625, 487.8166666667], [738.55, 350.75], [937.775, 509.85],
@@ -23,7 +25,14 @@ export const BANPO_REPLACEMENT_TREES = [
 ] as const satisfies readonly (readonly [east: number, north: number])[];
 
 const TREE_ASSET = '/models/han-river/vegetation/tree-small-02-riverbank.glb';
-const CANOPY_RADIUS_SQUARED = 5.6 ** 2;
+const CANOPY_RADIUS_SQUARED = 3.8 ** 2;
+export const BANPO_REPLACEMENT_TREES: readonly CanopyPlacement[] = canopyPlacements;
+const CANOPY_CELL_SIZE = 16;
+const replacementCells = new Map<string, readonly (readonly number[])[]>();
+for (const point of FORMER_BANK_TREES) {
+  const key = `${Math.floor(point[0] / CANOPY_CELL_SIZE)},${Math.floor(point[1] / CANOPY_CELL_SIZE)}`;
+  replacementCells.set(key, [...(replacementCells.get(key) ?? []), point]);
+}
 
 function disposeObject(root: THREE.Object3D): void {
   const geometries = new Set<THREE.BufferGeometry>();
@@ -45,8 +54,14 @@ function disposeObject(root: THREE.Object3D): void {
 }
 
 function overlapsReplacement(x: number, z: number): boolean {
-  return BANPO_REPLACEMENT_TREES.some(([east, north]) =>
-    (x - east) ** 2 + (z + north) ** 2 <= CANOPY_RADIUS_SQUARED);
+  const column = Math.floor(x / CANOPY_CELL_SIZE); const row = Math.floor(-z / CANOPY_CELL_SIZE);
+  for (let dx = -1; dx <= 1; dx++) {
+    for (let dy = -1; dy <= 1; dy++) {
+      const nearby = replacementCells.get(`${column + dx},${row + dy}`);
+      if (nearby?.some(([east, north]) => (x - east) ** 2 + (z + north) ** 2 <= CANOPY_RADIUS_SQUARED)) return true;
+    }
+  }
+  return false;
 }
 
 function removeCrudeCanopies(model: THREE.Group): CanopyIndexChange[] {
@@ -93,11 +108,10 @@ function instanceTreeParts(source: THREE.Group, group: THREE.Group): void {
     mesh.name = `Near-bank detailed trees ${material.name}`;
     mesh.castShadow = false;
     mesh.receiveShadow = false;
-    BANPO_REPLACEMENT_TREES.forEach(([east, north], index) => {
-      const scale = 1.48 + (index % 5) * 0.085;
+    BANPO_REPLACEMENT_TREES.forEach(({ east, north, elevation, scale, rotation }, index) => {
       const placement = new THREE.Matrix4().compose(
-        new THREE.Vector3(east, 7.3, -north),
-        new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), (index * 2.399963) % (Math.PI * 2)),
+        new THREE.Vector3(east, elevation, -north),
+        new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotation),
         new THREE.Vector3(scale, scale * (0.96 + (index % 3) * 0.035), scale),
       );
       mesh.setMatrixAt(index, placement.multiply(object.matrixWorld));
