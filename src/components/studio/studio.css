@@ -19,9 +19,10 @@
 .studio button { cursor: pointer; }
 .studio a { color: inherit; text-decoration: none; }
 .studio :focus-visible { outline: 2px solid var(--studio-teal); outline-offset: 4px; }
-.studio-stage { position: relative; height: 100svh; min-height: 560px; overflow: hidden; transform: translateZ(0); color: var(--studio-ink); background: var(--studio-paper); transition: background var(--studio-panel); }
+.studio-stage { position: relative; height: 100svh; min-height: min(560px, 100svh); overflow: hidden; transform: translateZ(0); color: var(--studio-ink); background: var(--studio-paper); transition: background var(--studio-panel); }
 .studio-scene { position: absolute; inset: 0; z-index: 1; touch-action: none; }
 .studio-scene canvas { touch-action: none; }
+.studio[data-reading='ai'] .studio-scene { touch-action: pan-y pinch-zoom; }
 .studio-scene:focus-visible { outline-offset: -5px; }
 .studio-header { position: absolute; z-index: 5; top: 28px; left: 32px; right: 32px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
 .studio-brand { display: inline-flex; align-items: center; gap: 12px; line-height: 1.3; padding: 6px; margin: -6px; border: 1px solid color-mix(in srgb,var(--studio-line) 80%,transparent); border-radius: 12px; background: color-mix(in srgb,var(--studio-paper) 70%,transparent); backdrop-filter: blur(5px); }
@@ -108,7 +109,7 @@
   .office-social-links { bottom: 160px; }
 }
 @media (max-width: 759px) {
-  .studio-stage { min-height: 540px; }
+  .studio-stage { min-height: min(540px, 100svh); }
   .studio-header { top: 20px; left: 18px; right: 18px; gap: 12px; }
   .studio-brand { min-width: 0; gap: 8px; }
   .studio-brand > div { min-width: 0; }

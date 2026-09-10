@@ -52,7 +52,6 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
     onDoubleClick={event => { if (active) event.stopPropagation(); }}>
     {active && <header className="monitor-screen-header">
       <h2>Curriculum Vitae</h2>
-      <a href="/cv#details">Read CV details</a>
       <button ref={closeButton} type="button" onClick={onClose} aria-label="Close and return to office"><OfficeIcon name="close" /></button>
     </header>}
     <div ref={content} className="monitor-screen-content" inert={!active} tabIndex={active ? 0 : -1}

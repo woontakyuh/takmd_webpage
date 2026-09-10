@@ -56,6 +56,7 @@ export const educationPrograms = [
 ];
 
 export const awards = [
+  { year: '2026', text: 'Best Shorts Award, KOSESS' },
   { year: '2025', text: 'Best Research Award, KOSESS' },
   { year: '2024', text: 'Best Paper Award, Korean Neurosurgical Society' },
   { year: '2024', text: 'Most Cited Paper, Neurospine Congress' },

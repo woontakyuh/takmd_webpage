@@ -1,8 +1,7 @@
 import { academicInterests, activities, awards, career, currentRoles, educationPrograms, profileImage } from '../../data/cv';
 import publicationsData from '../../data/publications.json';
-import presentationsData from '../../data/presentations.json';
 import surgerySummary from '../../data/public-surgery-summary.json';
-import { countPublicationRoles, publicationRoles } from '../../data/publicationAuthorship';
+import { countPublicationRoles } from '../../data/publicationAuthorship';
 
 const authorship = countPublicationRoles(publicationsData.publications);
 
@@ -66,26 +65,10 @@ export function CvReader({ publicationCount, presentationCount, inScreen = false
           </section>
         </div>
       </div>
-      <section className="monitor-cv-section">
-        <div className="monitor-cv-section-heading"><h2>Publications</h2><a href="/research">Explore research ↗</a></div>
-        <p className="monitor-cv-meta">{authorship.first} first author · {authorship.corresponding} corresponding author · {authorship.coauthor} coauthor. Roles may overlap.</p>
-        <p className="monitor-cv-meta">Updated <time dateTime={publicationsData.generatedAt}>{publicationsData.generatedAt.slice(0, 10)}</time></p>
-        {publicationsData.publications.map(publication => <div className="monitor-cv-record" key={publication.doi || publication.title}>
-          <div><span>{publication.year}</span><p className="monitor-cv-meta">{publication.journal}</p></div>
-          <div><h3><a href={publication.doiUrl} target="_blank" rel="noreferrer">{publication.title}</a></h3>
-            <p className="monitor-cv-meta">{publicationRoles(publication).join(' · ')}</p>
-          </div>
-        </div>)}
-      </section>
-      <section className="monitor-cv-section">
-        <div className="monitor-cv-section-heading"><h2>Presentations</h2><a href="/education">Explore education ↗</a></div>
-        {presentationsData.presentations.map(presentation => <div className="monitor-cv-record" key={presentation.id}>
-          <div><span>{presentation.date}</span><p className="monitor-cv-meta">{presentation.place}</p></div>
-          <div><h3>{presentation.url ? <a href={presentation.url} target="_blank" rel="noreferrer">{presentation.name}</a> : presentation.name}</h3>
-            {presentation.topics.map(topic => <p key={topic}>{topic}</p>)}
-          </div>
-        </div>)}
-      </section>
+      <nav className="monitor-cv-section monitor-cv-collections" aria-label="Research and teaching collections">
+        <a href="/research">Explore research →</a>
+        <a href="/education">Explore education →</a>
+      </nav>
       <footer className="monitor-cv-footer"><span>Woon Tak Yuh, MD.</span><a href="/contact">Get in touch ↗</a></footer>
     </div>
   </article>;

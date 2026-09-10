@@ -10,10 +10,38 @@ type Props = {
   readonly scrollState?: MonitorScrollState;
 };
 
+const POSTER_MONITOR = {
+  desktop: { width: 1440, height: 900, x: 739, y: 483, across: [89, -21], down: [2, 70] },
+  mobile: { width: 390, height: 844, x: 165, y: 424, across: [39, -2], down: [0, 24] },
+} as const;
+
 export function LoadingMonitorReader({ publicationCount, presentationCount, onClose, scrollState }: Props) {
   const frame = useRef<HTMLDivElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
+  const bezel = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  useLayoutEffect(() => {
+    const element = bezel.current;
+    const poster = overlay.current?.closest('.studio')?.querySelector('.office-poster img');
+    if (!element || !poster || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const source = window.matchMedia('(max-width: 759px)').matches ? POSTER_MONITOR.mobile : POSTER_MONITOR.desktop;
+    const image = poster.getBoundingClientRect();
+    const target = element.getBoundingClientRect();
+    const fit = Math.max(image.width / source.width, image.height / source.height);
+    const x = image.left + (image.width - source.width * fit) / 2 + source.x * fit - target.left;
+    const y = image.top + (image.height - source.height * fit) / 2 + source.y * fit - target.top;
+    const transform = `matrix(${source.across[0] * fit / target.width}, ${source.across[1] * fit / target.width}, ${source.down[0] * fit / target.height}, ${source.down[1] * fit / target.height}, ${x}, ${y})`;
+    const motion = getComputedStyle(element);
+    const panelDuration = motion.getPropertyValue('--studio-panel').trim();
+    const animation = element.animate([{ transform, opacity: 0.65 }, { offset: 0.25, opacity: 1 }, { transform: 'none', opacity: 1 }], {
+      duration: 2 * Number.parseFloat(panelDuration) * (panelDuration.endsWith('ms') ? 1 : 1000),
+      easing: motion.getPropertyValue('--studio-ease').trim(),
+    });
+    const settle = () => animation.finish();
+    window.addEventListener('resize', settle, { once: true });
+    return () => { animation.cancel(); window.removeEventListener('resize', settle); };
+  }, []);
+
   useLayoutEffect(() => {
     const element = frame.current;
     if (!element) return;
@@ -38,7 +66,7 @@ export function LoadingMonitorReader({ publicationCount, presentationCount, onCl
   return <div ref={overlay} className="loading-monitor-reader" role="dialog" aria-modal="true" aria-label="Curriculum Vitae on desk monitor"
     onPointerDown={event => event.stopPropagation()}
     onDoubleClick={event => event.stopPropagation()}>
-    <div className="loading-monitor-bezel" style={{ aspectRatio: `${MONITOR.width} / ${MONITOR.height}` }}>
+    <div ref={bezel} className="loading-monitor-bezel" style={{ aspectRatio: `${MONITOR.width} / ${MONITOR.height}` }}>
       <div ref={frame} className="loading-monitor-screen" style={{
         aspectRatio: `${MONITOR_CV_WIDTH} / ${MONITOR_CV_HEIGHT}`,
         width: `${100 * MONITOR.screenWidth / MONITOR.width}%`,

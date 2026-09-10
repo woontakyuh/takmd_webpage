@@ -42,7 +42,7 @@ export function StudioScene(props: StudioSceneProps) {
     <Canvas frameloop={props.paused && props.ready ? 'never' : 'always'} camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
       dpr={[1, props.selected === 'books' ? 2 : props.compact ? 1 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
-      style={{ touchAction: 'none' }}>
+      style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
       {ROOM_ENVIRONMENT}
       <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
       <hemisphereLight args={[sun.skyColor, PALETTE.walnut, 0.10 + skyFill * 0.48]} />
