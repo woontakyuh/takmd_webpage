@@ -1,3 +1,19 @@
+# Office session handoff — 2026-09-11
+
+## Current ordered interaction pass
+
+The authoritative release receipt is `.omo/evidence/cabinet-entry-poster-2026-09-11/release.json`. Read it before claiming commit, push or production deployment; an absent receipt means local work only. The complete current scope and explicitly unfinished work are recorded in `docs/office-follow-up-2026-09-11.md`. This entry supersedes conflicting historical descriptions below.
+
+The cabinet first approaches its closed front; another physical click opens it. Its left free edge closes it. Boxed cabinet instructions and grip markers are removed. Its A3 lecture sits 30mm right and 35mm lower, held by a single substantial upper-left magnet. Right-sheet and parked-left-sheet clicks turn the 26 approved slides with a physical paper motion; X/Escape returns to the closed cabinet. No TV handoff link is shown.
+
+In the ordinary room TV/monitor content is a depth-tested texture, so it cannot float through other objects. At a settled front-facing focus the sharp interactive reader replaces that plane. The shared CV layout retains normal scrolling; its last visible reading slice is captured into the physical monitor on exit. The TV retains lecture/page, expanded year and normalized archive scroll across physical and interactive surfaces. The snapshot dependency is lazy `html-to-image`, not html2canvas. Original CV portrait design is unchanged.
+
+Light and blind wall plates share the 1.22m height and a muted warm-gray contrast against the plaster. The blinds remain on the LEFT of the window. Each credential/award group first frames all three objects, then a physical item click gives a closer view and unboxed English copy. X restores the saved room pose. The clock opens with a responsive paper monthly calendar of 33 curated academic events, including attendance and faculty roles. This is a reviewed public snapshot, not a Notion watcher; see `docs/conference-calendar-source.md`.
+
+The build-time poster pipeline generates eight responsive day/night WebP masters and the early-CV monitor quadrilaterals. It fingerprints tracked scene/content/assets and visible date-dependent selections, uses the real capture date, and changes illumination independently. Fresh images are reused by unchanged builds; capture failures fail the build. Legitimate new source/assets must be staged before capture, while unrelated untracked reference files are excluded. Check `posters:check` before a release and verify archive-build parity. Do not manually freeze an old date to obtain daylight, as that selects the wrong TV lecture.
+
+Speaker replacement and BGM remain a feasibility brief only. The current recommendation is walnut/black JBL L82 Classic MkII on a low base; standard JS-80 stands do not fit below the 82cm shelf. Alternatives, dimensions and primary sources: `docs/office-speaker-options-2026-09-11.md`. No new audio, corner lamp or speaker model is installed. Further performance tuning, Han River refinement, permanent administrator arrangements, missing source files and owner-deferred 2024 lecture imports are explicitly listed in the follow-up document. Do not misreport them as completed.
+
 # Office session handoff — 2026-09-10
 
 ## Current physical refinements — 10 September evening
