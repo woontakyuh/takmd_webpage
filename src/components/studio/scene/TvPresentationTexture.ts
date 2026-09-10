@@ -70,13 +70,8 @@ export function useTvPresentationTexture({ cover, talk, presentations }: Props) 
       });
     });
     if (count > 1) {
-      context.font = '32px Arial'; context.textAlign = 'center';
-      for (const [x, glyph, enabled] of [[1240, '←', current > 0], [1430, '→', current < count - 1]] as const) {
-        context.strokeStyle = enabled ? '#8E9C91' : '#3D4B42'; context.lineWidth = 1;
-        context.strokeRect(x, 844, 130, 44); context.fillStyle = enabled ? '#EDF0E9' : '#627067';
-        context.fillText(glyph, x + 65, 848);
-      }
-      context.textAlign = 'left';
+      context.font = '20px Arial'; context.fillStyle = '#D3DED4';
+      context.fillText(`${photos ? 'Photo' : 'Slide'} ${current + 1} / ${count}`, 1240, 854);
     }
     texture.needsUpdate = true;
     return () => images.forEach(image => { image.onload = null; });

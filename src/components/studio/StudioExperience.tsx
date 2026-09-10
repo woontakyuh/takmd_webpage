@@ -151,7 +151,7 @@ function OfficeExperience(content: StudioContent) {
   const openLoadingProfile = () => open('ai');
   const approach = (id: ExhibitId) => {
     if (arrangement.editing) return;
-    if (id === 'ai' || navigation.current.current.focused === id) open(id);
+    if (id === 'ai' || (id === 'education' && talkId !== null) || navigation.current.current.focused === id) open(id);
     else { setExplored(true); navigation.go({ focused: id, selected: null, details: null }); }
   };
   const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(0); open('books'); };
