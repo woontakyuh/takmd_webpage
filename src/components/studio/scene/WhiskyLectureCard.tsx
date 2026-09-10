@@ -68,7 +68,7 @@ export function WhiskyLectureCard({ open, disabled }: { readonly open: boolean; 
       if (!handingToTv.current) trigger.current?.focus({ preventScroll: true });
     };
   }, [active, close]);
-  return <group ref={card} name="Magnetic whisky lecture card" position={[-0.255, 0.90, -0.2565]}
+  return <group ref={card} name="Magnetic whisky lecture card" position={[-0.285, 0.90, -0.2565]}
     rotation={[0, Math.PI, 0]} userData={{ lectureId: WHISKY_LECTURE.id, active }} {...handlers}>
     <mesh castShadow receiveShadow>
       <boxGeometry args={[WHISKY_LECTURE.width + .004, WHISKY_LECTURE.height + .004, .0007]} />
@@ -78,7 +78,7 @@ export function WhiskyLectureCard({ open, disabled }: { readonly open: boolean; 
       <planeGeometry args={[WHISKY_LECTURE.width, WHISKY_LECTURE.height]} />
       <meshStandardMaterial map={texture} color={PALETTE.paperLight} roughness={.94} />
     </mesh>
-    {[-.091, .091].map(x => <mesh key={x} name="Brushed steel paper magnet" position={[x, WHISKY_LECTURE.height / 2 - .003, .0017]}
+    {[-1, 1].map(side => <mesh key={side} name="Brushed steel paper magnet" position={[side * (WHISKY_LECTURE.width / 2 - .014), WHISKY_LECTURE.height / 2 - .008, .0017]}
       rotation={[Math.PI / 2, 0, 0]} castShadow>
       <cylinderGeometry args={[.0036, .0036, .0024, 20]} />
       <meshStandardMaterial color={PALETTE.aluminium} metalness={.86} roughness={.32} />

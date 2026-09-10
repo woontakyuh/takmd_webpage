@@ -4,8 +4,8 @@ import { focusFov } from './config';
 
 export const WHISKY_LECTURE = {
   id: '18c908af25b980b6b436e189b233b958',
-  width: 0.21,
-  height: 0.21 * 1357 / 1920,
+  width: 0.42,
+  height: 0.42 * 1357 / 1920,
   inspection: 'whisky-lecture',
 } as const;
 
