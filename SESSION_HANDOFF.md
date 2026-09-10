@@ -1,5 +1,17 @@
 # Office session handoff — 2026-09-10
 
+## Current physical refinements — 10 September evening
+
+The Halo 2 dial is beside the Mac mini at the back of the desk. Every personal book starts at its closed cover, including books with photographed inner pages; cover/next opens the content. Research folio focus is closer and centered on the complete open spread, with separate desktop/mobile distances that preserve both page edges.
+
+The complete focused gold plaque opens the original winning Short, matching its full-plaque hover. Distant plaque/photo clicks still approach the same pair and show the caption. Cabinet grip markers have been removed entirely; real handle/free-edge pointer targets remain. The A3 magnetic sheet is tilted four degrees with subtle static paper curl/crease, and becomes flat in its sharp slide viewer.
+
+Lower whisky bottles leave the shelf and go around the unfolded worktop before rising. Their return uses the reversed route. Concurrent separation preserves bottle height and projects moving bottles out of worktop/deck/shelf volumes; tests include settled and rapid switches. Runtime mesh/triangle collision evidence is retained; rotated mesh AABBs alone can falsely report contact for cylindrical bottles, so the surface trace uses a narrow phase.
+
+The physical TV keeps its compact year/date tree and selected slide mounted before approach, during reading and after X. Focus enables controls and upgrades the same slide to its available HD image; it no longer mounts a different layout. The tree retains its scroll position across focus. Shadow-only invisible enclosure meshes no longer participate in raycasting, so they cannot hide the real TV/monitor HTML surface when viewing through cutaway walls. Monitor off-axis registration remains in place.
+
+Current evidence: `.omo/evidence/cabinet-motion-2026-09-10/`. Its final `release.json` determines the committed/pushed/deployed revision; do not infer release from this note alone. This entry supersedes the earlier grip-marker and inner-page-on-entry descriptions. Do not broaden gesture redesign or resume deferred river/admin work from historical notes without checking the current user task.
+
 ## Current object interaction refinements
 
 The blind keypad is on the LEFT of the window, opposite the gown. One click on either award-shelf object opens the same photo-and-gold-plaque composition with the existing English award caption already visible. The polished inset quietly gleams in that close view; clicking it opens the original award-winning Short directly. The intermediate Open object / award reader / visible Shorts link is removed; a focus-only accessible Shorts link remains. The desk photo likewise opens its frame view and caption in one click. Legacy award/approach URLs enter the same pair view. Other object gestures are unchanged.
