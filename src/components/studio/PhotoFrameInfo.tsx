@@ -42,11 +42,11 @@ export function PhotoFrameInfo({ memory, onClose, variant = 'frame' }: {
   }, [variant]);
 
   return <dialog ref={dialogRef} className={`office-frame-info${variant === 'award-pair' ? ' office-frame-info--award-pair' : ''}`} aria-labelledby="office-frame-title"
-    aria-describedby="office-frame-description" aria-modal="false" lang="ko"
+    aria-describedby="office-frame-description" aria-modal="false" lang="en"
     onCancel={event => { event.preventDefault(); onClose(); }}>
     <div className="office-frame-info-top">
       <span>{memory.kicker}</span>
-      <button className="studio-icon-button" onClick={onClose} aria-label="사진 액자 닫기"><OfficeIcon name="close" /></button>
+      <button className="studio-icon-button" onClick={onClose} aria-label="Close photo frame"><OfficeIcon name="close" /></button>
     </div>
     <h2 id="office-frame-title">{memory.title}</h2>
     <p id="office-frame-description" className="studio-sr-only">{memory.alt}</p>

@@ -25,17 +25,17 @@ export const PHOTO_MEMORIES: Readonly<Record<'ppomppu' | 'kosess-award', PhotoMe
     place: '서래본갈비', people: '왼쪽부터 여운탁 · 고용산 · 박용진',
   },
   'kosess-award': {
-    kicker: '수상의 기록', title: 'Best Shorts Award',
+    kicker: 'A moment of recognition', title: 'Best Shorts Award',
     src: '/models/award-photo/kosess-ceremony.webp', width: 1600, height: 1241,
-    alt: 'KOSESS 정기학술대회에서 Best Shorts Award를 수상하는 여운탁.',
-    occasion: 'KOSESS 정기학술대회', dateTime: '2026-08-29', dateLabel: '2026.08.29',
-    place: '서울성모병원',
+    alt: 'Woon Tak Yuh receiving the Best Shorts Award at the KOSESS Annual Meeting.',
+    occasion: 'KOSESS Annual Meeting', dateTime: '2026-08-29', dateLabel: '29 August 2026',
+    place: 'Seoul St. Mary’s Hospital',
   },
 };
 
 const FAMILY_CAPTIONS: Readonly<Record<string, Pick<PhotoMemory, 'occasion' | 'dateTime' | 'dateLabel' | 'place'>>> = {
   '/images/photo-frame/d763025245ba26e9.webp': {
-    occasion: 'AO Spine Fellowship', dateTime: '2025-08-05', dateLabel: '2025.08.05',
+    occasion: 'AO Spine Fellowship', dateTime: '2025-08-05', dateLabel: '5 August 2025',
     place: 'Keio University Mita Campus',
   },
 };
@@ -46,5 +46,5 @@ export function selectFamilyPhoto(): PhotoMemory {
   const candidates = photos.length > 1 ? photos.filter(item => item.src !== previous) : photos;
   const photo = candidates[Math.floor(Math.random() * candidates.length)] ?? { src: profileImage };
   try { sessionStorage.setItem('takmd-frame-photo', photo.src); } catch { /* Selection works without storage. */ }
-  return { ...photo, ...FAMILY_CAPTIONS[photo.src], title: '가족과 함께', kicker: '책상 위의 한 장', alt: '책상 액자에 놓인 가족사진' };
+  return { ...photo, ...FAMILY_CAPTIONS[photo.src], title: 'With family', kicker: 'A photograph from the desk', alt: 'A family photograph in the desk frame' };
 }

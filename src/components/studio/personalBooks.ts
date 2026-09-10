@@ -37,7 +37,7 @@ export const PERSONAL_BOOKS = [
     width: .217, height: .286, thickness: .038, binding: '#d6c8ac',
     spine: spine([[493,95],[573,91],[562,804],[480,804]]),
     cover: BOOK_SURFACES['benzel-2-cover'], back: BOOK_SURFACES['benzel-2-back'], pages: [] },
-  { id: 'emory', title: 'Emory University Spine: Illustrated Tips and Tricks in Spine Surgery', author: 'John M. Rhee 편집 · M. Bradford Henley 시리즈 편집',
+  { id: 'emory', title: 'Emory University Spine: Illustrated Tips and Tricks in Spine Surgery', author: 'Edited by John M. Rhee · Series editor M. Bradford Henley',
     width: .218, height: .285, thickness: .025, binding: '#173d63',
     spine: spine([[594,94],[645,95],[627,800],[578,800]]),
     cover: BOOK_SURFACES['emory-cover'], back: BOOK_SURFACES['emory-back'], pages: [] },
@@ -46,8 +46,8 @@ export const PERSONAL_BOOKS = [
     spine: spine([[658,226],[695,226],[683,813],[644,812]]),
     cover: BOOK_SURFACES['csrs-cover'], back: BOOK_SURFACES['csrs-back'],
     pages: [
-      { label: '발표 일정 · 11쪽', right: BOOK_SURFACES['csrs-program'], leftLeaves: 5 },
-      { label: 'Paper 23 · 86–87쪽', left: BOOK_SURFACES['csrs-paper-left'], right: BOOK_SURFACES['csrs-paper-right'], leftLeaves: 43 },
+      { label: 'Program · p. 11', right: BOOK_SURFACES['csrs-program'], leftLeaves: 5 },
+      { label: 'Paper 23 · pp. 86–87', left: BOOK_SURFACES['csrs-paper-left'], right: BOOK_SURFACES['csrs-paper-right'], leftLeaves: 43 },
     ] },
   { id: 'consciousness', title: '의식', author: '크리스토퍼 코흐 · 이정진 옮김',
     width: .163, height: .226, thickness: .026, binding: '#e5ded1',
@@ -61,7 +61,7 @@ export const PERSONAL_BOOKS = [
     width: .159, height: .218, thickness: .02, binding: '#e5e6d8',
     spine: spine([[853,279],[890,278],[879,811],[844,811]]),
     cover: BOOK_SURFACES['woodpecker-cover'], back: BOOK_SURFACES['woodpecker-back'],
-    pages: [{ label: '김동규 선생님의 서명 · 2026. 9. 8.', right: BOOK_SURFACES['woodpecker-dedication'] }] },
+    pages: [{ label: 'Signed by the author · 8 September 2026', right: BOOK_SURFACES['woodpecker-dedication'] }] },
 ] as const satisfies readonly PersonalBook[];
 
 export function personalBook(id: PersonalBookId): PersonalBook {

@@ -33,3 +33,12 @@
 
 .office-book-reader .office-frame-info-top { position: sticky; top: -24px; z-index: 1; background: var(--studio-light); }
 @media (max-width: 759px) { .office-book-reader .office-frame-info-top { top: -16px; } }
+
+.office-frame-info.office-bookshelf-exit {
+  inset: 16px 16px auto auto; width: 44px; height: 44px; max-width: none; max-height: none;
+  padding: 0; border: 0; transform: none; background: transparent; box-shadow: none; overflow: visible;
+}
+.office-frame-info.office-bookshelf-exit[open] { animation: none; }
+.office-bookshelf-exit .studio-icon-button { width: 44px; height: 44px; background: var(--studio-light); }
+
+.studio:is([data-selected='bookshelf'], [data-selected='books']) .studio-header { visibility: hidden; pointer-events: none; }

@@ -300,7 +300,7 @@ function OfficeExperience(content: StudioContent) {
     {zoomed && <div className="office-approach-actions"><button className="studio-icon-button" onClick={() => window.dispatchEvent(new Event('office:zoom-close'))} aria-label="Return from closer view"><OfficeIcon name="close" /></button></div>}
     {!zoomed && !selected && focused && !details && <div className="office-approach-actions"><button className="studio-icon-button" onClick={close} aria-label="Return to previous office view"><OfficeIcon name="close" /></button><button onClick={() => open(focused)}>Open {focused === 'ai' ? 'monitor' : focused === 'education' ? 'TV' : 'object'}</button></div>}
     {(selected === 'family' || selected === 'award-photo') && <PhotoFrameInfo memory={selected === 'family' ? familyPhoto : PHOTO_MEMORIES['kosess-award']} variant={selected === 'award-photo' ? 'award-pair' : 'frame'} onClose={close} />}
-    {(selected === 'books' || selected === 'bookshelf') && <BookReader selectedBook={selectedBook} pageIndex={bookPageIndex} browsingShelf={selected === 'bookshelf'} shelfReady={bookshelfReady} onBookSelect={selectBook} onPageChange={setBookPageIndex} onClose={close} />}
+    {(selected === 'books' || selected === 'bookshelf') && <BookReader selectedBook={selectedBook} pageIndex={bookPageIndex} browsingShelf={selected === 'bookshelf'} onBookSelect={selectBook} onPageChange={setBookPageIndex} onClose={close} />}
     {memory && <MemoryPhoto memory={memory} onClose={() => setMemory(null)} />}
   </div>;
 }

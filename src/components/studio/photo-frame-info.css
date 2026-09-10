@@ -14,6 +14,7 @@
 .office-frame-meta { padding-top: 16px; border-top: 1px solid var(--studio-line); color: var(--studio-muted); font-size: 12px; line-height: 1.65; font-variant-numeric: tabular-nums; }
 .office-frame-meta p { margin: 4px 0 0; overflow-wrap: anywhere; }
 .office-frame-people { margin: 16px 0 0; color: var(--studio-muted); font-size: 11px; }
+.studio:is([data-selected='family'], [data-selected='award-photo']) .studio-header { visibility: hidden; pointer-events: none; }
 .studio[data-selected='family'] .studio-stage .studio-tools,
 .studio[data-selected='award-photo'] .studio-stage .studio-tools { visibility: hidden; pointer-events: none; }
 @keyframes office-frame-info-enter {

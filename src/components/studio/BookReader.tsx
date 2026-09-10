@@ -6,11 +6,10 @@ import type { PersonalBookId } from './personalBooks';
 import './photo-frame-info.css';
 import './book-reader.css';
 
-export function BookReader({ selectedBook, pageIndex, browsingShelf, shelfReady, onBookSelect, onPageChange, onClose }: {
+export function BookReader({ selectedBook, pageIndex, browsingShelf, onBookSelect, onPageChange, onClose }: {
   readonly selectedBook: PersonalBookId;
   readonly pageIndex: number;
   readonly browsingShelf: boolean;
-  readonly shelfReady: boolean;
   readonly onBookSelect: (id: PersonalBookId) => void;
   readonly onPageChange: (index: number) => void;
   readonly onClose: () => void;
@@ -44,33 +43,34 @@ export function BookReader({ selectedBook, pageIndex, browsingShelf, shelfReady,
     };
   }, [close, onClose]);
 
-  return <dialog ref={dialogRef} className="office-frame-info office-book-reader" aria-labelledby="office-book-title"
-    aria-modal="false" lang="ko" onCancel={event => { event.preventDefault(); close(); }}>
+  return <dialog ref={dialogRef} className={`office-frame-info ${browsingShelf ? 'office-bookshelf-exit' : 'office-book-reader'}`} aria-labelledby={browsingShelf ? undefined : 'office-book-title'} aria-label={browsingShelf ? 'Bookshelf view' : undefined}
+    aria-modal="false" lang="en" onCancel={event => { event.preventDefault(); close(); }}>
+    {browsingShelf ? <button className="studio-icon-button" onClick={close} aria-label="Return from bookshelf"><OfficeIcon name="close" /></button> : <>
     <div className="office-frame-info-top">
-      <span>책장 · {PERSONAL_BOOKS.length}권</span>
-      <button className="studio-icon-button" onClick={close} aria-label={browsingShelf ? '책장에서 돌아가기' : '책을 닫고 책장에 넣기'}><OfficeIcon name="close" /></button>
+      <span>Personal library · {PERSONAL_BOOKS.length} books</span>
+      <button className="studio-icon-button" onClick={close} aria-label="Close book and return to shelf"><OfficeIcon name="close" /></button>
     </div>
-    <h2 id="office-book-title">{browsingShelf ? '책장' : book.title}</h2>
-    <p className="office-frame-occasion" aria-live="polite">{browsingShelf ? (shelfReady ? '읽을 책을 골라주세요.' : '책장으로 다가가는 중입니다.') : book.author}</p>
-    {!browsingShelf && <p className="office-book-publication">{info.publication}</p>}
-    {!browsingShelf && <div className="office-book-pages" aria-label="책에서 보기">
-      <button onClick={() => onPageChange(-1)} aria-pressed={pageIndex < 0 || book.pages.length === 0}>표지</button>
+    <h2 id="office-book-title">{book.title}</h2>
+    <p className="office-frame-occasion" aria-live="polite">{book.author}</p>
+    <p className="office-book-publication">{info.publication}</p>
+    <div className="office-book-pages" aria-label="Book pages">
+      <button onClick={() => onPageChange(-1)} aria-pressed={pageIndex < 0 || book.pages.length === 0}>Cover</button>
       {book.pages.map((page, index) => <button key={page.label} onClick={() => onPageChange(index)}
         aria-pressed={pageIndex === index}>{page.label}</button>)}
-    </div>}
-    {!browsingShelf && <div className="office-book-info" key={selectedBook}>
+    </div>
+    <div className="office-book-info" key={selectedBook}>
       <p>{info.description}</p>
       {info.details && <details className="office-book-details">
         <summary>{info.details.label}</summary>
         {info.details.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
         <a href={info.details.source.url} target="_blank" rel="noopener noreferrer"
-          aria-label={`${info.details.source.label} (새 탭)`}>{info.details.source.label}<span aria-hidden="true"> ↗</span></a>
+          aria-label={`${info.details.source.label} (opens in a new tab)`}>{info.details.source.label}<span aria-hidden="true"> ↗</span></a>
       </details>}
       <a href={info.source.url} target="_blank" rel="noopener noreferrer"
-        aria-label={`${info.source.label} (새 탭)`}>{info.source.label}<span aria-hidden="true"> ↗</span></a>
-    </div>}
-    <details ref={catalogRef} className="office-book-catalog" open={browsingShelf || undefined}>
-      <summary>{browsingShelf ? '책 선택' : '다른 책 보기'}</summary>
+        aria-label={`${info.source.label} (opens in a new tab)`}>{info.source.label}<span aria-hidden="true"> ↗</span></a>
+    </div>
+    <details ref={catalogRef} className="office-book-catalog">
+      <summary>Other books</summary>
       <div>{PERSONAL_BOOKS.map(item => <button key={item.id} onClick={() => {
         onBookSelect(item.id);
         if (catalogRef.current) catalogRef.current.open = false;
@@ -79,8 +79,8 @@ export function BookReader({ selectedBook, pageIndex, browsingShelf, shelfReady,
           dialogRef.current?.querySelector<HTMLButtonElement>('.office-book-pages button')?.focus({ preventScroll: true });
         });
       }}
-        disabled={browsingShelf && !shelfReady}
         aria-pressed={selectedBook === item.id}>{item.title}</button>)}</div>
     </details>
+    </>}
   </dialog>;
 }
