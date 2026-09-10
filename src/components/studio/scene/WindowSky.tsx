@@ -1,7 +1,7 @@
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  Color, HalfFloatType, MathUtils, PerspectiveCamera, Vector2, Vector4, WebGLRenderTarget,
+  Box3, Color, Frustum, HalfFloatType, MathUtils, Matrix4, PerspectiveCamera, Vector2, Vector3, Vector4, WebGLRenderTarget,
 } from 'three';
 import { createBanpoLandscape } from './BanpoLandscape';
 import { ROOM } from './config';
@@ -62,6 +62,13 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
   const output = useMemo(() => new WebGLRenderTarget(1, 1, { type: HalfFloatType, samples: 2 }), []);
   const exteriorCamera = useMemo(() => new PerspectiveCamera(), []);
   const saved = useMemo(() => ({ viewport: new Vector4(), scissor: new Vector4() }), []);
+  const visibility = useMemo(() => ({
+    frustum: new Frustum(), matrix: new Matrix4(),
+    opening: new Box3(
+      new Vector3(leftX - 0.05, opening.bottom, opening.centerZ - opening.width / 2),
+      new Vector3(leftX + 0.05, opening.top, opening.centerZ + opening.width / 2),
+    ),
+  }), [leftX, opening.bottom, opening.top, opening.centerZ, opening.width]);
   const uniforms = useMemo(() => ({
     uExterior: { value: output.texture },
     uResolution: { value: new Vector2(1, 1) },
@@ -79,6 +86,10 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
 
   useFrame(({ camera, gl, clock }) => {
     if (!exterior || !(camera instanceof PerspectiveCamera)) return;
+    camera.updateMatrixWorld();
+    visibility.matrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+    visibility.frustum.setFromProjectionMatrix(visibility.matrix);
+    if (!visibility.frustum.intersectsBox(visibility.opening)) return;
     gl.getDrawingBufferSize(uniforms.uResolution.value);
     const { x: width, y: height } = uniforms.uResolution.value;
     if (output.width !== width || output.height !== height) output.setSize(width, height);

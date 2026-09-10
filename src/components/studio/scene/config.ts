@@ -107,7 +107,7 @@ export const MOTION = { camera: 4.5, object: 8, hoverLift: 0.008 } as const;
 export const SIDE_READER_SPACE = 438;
 
 export function tvReadingSize(width: number, height: number) {
-  const tvWidth = Math.min(Math.max(32, width - 32), Math.max(32, height - (width > height && height < 560 ? 32 : 128)) * WALL_TV.width / WALL_TV.height);
+  const tvWidth = Math.min(Math.max(32, width - 32), Math.max(32, height - (width > height && height < 560 ? 144 : 240)) * WALL_TV.width / WALL_TV.height);
   return tvWidth * WALL_TV.screenWidth / WALL_TV.width;
 }
 

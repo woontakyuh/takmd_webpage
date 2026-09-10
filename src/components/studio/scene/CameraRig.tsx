@@ -15,7 +15,7 @@ import { isSceneKeyboardEvent, panCameraWithArrow } from './cameraKeyboard';
 import { awardPairReadingFov, awardPairReadingLayout } from './awardPairReading';
 
 type CameraRigProps = Pick<StudioSceneProps,
-  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit'> & { readonly reading: boolean };
+  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit' | 'paused' | 'ready'> & { readonly reading: boolean };
 
 type SavedPose = {
   readonly position: Vector3;
@@ -83,7 +83,7 @@ function isVisibleSurface(object: Object3D): boolean {
     && (isSceneControl(object) || !material.transparent || material.opacity > 0.1));
 }
 
-export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit, reading }: CameraRigProps) {
+export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit, reading, paused, ready: sceneReady }: CameraRigProps) {
   const { editing, layout } = useArrangement();
   const { inspection, setInspection } = useSceneInspection();
   const screenFocused = selected === 'education' || selected === 'ai';
@@ -161,12 +161,13 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   }, [camera]);
 
   useEffect(() => {
+    if (paused && sceneReady) { setFrameloop('never'); return; }
     const observer = new IntersectionObserver(([entry]) => {
       setFrameloop(entry?.isIntersecting ? 'always' : 'never');
     }, { rootMargin: '100px' });
     observer.observe(gl.domElement);
     return () => observer.disconnect();
-  }, [gl, setFrameloop]);
+  }, [gl, paused, sceneReady, setFrameloop]);
 
   useEffect(() => {
     const canvas = gl.domElement;

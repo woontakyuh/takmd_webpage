@@ -12,6 +12,7 @@ type Props = {
 
 export function LoadingMonitorReader({ publicationCount, presentationCount, onClose, scrollState }: Props) {
   const frame = useRef<HTMLDivElement>(null);
+  const overlay = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   useLayoutEffect(() => {
     const element = frame.current;
@@ -23,7 +24,20 @@ export function LoadingMonitorReader({ publicationCount, presentationCount, onCl
     return () => observer.disconnect();
   }, []);
 
-  return <div className="loading-monitor-reader" role="dialog" aria-modal="true" aria-label="Curriculum Vitae on desk monitor">
+  useLayoutEffect(() => {
+    const element = overlay.current;
+    if (!element) return;
+    const containWheel = (event: WheelEvent) => {
+      event.stopPropagation();
+      if (!(event.target instanceof Element) || !event.target.closest('.monitor-screen-content')) event.preventDefault();
+    };
+    element.addEventListener('wheel', containWheel, { passive: false });
+    return () => element.removeEventListener('wheel', containWheel);
+  }, []);
+
+  return <div ref={overlay} className="loading-monitor-reader" role="dialog" aria-modal="true" aria-label="Curriculum Vitae on desk monitor"
+    onPointerDown={event => event.stopPropagation()}
+    onDoubleClick={event => event.stopPropagation()}>
     <div className="loading-monitor-bezel" style={{ aspectRatio: `${MONITOR.width} / ${MONITOR.height}` }}>
       <div ref={frame} className="loading-monitor-screen" style={{
         aspectRatio: `${MONITOR_CV_WIDTH} / ${MONITOR_CV_HEIGHT}`,

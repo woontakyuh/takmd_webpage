@@ -288,3 +288,7 @@
 .studio:is([data-selected], [data-inspecting]) .studio-stage { min-height: 0; height: 100dvh; }
 html:has(.studio:is([data-selected], [data-inspecting])),
 body:has(.studio:is([data-selected], [data-inspecting])) { overflow: clip; }
+
+.office-overview-return { position: fixed; top: max(16px, env(safe-area-inset-top)); left: max(16px, env(safe-area-inset-left)); z-index: 90; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--studio-line); border-radius: 12px; background: var(--studio-paper); color: var(--studio-ink); font-size: 12px; cursor: pointer; }
+.office-overview-return svg { width: 18px; height: 18px; }
+.office-overview-return:focus-visible { outline: 2px solid var(--studio-ink); outline-offset: 3px; }

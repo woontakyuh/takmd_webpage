@@ -39,7 +39,7 @@ export function StudioScene(props: StudioSceneProps) {
   const skyFill = MathUtils.smoothstep(sun.altitude, -6, 32);
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
-    <Canvas camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
+    <Canvas frameloop={props.paused && props.ready ? 'never' : 'always'} camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
       dpr={[1, props.selected === 'books' ? 2 : props.compact ? 1 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: 'none' }}>

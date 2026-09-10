@@ -1,8 +1,9 @@
-import { CatmullRomCurve3, MathUtils, Quaternion, Vector3 } from 'three';
+import { CurvePath, LineCurve3, MathUtils, QuadraticBezierCurve3, Quaternion, Vector3 } from 'three';
 import type { Group, Object3D } from 'three';
 import { focusFov } from './config';
 import type { Point } from './config';
-import { ISIDORO_WORKTOP_HEIGHT } from './WhiskyCabinetLayout';
+import type { BottleSpec } from './WhiskyBottleSpecs';
+import { ISIDORO_BOTTLE_SHELF_TOP, ISIDORO_DIMENSIONS, ISIDORO_WORKTOP_HEIGHT } from './WhiskyCabinetLayout';
 
 export const WHISKY_PRESENTATION = {
   position: [0, ISIDORO_WORKTOP_HEIGHT + 0.024, -0.205],
@@ -51,20 +52,41 @@ export function whiskyInspectionPose(cabinet: Group, viewport: WhiskyViewport) {
   return fittedCabinetPose(cabinet, viewport, true);
 }
 
-export function whiskyPresentationPath(cabinet: Group, parent: Object3D, slot: Point) {
+function roundedRoute(points: readonly Vector3[]) {
+  const curve = new CurvePath<Vector3>();
+  let previous = points[0];
+  for (let index = 1; index < points.length - 1; index += 1) {
+    const corner = points[index];
+    const next = points[index + 1];
+    const radius = Math.min(0.025, corner.distanceTo(points[index - 1]) / 3, corner.distanceTo(next) / 3);
+    const entry = corner.clone().addScaledVector(points[index - 1].clone().sub(corner).normalize(), radius);
+    const exit = corner.clone().addScaledVector(next.clone().sub(corner).normalize(), radius);
+    curve.add(new LineCurve3(previous, entry));
+    curve.add(new QuadraticBezierCurve3(entry, corner, exit));
+    previous = exit;
+  }
+  curve.add(new LineCurve3(previous, points[points.length - 1]));
+  return curve;
+}
+
+export function whiskyPresentationPath(cabinet: Group, parent: Object3D, bottle: Pick<BottleSpec, 'position' | 'radius'>) {
   cabinet.updateWorldMatrix(true, false);
   parent.updateWorldMatrix(true, false);
   const stage = parent.worldToLocal(cabinet.localToWorld(new Vector3(...WHISKY_PRESENTATION.position)));
-  const start = new Vector3(...slot);
-  const lifted = start.clone().add(new Vector3(0, 0.04, 0));
-  const clear = lifted.clone().add(new Vector3(0, 0, 0.22));
+  const start = new Vector3(...bottle.position);
+  const lifted = start.clone();
+  if (start.y >= ISIDORO_BOTTLE_SHELF_TOP) lifted.y += 0.04;
+  const clear = lifted.clone();
+  // Clear the deepest overhead panel plus the complete bottle before rounding into the lift.
+  clear.z = ISIDORO_DIMENSIONS.depth / 4 + bottle.radius * 1.005 + 0.00035 + 0.035;
+  const rise = clear.clone();
+  rise.y = Math.max(clear.y, stage.y) + 0.045;
   const above = stage.clone();
   above.y = Math.max(clear.y, stage.y) + 0.045;
   const rotation = parent.getWorldQuaternion(new Quaternion()).invert()
     .multiply(cabinet.getWorldQuaternion(new Quaternion()))
     .multiply(new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI));
-  const curve = new CatmullRomCurve3([start, lifted, clear, above, stage], false, 'centripetal');
-  curve.arcLengthDivisions = 240;
+  const curve = roundedRoute(start.equals(lifted) ? [start, clear, rise, above, stage] : [start, lifted, clear, rise, above, stage]);
   return { start, stage, curve, rotation };
 }
 

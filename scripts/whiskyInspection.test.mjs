@@ -28,7 +28,7 @@ describe('physical whisky presentation', () => {
       const { cabinet, parent } = openingHierarchy();
       const model = new Group();
       parent.add(model);
-      const path = whiskyPresentationPath(cabinet, parent, bottle.position);
+      const path = whiskyPresentationPath(cabinet, parent, bottle);
       applyWhiskyPresentation(model, path, 1);
       const position = cabinet.worldToLocal(model.getWorldPosition(new Vector3()));
       expect(position.toArray()).toEqual([expect.closeTo(0, 6), expect.closeTo(0.634, 6), expect.closeTo(-0.205, 6)]);
@@ -40,7 +40,7 @@ describe('physical whisky presentation', () => {
       const { cabinet, parent } = openingHierarchy();
       const model = new Group();
       parent.add(model);
-      const path = whiskyPresentationPath(cabinet, parent, bottle.position);
+      const path = whiskyPresentationPath(cabinet, parent, bottle);
       applyWhiskyPresentation(model, path, 1);
       applyWhiskyPresentation(model, path, 0);
       expect(model.position.toArray()).toEqual([...bottle.position]);
@@ -104,7 +104,7 @@ describe('continuous bottle movement', () => {
     // Given: the actual presentation route for an upper-shelf bottle.
     const { cabinet, parent } = openingHierarchy();
     const model = new Group();
-    const path = whiskyPresentationPath(cabinet, parent, WHISKY_BOTTLES[0].position);
+    const path = whiskyPresentationPath(cabinet, parent, WHISKY_BOTTLES[0]);
     // When: movement is sampled on either side of every former stop.
     const speeds = [0.25, 0.5, 0.75].map(progress => {
       applyWhiskyPresentation(model, path, progress - 0.0001);
@@ -168,7 +168,7 @@ describe('interrupted presentation timing', () => {
     const bottles = WHISKY_BOTTLES.map(bottle => {
       const group = new Group(); parent.add(group);
       group.position.set(...bottle.position);
-      return { bottle, group, path: whiskyPresentationPath(cabinet, parent, bottle.position), progress: 0, velocity: 0 };
+      return { bottle, group, path: whiskyPresentationPath(cabinet, parent, bottle), progress: 0, velocity: 0 };
     });
     const sequence = [0, 1, 4, 2, 6, 3, 5, 0, 4, 6, 1];
     let smallestGap = Infinity;
@@ -187,6 +187,12 @@ describe('interrupted presentation timing', () => {
       })));
       for (const [index, left] of bottles.entries()) {
         largestStep = Math.max(largestStep, left.group.position.distanceTo(previous[index]));
+        const { x, y, z } = left.group.position;
+        for (const [halfWidth, halfDepth, bottom, top] of [[.32, .11, .06, .12], [.32, .11, .711, .729], [.355, .1275, 1.145, 1.17]]) {
+          const gap = Math.hypot(Math.max(0, Math.abs(x) - halfWidth), Math.max(0, Math.abs(z) - halfDepth));
+          const intersects = gap < left.bottle.radius * 1.005 + .00035 - .000001 && y < top - .000001 && y + left.bottle.height > bottom + .000001;
+          expect(intersects, `frame ${frame}, ${left.bottle.name}, shelf ${top}`).toBe(false);
+        }
         for (const right of bottles.slice(index + 1)) {
           const a = left.group.position, b = right.group.position;
           const y = Math.max(0, b.y + right.bottle.radius - a.y - left.bottle.height + left.bottle.radius)
@@ -199,4 +205,36 @@ describe('interrupted presentation timing', () => {
     expect(smallestGap).toBeGreaterThan(0.0038);
     expect(largestStep).toBeLessThan(0.075);
   });
+});
+
+describe('cabinet shelf clearance', () => {
+  for (const bottle of WHISKY_BOTTLES) {
+    test(`clears shelf volumes in both directions for ${bottle.name}`, () => {
+      // Given: actual moving-half shelf and top-panel bounds in bottle-parent coordinates.
+      const { cabinet, parent } = openingHierarchy();
+      const model = new Group();
+      const path = whiskyPresentationPath(cabinet, parent, bottle);
+      const shelves = [
+        { halfWidth: 0.32, halfDepth: 0.11, bottom: 0.06, top: 0.12 },
+        { halfWidth: 0.32, halfDepth: 0.11, bottom: 0.711, top: 0.729 },
+        { halfWidth: 0.355, halfDepth: 0.1275, bottom: 1.145, top: 1.17 },
+      ];
+      const radius = bottle.radius * 1.005 + 0.00035;
+      // When: the upright bottle envelope traverses the route and its exact reverse.
+      for (const direction of [1, -1]) for (let sample = 0; sample <= 1000; sample += 1) {
+        const progress = direction === 1 ? sample / 1000 : 1 - sample / 1000;
+        applyWhiskyPresentation(model, path, progress);
+        const { x, y, z } = model.position;
+        // Then: no cylindrical bottle envelope penetrates a shelf, including between waypoints.
+        for (const shelf of shelves) {
+          const horizontalGap = Math.hypot(Math.max(0, Math.abs(x) - shelf.halfWidth), Math.max(0, Math.abs(z) - shelf.halfDepth));
+          const overlaps = horizontalGap < radius - 0.000001 && y < shelf.top - 0.000001 && y + bottle.height > shelf.bottom + 0.000001;
+          expect(overlaps, `${bottle.name}, progress ${progress}, shelf ${shelf.top}, position ${model.position.toArray()}`).toBe(false);
+        }
+        if (bottle.position[1] === 0.12 && z < 0.1275 + radius) {
+          expect(y).toBeCloseTo(0.12, 6);
+        }
+      }
+    });
+  }
 });

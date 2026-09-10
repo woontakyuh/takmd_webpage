@@ -72,7 +72,7 @@ export function WhiskyCollection({ cabinet, selection, enabled, reducedMotion, o
     for (const motion of bottles) {
       const presenting = selection?.bottle === motion.bottle.image && !selection.returning;
       if (presenting && motion.progress === 0 && motion.group.parent) {
-        motion.path = whiskyPresentationPath(cabinet.current, motion.group.parent, motion.bottle.position);
+        motion.path = whiskyPresentationPath(cabinet.current, motion.group.parent, motion.bottle);
       }
       if (!motion.path || (!presenting && !motion.away)) continue;
       motion.away = true;

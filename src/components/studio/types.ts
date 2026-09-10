@@ -56,6 +56,7 @@ export type BlindLift = readonly [number, number];
 
 export type StudioSceneProps = {
   readonly ready: boolean;
+  readonly paused?: boolean;
   readonly focused: ExhibitId | null;
   readonly monitorScroll: { scrollTop: number };
   readonly selectedBook: PersonalBookId;

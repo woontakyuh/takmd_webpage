@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ArrangementProvider, useArrangement } from './arrangement';
 import { ArrangementControls } from './ArrangementControls';
 import { ReadingPanel } from './ReadingPanel';
@@ -47,7 +47,7 @@ export function StudioExperience(content: StudioContent) {
 }
 function OfficeExperience(content: StudioContent) {
   const arrangement = useArrangement();
-  const { inspection } = useSceneInspection();
+  const { inspection, setInspection } = useSceneInspection();
   const progress = useRef(0);
   const returnFocus = useRef<HTMLElement | null>(null);
   const navigation = useOfficeNavigation();
@@ -88,6 +88,9 @@ function OfficeExperience(content: StudioContent) {
   const [ready, setReady] = useState(false);
   const [sceneFailed, setSceneFailed] = useState(false);
   const onSceneError = useCallback(() => setSceneFailed(true), []);
+  const [loadingProfileSession, setLoadingProfileSession] = useState(false);
+  const loadingProfileOpen = selected === 'ai' && (loadingProfileSession || !ready || sceneFailed);
+  useLayoutEffect(() => { setLoadingProfileSession(loadingProfileOpen); }, [loadingProfileOpen]);
   const [zoomed, setZoomed] = useState(false);
   const [explored, setExplored] = useState(false);
   const [compact, setCompact] = useState(false);
@@ -207,21 +210,25 @@ function OfficeExperience(content: StudioContent) {
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
   const goToView = (view: 0 | 1 | 2) => {
     setExplored(true);
+    setInspection(null);
+    setZoomed(false);
     navigation.go(OFFICE_HOME);
     progress.current = view / 2;
     setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
   };
+
+  const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed);
 
   return <div className="studio" data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
     <section className="studio-stage" aria-label="TakMD's office">
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
-        <SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene ready={ready} focused={focused} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
-        </Suspense>}</SceneBoundary>
+        <div style={{ display: 'contents' }} inert={loadingProfileOpen} aria-hidden={loadingProfileOpen || undefined}><SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
+          <Scene ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+        </Suspense>}</SceneBoundary></div>
         <OfficePoster ready={ready} failed={sceneFailed} night={night} interactive={mounted} onProfile={openLoadingProfile} />
-        {selected === 'ai' && (!ready || sceneFailed) && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
+        {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
         <button className="office-secret-trigger" id="studio-exhibit-books" onClick={approachBookshelf}>Browse personal books</button>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
         <button className="office-secret-trigger" id="studio-exhibit-award" onClick={() => open('award')}>Inspect the gold award</button>
@@ -233,7 +240,7 @@ function OfficeExperience(content: StudioContent) {
         <nav aria-label="Office navigation"><a href="/cv">Living CV</a><a href="/contact">Contact <span aria-hidden="true">↗</span></a></nav>
       </header>
       <div className="studio-tools">
-        <button onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>
+        <button onClick={() => goToView(0)} aria-label="Return to the overview" style={showOverviewReturn ? { visibility: 'hidden' } : undefined}><OfficeIcon name="overview" /><span>Overview</span></button>
         <button onClick={() => setLightMode(value => value === 'local' ? 'day' : value === 'day' ? 'evening' : 'local')}
           aria-label={lightMode === 'local' ? 'Local light · Preview daylight' : lightMode === 'day' ? 'Daylight preview · Preview evening' : 'Evening preview · Return to local light'}
           title="Light follows your time zone’s approximate sun position. Click to preview other lighting.">
@@ -277,6 +284,7 @@ function OfficeExperience(content: StudioContent) {
       <div className="studio-notes-list">{content.publications.slice(0, 3).map(p => <a key={`${p.doiUrl}-${p.title}`} href={p.doiUrl || '/research'} target={p.doiUrl ? '_blank' : undefined} rel={p.doiUrl ? 'noreferrer' : undefined}><span className="studio-meta">{p.journal} / {p.year}</span><h3>{p.title}</h3><span className="studio-notes-arrow" aria-hidden="true">↗</span></a>)}</div>
     </section>
     <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/knowledge">Knowledge</a><a href="/media">Media</a><a href="/credits">Scene credits</a><VisitorCount /></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href="/education#overview">Education<small>Workshops & training</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
+    {showOverviewReturn && <button className="office-overview-return" onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>}
     <ReadingPanel {...content} detailsPath={details} selected={details ? null : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
     {zoomed && <div className="office-approach-actions"><button className="studio-icon-button" onClick={() => window.dispatchEvent(new Event('office:zoom-close'))} aria-label="Return from closer view"><OfficeIcon name="close" /></button></div>}
     {!zoomed && !selected && focused && !details && <div className="office-approach-actions"><button className="studio-icon-button" onClick={close} aria-label="Return to previous office view"><OfficeIcon name="close" /></button><button onClick={() => open(focused)}>Open {focused === 'ai' ? 'monitor' : focused === 'education' ? 'TV' : 'object'}</button></div>}
