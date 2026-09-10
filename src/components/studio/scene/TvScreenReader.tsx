@@ -1,5 +1,5 @@
 import { Html } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { talkMedia } from '../collection';
 import { publicHighResolutionSlide } from '../publicSlideSource';
@@ -10,6 +10,8 @@ import { TvLectureTree } from './TvLectureTree';
 import '../tv-screen-reader.css';
 
 type Props = {
+  readonly active: boolean;
+  readonly hovered: boolean;
   readonly talk: Presentation | null;
   readonly slide: TalkSlide | null;
   readonly presentations: readonly Presentation[];
@@ -18,18 +20,17 @@ type Props = {
   readonly onClose: () => void;
 };
 
-export function TvScreenReader({ talk, slide, presentations, onTalk, onSlide, onClose }: Props) {
+export function TvScreenReader({ active, hovered, talk, slide, presentations, onTalk, onSlide, onClose }: Props) {
   const size = useThree(state => state.size);
   const width = tvReadingSize(size.width, size.height);
   const small = width < 700;
-  const [treeOpen, setTreeOpen] = useState(false);
   const [railOpen, setRailOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [loadedSource, setLoadedSource] = useState('');
   const [failedSource, setFailedSource] = useState('');
   const reader = useRef<HTMLElement>(null);
   const focusClose = useCallback((button: HTMLButtonElement | null) => {
-    if (!button) return;
+    if (!button || !active) return;
     const observer = new IntersectionObserver(entries => {
       if (!entries.some(entry => entry.isIntersecting)) return;
       button.focus({ preventScroll: true });
@@ -37,24 +38,26 @@ export function TvScreenReader({ talk, slide, presentations, onTalk, onSlide, on
     });
     observer.observe(button);
     return () => observer.disconnect();
-  }, []);
+  }, [active]);
   const media = talkMedia.find(item => item.id === talk?.id);
   const slides = media?.slides ?? [];
   const current = Math.max(0, slides.findIndex(item => item.src === slide?.src));
   const activeSlide = slides[current];
-  const source = activeSlide && (media?.kind === 'full' ? publicHighResolutionSlide(activeSlide) ?? activeSlide.src : activeSlide.src);
+  const source = activeSlide && (active && media?.kind === 'full' ? publicHighResolutionSlide(activeSlide) ?? activeSlide.src : activeSlide.src);
   const photos = media?.kind === 'photos';
   const close = onClose;
 
   useEffect(() => {
+    if (!active) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [onClose]);
+  }, [active, onClose]);
 
   useEffect(() => {
+    if (!active) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented) return;
       if (event.key === 'Escape') { event.preventDefault(); close(); return; }
@@ -67,25 +70,33 @@ export function TvScreenReader({ talk, slide, presentations, onTalk, onSlide, on
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [close, current, onSlide, slides.length]);
+  }, [active, close, current, onSlide, slides.length]);
 
   useEffect(() => {
+    if (!active) return;
     reader.current?.querySelector('.tv-screen-thumbnails [aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }, [current, railOpen, talk?.id]);
+  }, [active, current, railOpen, talk?.id]);
 
-  return <Html transform distanceFactor={400 * WALL_TV.screenWidth / width}
+  useFrame(({ camera, size: viewport }) => {
+    const portal = reader.current?.closest<HTMLElement>('.tv-screen-portal');
+    if (!portal) return;
+    const projection = camera.projectionMatrix.elements;
+    portal.style.translate = `${-projection[8] * viewport.width / 2}px ${projection[9] * viewport.height / 2}px`;
+    portal.style.overflow = 'visible';
+  });
+
+  return <Html wrapperClass="tv-screen-portal" pointerEvents={active ? 'auto' : 'none'} style={{ pointerEvents: active ? 'auto' : 'none' }} transform distanceFactor={400 * WALL_TV.screenWidth / width}
     position={[0, .003, WALL_TV.depth / 2 + .0012]} zIndexRange={[20, 16]} occlude>
-    <section ref={reader} className="tv-screen-reader" aria-label="Wall TV reader" data-small={small} data-rail={railOpen} data-tree={treeOpen} data-info={infoOpen} data-short-wide={size.width > size.height && size.height < 560}
+    <section ref={reader} className="tv-screen-reader" aria-label="Wall TV reader" data-small={small} data-rail={railOpen} data-active={active} data-hovered={hovered} inert={!active} data-info={infoOpen} data-short-wide={size.width > size.height && size.height < 560}
       data-talk={talk?.id} style={{ width, height: width * WALL_TV.screenHeight / WALL_TV.screenWidth }}
       onPointerDown={event => event.stopPropagation()} onWheel={event => event.stopPropagation()}>
-      <header className="tv-screen-header">
+      {active && <header className="tv-screen-header">
         <button ref={focusClose} onClick={close} aria-label="Close and return to office"><OfficeIcon name="close" /></button>
-        {small && <button aria-label="Browse lectures" aria-expanded={treeOpen} onClick={() => { setTreeOpen(value => !value); setRailOpen(false); setInfoOpen(false); }}>Lectures</button>}
         <span className="tv-screen-title">{talk?.title || 'Talks & teaching'}</span>
-        <button aria-label="Show lecture information" aria-expanded={infoOpen} onClick={() => { setInfoOpen(value => !value); setRailOpen(false); setTreeOpen(false); }}>About</button>
-      </header>
+        <button aria-label="Show lecture information" aria-expanded={infoOpen} onClick={() => { setInfoOpen(value => !value); setRailOpen(false); }}>About</button>
+      </header>}
       <div className="tv-screen-content">
-        <TvLectureTree presentations={presentations} selected={talk?.id} onSelect={id => { onTalk(id); setTreeOpen(false); setRailOpen(false); setInfoOpen(false); }} />
+        <TvLectureTree presentations={presentations} selected={talk?.id} onSelect={id => { onTalk(id); setRailOpen(false); setInfoOpen(false); }} />
         <div className="tv-screen-stage">
         <div className="tv-screen-image" data-photos={photos}>
           {activeSlide && source ? <>
@@ -121,7 +132,7 @@ export function TvScreenReader({ talk, slide, presentations, onTalk, onSlide, on
         </footer>
         </div>
       </div>
-      <a className="tv-screen-teaching-link" href="/education#overview">Teaching & training</a>
+      {active && <a className="tv-screen-teaching-link" href="/education#overview">Teaching & training</a>}
     </section>
   </Html>;
 }

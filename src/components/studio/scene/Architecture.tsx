@@ -41,7 +41,7 @@ export function Architecture({ night, sky, blindLift, reducedMotion }: Architect
   useEffect(() => () => Object.values(plaster).forEach(texture => texture.dispose()), [plaster]);
   return (
     <group>
-      {SHADOW_ENCLOSURE.map((surface, index) => <mesh key={index} position={[...surface.position]} castShadow>
+      {SHADOW_ENCLOSURE.map((surface, index) => <mesh key={index} position={[...surface.position]} castShadow raycast={() => undefined}>
         <boxGeometry args={[...surface.size]} />
         <meshBasicMaterial colorWrite={false} depthWrite={false} />
       </mesh>)}

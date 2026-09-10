@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { talkMedia } from '../collection';
 import type { Presentation } from '../types';
 
 export function TvLectureTree({ presentations, selected, onSelect }: {
@@ -46,11 +45,9 @@ export function TvLectureTree({ presentations, selected, onSelect }: {
         {dates.map(({ date, talks }) => <section className="tv-lecture-date" key={date} aria-label={date}>
           <time dateTime={date}>{new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`))}</time>
           {talks.map(talk => {
-            const media = talkMedia.find(item => item.id === talk.id);
             return <button key={talk.id} className="tv-lecture-entry" aria-current={selected === talk.id ? 'true' : undefined}
               title={[talk.title, talk.topic].filter(Boolean).join(' · ')} onClick={() => onSelect(talk.id)}>
-              <strong>{talk.title}</strong>{talk.topic && <span>{talk.topic}</span>}
-              <small>{media?.slides.length ? `${media.slides.length} ${media.kind === 'photos' ? 'photos' : 'slides'}` : 'Event record'}</small>
+              <strong>{talk.title}</strong>
             </button>;
           })}
         </section>)}
