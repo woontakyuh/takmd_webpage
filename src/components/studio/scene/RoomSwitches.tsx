@@ -10,7 +10,7 @@ import { scheduleSceneSingleAction } from './sceneGesture';
 export function RoomSwitches({ onControl }: { readonly onControl: (control: RoomControl) => void }) {
   return <>
     <WallButton position={[2.57, 1.22, 3.305]} rotation={Math.PI} label="Room lights" onClick={() => onControl('room')} />
-    <WallButton position={[ROOM.architecture.leftX + 0.055, 1.35, -1.38]} rotation={Math.PI / 2} label="Roller blinds" double onClick={() => onControl('shades')} />
+    <WallButton position={[ROOM.architecture.leftX + 0.055, 1.90, ROOM.architecture.window.centerZ - ROOM.architecture.window.width / 2 - 0.13]} rotation={Math.PI / 2} label="Roller blinds" double onClick={() => onControl('shades')} />
   </>;
 }
 
