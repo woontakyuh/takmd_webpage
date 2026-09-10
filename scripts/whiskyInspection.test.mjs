@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { Group, PerspectiveCamera, Vector3 } from 'three';
+import { Box3, Group, PerspectiveCamera, Vector3 } from 'three';
 import { WHISKY_BOTTLES } from '../src/components/studio/scene/WhiskyBottleSpecs';
 import { focusFov } from '../src/components/studio/scene/config';
 import { advanceWhiskyProgress, applyWhiskyPresentation, resolveWhiskyBottleClearance, whiskyCabinetPose, whiskyInspectionPose, whiskyPresentationPath } from '../src/components/studio/scene/WhiskyInspectionMotion';
@@ -200,8 +200,8 @@ describe('interrupted presentation timing', () => {
         Object.assign(motion, next);
         applyWhiskyPresentation(motion.group, motion.path, motion.progress);
       }
-      resolveWhiskyBottleClearance(bottles.map(({ bottle, group, progress }) => ({
-        position: group.position, radius: bottle.radius, height: bottle.height, moving: progress > 0 && progress < 1,
+      resolveWhiskyBottleClearance(bottles.map(({ bottle, group, progress, path }) => ({
+        position: group.position, radius: bottle.radius, height: bottle.height, moving: progress > 0 && progress < 1, obstacles: path.obstacles,
       })));
       for (const [index, left] of bottles.entries()) {
         largestStep = Math.max(largestStep, left.group.position.distanceTo(previous[index]));
@@ -226,6 +226,42 @@ describe('interrupted presentation timing', () => {
 });
 
 describe('cabinet shelf clearance', () => {
+  test('routes every lower bottle around the unfolded worktop in both directions and during exchanges', () => {
+    // Given: the actual worktop and its front underside lip, in cabinet coordinates.
+    const { cabinet, parent } = openingHierarchy();
+    const obstacles = [
+      new Box3(new Vector3(-.31, .616, -.32), new Vector3(.31, .634, 0)),
+      new Box3(new Vector3(-.31, .6075, -.319), new Vector3(.31, .6165, -.301)),
+    ];
+    const bottles = WHISKY_BOTTLES.map(bottle => {
+      const group = new Group(); parent.add(group);
+      return { bottle, group, path: whiskyPresentationPath(cabinet, parent, bottle), progress: 0, velocity: 0 };
+    });
+    const check = (motion, context) => {
+      const position = cabinet.worldToLocal(parent.localToWorld(motion.group.position.clone()));
+      const radius = motion.bottle.radius * 1.005 + .00035;
+      for (const box of obstacles) {
+        const horizontalGap = Math.hypot(Math.max(box.min.x - position.x, 0, position.x - box.max.x), Math.max(box.min.z - position.z, 0, position.z - box.max.z));
+        const overlap = horizontalGap < radius - .000001 && position.y < box.max.y - .000001 && position.y + motion.bottle.height > box.min.y + .000001;
+        expect(overlap, `${context}: ${motion.bottle.name} at ${position.toArray()}`).toBe(false);
+      }
+    };
+    // When: each route is traversed, then replaced repeatedly while both bottles move.
+    for (const motion of bottles) for (let frame = 0; frame <= 1000; frame++) {
+      applyWhiskyPresentation(motion.group, motion.path, frame / 1000);
+      check(motion, `route ${frame}`);
+    }
+    for (const framesPerSelection of [36, 114, 117, 108]) for (let frame = 0; frame < 1200; frame++) {
+      const selected = [2, 4, 3, 5, 6, 0, 4, 1, 5][Math.min(8, Math.floor(frame / framesPerSelection))];
+      for (const [index, motion] of bottles.entries()) {
+        Object.assign(motion, advanceWhiskyProgress(motion.progress, motion.velocity, index === selected, 1 / 60, false));
+        applyWhiskyPresentation(motion.group, motion.path, motion.progress);
+      }
+      resolveWhiskyBottleClearance(bottles.map(({ bottle, group, progress, path }) => ({position: group.position, radius: bottle.radius, height: bottle.height, moving: progress > 0 && progress < 1, obstacles: path.obstacles})));
+      // Then: neither the outgoing nor returning bottle passes through the worktop.
+      for (const motion of bottles) check(motion, `exchange ${frame}`);
+    }
+  });
   for (const bottle of WHISKY_BOTTLES) {
     test(`clears shelf volumes in both directions for ${bottle.name}`, () => {
       // Given: actual moving-half shelf and top-panel bounds in bottle-parent coordinates.

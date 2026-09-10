@@ -84,8 +84,9 @@ export function WhiskyCollection({ cabinet, selection, enabled, reducedMotion, o
       motion.group.userData.returning = !presenting;
       moving ||= motion.velocity !== 0;
     }
-    resolveWhiskyBottleClearance(bottles.map(({ bottle, group, progress }) => ({
+    resolveWhiskyBottleClearance(bottles.map(({ bottle, group, progress, path }) => ({
       position: group.position, radius: bottle.radius, height: bottle.height, moving: progress > 0 && progress < 1,
+      obstacles: path?.obstacles,
     })));
     for (const motion of bottles) {
       if (motion.away && motion.progress === 0) {
