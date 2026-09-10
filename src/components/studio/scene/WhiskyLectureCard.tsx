@@ -7,10 +7,10 @@ import { OfficeIcon } from '../OfficeIcon';
 import { talkMedia } from '../collection';
 import { requestOfficePath } from '../officeNavigation';
 import { publicHighResolutionSlide } from '../publicSlideSource';
-import { PALETTE } from './config';
 import { useSceneInspection } from './SceneInspection';
 import { useCabinetAction } from './WhiskyCabinetDoor';
 import { WHISKY_LECTURE, whiskyLectureLayout, whiskyLecturePose } from './WhiskyLectureLayout';
+import { WhiskyLecturePaper } from './WhiskyLecturePaper';
 import './whisky-lecture.css';
 
 const slides = talkMedia.find(talk => talk.id === WHISKY_LECTURE.id)?.slides ?? [];
@@ -69,20 +69,8 @@ export function WhiskyLectureCard({ open, disabled }: { readonly open: boolean; 
     };
   }, [active, close]);
   return <group ref={card} name="Magnetic whisky lecture card" position={[-0.285, 0.90, -0.2565]}
-    rotation={[0, Math.PI, 0]} userData={{ lectureId: WHISKY_LECTURE.id, active }} {...handlers}>
-    <mesh castShadow receiveShadow>
-      <boxGeometry args={[WHISKY_LECTURE.width + .004, WHISKY_LECTURE.height + .004, .0007]} />
-      <meshStandardMaterial color={hovered ? PALETTE.paperLight : PALETTE.paper} roughness={.92} />
-    </mesh>
-    <mesh position={[0, 0, .0004]} receiveShadow>
-      <planeGeometry args={[WHISKY_LECTURE.width, WHISKY_LECTURE.height]} />
-      <meshStandardMaterial map={texture} color={PALETTE.paperLight} roughness={.94} />
-    </mesh>
-    {[-1, 1].map(side => <mesh key={side} name="Brushed steel paper magnet" position={[side * (WHISKY_LECTURE.width / 2 - .014), WHISKY_LECTURE.height / 2 - .008, .0017]}
-      rotation={[Math.PI / 2, 0, 0]} castShadow>
-      <cylinderGeometry args={[.0036, .0036, .0024, 20]} />
-      <meshStandardMaterial color={PALETTE.aluminium} metalness={.86} roughness={.32} />
-    </mesh>)}
+    rotation={[0, Math.PI, -Math.PI / 45]} userData={{ lectureId: WHISKY_LECTURE.id, active }} {...handlers}>
+    <WhiskyLecturePaper texture={texture} flat={active} hovered={hovered} />
     {!open && !disabled && !active && <Html center position={[0, 0, .002]} occlude zIndexRange={[16, 12]} style={{ pointerEvents: 'none' }}>
       <button ref={trigger} type="button" className="whisky-lecture-trigger" aria-label="Read whisky lecture"
         onClick={event => { if (event.detail === 0) approach(); }} />
