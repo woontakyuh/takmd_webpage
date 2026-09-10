@@ -14,10 +14,12 @@ type BarwareMaterials = ReturnType<typeof createBarwareMaterials>;
 
 function createBarwareMaterials() {
   return {
-    glass: createHollowGlassMaterial({ height: ISIDORO_BARWARE.glencairn.height, solidHeight: 0.0275 }),
-    coupe: createHollowGlassMaterial({ height: ISIDORO_BARWARE.coupe.height, solidHeight: 0.121 }),
+    glass: createHollowGlassMaterial({ height: ISIDORO_BARWARE.glencairn.height,
+      solidHeight: 0.0275, barware: true }),
+    coupe: createHollowGlassMaterial({ height: ISIDORO_BARWARE.coupe.height,
+      solidHeight: 0.121, barware: true }),
     cutGlass: createHollowGlassMaterial({ height: ISIDORO_BARWARE.mixingGlass.height,
-      solidHeight: ISIDORO_BARWARE.mixingGlass.base, faceted: true }),
+      solidHeight: ISIDORO_BARWARE.mixingGlass.base, faceted: true, barware: true }),
     steel: new MeshPhysicalMaterial({
       color: '#aeb7b5',
       roughness: 0.13,
