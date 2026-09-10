@@ -1,0 +1,47 @@
+.conference-calendar-stage { --conference-ink: #202d2a; --conference-muted: #5c655f; --conference-accent: #ac5737; --conference-action: #355a50; position: absolute; inset: 0; pointer-events: none; color: var(--conference-ink); font-family: var(--studio-editorial); }
+.conference-calendar-paper { position: absolute; top: max(24px, 6vh); right: clamp(24px, 5vw, 72px); width: min(52vw, 760px); max-height: calc(100vh - max(48px, 12vh)); box-sizing: border-box; overflow: auto; pointer-events: auto; padding: clamp(28px, 3.5vw, 52px); background: #f6f1e6; border: 1px solid rgba(87, 77, 62, .28); box-shadow: 0 26px 70px rgba(24, 27, 24, .22), inset 0 0 80px rgba(133, 112, 77, .06); }
+.conference-calendar-paper::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .17; background: repeating-linear-gradient(0deg, transparent 0 4px, rgba(85, 70, 48, .055) 4px 5px); }
+.conference-calendar-paper header { position: relative; display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 24px; padding-right: 48px; }
+.conference-calendar-paper header p { margin: 0; color: var(--conference-accent); font: 600 10px/1 var(--studio-sans); letter-spacing: .14em; text-transform: uppercase; }
+.conference-calendar-paper h2 { margin: 0; font-size: clamp(30px, 3.2vw, 48px); font-weight: 400; line-height: 1; letter-spacing: -.035em; }
+.conference-calendar-weekdays, .conference-calendar-grid { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.conference-calendar-weekdays { border-bottom: 1px solid rgba(66, 66, 57, .32); }
+.conference-calendar-weekdays span { padding: 0 5px 8px; color: var(--conference-muted); font: 600 9px/1 var(--studio-sans); letter-spacing: .1em; text-transform: uppercase; }
+.conference-calendar-day { min-width: 0; min-height: clamp(54px, 7.5vh, 84px); padding: 7px 5px; border-right: 1px solid rgba(66, 66, 57, .17); border-bottom: 1px solid rgba(66, 66, 57, .17); }
+.conference-calendar-day:nth-child(7n) { border-right: 0; }
+.conference-calendar-day[data-in-month='false'] { color: rgba(32, 45, 42, .28); }
+.conference-calendar-day time { display: block; margin-bottom: 5px; font: 500 11px/1 var(--studio-sans); font-variant-numeric: tabular-nums; }
+.conference-calendar-mark { display: block; margin: 0 0 3px; padding-left: 6px; overflow: hidden; color: var(--conference-ink); border-left: 2px solid var(--conference-accent); font: 600 9px/1.25 var(--studio-sans); text-overflow: ellipsis; white-space: nowrap; }
+.conference-calendar-ledger { position: relative; margin-top: 22px; border-top: 1px solid rgba(66, 66, 57, .32); }
+.conference-calendar-ledger article { display: grid; grid-template-columns: minmax(112px, .35fr) 1fr; gap: 20px; padding: 14px 0; border-bottom: 1px solid rgba(66, 66, 57, .18); }
+.conference-calendar-ledger time { color: var(--conference-accent); font: 600 10px/1.45 var(--studio-sans); font-variant-numeric: tabular-nums; }
+.conference-calendar-ledger h3 { margin: 0 0 3px; overflow-wrap: anywhere; font-size: 15px; font-weight: 600; line-height: 1.3; }
+.conference-calendar-ledger p { margin: 0; color: var(--conference-muted); font: 500 10px/1.4 var(--studio-sans); letter-spacing: .02em; }
+.conference-calendar-empty { margin: 0; padding: 18px 0 4px; color: var(--conference-muted); font-size: 14px; }
+.conference-calendar-edge, .conference-calendar-close { display: grid; place-items: center; pointer-events: auto; padding: 0; color: var(--conference-ink); border: 0; background: transparent; cursor: pointer; transition: color 180ms ease, transform 180ms ease; }
+.conference-calendar-edge { position: absolute; z-index: 2; top: 45%; width: 38px; height: 72px; }
+.conference-calendar-edge span { font: 400 30px/1 var(--studio-editorial); }
+.conference-calendar-edge-left { left: 0; transform: translateY(-50%); }
+.conference-calendar-edge-right { right: 0; transform: translateY(-50%); }
+.conference-calendar-edge:hover, .conference-calendar-close:hover { color: var(--conference-action); transform: translateY(-50%) scale(1.08); }
+.conference-calendar-close:hover { transform: scale(1.08); }
+.conference-calendar-edge:focus-visible, .conference-calendar-close:focus-visible { outline: 2px solid var(--conference-action); outline-offset: 3px; }
+.conference-calendar-close { position: absolute; z-index: 3; top: calc(max(24px, 6vh) + 10px); right: calc(clamp(24px, 5vw, 72px) + 10px); width: 44px; height: 44px; }
+.calendar-clock-trigger { width: 0.752px; height: 0.432px; padding: 0; opacity: 0; border: 0; }
+
+@media (max-width: 759px) {
+  .conference-calendar-paper { top: 43vh; right: 12px; left: 12px; width: auto; max-height: calc(57vh - 12px); padding: 24px 18px 28px; }
+  .conference-calendar-paper header { align-items: flex-start; flex-direction: column; gap: 10px; margin-bottom: 18px; padding-right: 44px; }
+  .conference-calendar-paper h2 { font-size: clamp(30px, 10vw, 42px); }
+  .conference-calendar-day { min-height: 44px; padding: 6px 3px; }
+  .conference-calendar-mark { width: 6px; height: 6px; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: var(--conference-accent); color: transparent; }
+  .conference-calendar-ledger article { grid-template-columns: 92px 1fr; gap: 12px; }
+  .conference-calendar-edge { top: 48%; width: 30px; height: 64px; transform: translateY(-50%); }
+  .conference-calendar-edge-left { left: 0; }
+  .conference-calendar-edge-right { right: 0; }
+  .conference-calendar-close { top: calc(43vh + 8px); right: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conference-calendar-edge, .conference-calendar-close { transition: none; }
+}
