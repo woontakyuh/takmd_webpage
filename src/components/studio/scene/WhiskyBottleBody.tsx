@@ -1,45 +1,9 @@
 import { useEffect, useMemo } from 'react';
-import { Color, DoubleSide, ShaderChunk, Shape, ShapeGeometry } from 'three';
-import type { MeshPhysicalMaterial } from 'three';
+import { DoubleSide, Shape, ShapeGeometry } from 'three';
+import { createHollowGlassMaterial } from './GlassMaterial';
 import { bottleClosureStart, bottleRadiusAt, createBottleGeometry } from './WhiskyBottleGeometry';
+import { createWhiskyBottleMaterial } from './WhiskyBottleMaterial';
 import type { BottleSpec } from './WhiskyBottleSpecs';
-
-function absorptionShader(bottle: BottleSpec): MeshPhysicalMaterial['onBeforeCompile'] {
-  return shader => {
-    shader.uniforms.bottleHeight = { value: bottle.height };
-    shader.uniforms.bottleFill = { value: bottle.fillHeight };
-    shader.uniforms.whiskyColor = { value: new Color(bottle.liquid) };
-    shader.uniforms.glassColor = { value: new Color(bottle.glass) };
-    shader.vertexShader = shader.vertexShader.replace('#include <common>',
-      '#include <common>\nvarying vec3 vBottlePosition;')
-      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvBottlePosition = position;');
-    shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `#include <common>
-      varying vec3 vBottlePosition;
-      uniform float bottleHeight;
-      uniform float bottleFill;
-      uniform vec3 whiskyColor;
-      uniform vec3 glassColor;`)
-      .replace('#include <transmission_fragment>', ShaderChunk.transmission_fragment
-        .replace('vec4 transmitted = getIBLVolumeRefraction(', `
-          vec3 insideRay = normalize(transpose(mat3(modelMatrix)) * refract(-v, n, 1.0 / 1.36));
-          float chord = max(.003, -2.0 * dot(vBottlePosition.xz, insideRay.xz)
-            / max(dot(insideRay.xz, insideRay.xz), .0001));
-          chord = min(chord, .3);
-          float liquidPath = vBottlePosition.y < bottleFill * bottleHeight ? chord : 0.0;
-          if (abs(insideRay.y) > .0001) {
-            float bottom = -vBottlePosition.y / insideRay.y;
-            float surface = (bottleFill * bottleHeight - vBottlePosition.y) / insideRay.y;
-            float entry = max(0.0, min(bottom, surface));
-            float exitPoint = min(chord, max(bottom, surface));
-            liquidPath = max(0.0, exitPoint - entry);
-          }
-          material.thickness = chord;
-          material.attenuationColor = glassColor * pow(max(whiskyColor, vec3(.001)), vec3(liquidPath / chord));
-          material.attenuationDistance = .075;
-          material.transmission = .995;
-          vec4 transmitted = getIBLVolumeRefraction(`));
-  };
-}
 
 function Closure({ bottle }: { readonly bottle: BottleSpec }) {
   const start = bottleClosureStart(bottle);
@@ -58,13 +22,14 @@ function Closure({ bottle }: { readonly bottle: BottleSpec }) {
   }, [bottle, start]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   const neckRadius = bottleRadiusAt(bottle, start);
+  const crystalMaterial = useMemo(() => createHollowGlassMaterial({
+    height: bottle.height, solidHeight: bottle.height,
+  }), [bottle.height]);
+  useEffect(() => () => crystalMaterial.dispose(), [crystalMaterial]);
   switch (bottle.closure) {
     case 'crystal':
       return <group name="24 facet crystal stopper">
-        <mesh geometry={geometry} castShadow>
-          <meshPhysicalMaterial color="#ffffff" roughness={.035} transmission={.96} thickness={.025}
-            ior={1.52} attenuationColor="#f5f1e7" attenuationDistance={.5} envMapIntensity={1.3} />
-        </mesh>
+        <mesh geometry={geometry} material={crystalMaterial} />
         <mesh position={[0, start * bottle.height, 0]}>
           <cylinderGeometry args={[neckRadius * 1.005, neckRadius * 1.005, .003, 24]} />
           <meshStandardMaterial color="#3d241a" roughness={.48} />
@@ -139,15 +104,11 @@ export function WhiskyBottleBody({ bottle }: { readonly bottle: BottleSpec }) {
   const geometry = useMemo(() => createBottleGeometry(bottle, {
     low: 0, high: bottleClosureStart(bottle), closed: true,
   }), [bottle]);
-  const onBeforeCompile = useMemo(() => absorptionShader(bottle), [bottle]);
+  const material = useMemo(() => createWhiskyBottleMaterial(bottle), [bottle]);
   useEffect(() => () => geometry.dispose(), [geometry]);
+  useEffect(() => () => material.dispose(), [material]);
   return <group name="physical glass and whisky">
-    <mesh geometry={geometry} castShadow receiveShadow>
-      <meshPhysicalMaterial color={bottle.darkGlass ? bottle.glass : "#ffffff"} roughness={.045} transmission={.94} thickness={bottle.radius * 1.8}
-        attenuationColor={bottle.liquid} attenuationDistance={.075} ior={1.5} envMapIntensity={1.3}
-        clearcoat={.18} clearcoatRoughness={.055} onBeforeCompile={onBeforeCompile}
-        customProgramCacheKey={() => 'whisky-volume-absorption-v4'} />
-    </mesh>
+    <mesh geometry={geometry} material={material} receiveShadow />
     <Closure bottle={bottle} />
     {bottle.image.endsWith('/bookers.png') ? <WaxSeal bottle={bottle} /> : null}
   </group>;

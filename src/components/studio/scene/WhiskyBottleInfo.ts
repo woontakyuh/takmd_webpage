@@ -38,16 +38,16 @@ export const WHISKY_BOTTLE_INFO = {
   '/models/whisky/bowmore-17-white-sands.png': {
     brand: 'Bowmore', expression: '17 Year Old · White Sands', origin: 'Islay · Scotland',
     style: '싱글몰트 스카치 위스키', strength: '43%', age: '17년', volume: '700 ml',
-    story: '1779년 아일라 최초로 면허를 받은 Bowmore 증류소의 싱글몰트.',
-    character: '오크통에서 17년 숙성한 White Sands. 병에 표기된 도수는 43%입니다.',
-    source: 'https://www.bowmore.com/',
+    story: '2014년 면세 시장을 위해 선보인 White Sands. 버번을 숙성했던 캐스크에서 17년 숙성합니다.',
+    character: '스모키함에 잘 익은 과일과 달콤한 토피가 어우러집니다.',
+    source: 'https://www.thewhiskyexchange.com/p/27992/bowmore-17-year-old-white-sands',
   },
   '/models/whisky/bookers.png': {
     brand: 'Booker’s', expression: 'Kentucky Straight Bourbon', origin: 'Kentucky · USA',
     style: '켄터키 스트레이트 버번', strength: '배치별 상이', age: '배치별 상이', volume: '750 ml',
     story: '소량의 배럴을 골라 희석하지 않은 배럴 스트렝스로 병입하는 버번. 여과를 최소화해 배럴의 개성을 담습니다.',
     character: '도수와 숙성 기간, 풍미는 배치마다 달라집니다.',
-    source: 'https://www.bookersbourbon.com/batches',
+    source: 'https://www.beamdistilling.com/bookersbourbon',
   },
   '/models/whisky/glendronach-18-current.png': {
     brand: 'The Glendronach', expression: '18 Year Old', origin: 'Highlands · Scotland',

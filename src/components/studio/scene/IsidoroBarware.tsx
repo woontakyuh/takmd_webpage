@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
-import { DoubleSide, FrontSide, MeshPhysicalMaterial } from 'three';
+import { DoubleSide, MeshPhysicalMaterial } from 'three';
 import { PALETTE } from './config';
+import { createHollowGlassMaterial } from './GlassMaterial';
 import {
   createIsidoroBarwareGeometries,
   disposeIsidoroBarwareGeometries,
@@ -13,8 +14,10 @@ type BarwareMaterials = ReturnType<typeof createBarwareMaterials>;
 
 function createBarwareMaterials() {
   return {
-    glass: createGlassMaterial(),
-    cutGlass: createGlassMaterial(true),
+    glass: createHollowGlassMaterial({ height: ISIDORO_BARWARE.glencairn.height, solidHeight: 0.0275 }),
+    coupe: createHollowGlassMaterial({ height: ISIDORO_BARWARE.coupe.height, solidHeight: 0.121 }),
+    cutGlass: createHollowGlassMaterial({ height: ISIDORO_BARWARE.mixingGlass.height,
+      solidHeight: ISIDORO_BARWARE.mixingGlass.base, faceted: true }),
     steel: new MeshPhysicalMaterial({
       color: '#aeb7b5',
       roughness: 0.13,
@@ -35,34 +38,6 @@ function createBarwareMaterials() {
       envMapIntensity: 2.7,
     }),
   };
-}
-
-function createGlassMaterial(faceted = false) {
-  const material = new MeshPhysicalMaterial({
-    color: '#ffffff',
-    transmission: 0,
-    transparent: true,
-    opacity: 0.16,
-    ior: 1.5,
-    depthWrite: false,
-    side: FrontSide,
-    roughness: faceted ? 0.11 : 0.035,
-    flatShading: faceted,
-    metalness: 0,
-    clearcoat: 0.32,
-    clearcoatRoughness: 0.025,
-    envMapIntensity: 1.35,
-  });
-  // Hollow inner and outer walls already carry their own outward-facing normals.
-  // Alpha glass retains neighboring glasses instead of sampling an incomplete transmission buffer.
-  material.onBeforeCompile = shader => {
-    shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
-      float glassRim = pow(1.0 - abs(dot(normalize(normal), normalize(vViewPosition))), 5.0);
-      diffuseColor.a = 0.02 + glassRim * 0.35;
-      #include <opaque_fragment>`);
-  };
-  material.customProgramCacheKey = () => 'isidoro-hollow-alpha-glass-v2';
-  return material;
 }
 
 function useBarwareResources() {
@@ -176,7 +151,7 @@ export function IsidoroBarware() {
         <GlencairnGlass key={`${x}-${z}`} x={x} z={z} geometries={geometries} materials={materials} />))}
       {[0.073, 0.192].map(x =>
         <mesh key={x} name="Riedel coupe cocktail glass" position={[x, ISIDORO_BARWARE.shelfTop, -0.01]}
-          geometry={geometries.coupe} material={materials.glass} />)}
+          geometry={geometries.coupe} material={materials.coupe} />)}
     </group>
     <BarTray />
     <Shaker geometries={geometries} materials={materials} />

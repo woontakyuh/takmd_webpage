@@ -4,6 +4,7 @@ import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import type { Group, Texture } from 'three';
+import { OfficeIcon } from '../OfficeIcon';
 import { useArrangement } from '../arrangement';
 import { PALETTE } from './config';
 import { IsidoroBarware } from './IsidoroBarware';
@@ -11,10 +12,10 @@ import { IsidoroFixedHalf } from './IsidoroCabinetGeometry';
 import { IsidoroWorktop, WhiskyCabinetDoor, useCabinetAction, useIsidoroMotion } from './WhiskyCabinetDoor';
 import { WHISKY_CABINET } from './WhiskyCabinetLayout';
 import { WhiskyCollection } from './WhiskyCollection';
-import { WhiskyBottleChooser, WhiskyBottleInspector } from './WhiskyBottleInspector';
+import { WhiskyBottleInspector } from './WhiskyBottleInspector';
 import { finishWhiskyReturn, returnWhiskyBottle, selectWhiskyBottle } from './WhiskyInspectionState';
 import type { WhiskyBottleId, WhiskyInspectionState } from './WhiskyInspectionState';
-import { whiskyInspectionPose } from './WhiskyInspectionMotion';
+import { whiskyCabinetPose, whiskyInspectionPose } from './WhiskyInspectionMotion';
 import { useSceneInspection } from './SceneInspection';
 import { IsidoroInteriorLighting } from './IsidoroInteriorLighting';
 
@@ -28,38 +29,86 @@ const stopInteriorClick = (event: ThreeEvent<PointerEvent | MouseEvent>) => even
 
 export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps) {
   const { editing } = useArrangement();
-  const narrow = useThree(state => state.size.width < 760);
+  const size = useThree(state => state.size);
+  const narrow = size.width < 760;
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
   const [selection, setSelection] = useState<WhiskyInspectionState>(null);
   const cabinet = useRef<Group>(null);
+  const closing = useRef(false);
   const { inspection, setInspection } = useSceneInspection();
   const doorPivot = useRef<Group>(null);
   const worktopPivot = useRef<Group>(null);
   const ready = useIsidoroMotion(doorPivot, worktopPivot, open, reducedMotion, editing);
+  const approached = inspection?.id === 'whisky-cabinet' || inspection?.id.startsWith('whisky:') === true;
+  const approachCabinet = useCallback(() => {
+    if (cabinet.current) setInspection({ id: 'whisky-cabinet', ...whiskyCabinetPose(cabinet.current, size) });
+  }, [size, setInspection]);
   const toggle = useCallback(() => {
     if (editing) return;
-    if (open && selection) setSelection(current => returnWhiskyBottle(current, true));
-    else setOpen(value => !value);
-  }, [editing, open, selection]);
+    if (!open) {
+      approachCabinet();
+      if (approached) setOpen(true);
+      return;
+    }
+    if (open && selection) {
+      closing.current = true;
+      setSelection(current => returnWhiskyBottle(current, true));
+      approachCabinet();
+    } else setOpen(value => !value);
+  }, [approached, approachCabinet, editing, open, selection]);
   const { hovered, handlers } = useCabinetAction({ disabled: editing, onActivate: toggle });
   const chooseBottle = useCallback((id: WhiskyBottleId) => {
     if (!ready || !cabinet.current) return;
+    closing.current = false;
     setSelection(current => selectWhiskyBottle(current, id));
-    setInspection({ id: `whisky:${id}`, ...whiskyInspectionPose(cabinet.current, narrow) });
-  }, [narrow, ready, setInspection]);
-  const returnBottle = useCallback(() => setSelection(current => returnWhiskyBottle(current, false)), []);
-  const returned = useCallback(() => {
-    if (!selection?.returning) return;
-    if (selection.closing) setOpen(false);
-    if (!selection.next) setInspection(null);
-    setSelection(finishWhiskyReturn(selection));
-  }, [selection, setInspection]);
+    setInspection({ id: `whisky:${id}`, ...whiskyInspectionPose(cabinet.current, size) });
+  }, [size, ready, setInspection]);
+  const returnBottle = useCallback(() => {
+    setSelection(current => returnWhiskyBottle(current, false));
+    approachCabinet();
+  }, [approachCabinet]);
+  const returned = useCallback((id: WhiskyBottleId) => {
+    setSelection(current => finishWhiskyReturn(current, id));
+  }, []);
+  const leaveCabinet = useCallback(() => {
+    closing.current = true;
+    setSelection(current => returnWhiskyBottle(current, true));
+    setInspection(null);
+  }, [setInspection]);
   useEffect(() => {
-    if (editing) { setOpen(false); setSelection(null); }
+    if (editing) { closing.current = false; setOpen(false); setSelection(null); }
   }, [editing]);
-  useEffect(() => { if (!inspection) returnBottle(); }, [inspection, returnBottle]);
-  const controlsVisible = !editing && (hovered || focused || open);
+  useEffect(() => {
+    if (selection || !closing.current) return;
+    closing.current = false;
+    setOpen(false);
+  }, [selection]);
+  useEffect(() => {
+    if (approached) return;
+    closing.current = true;
+    setSelection(current => returnWhiskyBottle(current, true));
+    if (!selection) setOpen(false);
+  }, [approached, selection]);
+  useEffect(() => {
+    if (!approached || selection) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented || document.querySelector('dialog:modal')) return;
+      event.preventDefault();
+      leaveCabinet();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [approached, leaveCabinet, selection]);
+  const previousViewport = useRef(size);
+  useEffect(() => {
+    if (previousViewport.current.width === size.width && previousViewport.current.height === size.height) return;
+    previousViewport.current = size;
+    if (!approached || !inspection || !cabinet.current) return;
+    const pose = inspection.id.startsWith('whisky:') ? whiskyInspectionPose(cabinet.current, size) : whiskyCabinetPose(cabinet.current, size);
+    setInspection({ id: inspection.id, ...pose });
+  }, [approached, inspection, setInspection, size]);
+  const controlsVisible = !editing && (hovered || focused || open || approached);
   return <group ref={cabinet} name="Poltrona Frau Isidoro drinks cabinet"
     userData={{
       product: 'Poltrona Frau Isidoro',
@@ -101,12 +150,13 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
           boxShadow: '0 2px 12px #202d2a1a',
         }}>
         <button type="button" disabled={editing} aria-label={`${open ? 'Close' : 'Open'} Isidoro drinks cabinet`}
-          aria-expanded={open} onClick={toggle} style={CONTROL_STYLE}>{open ? 'Close bar' : 'Open bar'}</button>
-        {open && !selection && <WhiskyBottleChooser selected={null} disabled={!ready} onSelect={chooseBottle} />}
+          aria-expanded={open} onClick={toggle} style={CONTROL_STYLE}>{open ? 'Close bar' : approached ? 'Open bar' : 'View bar'}</button>
+        {approached && !selection && <button type="button" onClick={leaveCabinet} aria-label="Close cabinet view"
+          style={{ ...CONTROL_STYLE, minWidth: 44, width: 44, display: 'grid', placeItems: 'center' }}><OfficeIcon name="close" /></button>}
       </div>
     </Html>
     {selection && <WhiskyBottleInspector bottleId={selection.bottle} returning={selection.returning}
-      onReturn={returnBottle} onSelect={chooseBottle} />}
+      onReturn={returnBottle} />}
   </group>;
 }
 
