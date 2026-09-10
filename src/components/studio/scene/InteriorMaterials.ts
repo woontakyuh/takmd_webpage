@@ -20,7 +20,7 @@ export type InteriorMaterial = {
 
 const INTERIOR_TEXTURE_PATHS: Readonly<Record<InteriorSurface, TexturePaths>> = {
   oak: {
-    map: '/textures/interior/oak/diffuse.jpg',
+    map: '/textures/interior/oak/diffuse.webp',
     normalMap: '/textures/interior/oak/normal.jpg',
     roughnessMap: '/textures/interior/oak/roughness.jpg',
   },
