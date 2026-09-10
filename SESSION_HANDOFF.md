@@ -1,10 +1,18 @@
 # Office session handoff — 2026-09-10
 
+## Current object interaction refinements
+
+The blind keypad is on the LEFT of the window, opposite the gown. One click on either award-shelf object opens the same photo-and-gold-plaque composition with the existing English award caption already visible. The polished inset quietly gleams in that close view; clicking it opens the original award-winning Short directly. The intermediate Open object / award reader / visible Shorts link is removed; a focus-only accessible Shorts link remains. The desk photo likewise opens its frame view and caption in one click. Legacy award/approach URLs enter the same pair view. Other object gestures are unchanged.
+
+The cabinet marker is now depth-tested, front-facing 3D geometry on the leather grip, rather than an offset/clamped HTML dot. It follows the moving door and is occluded from behind. After opening, the close cue is attached to the physical left free edge. A closed-cabinet click approaches the interior-facing camera first and then opens once the camera has arrived; leaving or arranging cancels pending opening. The magnetic lecture sheet is now 420 by approximately 297 mm (A3 landscape), with magnets moved to its upper corners. Existing slides, in-room enlargement and TV handoff remain.
+
+Evidence: `.omo/evidence/blind-left-2026-09-10/`, `.omo/evidence/award-pair-interaction-2026-09-10/`, `.omo/evidence/cabinet-handle-2026-09-10/`. Release receipt `cabinet-handle-2026-09-10/release.json` is authoritative when present. This entry supersedes the historical two-click photo/award and projected HTML-marker descriptions below. The prior performance/river scope and its limits remain unchanged.
+
 ## Current performance, incoming lectures and Han River increment
 
 The four newly supplied curated PDFs are integrated: KASS 2025 (7 pages), ThaiSMISST 2025 (10), Wills AI workflow 2026 (23), and GeneCker AI 2026 (11). This adds 51 pages. Earlier source hashes and photo content were unchanged. Public source resolution now covers all eight approved standard-resolution-only pages; those pages never request nonexistent HD images. Source PDFs remain in Dropbox. TV mobile layout now bounds long lecture titles so they cannot stretch or clip the slide/page controls.
 
-The off-axis monitor CV plane is registered to its physical screen again. The blind keypad is beyond the window's right edge at 1.90m, clear of the gown. Preserve the owner's original CV layout. Early CV remains mounted with scroll position through room readiness; the live reader resumes the same position.
+The off-axis monitor CV plane is registered to its physical screen again. Following the owner's corrected direction, the blind keypad is beyond the window's left edge at 1.90m, opposite the gown. Preserve the owner's original CV layout. Early CV remains mounted with scroll position through room readiness; the live reader resumes the same position.
 
 Measured optimization retains room geometry and interactions: four entry assets save 3,616,443 bytes; the exterior render target encloses only visible window pixels at the same sampling; closed cabinet contents skip drawing; tiny clock flip faces stop invalidating the room shadow map; distant small glazing uses half-size transmission buffers and restores full sampling nearby; offscreen/hidden canvases pause. Under the recorded Chrome/20 Mbps/40ms conditions, desktop median frame interval improved 83.4→50.0ms, and initial transfer 42.81→39.26MB. Mobile simulation median was effectively unchanged (83.4→83.3ms), although p95 improved 116.7→83.4ms. Do not claim low-end phones are smooth or the 39MB initial payload is small. Physical-phone performance has not been measured.
 

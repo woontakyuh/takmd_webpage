@@ -752,7 +752,7 @@ The bookshelf approach contains only the physical books and a compact exit contr
 
 ### September 10 performance and mapped-landscape increment
 
-Preserve room-native gestures, full-quality media readers, object proportions and the original CV layout. The monitor HTML plane must account for camera view offsets so it stays on its physical screen; the blind keypad sits 13 cm beyond the right window edge at 1.90 m, clear of the hanging coat.
+Preserve room-native gestures, full-quality media readers, object proportions and the original CV layout. The monitor HTML plane must account for camera view offsets so it stays on its physical screen; the blind keypad sits 13 cm beyond the left window edge at 1.90 m, on the opposite side from the hanging coat, following the owner's corrected direction.
 
 Render the exterior only within a conservatively enclosed, 64-pixel-aligned window rectangle. Preserve device-pixel sampling and existing off-axis projection. Near-plane crossings use the full viewport; the water reflection remains 1024 px. Preserve all bridge identities and live traffic. The mapped facade layer covers 49 source footprint edges, retains tagged heights and uses three material instance families with 5,000-instance/60,000-triangle caps. The 72 inland trees occupy eight mapped park/woodland clusters, avoid mapped circulation and use three instanced parts. These are geographic visual increments, not a photorealistic city survey.
 
@@ -761,3 +761,9 @@ Enclosed whisky bottles and barware are skipped only when the cabinet door is co
 The new lecture derivatives follow the same TVPDF publication workflow and native TV archive. Preserve raw Dropbox originals. New protected pages use the existing audited source-hash contract, with only their sanitized standard-resolution derivatives public.
 
 The TV stage uses a bounded single grid column: long lecture titles truncate within the context footer, never widening or cropping the slide. Mobile KASS/ThaiSMISST regression coverage also requires the next-page arrow to stay inside the physical television.
+
+## Object-first award and cabinet affordances — 2026-09-10
+
+This latest owner decision supersedes earlier two-stage photo/award readers: either shelf object opens the same pair view immediately, with the photo caption below. The right plaque's polished inset has a restrained close-view gleam and links directly to the Short; no visible Open object or textual Shorts step. Preserve full-plaque hover, the static reduced-motion emphasis, keyboard access and X/Overview return. The desk photo opens its frame and caption in one click.
+
+Cabinet cues belong to the physical grip and open free edge, with scene depth and front-facing visibility. Never clamp a marker to the viewport or offset it in screen pixels. A click from behind travels to the interior-facing camera before opening. The lecture paper is A3 landscape (420 × approximately 297 mm), larger than the previous A5-sized card, with magnets following its corners. The blind keypad stays beyond the window LEFT edge at 1.90 m, opposite the gown.
