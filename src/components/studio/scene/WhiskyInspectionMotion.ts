@@ -57,7 +57,9 @@ export function whiskyCabinetScreenBounds(cabinet: Object3D, camera: Camera, { w
   };
 }
 
-function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, inspecting: boolean) {
+function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'closed' | 'open' | 'bottle') {
+  const inspecting = view === 'bottle';
+  const closed = view === 'closed';
   const { width, height } = viewport;
   const narrow = width < 760;
   const layout = whiskyInspectionLayout(viewport);
@@ -69,12 +71,13 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, inspecting:
   const top = 1 - 2 * area.top / height;
   const bottom = 1 - 2 * area.bottom / height;
   const centerX = (left + right) / 2, centerY = (top + bottom) / 2;
-  const outward = new Vector3(-1.57, inspecting && layout.stacked ? 2.5 : 0.8, -1.7).normalize();
+  const outward = (closed ? new Vector3(0, 0.12, -1)
+    : new Vector3(-1.57, inspecting && layout.stacked ? 2.5 : 0.8, -1.7)).normalize();
   const horizontal = new Vector3(0, 1, 0).cross(outward).normalize();
   const vertical = outward.clone().cross(horizontal);
-  const center = new Vector3(0.12, ISIDORO_DIMENSIONS.height / 2, -0.25);
+  const center = new Vector3(closed ? 0 : 0.12, ISIDORO_DIMENSIONS.height / 2, -0.25);
   let distance = 0;
-  const angles = inspecting ? [-Math.PI / 2] : Array.from({ length: 13 }, (_, index) => -index * Math.PI / 24);
+  const angles = closed ? [0] : inspecting ? [-Math.PI / 2] : Array.from({ length: 13 }, (_, index) => -index * Math.PI / 24);
   for (const point of cabinetFramePoints(angles)) {
     const corner = point.sub(center);
     const horizontalPosition = corner.dot(horizontal), verticalPosition = corner.dot(vertical), depth = corner.dot(outward);
@@ -93,11 +96,15 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, inspecting:
 }
 
 export function whiskyCabinetPose(cabinet: Group, viewport: WhiskyViewport) {
-  return fittedCabinetPose(cabinet, viewport, false);
+  return fittedCabinetPose(cabinet, viewport, 'open');
+}
+
+export function whiskyClosedCabinetPose(cabinet: Group, viewport: WhiskyViewport) {
+  return fittedCabinetPose(cabinet, viewport, 'closed');
 }
 
 export function whiskyInspectionPose(cabinet: Group, viewport: WhiskyViewport) {
-  return fittedCabinetPose(cabinet, viewport, true);
+  return fittedCabinetPose(cabinet, viewport, 'bottle');
 }
 
 function roundedRoute(points: readonly Vector3[]) {

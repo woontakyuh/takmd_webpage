@@ -12,17 +12,20 @@ export const WHISKY_LECTURE = {
 type Viewport = { readonly width: number; readonly height: number };
 
 export function whiskyLectureLayout({ width, height }: Viewport) {
-  const paperHeight = Math.min(height - 224, (width - 48) * WHISKY_LECTURE.height / WHISKY_LECTURE.width, 640);
-  const paperTop = Math.max(72, (height - paperHeight - 112) / 2);
-  return { paperHeight, paperTop, controlsTop: paperTop + paperHeight + 24 };
+  const aspect = WHISKY_LECTURE.width / WHISKY_LECTURE.height;
+  const paperHeight = Math.min(height - 112, (width - 40) / (1.26 * aspect), 680);
+  const paperWidth = paperHeight * aspect;
+  const paperTop = Math.max(60, (height - paperHeight) / 2);
+  return { paperHeight, paperWidth, paperTop, paperCenterX: width / 2 + paperWidth * 0.13 };
 }
 
 export function whiskyLecturePose(card: Object3D, viewport: Viewport) {
   const layout = whiskyLectureLayout(viewport);
   const tangent = Math.tan(focusFov(null, viewport.width < 760, viewport.width, viewport.height) * Math.PI / 360);
   const distance = WHISKY_LECTURE.height * viewport.height / (2 * layout.paperHeight * tangent);
+  const centerX = 2 * layout.paperCenterX / viewport.width - 1;
   const centerY = 1 - 2 * (layout.paperTop + layout.paperHeight / 2) / viewport.height;
-  const target = new Vector3(0, -centerY * tangent * distance, 0);
+  const target = new Vector3(-centerX * tangent * viewport.width / viewport.height * distance, -centerY * tangent * distance, 0);
   const position = target.clone().add(new Vector3(0, 0, distance));
   card.updateWorldMatrix(true, false);
   return { position: card.localToWorld(position).toArray(), target: card.localToWorld(target).toArray() };

@@ -13,7 +13,7 @@ import { WhiskyCollection } from './WhiskyCollection';
 import { WhiskyBottleInspector } from './WhiskyBottleInspector';
 import { finishWhiskyReturn, returnWhiskyBottle, selectWhiskyBottle } from './WhiskyInspectionState';
 import type { WhiskyBottleId, WhiskyInspectionState } from './WhiskyInspectionState';
-import { whiskyCabinetPose, whiskyInspectionPose } from './WhiskyInspectionMotion';
+import { whiskyCabinetPose, whiskyClosedCabinetPose, whiskyInspectionPose } from './WhiskyInspectionMotion';
 import { useSceneInspection } from './SceneInspection';
 import { IsidoroInteriorLighting } from './IsidoroInteriorLighting';
 import { WhiskyLectureCard } from './WhiskyLectureCard';
@@ -29,10 +29,10 @@ const stopInteriorClick = (event: ThreeEvent<PointerEvent | MouseEvent>) => even
 export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps) {
   const { editing } = useArrangement();
   const size = useThree(state => state.size);
+  const camera = useThree(state => state.camera);
   const [open, setOpen] = useState(false);
   const [selection, setSelection] = useState<WhiskyInspectionState>(null);
   const cabinet = useRef<Group>(null);
-  const opening = useRef(false);
   const closing = useRef(false);
   const { inspection, setInspection } = useSceneInspection();
   const lectureActive = inspection?.id === 'whisky-lecture';
@@ -41,33 +41,41 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const ready = useIsidoroMotion(doorPivot, worktopPivot, open, reducedMotion, editing);
   const barware = useRef<Group>(null);
   const bottles = useRef<Group>(null);
-  useFrame(({ camera }) => {
-    if (opening.current && inspection?.id === 'whisky-cabinet'
-      && Math.hypot(...inspection.position.map((value, index) => value - camera.position.getComponent(index))) < 0.035) {
-      opening.current = false;
-      setOpen(true);
-    }
+  useFrame(() => {
     const exposed = (open && !editing) || (doorPivot.current?.rotation.y ?? 0) !== 0;
     if (barware.current) barware.current.visible = exposed;
     if (bottles.current) bottles.current.visible = exposed;
   });
   const approached = inspection?.id === 'whisky-cabinet' || inspection?.id.startsWith('whisky:') === true;
-  const approachCabinet = useCallback(() => {
-    if (cabinet.current) setInspection({ id: 'whisky-cabinet', ...whiskyCabinetPose(cabinet.current, size) });
-  }, [size, setInspection]);
+  const approachCabinet = useCallback((opened = open) => {
+    if (cabinet.current) setInspection({ id: 'whisky-cabinet',
+      ...(opened ? whiskyCabinetPose : whiskyClosedCabinetPose)(cabinet.current, size) });
+  }, [open, size, setInspection]);
+  const visitClosedCabinet = useCallback(() => {
+    if (!cabinet.current) return false;
+    const pose = whiskyClosedCabinetPose(cabinet.current, size);
+    if (inspection?.id === 'whisky-cabinet'
+      && Math.hypot(...pose.position.map((value, index) => value - camera.position.getComponent(index))) < 0.08) return true;
+    approachCabinet(false);
+    return false;
+  }, [approachCabinet, camera, inspection, size]);
   const toggle = useCallback(() => {
     if (editing) return;
     if (!open) {
-      opening.current = true;
-      approachCabinet();
+      if (!visitClosedCabinet()) return;
+      setOpen(true);
+      approachCabinet(true);
       return;
     }
     if (open && selection) {
       closing.current = true;
       setSelection(current => returnWhiskyBottle(current, true));
       approachCabinet();
-    } else setOpen(value => !value);
-  }, [approachCabinet, editing, open, selection]);
+    } else {
+      setOpen(false);
+      approachCabinet(false);
+    }
+  }, [approachCabinet, editing, open, selection, visitClosedCabinet]);
   const { handlers } = useCabinetAction({ disabled: editing, onActivate: toggle });
   const chooseBottle = useCallback((id: WhiskyBottleId) => {
     if (!ready || !cabinet.current) return;
@@ -88,16 +96,16 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     setInspection(null);
   }, [setInspection]);
   useEffect(() => {
-    if (editing) { opening.current = false; closing.current = false; setOpen(false); setSelection(null); }
+    if (editing) { closing.current = false; setOpen(false); setSelection(null); }
   }, [editing]);
   useEffect(() => {
     if (selection || !closing.current) return;
     closing.current = false;
     setOpen(false);
-  }, [selection]);
+    if (approached) approachCabinet(false);
+  }, [selection, approached, approachCabinet]);
   useEffect(() => {
     if (approached) return;
-    opening.current = false;
     closing.current = true;
     setSelection(current => returnWhiskyBottle(current, true));
     if (!selection) setOpen(false);
@@ -117,9 +125,9 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     if (previousViewport.current.width === size.width && previousViewport.current.height === size.height) return;
     previousViewport.current = size;
     if (!approached || !inspection || !cabinet.current) return;
-    const pose = inspection.id.startsWith('whisky:') ? whiskyInspectionPose(cabinet.current, size) : whiskyCabinetPose(cabinet.current, size);
+    const pose = (inspection.id.startsWith('whisky:') ? whiskyInspectionPose : open ? whiskyCabinetPose : whiskyClosedCabinetPose)(cabinet.current, size);
     setInspection({ id: inspection.id, ...pose });
-  }, [approached, inspection, setInspection, size]);
+  }, [approached, inspection, open, setInspection, size]);
   return <group ref={cabinet} name="Poltrona Frau Isidoro drinks cabinet"
     userData={{
       product: 'Poltrona Frau Isidoro',
@@ -139,7 +147,8 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       </group>
     </IsidoroFixedHalf>
     <WhiskyCabinetDoor open={open} pivot={doorPivot} wood={wood}
-      exterior={<Suspense fallback={null}><WhiskyLectureCard open={open} disabled={editing} /></Suspense>}
+      exterior={<Suspense fallback={null}><WhiskyLectureCard open={open} disabled={editing}
+        onApproach={visitClosedCabinet} onReturn={approachCabinet} /></Suspense>}
       disabled={editing} onActivate={toggle}>
       <group ref={bottles} name="complete seven-bottle whisky and Armagnac collection">
         <Suspense fallback={null}><WhiskyCollection cabinet={cabinet} selection={selection}
@@ -151,7 +160,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     <Html fullscreen zIndexRange={[17, 11]} style={{ pointerEvents: 'none' }}
       calculatePosition={(_object, _camera, viewport) => [viewport.width / 2, viewport.height / 2]}>
       <button className="office-secret-trigger" type="button" disabled={editing || lectureActive}
-        aria-expanded={open} onClick={toggle}>{open ? 'Close' : 'Open'} Isidoro drinks cabinet</button>
+        aria-expanded={open} onClick={toggle}>{open ? 'Close' : approached ? 'Open' : 'View'} Isidoro drinks cabinet</button>
     </Html>
     {approached && !selection && <Html fullscreen zIndexRange={[18, 12]} style={{ pointerEvents: 'none' }}
       calculatePosition={(_object, _camera, viewport) => [viewport.width / 2, viewport.height / 2]}>
