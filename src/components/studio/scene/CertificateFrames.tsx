@@ -7,6 +7,8 @@ import type { StudioSceneProps } from '../types';
 import { useArrangement } from '../arrangement';
 import { scheduleSceneSingleAction } from './sceneGesture';
 import { DigitalPhotoFrame } from './DigitalPhotoFrame';
+import { CollectionInspectionExit, CollectionInspectionItem } from './CollectionInspection';
+import { CREDENTIAL_ITEMS } from './CollectionInspectionData';
 
 const FRAME = {
   face: 0.008,
@@ -158,8 +160,12 @@ export function CertificateFrames() {
   return <group name="Framed academic credentials" position={[0, 0, 0]}>
     {CREDENTIALS.map((credential, index) => {
       const texture = textures[index];
-      return texture ? <FramedCredential key={credential.id} credential={credential} texture={texture} /> : null;
+      const item = CREDENTIAL_ITEMS[index];
+      return texture && item ? <CollectionInspectionItem key={credential.id} item={item}>
+        <FramedCredential credential={credential} texture={texture} />
+      </CollectionInspectionItem> : null;
     })}
+    <CollectionInspectionExit collection="credentials" />
   </group>;
 }
 

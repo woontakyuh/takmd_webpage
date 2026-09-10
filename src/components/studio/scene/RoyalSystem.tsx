@@ -8,6 +8,8 @@ import { HallymPlaque } from './HallymPlaque';
 import { SnuhAward } from './SnuhAward';
 import { KomissAward } from './KomissAward';
 import { AwardCeremonyPhoto, CertificateFrames } from './CertificateFrames';
+import { CollectionInspectionExit, CollectionInspectionItem } from './CollectionInspection';
+import { AWARD_ITEMS } from './CollectionInspectionData';
 
 const WOOD_BASE = new Color(PALETTE.paperLight);
 const WOOD_TINT = new Color(INTERIOR.lightWood).multiply(
@@ -72,15 +74,22 @@ export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: Roy
     <group name="personal-awards-collection">
       <Suspense fallback={null}><CertificateFrames /></Suspense>
       <Suspense fallback={null}><AwardCeremonyPhoto onOpen={onAwardPhoto} selected={selected} reducedMotion={reducedMotion} /></Suspense>
-      <group name="Hallym appreciation display" position={[-1.54, LEFT_LEVELS[0], 3.095]} rotation={[0, Math.PI, 0]}>
-        <HallymPlaque />
-      </group>
-      <group name="SNUH merit display" position={[-1.875, LEFT_LEVELS[0], 3.115]} rotation={[0, Math.PI, 0]}>
-        <SnuhAward />
-      </group>
-      <group name="KOMISS membership display" position={[-2.21, LEFT_LEVELS[0], 3.115]} rotation={[0, Math.PI, 0]}>
-        <KomissAward />
-      </group>
+      <CollectionInspectionItem item={AWARD_ITEMS[0]}>
+        <group name="Hallym appreciation display" position={[-1.54, LEFT_LEVELS[0], 3.095]} rotation={[0, Math.PI, 0]}>
+          <HallymPlaque />
+        </group>
+      </CollectionInspectionItem>
+      <CollectionInspectionItem item={AWARD_ITEMS[1]}>
+        <group name="SNUH merit display" position={[-1.875, LEFT_LEVELS[0], 3.115]} rotation={[0, Math.PI, 0]}>
+          <SnuhAward />
+        </group>
+      </CollectionInspectionItem>
+      <CollectionInspectionItem item={AWARD_ITEMS[2]}>
+        <group name="KOMISS membership display" position={[-2.21, LEFT_LEVELS[0], 3.115]} rotation={[0, Math.PI, 0]}>
+          <KomissAward />
+        </group>
+      </CollectionInspectionItem>
+      <CollectionInspectionExit collection="awards" />
     </group>
   </group>;
 }

@@ -1,0 +1,39 @@
+.collection-inspection-exit {
+  position: absolute; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right));
+  display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0;
+  color: var(--studio-ink); background: transparent; pointer-events: auto; cursor: pointer;
+}
+.collection-inspection-exit svg { width: 18px; height: 18px; }
+.collection-inspection-exit:focus-visible { outline: 2px solid var(--studio-teal); outline-offset: 2px; border-radius: 4px; }
+.collection-inspection-copy {
+  position: absolute; top: 50%; right: clamp(24px, 5vw, 80px); width: min(360px, 31vw);
+  transform: translateY(-50%); color: var(--studio-ink); pointer-events: none; overscroll-behavior: contain;
+  font: 400 16px/1.65 var(--studio-editorial); text-shadow: 0 0 4px var(--studio-light), 0 0 12px var(--studio-light), 0 0 24px var(--studio-light);
+  animation: collection-copy-enter var(--studio-panel) var(--studio-ease) both;
+}
+.collection-inspection-copy--left { right: auto; left: clamp(24px, 5vw, 80px); }
+.collection-inspection-copy--bottom {
+  top: auto; right: 50%; bottom: clamp(20px, 5vh, 48px); width: min(420px, 40vw); transform: translateX(50%);
+}
+.collection-inspection-label, .collection-inspection-date {
+  margin: 0; color: var(--studio-muted); font: 500 11px/1.4 Manrope, sans-serif; letter-spacing: .1em; text-transform: uppercase;
+}
+.collection-inspection-copy h2 { margin: 12px 0 8px; font: 400 32px/1.08 var(--studio-editorial); letter-spacing: -.035em; }
+.collection-inspection-copy > p:last-child { margin: 20px 0 0; }
+.studio[data-night='true'] .collection-inspection-copy { text-shadow: 0 1px 14px #111, 0 0 3px #111; }
+@keyframes collection-copy-enter { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 759px) {
+  .collection-inspection-copy {
+    top: 56svh; right: 16px; bottom: auto; left: 16px; width: auto; max-height: 23svh;
+    overflow-y: auto; transform: none; font-size: 14px; line-height: 1.55; pointer-events: auto;
+    text-shadow: 0 1px 10px var(--studio-paper), 0 0 3px var(--studio-paper);
+  }
+  .collection-inspection-copy h2 { margin-top: 8px; font-size: 24px; }
+  .collection-inspection-copy > p:last-child { margin-top: 12px; }
+  .collection-inspection-copy[data-item='credential-komiss'] { top: 51svh; max-height: 19svh; font-size: 13px; line-height: 1.45; }
+  .collection-inspection-copy[data-item='credential-komiss'] h2 { margin-top: 6px; font-size: 21px; }
+  .collection-inspection-copy[data-item='credential-komiss'] > p:last-child { margin-top: 8px; }
+}
+@keyframes collection-copy-enter-mobile { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 759px) { .collection-inspection-copy { animation-name: collection-copy-enter-mobile; } }
+@media (prefers-reduced-motion: reduce) { .collection-inspection-copy { animation: none; } }
