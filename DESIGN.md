@@ -748,3 +748,16 @@ A small matte print of the actual KOSESS whisky lecture cover is attached with t
 In the enlarged television, a narrow left lecture browser groups real events by year and date. The right side contains the original slide, page arrows, thumbnails and concise event/slide context. On narrow screens the lecture list opens on demand to protect slide area. Closing retains the selected slide on the physical TV; slide controls operate only in the enlarged reader. Keep the actual television bezel and camera transition, avoiding a detached full-screen website.
 
 The bookshelf approach contains only the physical books and a compact exit control, without the redundant choose-a-book information panel. Once a book is open its meaningful bibliographic information remains available. Interface and descriptive text use English; original Korean book titles/pages and presentation slides retain their language. The Ppomppu room Easter egg remains unchanged.
+
+
+### September 10 performance and mapped-landscape increment
+
+Preserve room-native gestures, full-quality media readers, object proportions and the original CV layout. The monitor HTML plane must account for camera view offsets so it stays on its physical screen; the blind keypad sits 13 cm beyond the right window edge at 1.90 m, clear of the hanging coat.
+
+Render the exterior only within a conservatively enclosed, 64-pixel-aligned window rectangle. Preserve device-pixel sampling and existing off-axis projection. Near-plane crossings use the full viewport; the water reflection remains 1024 px. Preserve all bridge identities and live traffic. The mapped facade layer covers 49 source footprint edges, retains tagged heights and uses three material instance families with 5,000-instance/60,000-triangle caps. The 72 inland trees occupy eight mapped park/woodland clusters, avoid mapped circulation and use three instanced parts. These are geographic visual increments, not a photorealistic city survey.
+
+Enclosed whisky bottles and barware are skipped only when the cabinet door is completely shut; restore before opening and retain throughout closing. Clock printed leaves animate without forcing global room-shadow rerenders; the housing continues casting shadows. Small refractive decorations use a half-size refraction buffer, returning to full resolution above 112 projected pixels and descending below 96 px. The main image, transmission/IOR materials and media resolution remain unchanged. Suspend the scene while its canvas is outside the viewport or its tab is hidden, and resume in the same document. Report mobile results separately rather than inferring phone performance from a desktop run.
+
+The new lecture derivatives follow the same TVPDF publication workflow and native TV archive. Preserve raw Dropbox originals. New protected pages use the existing audited source-hash contract, with only their sanitized standard-resolution derivatives public.
+
+The TV stage uses a bounded single grid column: long lecture titles truncate within the context footer, never widening or cropping the slide. Mobile KASS/ThaiSMISST regression coverage also requires the next-page arrow to stay inside the physical television.

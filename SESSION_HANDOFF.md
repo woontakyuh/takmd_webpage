@@ -1,5 +1,17 @@
 # Office session handoff — 2026-09-10
 
+## Current performance, incoming lectures and Han River increment
+
+The four newly supplied curated PDFs are integrated: KASS 2025 (7 pages), ThaiSMISST 2025 (10), Wills AI workflow 2026 (23), and GeneCker AI 2026 (11). This adds 51 pages. Earlier source hashes and photo content were unchanged. Public source resolution now covers all eight approved standard-resolution-only pages; those pages never request nonexistent HD images. Source PDFs remain in Dropbox. TV mobile layout now bounds long lecture titles so they cannot stretch or clip the slide/page controls.
+
+The off-axis monitor CV plane is registered to its physical screen again. The blind keypad is beyond the window's right edge at 1.90m, clear of the gown. Preserve the owner's original CV layout. Early CV remains mounted with scroll position through room readiness; the live reader resumes the same position.
+
+Measured optimization retains room geometry and interactions: four entry assets save 3,616,443 bytes; the exterior render target encloses only visible window pixels at the same sampling; closed cabinet contents skip drawing; tiny clock flip faces stop invalidating the room shadow map; distant small glazing uses half-size transmission buffers and restores full sampling nearby; offscreen/hidden canvases pause. Under the recorded Chrome/20 Mbps/40ms conditions, desktop median frame interval improved 83.4→50.0ms, and initial transfer 42.81→39.26MB. Mobile simulation median was effectively unchanged (83.4→83.3ms), although p95 improved 116.7→83.4ms. Do not claim low-end phones are smooth or the 39MB initial payload is small. Physical-phone performance has not been measured.
+
+Han River refinement attaches facade detail to 49 mapped building faces (10 previously) and places 72 instanced trees in eight mapped inland clusters, grounded to the actual terrain and clear of paths, buildings and water. Actual bridge axes, individual silhouettes, traffic, default camera, day/night and oblique window views are retained. This is an incremental geographic render; distant density and vegetation still look sparse and are not photorealistic.
+
+Current evidence: `.omo/evidence/office-performance-river-2026-09-10/`. The final `release.json` is authoritative for commit, pushed remote, exact Cloudflare source SHA and live checks. Build/types and focused geometry/media tests passed; dedicated mobile TV, loading CV and monitor regression evidence is retained there. Unrelated local references and Beolab/whisky experiments are excluded. User will give additional gesture feedback later; do not preemptively redesign click/double-click behavior. Administrator layout persistence, unsupplied lecture assets, 2024-or-earlier imports and broader photorealism remain deferred. Historical entries below do not override this checkpoint.
+
 ## Ordered office refinements after CV concept review
 
 The owner rejected all three portrait concepts. The canonical CV component, stylesheet and original profile image remain unchanged. Closing the monitor now shows the cover in the office; reopening resumes the saved reading position. Desktop, portrait and landscape regression checks passed.
