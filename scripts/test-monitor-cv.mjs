@@ -88,10 +88,34 @@ try {
       await page.locator('.monitor-screen-reader[data-active=true]').waitFor();
       await page.waitForTimeout(1500);
     }
+    // Given a reader positioned below its cover, closing must show the cover in the office.
+    const scrollBeforeClose = await content.evaluate(element => element.scrollTop);
+    assert(scrollBeforeClose > 50);
+    await page.getByRole('button', { name: 'Close and return to office', exact: true }).click();
+    await page.locator('.studio:not([data-selected])').waitFor({ state: 'attached' });
+    const inactiveContent = page.locator('.monitor-screen-reader[data-active=false] .monitor-screen-content');
+    await inactiveContent.waitFor({ state: 'attached' });
+    await page.getByRole('button', { name: 'The desk', exact: true }).click();
+    await page.waitForFunction(() => window.monitorTestScene()?.controls?.enabled === true);
+    // Move inside the invisible shadow enclosure that occludes HTML in the guided view.
+    for (let step = 0; step < 4; step++) await page.locator('.studio-scene').press('+');
+    await page.waitForFunction(() => document.querySelector('.monitor-screen-reader[data-active=false] .monitor-screen-content')?.clientHeight > 0);
+    const scrollAfterClose = await inactiveContent.evaluate(async element => {
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      return element.scrollTop;
+    });
+    await page.screenshot({ path: `${evidence}/closed-cover-${width}.png` });
+    assert.equal(scrollAfterClose, 0, 'The inactive office monitor must display the CV cover');
+
+    // Given the office cover, reopening must resume the last reading position.
+    await page.locator('#studio-exhibit-ai').click();
+    await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Close and return to office');
+    const scrollAfterReopen = await content.evaluate(element => element.scrollTop);
+    assert(Math.abs(scrollAfterReopen - scrollBeforeClose) <= 1, `Reopening must restore ${scrollBeforeClose}, received ${scrollAfterReopen}`);
     await page.getByRole('button', { name: 'Close and return to office', exact: true }).click();
     await page.locator('.studio:not([data-selected])').waitFor({ state: 'attached' });
     assert.deepEqual(errors, []);
-    results.push({ width, height, touch, scrollBefore, scrollAfter, award: true, internalRoutes: true, close: true });
+    results.push({ width, height, touch, scrollBefore, scrollAfter, scrollBeforeClose, scrollAfterClose, scrollAfterReopen, award: true, internalRoutes: true, close: true });
     await context.close();
   }
 } finally {

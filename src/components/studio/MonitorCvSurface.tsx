@@ -33,7 +33,8 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
       if (!element) return;
       // Drei attaches this portal after child layout effects; wait for its scroll box.
       if (element.clientHeight === 0) { frame = requestAnimationFrame(restore); return; }
-      if (scrollState) element.scrollTop = scrollState.scrollTop;
+      if (!active) element.scrollTop = 0;
+      else if (scrollState) element.scrollTop = scrollState.scrollTop;
       restoring.current = false;
       if (active) closeButton.current?.focus({ preventScroll: true });
     };
