@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { DoubleSide, Shape, ShapeGeometry } from 'three';
 import { createHollowGlassMaterial } from './GlassMaterial';
 import { bottleClosureStart, bottleRadiusAt, createBottleGeometry } from './WhiskyBottleGeometry';
-import { createWhiskyBottleMaterial } from './WhiskyBottleMaterial';
+import { createWhiskyBottleMaterial, createWhiskyLiquidMaterial } from './WhiskyBottleMaterial';
 import type { BottleSpec } from './WhiskyBottleSpecs';
 
 function Closure({ bottle }: { readonly bottle: BottleSpec }) {
@@ -105,9 +105,16 @@ export function WhiskyBottleBody({ bottle }: { readonly bottle: BottleSpec }) {
     low: 0, high: bottleClosureStart(bottle), closed: true,
   }), [bottle]);
   const material = useMemo(() => createWhiskyBottleMaterial(bottle), [bottle]);
+  const liquidGeometry = useMemo(() => createBottleGeometry(bottle, {
+    low: .012 / bottle.height, high: bottle.fillHeight, offset: -.002, closed: true, meniscus: true,
+  }), [bottle]);
+  const liquidMaterial = useMemo(() => createWhiskyLiquidMaterial(bottle), [bottle]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => () => material.dispose(), [material]);
+  useEffect(() => () => liquidGeometry.dispose(), [liquidGeometry]);
+  useEffect(() => () => liquidMaterial.dispose(), [liquidMaterial]);
   return <group name="physical glass and whisky">
+    <mesh name="closed whisky volume and concave meniscus" geometry={liquidGeometry} material={liquidMaterial} />
     <mesh geometry={geometry} material={material} receiveShadow />
     <Closure bottle={bottle} />
     {bottle.image.endsWith('/bookers.png') ? <WaxSeal bottle={bottle} /> : null}

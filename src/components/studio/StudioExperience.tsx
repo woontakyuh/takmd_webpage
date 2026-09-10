@@ -183,8 +183,19 @@ function OfficeExperience(content: StudioContent) {
       const next = officePathView(url.pathname + url.search + url.hash, navigation.current.current);
       if (!next) return false;
       setExplored(true);
-      if (next.selected === 'education') setTalkId(value => value ?? featuredTalk?.id ?? null);
+      const requestedTalk = next.selected === 'education'
+        ? content.presentations.find(talk => talk.id === url.searchParams.get('talk')) : undefined;
+      if (next.selected === 'education') {
+        setInspection(null);
+        setTalkId(value => requestedTalk?.id ?? value ?? featuredTalk?.id ?? null);
+        if (requestedTalk) setTalkSlideIndex(0);
+      }
       navigation.go(next);
+      if (requestedTalk) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('talk', requestedTalk.id);
+        window.history.replaceState(window.history.state, '', currentUrl.pathname + currentUrl.search);
+      }
       window.scrollTo({ top: 0, behavior: 'instant' });
       return true;
     };
@@ -205,7 +216,7 @@ function OfficeExperience(content: StudioContent) {
     window.addEventListener('office:navigate', onNavigate);
     window.addEventListener('keydown', onEscape);
     return () => { window.removeEventListener('office:zoomed', onZoomed); document.removeEventListener('click', onLink, true); window.removeEventListener('office:navigate', onNavigate); window.removeEventListener('keydown', onEscape); };
-  }, [navigation.go, navigation.current, close, featuredTalk?.id]);
+  }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection]);
   useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
   const goToView = (view: 0 | 1 | 2) => {

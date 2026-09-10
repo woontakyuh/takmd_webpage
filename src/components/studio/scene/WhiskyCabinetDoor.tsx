@@ -21,6 +21,7 @@ type DoorProps = ActionOptions & {
   readonly reducedMotion: boolean;
   readonly wood: Texture;
   readonly children: ReactNode;
+  readonly exterior?: ReactNode;
 };
 type Gesture = { readonly id: number; readonly x: number; readonly y: number };
 
@@ -138,13 +139,14 @@ export function useIsidoroMotion(door: RefObject<Group | null>, worktop: RefObje
   return ready;
 }
 
-export function WhiskyCabinetDoor({ open, wood, pivot, children, ...action }: Omit<DoorProps, 'reducedMotion'> & { readonly pivot: RefObject<Group | null> }) {
+export function WhiskyCabinetDoor({ open, wood, pivot, children, exterior, ...action }: Omit<DoorProps, 'reducedMotion'> & { readonly pivot: RefObject<Group | null> }) {
   const { hovered, handlers } = useCabinetAction(action);
   const target = open && !action.disabled ? -ISIDORO_OPEN_ANGLE : 0;
   return <group ref={pivot} name="Isidoro book-opening mobile half"
     position={[ISIDORO_DIMENSIONS.width / 2, 0, 0]}
     userData={{ open: open && !action.disabled, angle: target }} {...(!open ? handlers : {})}>
     <group scale={[-1, 1, 1]}><IsidoroOpeningHalf wood={wood}>{children}</IsidoroOpeningHalf></group>
+    {exterior}
     {open && <group name="Isidoro left outer edge and leather handle close target" {...handlers}>
       <mesh position={[-0.6975, 0.595, -0.1275]}>
         <boxGeometry args={[0.050, 1.12, 0.285]} />

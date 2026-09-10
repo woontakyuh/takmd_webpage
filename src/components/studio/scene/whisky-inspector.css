@@ -1,6 +1,6 @@
 .whisky-inspector {
-  position: absolute; top: 50%; right: 24px; transform: translateY(-50%);
-  box-sizing: border-box; width: 300px; max-width: calc(100% - 48px); max-height: calc(100% - 48px);
+  position: absolute; transform: translateY(-50%);
+  box-sizing: border-box;
   padding: 24px; border: 1px solid var(--studio-line); border-radius: 12px;
   color: var(--studio-ink); background: var(--studio-light); box-shadow: 0 12px 50px #202d2a14;
   font: 400 14px/1.65 Manrope, sans-serif; pointer-events: auto; overflow-y: auto; overscroll-behavior: contain;
@@ -26,16 +26,31 @@
 .whisky-cabinet-controls select { max-width: 180px; margin-left: 4px; font-size: 11px; }
 @keyframes whisky-inspector-enter { from { opacity: 0; transform: translate(12px, -50%); } to { opacity: 1; transform: translate(0, -50%); } }
 @media (max-width: 759px) {
-  .whisky-inspector { inset: auto 16px 16px; transform: none; width: auto; max-width: none; max-height: 38svh; padding: 16px; }
+  .whisky-inspector { padding: 16px; }
   .whisky-inspector h2 { margin-top: 8px; }
   .whisky-inspector .whisky-expression { margin-bottom: 12px; }
-  @keyframes whisky-inspector-enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 }
+.whisky-inspector[data-layout='below'] { transform: none; animation-name: whisky-inspector-enter-below; }
+@keyframes whisky-inspector-enter-below { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { .whisky-inspector { animation: none; } }
 
 .studio[data-inspecting='whisky'] :is(.studio-header, .studio-tools, .office-title, .office-guided, .studio-stage-footer) { visibility: hidden; pointer-events: none; }
 .whisky-cabinet-controls { display: flex; align-items: center; width: max-content; gap: 4px; }
 .whisky-cabinet-controls select { width: 180px; margin-left: 0; }
+.whisky-cabinet-controls { transition: opacity var(--studio-micro) var(--studio-ease); }
+.whisky-handle-marker, .whisky-cabinet-exit {
+  display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  border: 0; color: var(--studio-ink); background: transparent; cursor: pointer;
+}
+.whisky-handle-marker span {
+  width: 8px; height: 8px; border: 1px solid var(--studio-paper); border-radius: 50%;
+  background: var(--studio-teal); box-shadow: 0 0 0 3px #f8f6f040;
+}
+.whisky-handle-marker:is(:hover, :focus-visible) span { box-shadow: 0 0 0 4px #f8f6f080; }
+.whisky-cabinet-exit { position: absolute; top: 16px; right: 16px; pointer-events: auto; }
+.whisky-cabinet-exit svg { width: 18px; height: 18px; }
+.whisky-handle-marker:focus-visible, .whisky-cabinet-exit:focus-visible { outline: 2px solid var(--studio-teal); outline-offset: 0; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { .whisky-cabinet-controls { transition: none; } }
 
 .whisky-inspector-top { position: sticky; top: -24px; z-index: 1; align-items: center; margin-top: -12px; background: var(--studio-light); }
 .whisky-inspector-top button { width: 44px; flex: 0 0 44px; border: 0; padding: 12px; }

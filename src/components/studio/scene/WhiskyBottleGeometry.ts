@@ -9,6 +9,7 @@ type BottleSurface = {
   readonly halfAngle?: number;
   readonly offset?: number;
   readonly closed?: boolean;
+  readonly meniscus?: boolean;
 };
 
 function unreachable(value: never): never {
@@ -48,17 +49,23 @@ export function bottleRadiusAt(bottle: BottleSpec, height: number): number {
 }
 
 export function createBottleGeometry(bottle: BottleSpec, options: BottleSurface = {}): BufferGeometry {
-  const { low = 0, high = 1, halfAngle = Math.PI, offset = 0, closed = false } = options;
-  const rows = Math.max(2, Math.ceil((high - low) * 96));
+  const { low = 0, high = 1, halfAngle = Math.PI, offset = 0, closed = false, meniscus = false } = options;
+  const rows = Math.max(2, Math.ceil((high - low) * (meniscus ? 48 : 96)));
   const points = Array.from({ length: rows + 1 }, (_, index) => {
     const y = MathUtils.lerp(low, high, index / rows);
     return new Vector2(Math.max(0, bottleRadiusAt(bottle, y) + offset), y * bottle.height);
   });
   if (closed) {
     points.unshift(new Vector2(0, low * bottle.height));
-    points.push(new Vector2(0, high * bottle.height));
+    const topRadius = Math.max(0, bottleRadiusAt(bottle, high) + offset);
+    if (meniscus) {
+      for (const fraction of [.98, .94, .86, .65, 0]) {
+        points.push(new Vector2(topRadius * fraction,
+          high * bottle.height - .0012 * (1 - Math.exp(-(1 - fraction) * 24))));
+      }
+    } else points.push(new Vector2(0, high * bottle.height));
   }
-  const radialSegments = bottle.shape === 'faceted' ? 24 : 64;
+  const radialSegments = bottle.shape === 'faceted' ? 24 : meniscus ? 32 : 64;
   const segments = Math.max(4, Math.ceil(radialSegments * halfAngle / Math.PI));
   const geometry = new LatheGeometry(points, segments, -halfAngle, halfAngle * 2);
   switch (bottle.shape) {

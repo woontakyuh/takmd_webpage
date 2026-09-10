@@ -1,0 +1,33 @@
+.whisky-lecture-trigger {
+  display: block; width: 44px; height: 44px; padding: 0; border: 0;
+  background: transparent; pointer-events: none;
+}
+.whisky-lecture-slide {
+  display: block; width: 960px; max-width: none; height: auto; user-select: none;
+  mask-image: radial-gradient(circle at 64px 14px, transparent 17px, #000 18px), radial-gradient(circle at 896px 14px, transparent 17px, #000 18px);
+  mask-composite: intersect;
+}
+.whisky-lecture-close {
+  position: absolute; top: 16px; right: 16px; display: grid; place-items: center;
+  width: 44px; height: 44px; padding: 0; border: 0; border-radius: 4px;
+  background: var(--studio-light); color: var(--studio-ink); pointer-events: auto; cursor: pointer;
+}
+.whisky-lecture-controls {
+  position: absolute; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 32px);
+  padding: 8px 12px; border: 1px solid var(--studio-line); border-radius: 8px;
+  color: var(--studio-ink); background: var(--studio-light); pointer-events: auto;
+  font: 400 12px/1.5 Manrope, sans-serif;
+}
+.whisky-lecture-controls p { margin: 0 0 4px; text-align: center; color: var(--studio-muted); }
+.whisky-lecture-controls nav { display: flex; justify-content: center; align-items: center; gap: 4px; }
+.whisky-lecture-controls button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; min-height: 44px;
+  padding: 8px; border: 0; border-radius: 4px; color: var(--studio-ink); background: transparent; cursor: pointer; font: inherit;
+}
+.whisky-lecture-controls button:hover { background: var(--studio-paper); }
+.whisky-lecture-controls button:disabled { opacity: .35; cursor: default; }
+.whisky-lecture-controls span[role='status'] { min-width: 48px; text-align: center; font-variant-numeric: tabular-nums; }
+.whisky-lecture-controls .whisky-lecture-tv { margin-left: 8px; padding-inline: 12px; border-left: 1px solid var(--studio-line); }
+.whisky-lecture-trigger:focus-visible, .whisky-lecture-close:focus-visible, .whisky-lecture-controls button:focus-visible {
+  outline: 2px solid var(--studio-teal); outline-offset: 2px;
+}

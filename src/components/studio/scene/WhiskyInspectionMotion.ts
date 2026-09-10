@@ -1,5 +1,5 @@
 import { CurvePath, LineCurve3, MathUtils, QuadraticBezierCurve3, Quaternion, Vector3 } from 'three';
-import type { Group, Object3D } from 'three';
+import type { Camera, Group, Object3D } from 'three';
 import { focusFov } from './config';
 import type { Point } from './config';
 import type { BottleSpec } from './WhiskyBottleSpecs';
@@ -13,23 +13,70 @@ export const WHISKY_PRESENTATION = {
 
 type WhiskyViewport = { readonly width: number; readonly height: number };
 
+export function whiskyInspectionLayout({ width, height }: WhiskyViewport) {
+  const stacked = width < 960 && height >= width;
+  const inset = width < 760 ? 16 : 24;
+  const gap = 32;
+  const panelWidth = stacked ? width - inset * 2 : Math.min(300, width * 0.36);
+  const panelTop = stacked ? height * 0.61 : inset;
+  const objectWidth = stacked ? width - inset * 2
+    : Math.min(width - panelWidth - gap - inset * 2, (height - inset * 2) * 1.05);
+  const objectLeft = stacked ? inset : (width - objectWidth - gap - panelWidth) / 2;
+  return {
+    stacked, inset, gap,
+    object: { left: objectLeft, right: objectLeft + objectWidth, top: stacked ? 80 : inset, bottom: stacked ? panelTop - gap : height - inset },
+    panel: { left: stacked ? inset : objectLeft + objectWidth + gap, top: panelTop, width: panelWidth, maxHeight: height - panelTop - inset },
+  };
+}
+
+function cabinetFramePoints(angles: readonly number[]) {
+  const points: Vector3[] = [];
+  const halfWidth = ISIDORO_DIMENSIONS.width / 2;
+  const halfDepth = ISIDORO_DIMENSIONS.depth / 2;
+  for (const x of [-halfWidth, halfWidth]) for (const y of [0.004, ISIDORO_DIMENSIONS.height]) for (const z of [0, halfDepth]) points.push(new Vector3(x, y, z));
+  for (const angle of angles) {
+    const cosine = Math.cos(angle), sine = Math.sin(angle);
+    for (const part of [
+      { x: [-ISIDORO_DIMENSIONS.width, 0], y: [0.004, ISIDORO_DIMENSIONS.height], z: [-halfDepth, 0] },
+      { x: [-0.634, -0.588], y: [0.503, 0.737], z: [-0.301, -0.259] },
+    ]) for (const x of part.x) for (const y of part.y) for (const z of part.z) points.push(new Vector3(halfWidth + x * cosine + z * sine, y, -x * sine + z * cosine));
+  }
+  for (const x of [-0.31, 0.31]) for (const y of [0.616, 0.634]) for (const z of [-0.32, 0]) points.push(new Vector3(x, y, z));
+  return points;
+}
+
+export function whiskyCabinetScreenBounds(cabinet: Object3D, camera: Camera, { width, height }: WhiskyViewport) {
+  const angle = cabinet.getObjectByName('Isidoro book-opening mobile half')?.rotation.y ?? 0;
+  cabinet.updateWorldMatrix(true, false);
+  const points = cabinetFramePoints([angle]).map(point => cabinet.localToWorld(point).project(camera));
+  return {
+    left: (Math.min(...points.map(point => point.x)) + 1) * width / 2,
+    right: (Math.max(...points.map(point => point.x)) + 1) * width / 2,
+    top: (1 - Math.max(...points.map(point => point.y))) * height / 2,
+    bottom: (1 - Math.min(...points.map(point => point.y))) * height / 2,
+  };
+}
+
 function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, inspecting: boolean) {
   const { width, height } = viewport;
   const narrow = width < 760;
+  const layout = whiskyInspectionLayout(viewport);
   const tangentY = Math.tan(focusFov(null, narrow, width, height) * Math.PI / 360);
   const tangentX = tangentY * width / height;
-  const left = 48 / width - 1;
-  const right = 2 * (width - (inspecting && !narrow ? 348 : 24)) / width - 1;
-  const top = 1 - 48 / height;
-  const bottom = 1 - 2 * (inspecting && narrow ? height * 0.6 - 24 : height - 24) / height;
+  const area = inspecting ? layout.object : { left: layout.inset, right: width - layout.inset, top: layout.inset, bottom: height - layout.inset };
+  const left = 2 * area.left / width - 1;
+  const right = 2 * area.right / width - 1;
+  const top = 1 - 2 * area.top / height;
+  const bottom = 1 - 2 * area.bottom / height;
   const centerX = (left + right) / 2, centerY = (top + bottom) / 2;
-  const outward = new Vector3(-1.57, inspecting && narrow ? 2.5 : 0.8, -1.7).normalize();
+  const outward = new Vector3(-1.57, inspecting && layout.stacked ? 2.5 : 0.8, -1.7).normalize();
   const horizontal = new Vector3(0, 1, 0).cross(outward).normalize();
   const vertical = outward.clone().cross(horizontal);
-  const center = new Vector3(0.12, 0.65, -0.25);
-  let distance = 2.42;
-  for (const x of [-0.355, 0.61]) for (const y of [narrow ? -0.18 : 0.02, narrow ? 1.18 : 1.31]) for (const z of [-0.735, 0.255]) {
-    const corner = new Vector3(x, y, z).sub(center);
+  const center = new Vector3(0.12, ISIDORO_DIMENSIONS.height / 2, -0.25);
+  let distance = 0;
+  const angles = inspecting ? [-Math.PI / 2] : Array.from({ length: 13 }, (_, index) => -index * Math.PI / 24);
+  for (const point of cabinetFramePoints(angles)) {
+    const corner = point.sub(center);
     const horizontalPosition = corner.dot(horizontal), verticalPosition = corner.dot(vertical), depth = corner.dot(outward);
     distance = Math.max(distance,
       (horizontalPosition + right * tangentX * depth) / ((right - centerX) * tangentX),
@@ -37,6 +84,7 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, inspecting:
       (verticalPosition + top * tangentY * depth) / ((top - centerY) * tangentY),
       (-verticalPosition - bottom * tangentY * depth) / ((centerY - bottom) * tangentY));
   }
+  distance *= 1.005;
   const target = center.addScaledVector(horizontal, -centerX * tangentX * distance)
     .addScaledVector(vertical, -centerY * tangentY * distance);
   const position = target.clone().addScaledVector(outward, distance);

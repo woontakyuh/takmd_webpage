@@ -1,61 +1,106 @@
-import { Color } from 'three';
+import { Color, FrontSide, MeshPhysicalMaterial } from 'three';
 import { createGlassSurfaceMaterial, GLASS_ENVIRONMENT_FRAGMENT, GLASS_REFLECTION_FRAGMENT } from './GlassMaterial';
 import type { BottleSpec } from './WhiskyBottleSpecs';
 
 export function createWhiskyBottleMaterial(bottle: BottleSpec) {
   const material = createGlassSurfaceMaterial();
-  material.color.set(bottle.darkGlass ? bottle.glass : '#ffffff');
-  material.name = 'Reflective bottle glass with analytic whisky depth';
+  material.name = 'Bottle glass wall and weighted base';
   material.roughness = 0.045;
   material.onBeforeCompile = shader => {
-    shader.uniforms.bottleFill = { value: bottle.fillHeight * bottle.height };
-    shader.uniforms.whiskyColor = { value: new Color(bottle.liquid) };
     shader.uniforms.glassColor = { value: new Color(bottle.glass) };
     shader.vertexShader = shader.vertexShader.replace('#include <common>', `#include <common>
-      varying vec3 vBottlePosition;
-      varying vec3 vBottleNormal;
-      varying vec3 vBottleView;`)
+      varying float vBottleHeight;`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>
-        vBottlePosition = position;
-        vBottleNormal = normal;`)
-      .replace('#include <project_vertex>', `#include <project_vertex>
-        vBottleView = inverseTransformDirection(-mvPosition.xyz, modelViewMatrix);`);
+        vBottleHeight = position.y;`);
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <envmap_physical_pars_fragment>', GLASS_ENVIRONMENT_FRAGMENT)
       .replace('#include <common>', `#include <common>
-      varying vec3 vBottlePosition;
-      varying vec3 vBottleNormal;
-      varying vec3 vBottleView;
-      uniform float bottleFill;
-      uniform vec3 whiskyColor;
+      varying float vBottleHeight;
       uniform vec3 glassColor;`)
-      .replace('#include <color_fragment>', `#include <color_fragment>
-        vec3 insideRay = refract(-normalize(vBottleView), normalize(vBottleNormal), 1.0 / 1.36);
-        float chord = clamp(-2.0 * dot(vBottlePosition.xz, insideRay.xz)
-          / max(dot(insideRay.xz, insideRay.xz), 0.0001), 0.002, 0.18);
-        float liquidPath = vBottlePosition.y < bottleFill ? chord : 0.0;
-        if (abs(insideRay.y) > 0.0001) {
-          float bottom = (0.012 - vBottlePosition.y) / insideRay.y;
-          float surface = (bottleFill - vBottlePosition.y) / insideRay.y;
-          float entry = max(0.0, min(bottom, surface));
-          float exitPoint = min(chord, max(bottom, surface));
-          liquidPath = max(0.0, exitPoint - entry);
-        }
-        float bottleFacing = abs(dot(normalize(vBottleNormal), normalize(vBottleView)));
-        float weightedBase = 1.0 - smoothstep(0.01, 0.016, vBottlePosition.y);
-        float glassPath = 0.006 / max(bottleFacing, 0.18) + weightedBase * 0.022;
-        vec3 liquidTransmission = pow(max(whiskyColor, vec3(0.008)), vec3(liquidPath / 0.095));
-        vec3 glassTransmission = pow(max(glassColor, vec3(0.008)), vec3(glassPath / 0.028));
-        vec3 bottleTransmission = liquidTransmission * glassTransmission;
-        float absorption = 1.0 - dot(bottleTransmission, vec3(0.2126, 0.7152, 0.0722));
-        diffuseColor.rgb *= bottleTransmission / max(max(bottleTransmission.r,
-          bottleTransmission.g), max(bottleTransmission.b, 0.02));`)
       .replace('#include <opaque_fragment>', `
+        float bottleFacing = abs(dot(normalize(normal), normalize(vViewPosition)));
+        float weightedBase = 1.0 - smoothstep(0.008, 0.015, vBottleHeight);
+        float glassPath = 0.004 / max(bottleFacing, 0.18) + weightedBase * 0.014;
+        vec3 glassTransmission = pow(max(glassColor, vec3(0.008)), vec3(glassPath / 0.028));
+        float absorption = 1.0 - dot(glassTransmission, vec3(0.2126, 0.7152, 0.0722));
+        totalDiffuse *= glassTransmission;
         float fresnel = 0.04 + 0.96 * pow(1.0 - bottleFacing, 5.0);
-        diffuseColor.a = clamp(0.08 + absorption * 0.84 + fresnel * 0.62 + weightedBase * 0.18, 0.0, 0.96);
-        float glassDiffuseWeight = mix(0.025, 0.16, absorption);
+        diffuseColor.a = clamp(0.025 + absorption * 0.76 + fresnel * 0.62 + weightedBase * 0.24, 0.0, 0.92);
+        float glassDiffuseWeight = 0.025;
         ${GLASS_REFLECTION_FRAGMENT}`);
   };
-  material.customProgramCacheKey = () => 'whisky-analytic-alpha-absorption-v8';
+  material.customProgramCacheKey = () => 'whisky-glass-wall-v9';
+  return material;
+}
+
+export function createWhiskyLiquidMaterial(bottle: BottleSpec) {
+  const material = new MeshPhysicalMaterial({
+    name: 'Closed whisky volume with environment refraction and Beer absorption',
+    color: '#ffffff', roughness: 0.055, metalness: 0,
+    transmission: 0, opacity: 1, transparent: false, depthWrite: true,
+    side: FrontSide, ior: 1.36,
+  });
+  // The existing room probe approximates transmitted light without replaying the opaque scene.
+  material.onBeforeCompile = shader => {
+    shader.uniforms.liquidBottom = { value: 0.012 };
+    shader.uniforms.liquidTop = { value: bottle.fillHeight * bottle.height };
+    shader.uniforms.liquidRadius = { value: bottle.radius - 0.002 };
+    shader.uniforms.whiskyAttenuation = { value: new Color(bottle.liquid) };
+    shader.uniforms.bottleTint = { value: new Color(bottle.glass) };
+    shader.vertexShader = shader.vertexShader.replace('#include <common>', `#include <common>
+      varying vec3 vLiquidPosition;
+      varying vec3 vLiquidNormal;
+      varying vec3 vLiquidView;`)
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+        vLiquidPosition = position;
+        vLiquidNormal = normal;`)
+      .replace('#include <project_vertex>', `#include <project_vertex>
+        vLiquidView = inverseTransformDirection(-mvPosition.xyz, modelViewMatrix);`);
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>
+      varying vec3 vLiquidPosition;
+      varying vec3 vLiquidNormal;
+      varying vec3 vLiquidView;
+      uniform float liquidBottom;
+      uniform float liquidTop;
+      uniform float liquidRadius;
+      uniform vec3 whiskyAttenuation;
+      uniform vec3 bottleTint;
+      uniform mat4 modelMatrix;`)
+      .replace('#include <transmission_fragment>', `
+        vec3 liquidRay = refract(-normalize(vLiquidView), normalize(vLiquidNormal), 1.0 / ior);
+        float radius = mix(length(vLiquidPosition.xz), liquidRadius,
+          smoothstep(0.65, 0.95, abs(normalize(vLiquidNormal).y)));
+        float a = max(dot(liquidRay.xz, liquidRay.xz), 0.00001);
+        float b = dot(vLiquidPosition.xz, liquidRay.xz);
+        float c = dot(vLiquidPosition.xz, vLiquidPosition.xz) - radius * radius;
+        float rayLength = max(0.0001, (-b + sqrt(max(0.0, b * b - a * c))) / a);
+        if (liquidRay.y < -0.0001) rayLength = min(rayLength, (liquidBottom - vLiquidPosition.y) / liquidRay.y);
+        if (liquidRay.y > 0.0001) rayLength = min(rayLength, (liquidTop - vLiquidPosition.y) / liquidRay.y);
+        float liquidDistance = clamp(rayLength, 0.0001, 0.5);
+        vec3 exitPosition = vLiquidPosition + liquidRay * liquidDistance;
+        vec3 exitNormal = normalize(vec3(exitPosition.x, 0.0, exitPosition.z));
+        if (exitPosition.y <= liquidBottom + 0.0002) exitNormal = vec3(0.0, -1.0, 0.0);
+        if (exitPosition.y >= liquidTop - 0.0002) exitNormal = vec3(0.0, 1.0, 0.0);
+        vec3 exitRay = refract(liquidRay, -exitNormal, ior);
+        float internalReflection = step(dot(exitRay, exitRay), 0.001);
+        if (internalReflection > 0.5) exitRay = reflect(liquidRay, -exitNormal);
+        vec3 throughLight = totalDiffuse;
+        #ifdef ENVMAP_TYPE_CUBE_UV
+          vec3 worldExitRay = normalize(mat3(modelMatrix) * exitRay);
+          vec3 probeLight = textureCubeUV(envMap, envMapRotation * worldExitRay, material.roughness).rgb;
+          float probeLuminance = max(dot(probeLight, vec3(0.2126, 0.7152, 0.0722)), 0.001);
+          float cabinetRadiance = probeLuminance * 0.32 + max(probeLuminance - 0.62, 0.0) * 2.0;
+          throughLight = probeLight * (cabinetRadiance / probeLuminance) * envMapIntensity;
+        #endif
+        vec3 beerTransmission = pow(max(whiskyAttenuation, vec3(0.001)), vec3(liquidDistance / 0.085));
+        float wallPath = 0.004 / max(abs(dot(normalize(vLiquidNormal), normalize(vLiquidView))), 0.18);
+        beerTransmission *= pow(max(bottleTint, vec3(0.001)), vec3(wallPath / 0.028));
+        vec3 liquidFresnel = EnvironmentBRDF(normal, normalize(vViewPosition),
+          material.specularColorBlended, material.specularF90, material.roughness);
+        totalDiffuse = throughLight * beerTransmission * (1.0 - liquidFresnel) * mix(1.0, 0.2, internalReflection);
+      `);
+  };
+  material.customProgramCacheKey = () => 'whisky-closed-probe-refraction-v2';
   return material;
 }

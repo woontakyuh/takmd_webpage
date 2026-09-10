@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Group, PerspectiveCamera, Vector3 } from 'three';
 import { WHISKY_BOTTLES } from '../src/components/studio/scene/WhiskyBottleSpecs';
+import { focusFov } from '../src/components/studio/scene/config';
 import { advanceWhiskyProgress, applyWhiskyPresentation, resolveWhiskyBottleClearance, whiskyCabinetPose, whiskyInspectionPose, whiskyPresentationPath } from '../src/components/studio/scene/WhiskyInspectionMotion';
 import { finishWhiskyReturn, returnWhiskyBottle, selectWhiskyBottle } from '../src/components/studio/scene/WhiskyInspectionState';
 
@@ -20,6 +21,20 @@ function openingHierarchy() {
   const parent = new Group();
   cabinet.add(door); door.add(mirror); mirror.add(half); half.add(unmirror); unmirror.add(parent);
   return { cabinet, parent };
+}
+
+function physicalCabinetCorners(angle) {
+  // Dimensions follow IsidoroCabinetGeometry: .71m shells, .255m half depth, .117m handle half-height.
+  const points = [];
+  for (const x of [-.355, .355]) for (const y of [.004, 1.17]) for (const z of [0, .255]) points.push(new Vector3(x, y, z));
+  for (const part of [
+    { x: [-.71, 0], y: [.004, 1.17], z: [-.255, 0] },
+    { x: [-.634, -.588], y: [.503, .737], z: [-.301, -.259] },
+  ]) for (const x of part.x) for (const y of part.y) for (const z of part.z) {
+    points.push(new Vector3(x, y, z).applyAxisAngle(new Vector3(0, 1, 0), angle).add(new Vector3(.355, 0, 0)));
+  }
+  for (const x of [-.31, .31]) for (const y of [.616, .634]) for (const z of [-.32, 0]) points.push(new Vector3(x, y, z));
+  return points;
 }
 
 describe('physical whisky presentation', () => {
@@ -47,27 +62,30 @@ describe('physical whisky presentation', () => {
       expect(model.quaternion.toArray()).toEqual([0, 0, 0, 1]);
     });
   }
-  for (const [width, height] of [[1440, 1000], [1280, 800], [768, 1024], [375, 812], [812, 375]]) {
+  for (const [width, height] of [[1440, 900], [1280, 800], [768, 1024], [390, 844], [375, 667], [844, 390], [667, 375]]) {
     for (const inspecting of [false, true]) {
-      test(`frames the full open cabinet at ${width}x${height} with inspector ${inspecting}`, () => {
-        // Given: the cabinet's transformed open envelope, including its controls.
+      test(`frames the physical cabinet at ${width}x${height} with inspector ${inspecting}`, () => {
+        // Given: actual shell, feet, carry-handle and worktop corners, with no removed text-label volume.
         const { cabinet } = openingHierarchy();
         const narrow = width < 760;
         const viewport = { width, height };
         // When: the fitted camera is applied to a real perspective projection.
         const pose = inspecting ? whiskyInspectionPose(cabinet, viewport) : whiskyCabinetPose(cabinet, viewport);
-        const camera = new PerspectiveCamera(width < height ? 60 : 42, width / height, 0.015, 60);
+        const camera = new PerspectiveCamera(focusFov(null, narrow, width, height), width / height, 0.015, 60);
         camera.position.set(...pose.position); camera.lookAt(new Vector3(...pose.target)); camera.updateMatrixWorld();
         const projected = [];
-        for (const x of [-0.355, 0.61]) for (const y of [narrow ? -0.18 : 0.02, narrow ? 1.18 : 1.31]) for (const z of [-0.735, 0.255]) {
-          const point = cabinet.localToWorld(new Vector3(x, y, z)).project(camera);
+        const angles = inspecting ? [-Math.PI / 2] : Array.from({ length: 91 }, (_, degree) => -degree * Math.PI / 180);
+        for (const angle of angles) for (const corner of physicalCabinetCorners(angle)) {
+          const point = cabinet.localToWorld(corner).project(camera);
           projected.push({ x: (point.x + 1) * width / 2, y: (1 - point.y) * height / 2 });
         }
-        // Then: every corner remains inside the region not occupied by the information card.
+        // Then: every physical corner, including the complete opening sweep, stays in view.
         expect(Math.min(...projected.map(point => point.x))).toBeGreaterThanOrEqual(16);
-        expect(Math.max(...projected.map(point => point.x))).toBeLessThanOrEqual(width - (inspecting && !narrow ? 340 : 16));
+        const stacked = width < 960 && height >= width;
+        const panelWidth = Math.min(300, width * .36);
+        expect(Math.max(...projected.map(point => point.x))).toBeLessThanOrEqual(width - (inspecting && !stacked ? panelWidth + 32 + 16 : 16));
         expect(Math.min(...projected.map(point => point.y))).toBeGreaterThanOrEqual(16);
-        expect(Math.max(...projected.map(point => point.y))).toBeLessThanOrEqual(height - (inspecting && narrow ? height * 0.4 + 16 : 16));
+        expect(Math.max(...projected.map(point => point.y))).toBeLessThanOrEqual(height - (inspecting && stacked ? 160 + 32 + 16 : 16));
       });
     }
   }
