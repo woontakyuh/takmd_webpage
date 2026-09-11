@@ -9,7 +9,7 @@ import { PALETTE } from './config';
 import { IsidoroOpeningHalf } from './IsidoroCabinetGeometry';
 import { Block, Rod } from './Primitives';
 import { cancelSceneSingleAction, scheduleSceneSingleAction } from './sceneGesture';
-import { ISIDORO_DIMENSIONS, ISIDORO_OPEN_ANGLE, ISIDORO_WORKTOP_HEIGHT } from './WhiskyCabinetLayout';
+import { ISIDORO_DIMENSIONS, ISIDORO_OPEN_ANGLE, ISIDORO_WORKTOP_TOP } from './WhiskyCabinetLayout';
 
 type ActionOptions = {
   readonly disabled: boolean;
@@ -139,21 +139,20 @@ export function useIsidoroMotion(door: RefObject<Group | null>, worktop: RefObje
   return ready;
 }
 
-export function WhiskyCabinetDoor({ open, wood, pivot, children, exterior, ...action }: Omit<DoorProps, 'reducedMotion'> & { readonly pivot: RefObject<Group | null> }) {
+export function WhiskyCabinetDoor({ open, wood, pivot, worktop, children, exterior, ...action }: Omit<DoorProps, 'reducedMotion'> & {
+  readonly pivot: RefObject<Group | null>;
+  readonly worktop: RefObject<Group | null>;
+}) {
   const { hovered, handlers } = useCabinetAction(action);
   const target = open && !action.disabled ? -ISIDORO_OPEN_ANGLE : 0;
   return <group ref={pivot} name="Isidoro book-opening mobile half"
     position={[ISIDORO_DIMENSIONS.width / 2, 0, 0]}
     userData={{ open: open && !action.disabled, angle: target }} {...(!open ? handlers : {})}>
-    <group scale={[-1, 1, 1]}><IsidoroOpeningHalf wood={wood}>{children}</IsidoroOpeningHalf></group>
+    <group scale={[-1, 1, 1]}><IsidoroOpeningHalf wood={wood} worktop={worktop}>{children}</IsidoroOpeningHalf></group>
     {exterior}
     {open && <group name="Isidoro left outer edge and leather handle close target" {...handlers}>
       <mesh position={[-0.6975, 0.595, -0.1275]}>
         <boxGeometry args={[0.050, 1.12, 0.285]} />
-        <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
-      </mesh>
-      <mesh position={[-0.600, 0.62, -0.279]}>
-        <boxGeometry args={[0.065, 0.25, 0.055]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
       </mesh>
     </group>}
@@ -170,7 +169,7 @@ export function IsidoroWorktop({ open, wood, disabled, pivot }: {
 }) {
   const target = open && !disabled ? 0 : Math.PI / 2;
   return <group ref={pivot} name="fold-down Canaletto walnut worktop"
-    position={[0, ISIDORO_WORKTOP_HEIGHT + 0.015, 0]} rotation={[Math.PI / 2, 0, 0]}
+    position={[0, ISIDORO_WORKTOP_TOP - 0.009, 0]} rotation={[Math.PI / 2, 0, 0]}
     userData={{ open: open && !disabled, angle: target }}>
     <Block size={[0.62, 0.018, 0.32]} position={[0, 0, -0.16]}
       color={PALETTE.walnut} texture={wood} radius={0.006} roughness={0.46} />

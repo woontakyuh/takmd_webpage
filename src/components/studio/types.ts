@@ -76,6 +76,7 @@ export type StudioSceneProps = {
   readonly blindLift: BlindLift;
   readonly halo: { readonly power: number; readonly brightness: number; readonly temperature: number };
   readonly onRoomControl: (control: RoomControl) => void;
+  readonly roomControlPanel?: RefObject<HTMLDivElement | null>;
   readonly onHaloControls: () => void;
   readonly reducedMotion: boolean;
   readonly compact: boolean;

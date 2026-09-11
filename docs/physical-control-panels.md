@@ -16,6 +16,8 @@ Halo dial: captured circular pointer dragging, wheel steps, Arrow keys, Page Up/
 
 Popover remains nonmodal with light dismissal and Escape; opening focuses the corresponding primary control without locking the room. Reset local light remains available after manual room adjustment. On narrow/short screens the bounded panel scrolls vertically without page overflow.
 
+Desktop room-light and shade panels follow the actual wall-switch projection, using the free left side first so the window stays visible during shade travel. Keep a 24px gap from the switch and a 16px viewport gutter; use adjacent available space and clamp the measured panel bounds when the camera or viewport changes. Update positioning directly without rerendering the scene. Halo uses the same placement at its actual desk dial, on the free side of the projected Mac mini top, while retaining its dial presentation and interactions. Narrow screens retain the compact touch panel. Lighting presets keep their existing appearance and position; integrating engraved preset words into the plate is a proposal only.
+
 ## Two-shade refinement
 
 The later user request supersedes the shared shade lift: the panel consumes a readonly [left, right] tuple and invokes the existing per-side callback. Open fully / Close fully make one call for the chosen side; the owner tracks both actual shade positions in one shared state and animates each target independently. A hold interrupts automatic travel at the currently displayed position. Position percentages identify each independently. Hold controls use pointer capture and cancel their frame on all exit paths; no autonomous timer survives panel closure.

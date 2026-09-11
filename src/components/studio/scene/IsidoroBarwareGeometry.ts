@@ -7,16 +7,17 @@ import {
   Vector2,
   Vector3,
 } from 'three';
+import { ISIDORO_WORKTOP_TOP, ISIDORO_UPPER_SHELF_HEIGHT, ISIDORO_SHELF_THICKNESS } from './WhiskyCabinetLayout';
 
 export const ISIDORO_BARWARE = {
-  shelfTop: 0.929,
-  counterTop: 0.619,
+  shelfTop: ISIDORO_UPPER_SHELF_HEIGHT + ISIDORO_SHELF_THICKNESS / 2,
+  counterTop: ISIDORO_WORKTOP_TOP,
   tray: { centerX: 0, centerZ: 0, width: 0.52, depth: 0.18, thickness: 0.012 },
   glencairn: { height: 0.115, radius: 0.033 },
   coupe: { height: 0.17, radius: 0.0555 },
   mixingGlass: { x: -0.065, z: 0.025, height: 0.13, radius: 0.045, wall: 0.0025, base: 0.009 },
   shaker: { x: -0.185, z: 0.025, height: 0.215, radius: 0.045, strainerY: 0.15, capY: 0.19 },
-  jigger: { x: 0.06, z: 0.025, height: 0.076, radius: 0.023 },
+  jigger: { x: -0.09, z: -0.055, height: 0.076, radius: 0.023 },
   spoon: { x: 0.09, z: -0.045, length: 0.29, radius: 0.016 },
 } as const;
 

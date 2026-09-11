@@ -1,8 +1,9 @@
 import { describe, expect, test } from 'bun:test';
 import { Box3, Group, PerspectiveCamera, Vector3 } from 'three';
 import { WHISKY_BOTTLES } from '../src/components/studio/scene/WhiskyBottleSpecs';
-import { focusFov } from '../src/components/studio/scene/config';
-import { advanceWhiskyProgress, applyWhiskyPresentation, resolveWhiskyBottleClearance, whiskyCabinetPose, whiskyInspectionPose, whiskyPresentationPath } from '../src/components/studio/scene/WhiskyInspectionMotion';
+import { focusFov, ROOM } from '../src/components/studio/scene/config';
+import { WHISKY_CABINET } from '../src/components/studio/scene/WhiskyCabinetLayout';
+import { advanceWhiskyProgress, applyWhiskyPresentation, resolveWhiskyBottleClearance, whiskyCabinetPose, whiskyInspectionLayout, whiskyInspectionPose, whiskyPresentationPath } from '../src/components/studio/scene/WhiskyInspectionMotion';
 import { finishWhiskyReturn, returnWhiskyBottle, selectWhiskyBottle } from '../src/components/studio/scene/WhiskyInspectionState';
 
 function openingHierarchy() {
@@ -24,17 +25,32 @@ function openingHierarchy() {
 }
 
 function physicalCabinetCorners(angle) {
-  // Dimensions follow IsidoroCabinetGeometry: .71m shells, .255m half depth, .117m handle half-height.
+  // Case, side strap, opened lower window doors, and worktop are independently measured here.
   const points = [];
   for (const x of [-.355, .355]) for (const y of [.004, 1.17]) for (const z of [0, .255]) points.push(new Vector3(x, y, z));
+  for (const x of [-.405, -.355]) for (const y of [.3, .915]) for (const z of [0, .093]) points.push(new Vector3(x, y, z));
   for (const part of [
     { x: [-.71, 0], y: [.004, 1.17], z: [-.255, 0] },
-    { x: [-.634, -.588], y: [.503, .737], z: [-.301, -.259] },
+    { x: [-.682, -.028], y: [.068, .478], z: [-.017, .301] },
   ]) for (const x of part.x) for (const y of part.y) for (const z of part.z) {
     points.push(new Vector3(x, y, z).applyAxisAngle(new Vector3(0, 1, 0), angle).add(new Vector3(.355, 0, 0)));
   }
-  for (const x of [-.31, .31]) for (const y of [.616, .634]) for (const z of [-.32, 0]) points.push(new Vector3(x, y, z));
+  for (const x of [-.31, .31]) for (const y of [.648, .666]) for (const z of [-.32, 0]) points.push(new Vector3(x, y, z));
   return points;
+}
+
+function physicalOpeningPanels() {
+  return [
+    [[-.32, .067, -.11], [.32, .085, .11]],
+    [[-.32, .478, -.11], [.32, .49, .11]],
+    [[-.32, .654, -.11], [.32, .666, .11]],
+    [[-.32, .979, -.11], [.32, .991, .11]],
+    [[-.304, .6852, .1317], [.304, .6888, .1353]],
+    [[-.304, 1.0102, .1317], [.304, 1.0138, .1353]],
+    [[-.355, 1.145, -.1275], [.355, 1.17, .1275]],
+    [[-.327, .0688, .1108], [-.311, .4762, .428]],
+    [[.311, .0688, .1108], [.327, .4762, .428]],
+  ].map(([min, max]) => new Box3(new Vector3(...min), new Vector3(...max)));
 }
 
 describe('physical whisky presentation', () => {
@@ -46,7 +62,7 @@ describe('physical whisky presentation', () => {
       const path = whiskyPresentationPath(cabinet, parent, bottle);
       applyWhiskyPresentation(model, path, 1);
       const position = cabinet.worldToLocal(model.getWorldPosition(new Vector3()));
-      expect(position.toArray()).toEqual([expect.closeTo(0, 6), expect.closeTo(0.634, 6), expect.closeTo(-0.205, 6)]);
+      expect(position.toArray()).toEqual([expect.closeTo(0, 6), expect.closeTo(0.666, 6), expect.closeTo(-0.205, 6)]);
       const facing = model.getWorldDirection(new Vector3());
       const front = new Vector3(0, 0, -1).transformDirection(cabinet.matrixWorld);
       expect(facing.dot(front)).toBeCloseTo(1, 6);
@@ -80,14 +96,41 @@ describe('physical whisky presentation', () => {
           projected.push({ x: (point.x + 1) * width / 2, y: (1 - point.y) * height / 2 });
         }
         // Then: every physical corner, including the complete opening sweep, stays in view.
-        expect(Math.min(...projected.map(point => point.x))).toBeGreaterThanOrEqual(16);
         const stacked = width < 960 && height >= width;
         const panelWidth = Math.min(300, width * .36);
-        expect(Math.max(...projected.map(point => point.x))).toBeLessThanOrEqual(width - (inspecting && !stacked ? panelWidth + 32 + 16 : 16));
+        expect(Math.min(...projected.map(point => point.x))).toBeGreaterThanOrEqual(inspecting && !stacked ? panelWidth + 32 + 16 : 16);
+        expect(Math.max(...projected.map(point => point.x))).toBeLessThanOrEqual(width - 16);
         expect(Math.min(...projected.map(point => point.y))).toBeGreaterThanOrEqual(16);
         expect(Math.max(...projected.map(point => point.y))).toBeLessThanOrEqual(height - (inspecting && stacked ? 160 + 32 + 16 : 16));
       });
     }
+  }
+});
+
+describe('whisky caption background clearance', () => {
+  for (const [width, height] of [[1440, 900], [1280, 800], [390, 844], [375, 667]]) {
+    test(`keeps the caption clear of the guitar at ${width}x${height}`, () => {
+      // Given the real room positions and the full guitar/stand envelope.
+      const cabinet = new Group();
+      cabinet.position.set(...WHISKY_CABINET.center); cabinet.rotation.y = WHISKY_CABINET.rotation;
+      const guitar = new Group();
+      guitar.position.set(...ROOM.music.position); guitar.rotation.y = ROOM.music.rotation;
+      guitar.updateMatrixWorld();
+      const viewport = { width, height };
+      // When the selected-bottle camera frames the room.
+      const pose = whiskyInspectionPose(cabinet, viewport);
+      const camera = new PerspectiveCamera(focusFov(null, width < 760, width, height), width / height, .015, 60);
+      camera.position.set(...pose.position); camera.lookAt(...pose.target); camera.updateMatrixWorld();
+      const points = [];
+      for (const x of [-.576, -.196]) for (const y of [0, 1.112]) for (const z of [-.13, .16]) {
+        const point = guitar.localToWorld(new Vector3(x, y, z)).project(camera);
+        points.push({ x: (point.x + 1) * width / 2, y: (1 - point.y) * height / 2 });
+      }
+      const layout = whiskyInspectionLayout(viewport);
+      // Then desktop text has a clear side, and mobile text begins below the guitar.
+      expect(layout.stacked ? layout.panel.top >= Math.max(...points.map(point => point.y))
+        : layout.panel.left + layout.panel.width < Math.min(...points.map(point => point.x))).toBe(true);
+    });
   }
 });
 
@@ -206,10 +249,10 @@ describe('interrupted presentation timing', () => {
       for (const [index, left] of bottles.entries()) {
         largestStep = Math.max(largestStep, left.group.position.distanceTo(previous[index]));
         const { x, y, z } = left.group.position;
-        for (const [halfWidth, halfDepth, bottom, top] of [[.32, .11, .06, .12], [.32, .11, .711, .729], [.355, .1275, 1.145, 1.17]]) {
-          const gap = Math.hypot(Math.max(0, Math.abs(x) - halfWidth), Math.max(0, Math.abs(z) - halfDepth));
-          const intersects = gap < left.bottle.radius * 1.005 + .00035 - .000001 && y < top - .000001 && y + left.bottle.height > bottom + .000001;
-          expect(intersects, `frame ${frame}, ${left.bottle.name}, shelf ${top}`).toBe(false);
+        for (const box of physicalOpeningPanels()) {
+          const gap = Math.hypot(Math.max(box.min.x - x, 0, x - box.max.x), Math.max(box.min.z - z, 0, z - box.max.z));
+          const intersects = gap < left.bottle.radius * 1.005 + .00035 - .000001 && y < box.max.y - .000001 && y + left.bottle.height > box.min.y + .000001;
+          expect(intersects, `frame ${frame}, ${left.bottle.name}, panel ${box.max.toArray()}`).toBe(false);
         }
         for (const right of bottles.slice(index + 1)) {
           const a = left.group.position, b = right.group.position;
@@ -230,8 +273,8 @@ describe('cabinet shelf clearance', () => {
     // Given: the actual worktop and its front underside lip, in cabinet coordinates.
     const { cabinet, parent } = openingHierarchy();
     const obstacles = [
-      new Box3(new Vector3(-.31, .616, -.32), new Vector3(.31, .634, 0)),
-      new Box3(new Vector3(-.31, .6075, -.319), new Vector3(.31, .6165, -.301)),
+      new Box3(new Vector3(-.31, .648, -.32), new Vector3(.31, .666, 0)),
+      new Box3(new Vector3(-.31, .6395, -.319), new Vector3(.31, .6485, -.301)),
     ];
     const bottles = WHISKY_BOTTLES.map(bottle => {
       const group = new Group(); parent.add(group);
@@ -268,11 +311,7 @@ describe('cabinet shelf clearance', () => {
       const { cabinet, parent } = openingHierarchy();
       const model = new Group();
       const path = whiskyPresentationPath(cabinet, parent, bottle);
-      const shelves = [
-        { halfWidth: 0.32, halfDepth: 0.11, bottom: 0.06, top: 0.12 },
-        { halfWidth: 0.32, halfDepth: 0.11, bottom: 0.711, top: 0.729 },
-        { halfWidth: 0.355, halfDepth: 0.1275, bottom: 1.145, top: 1.17 },
-      ];
+      const shelves = physicalOpeningPanels();
       const radius = bottle.radius * 1.005 + 0.00035;
       // When: the upright bottle envelope traverses the route and its exact reverse.
       for (const direction of [1, -1]) for (let sample = 0; sample <= 1000; sample += 1) {
@@ -281,12 +320,12 @@ describe('cabinet shelf clearance', () => {
         const { x, y, z } = model.position;
         // Then: no cylindrical bottle envelope penetrates a shelf, including between waypoints.
         for (const shelf of shelves) {
-          const horizontalGap = Math.hypot(Math.max(0, Math.abs(x) - shelf.halfWidth), Math.max(0, Math.abs(z) - shelf.halfDepth));
-          const overlaps = horizontalGap < radius - 0.000001 && y < shelf.top - 0.000001 && y + bottle.height > shelf.bottom + 0.000001;
-          expect(overlaps, `${bottle.name}, progress ${progress}, shelf ${shelf.top}, position ${model.position.toArray()}`).toBe(false);
+          const horizontalGap = Math.hypot(Math.max(shelf.min.x - x, 0, x - shelf.max.x), Math.max(shelf.min.z - z, 0, z - shelf.max.z));
+          const overlaps = horizontalGap < radius - 0.000001 && y < shelf.max.y - 0.000001 && y + bottle.height > shelf.min.y + 0.000001;
+          expect(overlaps, `${bottle.name}, progress ${progress}, panel ${shelf.max.toArray()}, position ${model.position.toArray()}`).toBe(false);
         }
-        if (bottle.position[1] === 0.12 && z < 0.1275 + radius) {
-          expect(y).toBeCloseTo(0.12, 6);
+        if (bottle.position[1] === 0.085 && z < 0.428 + radius) {
+          expect(y).toBeCloseTo(0.085, 6);
         }
       }
     });

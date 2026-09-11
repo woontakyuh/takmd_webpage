@@ -1,4 +1,6 @@
 import { describe, expect, test } from 'bun:test';
+import { DoubleSide, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from 'three';
+import { createIsidoroWindowDoorGeometry } from '../src/components/studio/scene/IsidoroStorage';
 import { FENDER_MUSIC_CORNER_BOUNDS } from '../src/components/studio/scene/FenderMusicCorner';
 import { ROOM } from '../src/components/studio/scene/config';
 import { WHISKY_BOTTLES } from '../src/components/studio/scene/WhiskyBottleSpecs';
@@ -8,6 +10,8 @@ import {
   ISIDORO_BOTTLE_DECK_TOP,
   ISIDORO_BOTTLE_SHELF_TOP,
   ISIDORO_BOTTLE_SHELF_HEIGHT,
+  ISIDORO_UPPER_SHELF_HEIGHT,
+  ISIDORO_STORAGE_TOP,
   WHISKY_CABINET,
   isidoroFootprint,
   rotateFootprint,
@@ -74,15 +78,15 @@ describe('Isidoro cabinet measured layout', () => {
   test('fits all seven real bottles on the two moving-half shelves without overlap', () => {
     expect(WHISKY_BOTTLES).toHaveLength(7);
     expect(WHISKY_BOTTLES.some(({ name }) => name.includes('Armagnac'))).toBe(true);
-    expect(WHISKY_BOTTLES.filter(({ position }) => position[1] === ISIDORO_BOTTLE_SHELF_TOP)).toHaveLength(3);
-    expect(WHISKY_BOTTLES.filter(({ position }) => position[1] === ISIDORO_BOTTLE_DECK_TOP)).toHaveLength(4);
+    expect(WHISKY_BOTTLES.filter(({ position }) => position[1] === ISIDORO_BOTTLE_SHELF_TOP)).toHaveLength(1);
+    expect(WHISKY_BOTTLES.filter(({ position }) => position[1] === ISIDORO_BOTTLE_DECK_TOP)).toHaveLength(6);
     for (const bottle of WHISKY_BOTTLES) {
       const [x, y, z] = bottle.position;
       expect(Math.abs(x) + bottle.radius).toBeLessThan(WHISKY_CABINET.width / 2 - 0.025);
       expect(z - bottle.radius).toBeGreaterThanOrEqual(-0.085);
       expect(z + bottle.radius).toBeLessThanOrEqual(0.11);
       expect([ISIDORO_BOTTLE_DECK_TOP, ISIDORO_BOTTLE_SHELF_TOP]).toContain(y);
-      const ceiling = y === ISIDORO_BOTTLE_DECK_TOP ? ISIDORO_BOTTLE_SHELF_HEIGHT - 0.009 : 1.145;
+      const ceiling = y === ISIDORO_BOTTLE_DECK_TOP ? ISIDORO_STORAGE_TOP - 0.012 : ISIDORO_UPPER_SHELF_HEIGHT - 0.006;
       expect(y + bottle.height).toBeLessThan(ceiling - 0.02);
     }
     for (const [index, bottle] of WHISKY_BOTTLES.entries()) {
@@ -93,5 +97,30 @@ describe('Isidoro cabinet measured layout', () => {
         expect(distance).toBeGreaterThanOrEqual(bottle.radius + other.radius + 0.01);
       }
     }
+  });
+
+  test('keeps the two thin opening-half shelves at the reference compartment proportions', () => {
+    // Given: the 1.17m product case shown in the supplied interior photographs.
+    // When: the physical support levels are expressed as a proportion of its height.
+    const levels = [ISIDORO_BOTTLE_SHELF_HEIGHT, ISIDORO_UPPER_SHELF_HEIGHT].map(y => y / ISIDORO_DIMENSIONS.height);
+    // Then: the open middle compartment and shallow top compartment follow the reference.
+    expect(levels[0]).toBeGreaterThan(0.55);
+    expect(levels[0]).toBeLessThan(0.59);
+    expect(levels[1]).toBeGreaterThan(0.83);
+    expect(levels[1]).toBeLessThan(0.87);
+  });
+
+  test('has a real see-through window in each wooden lower door', () => {
+    // Given: the same extruded door geometry mounted in the rendered cabinet.
+    const geometry = createIsidoroWindowDoorGeometry();
+    const material = new MeshBasicMaterial({ side: DoubleSide });
+    const door = new Mesh(geometry, material);
+    door.updateMatrixWorld();
+    // When: sightlines pass through the rounded window and adjacent solid frame.
+    const hits = [0.1575, 0.02].map(x => new Raycaster(new Vector3(x, 0.18, 1), new Vector3(0, 0, -1)).intersectObject(door).length);
+    // Then: the aperture passes light through while the walnut frame remains solid.
+    expect(hits[0]).toBe(0);
+    expect(hits[1]).toBeGreaterThan(0);
+    geometry.dispose(); material.dispose();
   });
 });

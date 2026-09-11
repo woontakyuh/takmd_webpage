@@ -3,14 +3,14 @@ import type { Camera, Group, Object3D } from 'three';
 import { focusFov } from './config';
 import type { Point } from './config';
 import type { BottleSpec } from './WhiskyBottleSpecs';
-import { ISIDORO_BOTTLE_SHELF_TOP, ISIDORO_DIMENSIONS, ISIDORO_WORKTOP_HEIGHT } from './WhiskyCabinetLayout';
+import { ISIDORO_BOTTLE_SHELF_TOP, ISIDORO_DIMENSIONS, ISIDORO_WORKTOP_TOP } from './WhiskyCabinetLayout';
+import { ISIDORO_LOWER_DOOR_FRONT, isidoroOpeningObstacles } from './IsidoroCollisionGeometry';
 
 export const WHISKY_PRESENTATION = {
-  position: [0, ISIDORO_WORKTOP_HEIGHT + 0.024, -0.205],
+  position: [0, ISIDORO_WORKTOP_TOP, -0.205],
   camera: [0.03, 1.13, -1.10],
   target: [0, 0.82, -0.205],
 } as const satisfies Readonly<Record<string, Point>>;
-
 type WhiskyViewport = { readonly width: number; readonly height: number };
 
 export function whiskyInspectionLayout({ width, height }: WhiskyViewport) {
@@ -21,27 +21,28 @@ export function whiskyInspectionLayout({ width, height }: WhiskyViewport) {
   const panelTop = stacked ? height * 0.61 : inset;
   const objectWidth = stacked ? width - inset * 2
     : Math.min(width - panelWidth - gap - inset * 2, (height - inset * 2) * 1.05);
-  const objectLeft = stacked ? inset : (width - objectWidth - gap - panelWidth) / 2;
+  const panelLeft = stacked ? inset : (width - objectWidth - gap - panelWidth) / 2;
+  const objectLeft = stacked ? inset : panelLeft + panelWidth + gap;
   return {
     stacked, inset, gap,
     object: { left: objectLeft, right: objectLeft + objectWidth, top: stacked ? 80 : inset, bottom: stacked ? panelTop - gap : height - inset },
-    panel: { left: stacked ? inset : objectLeft + objectWidth + gap, top: panelTop, width: panelWidth, maxHeight: height - panelTop - inset },
+    panel: { left: panelLeft, top: panelTop, width: panelWidth, maxHeight: height - panelTop - inset },
   };
 }
-
 function cabinetFramePoints(angles: readonly number[]) {
   const points: Vector3[] = [];
   const halfWidth = ISIDORO_DIMENSIONS.width / 2;
   const halfDepth = ISIDORO_DIMENSIONS.depth / 2;
   for (const x of [-halfWidth, halfWidth]) for (const y of [0.004, ISIDORO_DIMENSIONS.height]) for (const z of [0, halfDepth]) points.push(new Vector3(x, y, z));
+  for (const x of [-0.405, -0.355]) for (const y of [0.3, 0.915]) for (const z of [0, 0.093]) points.push(new Vector3(x, y, z));
   for (const angle of angles) {
     const cosine = Math.cos(angle), sine = Math.sin(angle);
     for (const part of [
       { x: [-ISIDORO_DIMENSIONS.width, 0], y: [0.004, ISIDORO_DIMENSIONS.height], z: [-halfDepth, 0] },
-      { x: [-0.634, -0.588], y: [0.503, 0.737], z: [-0.301, -0.259] },
+      { x: [-0.682, -0.028], y: [0.068, 0.478], z: [-0.017, 0.301] },
     ]) for (const x of part.x) for (const y of part.y) for (const z of part.z) points.push(new Vector3(halfWidth + x * cosine + z * sine, y, -x * sine + z * cosine));
   }
-  for (const x of [-0.31, 0.31]) for (const y of [0.616, 0.634]) for (const z of [-0.32, 0]) points.push(new Vector3(x, y, z));
+  for (const x of [-0.31, 0.31]) for (const y of [ISIDORO_WORKTOP_TOP - 0.018, ISIDORO_WORKTOP_TOP]) for (const z of [-0.32, 0]) points.push(new Vector3(x, y, z));
   return points;
 }
 
@@ -71,7 +72,7 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'clos
   const top = 1 - 2 * area.top / height;
   const bottom = 1 - 2 * area.bottom / height;
   const centerX = (left + right) / 2, centerY = (top + bottom) / 2;
-  const outward = (closed ? new Vector3(0, 0.12, -1)
+  const outward = (closed ? new Vector3(-0.55, 0.12, -1)
     : new Vector3(-1.57, inspecting && layout.stacked ? 2.5 : 0.8, -1.7)).normalize();
   const horizontal = new Vector3(0, 1, 0).cross(outward).normalize();
   const vertical = outward.clone().cross(horizontal);
@@ -133,7 +134,9 @@ export function whiskyPresentationPath(cabinet: Group, parent: Object3D, bottle:
   if (start.y >= ISIDORO_BOTTLE_SHELF_TOP) lifted.y += 0.04;
   const clear = lifted.clone();
   // Clear the deepest overhead panel plus the complete bottle before rounding into the lift.
-  clear.z = ISIDORO_DIMENSIONS.depth / 4 + bottle.radius * 1.005 + 0.00035 + 0.035;
+  clear.z = (start.y < ISIDORO_BOTTLE_SHELF_TOP ? ISIDORO_LOWER_DOOR_FRONT : ISIDORO_DIMENSIONS.depth / 4)
+    + bottle.radius * 1.005 + 0.00035 + 0.035;
+  if (start.y < ISIDORO_BOTTLE_SHELF_TOP) clear.z += (start.x + 0.247) * 0.9;
   const aroundWorktop = clear.clone();
   if (start.y < ISIDORO_BOTTLE_SHELF_TOP) {
     const frontEdge = parent.worldToLocal(cabinet.localToWorld(new Vector3(0, start.y, -0.32)));
@@ -152,14 +155,10 @@ export function whiskyPresentationPath(cabinet: Group, parent: Object3D, bottle:
   const curve = roundedRoute([...departure, rise, above, stage]);
   const cabinetToParent = new Matrix4().copy(parent.matrixWorld).invert().multiply(cabinet.matrixWorld);
   const obstacles = [
-    new Box3(new Vector3(-.31, .616, -.32), new Vector3(.31, .634, 0)),
-    new Box3(new Vector3(-.31, .6075, -.319), new Vector3(.31, .6165, -.301)),
+    new Box3(new Vector3(-.31, ISIDORO_WORKTOP_TOP - .018, -.32), new Vector3(.31, ISIDORO_WORKTOP_TOP, 0)),
+    new Box3(new Vector3(-.31, ISIDORO_WORKTOP_TOP - .0265, -.319), new Vector3(.31, ISIDORO_WORKTOP_TOP - .0175, -.301)),
   ].map(box => box.applyMatrix4(cabinetToParent));
-  obstacles.push(
-    new Box3(new Vector3(-.32, .06, -.11), new Vector3(.32, .12, .11)),
-    new Box3(new Vector3(-.32, .711, -.11), new Vector3(.32, .729, .11)),
-    new Box3(new Vector3(-.355, 1.145, -.1275), new Vector3(.355, 1.17, .1275)),
-  );
+  obstacles.push(...isidoroOpeningObstacles());
   return { start, stage, curve, rotation, obstacles };
 }
 
@@ -173,11 +172,11 @@ export function applyWhiskyPresentation(group: Group, path: ReturnType<typeof wh
 export function advanceWhiskyProgress(progress: number, velocity: number, presenting: boolean, delta: number, reducedMotion: boolean) {
   const target = presenting ? 1 : 0;
   if (reducedMotion) return { progress: target, velocity: 0 };
-  const decay = Math.exp(-8 * delta);
+  const decay = Math.exp(-4.5 * delta);
   const change = progress - target;
-  const step = (velocity + 8 * change) * delta;
+  const step = (velocity + 4.5 * change) * delta;
   const next = MathUtils.clamp(target + (change + step) * decay, 0, 1);
-  const nextVelocity = (velocity - 8 * step) * decay;
+  const nextVelocity = (velocity - 4.5 * step) * decay;
   return Math.abs(next - target) < 0.001 && Math.abs(nextVelocity) < 0.01
     ? { progress: target, velocity: 0 } : { progress: next, velocity: nextVelocity };
 }

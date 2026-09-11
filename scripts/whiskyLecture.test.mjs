@@ -1,10 +1,117 @@
 import { describe, expect, test } from 'bun:test';
 import { Group, PerspectiveCamera, Vector3 } from 'three';
 import { WHISKY_LECTURE, whiskyLectureLayout, whiskyLecturePose } from '../src/components/studio/scene/WhiskyLectureLayout';
-import { advanceLecturePage, lectureLeafState, visibleLecturePages } from '../src/components/studio/scene/WhiskyLectureMotion';
+import { advanceLecturePage, lectureLeafState, visibleLecturePages, lectureStackState, stepLectureTurn, lectureSheetPoint } from '../src/components/studio/scene/WhiskyLectureMotion';
 import { focusFov } from '../src/components/studio/scene/config';
+import { createLectureSheet } from '../src/components/studio/scene/WhiskyLectureSheet';
 
 describe('cabinet lecture page turns', () => {
+  test('Given a low frame rate, when a page turns, then it settles in the same wall-clock interval', () => {
+    // Given
+    const durations = [];
+    // When
+    for (const delta of [1 / 60, 1 / 15]) {
+      let cursor = 2;
+      let elapsed = 0;
+      while (cursor !== 3 && elapsed < 3) {
+        cursor = stepLectureTurn(cursor, 3, delta, false);
+        elapsed += delta;
+      }
+      durations.push(elapsed);
+    }
+    // Then
+    expect(Math.abs(durations[0] - durations[1])).toBeLessThan(.1);
+    expect(durations[1]).toBeLessThan(1.2);
+  });
+  test('Given rapid navigation across the deck, when motion advances, then each adjacent sheet remains available in the bounded texture window', () => {
+    // Given
+    let cursor = 0;
+    const visited = new Set([0]);
+    // When
+    for (let frame = 0; frame < 1200 && cursor !== 25; frame++) {
+      const available = visibleLecturePages(Math.floor(cursor), 26);
+      const next = stepLectureTurn(cursor, 25, 1 / 60, false);
+      expect(available).toContain(Math.ceil(next));
+      cursor = next;
+      visited.add(Math.floor(cursor));
+    }
+    // Then
+    expect(cursor).toBe(25);
+    expect(visited.size).toBe(26);
+  });
+
+  test('Given the generated sheet geometry, when a turn completes, then its actual surface normal exposes the back face', () => {
+    // Given
+    const sheet = createLectureSheet(1);
+    // When
+    const normal = sheet.getAttribute('normal');
+    const center = 12 * 65 + 50;
+    // Then
+    expect(normal.getZ(center)).toBeLessThan(-.99);
+    sheet.dispose();
+  });
+
+  test('Given a turned stack, when sampling below the magnet, then its blank sheets stay to the left of the readable slide', () => {
+    // Given
+    const leftEdge = -WHISKY_LECTURE.width / 2;
+    // When / Then
+    for (const x of [leftEdge, -.1, 0, .1, WHISKY_LECTURE.width / 2]) {
+      expect(lectureSheetPoint(x, 0, 1).x).toBeLessThan(leftEdge + .00001);
+    }
+  });
+  test('Given any turn position, when the stacks are composed, then all 26 sheets are conserved', () => {
+    // Given / When / Then
+    for (const cursor of [0, .2, .8, 1, 12, 12.5, 24.9, 25]) {
+      const stack = lectureStackState(cursor, 26);
+      expect(stack.left + stack.right + stack.turning).toBe(26);
+      expect(stack.left).toBe(Math.floor(cursor));
+      expect(stack.right).toBe(25 - Math.floor(cursor));
+    }
+  });
+
+  test('Given a half-turned sheet, when its surface is sampled, then it bends out of the cabinet while the magnet corner stays fixed', () => {
+    // Given
+    const { pinX, pinY, width } = WHISKY_LECTURE;
+    // When
+    const pin = lectureSheetPoint(pinX, pinY, .5);
+    const middle = lectureSheetPoint(0, 0, .5);
+    const tip = lectureSheetPoint(width / 2, 0, .5);
+    // Then
+    expect(pin).toEqual({ x: pinX, y: pinY, z: 0 });
+    expect(tip.z).toBeGreaterThan(.25);
+    expect(Math.abs(middle.x - tip.x)).toBeGreaterThan(.015);
+  });
+
+  test('Given a completed turn, when the sheet is sampled, then its printed face is reversed on the left of the pin', () => {
+    // Given
+    const { pinX, width } = WHISKY_LECTURE;
+    // When
+    const point = lectureSheetPoint(width / 2, 0, 1);
+    // Then
+    expect(point.x).toBeLessThanOrEqual(2 * pinX - width / 2);
+    expect(point.z).toBeLessThan(.01);
+  });
+
+  test('Given a turn in flight, when the target reverses, then the same continuous cursor returns without jumping', () => {
+    // Given
+    const cursor = 8.45;
+    // When
+    const reversed = stepLectureTurn(cursor, 8, 1 / 60, false);
+    // Then
+    expect(reversed).toBeLessThan(cursor);
+    expect(reversed).toBeGreaterThan(cursor - .05);
+  });
+
+  test('Given rapid navigation to the last page, when one frame advances, then motion stays bounded and reduced motion reaches the exact target', () => {
+    // Given
+    const cursor = 0;
+    // When
+    const next = stepLectureTurn(cursor, 25, 1 / 60, false);
+    const reduced = stepLectureTurn(cursor, 25, 1 / 60, true);
+    // Then
+    expect(next).toBeLessThanOrEqual(2.8 / 60);
+    expect(reduced).toBe(25);
+  });
   test('Given the first and last pages, when navigation continues past either bound, then the index stays within the 26-slide deck', () => {
     // Given
     const count = 26;
@@ -44,7 +151,7 @@ describe('cabinet lecture page turns', () => {
 });
 
 describe('cabinet lecture reading composition', () => {
-  for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }, { width: 844, height: 390 }]) {
+  for (const viewport of [{ width: 1440, height: 900 }, { width: 360, height: 800 }, { width: 390, height: 844 }, { width: 844, height: 390 }]) {
     test(`Given a rotated cabinet, when inspecting at ${viewport.width}x${viewport.height}, then the entire paper fits above its controls`, () => {
       const card = new Group();
       card.position.set(1.7, 0.92, -2.1);

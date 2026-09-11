@@ -2,7 +2,7 @@
 
 ## Current release scope
 
-The release receipt in `.omo/evidence/cabinet-entry-poster-2026-09-11/release.json` is authoritative for the final commit, pushed remote and production deployment. Until that receipt exists, the following is local implementation under final verification.
+The afternoon release receipt in `.omo/evidence/isidoro-paper-fidelity-2026-09-11/release.json` is authoritative for this pass's commit, pushed remote and production deployment. Until that receipt exists, this pass remains local. The earlier `cabinet-entry-poster-2026-09-11/release.json` records the preceding checkpoint.
 
 1. Closed cabinet: first click approaches its front without opening; the next click opens it. Its physical left free edge closes it. Grip markers and visible instructional boxes are removed. The lecture paper sits 30mm further right and 35mm lower.
 2. Magnetic lecture: one substantial upper-left magnet holds the A3 stack. Click the right sheet for the next page, the parked left sheet for the previous page. The existing 26 approved slides, high-resolution images, X/Escape and reduced-motion support remain; no TV handoff button is shown.
@@ -13,9 +13,21 @@ The release receipt in `.omo/evidence/cabinet-entry-poster-2026-09-11/release.js
 7. Information typography: book, photo, whisky and collection descriptions use quieter editorial type and unboxed layouts. Original Korean material and the Ppomppu Easter egg remain unchanged. The original CV portrait layout is retained.
 8. Loading image: the regular build checks source/asset fingerprints and produces eight responsive day/night office images when needed. Unchanged builds reuse the verified images. The early CV transition origin follows the corresponding photographed monitor corners. This is build-time work and does not add screenshot rendering to a visitor’s device.
 
+## Afternoon fidelity and interaction additions
+
+- Rebuilt the Isidoro strap, two combination catches, shelf guards, recessed glazed bottle storage, drawer and nesting trays against the supplied photographs. Kept the approved taupe finish and corner opening. All seven visible bottles remain directly selectable, including through the lower glass; solid cabinet parts still block clicks.
+- Reworked the magnetic lecture into printed sheets with a real-thickness nickel pot magnet, curled page turns and conserved left/right stack thickness. Existing 26 approved slides remain the source.
+- Brought photograph, credential, plaque, whisky and research explanations next to their objects. Placed the SNU degree text upper-right, rectified the KOMISS photographed border, and added 2026 to the KOSESS event caption. Opening a new object dismisses previous details.
+- Anchored lighting, blinds and Halo controls nearby; connected multi-day calendar events and fixed the month navigation positions. Prevented native focus from scrolling the room out of its viewport.
+- Increased the research viewing angle and corrected Mac mini focus to the front/right of the actual monitor geometry.
+- Composed eight Spine Summit photographs into three boards and connected four TV backlight regions to the displayed image colors.
+- Rebuilt the owner's amber Bing board from six photographs, with distinct deck/bottom graphics, wax texture, corrected fin and rounded profile.
+- Replaced the soundbar with Beosound 9000 and two Beolab 8000 speakers; physical CD selection, clamper movement, glass and transport/volume controls are available. Real music is pending as listed below.
+
 ## Decisions and work still open
 
-- **Speaker and BGM: research only, as requested.** JBL L82 Classic MkII in walnut with black grilles is the first recommendation for the space below the TV shelf. JBL 4309 and Klipsch Heresy IV are alternatives. The JBL JS-80 stand is too tall for this opening; the proposal uses a lower base. No speaker was replaced, no dummy playback controls were added and no music was selected. Next: choose the speaker and provide the playlist, then implement room-native playback, volume and optional EQ. Full comparison and primary sources: `docs/office-speaker-options-2026-09-11.md`.
+- **Speaker selected; actual audio still open.** The owner approved Beosound 9000 and the silver/black Beolab 8000 pair. Their models and integrated CD/glass/transport/volume controls are implemented in this pass. No source music is loaded and Play states this explicitly. The owner will select six albums; Asoto Union and Brown Eyes Reason 4 Breathing are favorites, not a completed playlist. Website-authorized audio gives the cleanest room-native experience; YouTube requires its visible player, while Spotify browser full-track playback requires each listener's eligible account. Audio playback, within-album track selection and optional EQ remain unimplemented. See `docs/beosound-9000.md`; the older speaker comparison is historical.
+- **Physical preset integration:** the proposed engraved touch labels with a small active LED remain a design recommendation. Existing presets work; the owner has not selected a replacement treatment.
 - **Performance: further optimization remains open.** The previous controlled profile recorded about 39MB of initial requests and costly transmission rendering. This release corrects duplicated screen surfaces; it does not establish smooth performance on low-end phones. Next: simplify distant glass rendering while preserving close-up refraction, batch compatible static meshes, then reduce large model/texture payloads. Remeasure each change under the same conditions. See `docs/office-performance-2026-09-10.md`.
 - **Han River: further detail remains open.** Earlier releases already added mapped terrain, bridge locations and silhouettes, facade detail and instanced trees. Distant building density, greenery and approaches remain coarse. Next: refine those against mapped aerial/close references while preserving the visible bridge geography and the performance budget. No new river-fidelity change is claimed in this release.
 - **Corner lamp:** researched alternatives remain uninstalled. No new model is implied by the speaker research.

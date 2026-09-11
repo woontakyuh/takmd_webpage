@@ -10,6 +10,7 @@ import { MemoryPhoto } from './MemoryPhoto';
 import { BookReader } from './BookReader';
 import { useOfficeNavigation } from './useOfficeNavigation';
 import { OFFICE_HOME, officePathView } from './officeNavigation';
+import { viewAfterSceneInspection } from './officeDetailState';
 import { LoadingMonitorReader } from './LoadingMonitorReader';
 import { PERSONAL_BOOKS, personalBook, type PersonalBookId } from './personalBooks';
 import { bookPageAfter } from './personalBookInteraction';
@@ -52,6 +53,14 @@ function OfficeExperience(content: StudioContent) {
   const returnFocus = useRef<HTMLElement | null>(null);
   const navigation = useOfficeNavigation();
   const { selected, focused, details } = navigation.view;
+  const previousInspectionId = useRef<string | null>(null);
+  useLayoutEffect(() => {
+    const nextId = inspection?.id ?? null;
+    const current = navigation.current.current;
+    const next = viewAfterSceneInspection(current, previousInspectionId.current, nextId);
+    previousInspectionId.current = nextId;
+    if (next !== current) navigation.go(next, true);
+  }, [inspection?.id, navigation.current, navigation.go]);
   const monitorScroll = useRef({ scrollTop: 0 });
   const setSelected = useCallback((id: ExhibitId | null) => navigation.go({ focused: id, selected: id, details: null }), [navigation.go]);
   const [selectedBook, setSelectedBook] = useState<PersonalBookId>(PERSONAL_BOOKS[0].id);
@@ -69,6 +78,7 @@ function OfficeExperience(content: StudioContent) {
   const [roomBrightness, setRoomBrightness] = useState(1);
   const [haloSettings, setHaloSettings] = useState<HaloSettings>({ enabled: null, brightness: 0.65, temperature: 3500 });
   const [roomControl, setRoomControl] = useState<RoomControl | null>(null);
+  const roomControlPanel = useRef<HTMLDivElement>(null);
   const lighting = useMemo(() => localLighting
     ? { ...localLighting, sun: { ...localLighting.sun, lamp: (manualLights === null ? localLighting.sun.lamp : Number(manualLights)) * roomBrightness } }
     : null, [localLighting, manualLights, roomBrightness]);
@@ -237,7 +247,7 @@ function OfficeExperience(content: StudioContent) {
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <div style={{ display: 'contents' }} inert={loadingProfileOpen} aria-hidden={loadingProfileOpen || undefined}><SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+          <Scene ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary></div>
         <OfficePoster ready={ready} failed={sceneFailed} night={night} interactive={mounted} onProfile={openLoadingProfile} />
         {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
@@ -260,7 +270,7 @@ function OfficeExperience(content: StudioContent) {
           title="Light follows your time zone’s approximate sun position. Click to preview other lighting.">
           <OfficeIcon name={lightMode === 'local' ? 'clock' : lightMode === 'day' ? 'sun' : 'moon'} /><span>{lightMode === 'local' ? 'Local light' : lightMode === 'day' ? 'Daylight preview' : 'Evening preview'}</span>
         </button>
-        <OfficeRoomControls preset={lightPreset} onPreset={applyPreset} control={roomControl} onClose={() => setRoomControl(null)} blindLift={blindLift} lightsOn={(lighting?.sun.lamp ?? 0) > 0}
+        <OfficeRoomControls panelRef={roomControlPanel} preset={lightPreset} onPreset={applyPreset} control={roomControl} onClose={() => setRoomControl(null)} blindLift={blindLift} lightsOn={(lighting?.sun.lamp ?? 0) > 0}
           automaticLight={manualLights === null} onBlindLift={changeBlindLift}
           onLights={value => { setManualLights(value); if (value && roomBrightness === 0) setRoomBrightness(1); }}
           onAutomaticLight={() => { setManualLights(null); setRoomBrightness(1); }} roomBrightness={roomBrightness}

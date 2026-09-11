@@ -9,6 +9,7 @@ import { scheduleSceneSingleAction } from './sceneGesture';
 import { DigitalPhotoFrame } from './DigitalPhotoFrame';
 import { CollectionInspectionExit, CollectionInspectionItem } from './CollectionInspection';
 import { CREDENTIAL_ITEMS } from './CollectionInspectionData';
+import { certificatePaperGeometry } from './CertificatePaperGeometry';
 
 const FRAME = {
   face: 0.008,
@@ -104,6 +105,8 @@ function preparedTexture(source: Texture) {
 export function FramedCredential({ credential, texture }: FramedCredentialProps) {
   const geometry = useMemo(() => frameGeometry(credential.width, credential.height), [credential.height, credential.width]);
   const [paperWidth, paperHeight] = credential.paperSize;
+  const paperGeometry = useMemo(() => certificatePaperGeometry(paperWidth, paperHeight, credential.id), [paperWidth, paperHeight, credential.id]);
+  useEffect(() => () => paperGeometry.dispose(), [paperGeometry]);
   const groundOffset = 0.0018 * Math.cos(FRAME.leanRadians)
     + (FRAME.depth / 2 + 0.0018) * Math.sin(FRAME.leanRadians);
   const hingeHeight = credential.height * 0.62;
@@ -130,8 +133,7 @@ export function FramedCredential({ credential, texture }: FramedCredentialProps)
       <planeGeometry args={[credential.width - FRAME.face * 2, credential.height - FRAME.face * 2]} />
       <meshStandardMaterial color="#e5dfd1" roughness={0.88} />
     </mesh>
-    <mesh name={`${credential.id}-document-paper`} position={[0, credential.height / 2, FRAME.depth / 2 + 0.00045]} receiveShadow>
-      <planeGeometry args={[paperWidth, paperHeight]} />
+    <mesh name={`${credential.id}-document-paper`} geometry={paperGeometry} position={[0, credential.height / 2, FRAME.depth / 2 + 0.00045]} receiveShadow>
       <meshStandardMaterial map={texture} color="#ffffff" roughness={0.76} />
     </mesh>
     <mesh name={`${credential.id}-physical-glazing`} position={[0, credential.height / 2, FRAME.depth / 2 + 0.00082]}>

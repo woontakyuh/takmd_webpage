@@ -5,8 +5,10 @@ import { talkMedia } from '../collection';
 import { publicHighResolutionSlide } from '../publicSlideSource';
 import { OfficeIcon } from '../OfficeIcon';
 import type { Presentation, TalkSlide } from '../types';
+import { photoPageIndex, tvPhotoPages } from '../tvPhotoGallery';
 import { tvReadingSize, WALL_TV } from './config';
 import { TvLectureTree } from './TvLectureTree';
+import { TvPhotoGallery } from './TvPhotoGallery';
 import '../tv-screen-reader.css';
 
 type Props = {
@@ -43,8 +45,13 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
   }, [active]);
   const media = talkMedia.find(item => item.id === talk?.id);
   const slides = media?.slides ?? [];
-  const current = Math.max(0, slides.findIndex(item => item.src === slide?.src));
-  const activeSlide = slides[current];
+  const gallery = tvPhotoPages(media);
+  const sourceIndex = Math.max(0, slides.findIndex(item => item.src === slide?.src));
+  const current = gallery.length ? photoPageIndex(gallery, slide?.src) : sourceIndex;
+  const currentPage = gallery[current];
+  const count = gallery.length || slides.length;
+  const activeSlide = slides[sourceIndex];
+  const showPage = (index: number) => onSlide(gallery[index]?.sourceIndex ?? index);
   const source = activeSlide && (active && media?.kind === 'full' ? publicHighResolutionSlide(activeSlide) ?? activeSlide.src : activeSlide.src);
   const photos = media?.kind === 'photos';
   const close = onClose;
@@ -65,14 +72,14 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
       if (event.key === 'Escape') { event.preventDefault(); close(); return; }
       if (event.target instanceof HTMLElement && event.target.closest('select, input, textarea, .tv-lecture-tree')) return;
       const next = event.key === 'ArrowRight' ? current + 1 : event.key === 'ArrowLeft' ? current - 1
-        : event.key === 'Home' ? 0 : event.key === 'End' ? slides.length - 1 : null;
+        : event.key === 'Home' ? 0 : event.key === 'End' ? count - 1 : null;
       if (next === null) return;
       event.preventDefault();
-      if (next >= 0 && next < slides.length) onSlide(next);
+      if (next >= 0 && next < count) showPage(next);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [active, close, current, onSlide, slides.length]);
+  }, [active, close, current, showPage, count]);
 
   useEffect(() => {
     if (!active) return;
@@ -102,35 +109,38 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
           onSelect={id => { onTalk(id); setRailOpen(false); setInfoOpen(false); }} />
         <div className="tv-screen-stage">
         <div className="tv-screen-image" data-photos={photos}>
-          {activeSlide && source ? <>
+          {currentPage ? <TvPhotoGallery key={`${talk?.id}-${current}`} page={currentPage} /> : activeSlide && source ? <>
             <img key={source} src={source} alt={activeSlide.caption} width={activeSlide.width ?? 1920} height={activeSlide.height ?? 1080}
               draggable={false} decoding="async" fetchPriority="high" onLoad={() => setLoadedSource(source)} onError={() => setFailedSource(source)} />
             {loadedSource !== source && <span className="tv-screen-loading" role="status">{failedSource === source ? 'Image unavailable. Please try another slide.' : 'Loading image…'}</span>}
           </> : <div className="tv-screen-record"><p>{talk?.date}</p><h2>{talk?.topic || talk?.title}</h2><p>{talk?.title} · {talk?.venue}</p><small>Event record · Slides have not been added yet.</small></div>}
-          {slides.length > 1 && <>
-            <button className="tv-page-arrow tv-page-arrow-previous" aria-label={photos ? 'Previous event photo' : 'Previous presentation slide'}
-              disabled={current === 0} onClick={() => onSlide(current - 1)}>‹</button>
-            <button className="tv-page-arrow tv-page-arrow-next" aria-label={photos ? 'Next event photo' : 'Next presentation slide'}
-              disabled={current >= slides.length - 1} onClick={() => onSlide(current + 1)}>›</button>
+          {count > 1 && <>
+            <button className="tv-page-arrow tv-page-arrow-previous" aria-label={currentPage ? 'Previous gallery slide' : photos ? 'Previous event photo' : 'Previous presentation slide'}
+              disabled={current === 0} onClick={() => showPage(current - 1)}>‹</button>
+            <button className="tv-page-arrow tv-page-arrow-next" aria-label={currentPage ? 'Next gallery slide' : photos ? 'Next event photo' : 'Next presentation slide'}
+              disabled={current >= count - 1} onClick={() => showPage(current + 1)}>›</button>
           </>}
         </div>
-        {railOpen && slides.length > 1 && <nav className="tv-screen-thumbnails" aria-label={photos ? 'Event photos' : 'Presentation slides'}>
-          {slides.map((item, index) => <button key={item.src} aria-label={`${photos ? 'Show event photo' : 'Show presentation slide'} ${index + 1}`}
-            aria-current={index === current ? 'page' : undefined} onClick={() => { onSlide(index); setRailOpen(false); }}>
+        {railOpen && count > 1 && <nav className="tv-screen-thumbnails" aria-label={currentPage ? 'Gallery slides' : photos ? 'Event photos' : 'Presentation slides'}>
+          {gallery.length ? gallery.map((page, index) => <button key={page.sourceIndex} aria-label={`Show gallery slide ${index + 1}`}
+            aria-current={index === current ? 'page' : undefined} onClick={() => { showPage(index); setRailOpen(false); }}>
+            <TvPhotoGallery page={page} thumbnail /><span>{index + 1}</span>
+          </button>) : slides.map((item, index) => <button key={item.src} aria-label={`${photos ? 'Show event photo' : 'Show presentation slide'} ${index + 1}`}
+            aria-current={index === current ? 'page' : undefined} onClick={() => { showPage(index); setRailOpen(false); }}>
             <img src={item.thumbnail ?? item.src} alt="" width={160} height={90} loading="lazy" decoding="async" /><span>{index + 1}</span>
           </button>)}
         </nav>}
         {infoOpen && <article className="tv-screen-details" aria-label="Lecture information">
           <p>{[talk?.date, media?.role].filter(Boolean).join(' · ')}</p>
           <h2>{talk?.topic || talk?.title}</h2><p>{talk?.title}</p><p>{talk?.venue}</p>
-          {activeSlide && <p>{activeSlide.caption}</p>}
+          {currentPage ? <p>{currentPage.caption}</p> : activeSlide && <p>{activeSlide.caption}</p>}
           {!slides.length && <p>Event record. Slides have not been added yet.</p>}
         </article>}
         <footer className="tv-screen-context">
           <div><strong>{talk?.topic || talk?.title}</strong><span>{[talk?.date, talk?.venue].filter(Boolean).join(' · ')}</span></div>
-          <button disabled={slides.length < 2} aria-label="Toggle slide thumbnails" aria-expanded={railOpen}
+          <button disabled={count < 2} aria-label="Toggle slide thumbnails" aria-expanded={railOpen}
             onClick={() => { setRailOpen(value => !value); setInfoOpen(false); }}>
-            <span role="status">{slides.length ? `${current + 1} / ${slides.length}` : 'Record'}</span><small>{photos ? 'Photos' : 'Slides'}</small>
+            <span role="status">{count ? `${current + 1} / ${count}` : 'Record'}</span><small>{currentPage ? `${slides.length} photos` : photos ? 'Photos' : 'Slides'}</small>
           </button>
         </footer>
         </div>

@@ -28,7 +28,7 @@ export const PHOTO_MEMORIES: Readonly<Record<'ppomppu' | 'kosess-award', PhotoMe
     kicker: 'A moment of recognition', title: 'Best Shorts Award',
     src: '/models/award-photo/kosess-ceremony.webp', width: 1600, height: 1241,
     alt: 'Woon Tak Yuh receiving the Best Shorts Award at the KOSESS Annual Meeting.',
-    occasion: 'KOSESS Annual Meeting', dateTime: '2026-08-29', dateLabel: '29 August 2026',
+    occasion: '2026 KOSESS Annual Meeting', dateTime: '2026-08-29', dateLabel: '29 August 2026',
     place: 'Seoul St. Mary’s Hospital',
   },
 };

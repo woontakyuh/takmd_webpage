@@ -1,30 +1,36 @@
 import { useCursor } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { useRef, useState } from 'react';
+import { useRef, useState, type RefObject } from 'react';
 import type { RoomControl } from '../OfficeRoomControls';
 import { Block, Rod } from './Primitives';
 import { ROOM, type Point } from './config';
 import { useArrangement } from '../arrangement';
 import { scheduleSceneSingleAction } from './sceneGesture';
+import { useRoomControlPanelAnchor } from './useRoomControlPanelAnchor';
 
 const SWITCH_HEIGHT = 1.22;
 
-export function RoomSwitches({ onControl }: { readonly onControl: (control: RoomControl) => void }) {
+export function RoomSwitches({ onControl, panel }: {
+  readonly onControl: (control: RoomControl) => void;
+  readonly panel?: RefObject<HTMLDivElement | null>;
+}) {
   return <>
-    <WallButton position={[2.57, SWITCH_HEIGHT, 3.305]} rotation={Math.PI} label="Room lights" onClick={() => onControl('room')} />
-    <WallButton position={[ROOM.architecture.leftX + 0.055, SWITCH_HEIGHT, ROOM.architecture.window.centerZ + ROOM.architecture.window.width / 2 + 0.13]} rotation={Math.PI / 2} label="Roller blinds" double onClick={() => onControl('shades')} />
+    <WallButton position={[2.57, SWITCH_HEIGHT, 3.305]} rotation={Math.PI} label="Room lights" control="room" panel={panel} onClick={() => onControl('room')} />
+    <WallButton position={[ROOM.architecture.leftX + 0.055, SWITCH_HEIGHT, ROOM.architecture.window.centerZ + ROOM.architecture.window.width / 2 + 0.13]} rotation={Math.PI / 2} label="Roller blinds" control="shades" panel={panel} double onClick={() => onControl('shades')} />
   </>;
 }
 
-function WallButton({ position, rotation, label, double = false, onClick }: {
+function WallButton({ position, rotation, label, control, panel, double = false, onClick }: {
   readonly position: Point; readonly rotation: number; readonly label: string; readonly double?: boolean; readonly onClick: () => void;
+  readonly control: 'room' | 'shades'; readonly panel?: RefObject<HTMLDivElement | null>;
 }) {
   const { editing } = useArrangement();
   const { gl } = useThree();
+  const switchGroup = useRoomControlPanelAnchor(control, panel);
   const [hovered, setHovered] = useState(false);
   const start = useRef<{ x: number; y: number; id: number } | null>(null);
   useCursor(hovered && !editing);
-  return <group name={`${label} wall switch`} position={[...position]} rotation={[0, rotation, 0]}
+  return <group ref={switchGroup} name={`${label} wall switch`} position={[...position]} rotation={[0, rotation, 0]}
     onPointerOver={event => { event.stopPropagation(); setHovered(true); }} onPointerOut={() => setHovered(false)}
     onPointerDown={event => {
       event.stopPropagation();

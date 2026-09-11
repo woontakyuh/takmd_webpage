@@ -1,15 +1,19 @@
-import { useEffect, useMemo, type ReactNode } from 'react';
+import { useEffect, useMemo, type ReactNode, type RefObject } from 'react';
 import { useTexture } from '@react-three/drei';
 import { CatmullRomCurve3, RepeatWrapping, Vector2, Vector3 } from 'three';
-import type { Texture } from 'three';
+import type { Group, Texture } from 'three';
 import { INTERIOR, PALETTE } from './config';
 import { Block, Rod } from './Primitives';
+import { IsidoroFixedHardware, IsidoroMovingHasps } from './IsidoroHardware';
+import { IsidoroDrawerStorage, IsidoroLowerBottleStorage } from './IsidoroStorage';
 import {
   ISIDORO_BOTTLE_DECK_TOP,
   ISIDORO_BOTTLE_SHELF_HEIGHT,
   ISIDORO_DIMENSIONS,
   ISIDORO_FIXED_HALF_OFFSET_Z,
   ISIDORO_WORKTOP_HEIGHT,
+  ISIDORO_SHELF_THICKNESS,
+  ISIDORO_UPPER_SHELF_HEIGHT,
 } from './WhiskyCabinetLayout';
 
 const HALF_DEPTH = ISIDORO_DIMENSIONS.depth / 2;
@@ -28,9 +32,12 @@ type HalfProps = {
 function ChromeRail({ y, interiorSide }: { readonly y: number; readonly interiorSide: -1 | 1 }) {
   const z = interiorSide * (HALF_DEPTH / 2 + 0.006);
   return <group name="miniature chrome guardrail">
-    <Rod from={[-0.295, y, z]} to={[0.295, y, z]} radius={0.004} color={CHROME} metalness={0.93} />
-    {[-0.295, 0.295].map(x => <Rod key={x} from={[x, y - 0.035, z]} to={[x, y, z]}
-      radius={0.003} color={CHROME} metalness={0.93} />)}
+    <Rod from={[-0.302, y, z]} to={[0.302, y, z]} radius={0.0018} color={CHROME} metalness={0.96} />
+    {[-0.302, 0.302].map(x => <group key={x}>
+      <Rod from={[x, y - 0.02, z]} to={[x, y - 0.004, z]} radius={0.0016} color={CHROME} metalness={0.96} />
+      <Rod from={[x, y - 0.004, z]} to={[x - Math.sign(x) * 0.007, y, z]}
+        radius={0.0018} color={CHROME} metalness={0.96} />
+    </group>)}
   </group>;
 }
 
@@ -82,17 +89,16 @@ function HalfShell({ interiorSide, moving = false, wood, children }: HalfProps) 
       color={LEATHER} radius={0.018} roughness={0.83} material={leather} />
     <Block size={[ISIDORO_DIMENSIONS.width, PANEL, HALF_DEPTH]} position={[0, 0.0475, 0]}
       color={LEATHER} radius={0.014} roughness={0.83} material={leather} />
-    <Block size={[0.64, 0.06, HALF_DEPTH - 0.035]}
-      position={[0, ISIDORO_BOTTLE_DECK_TOP - 0.03, 0]}
-      color={PALETTE.walnut} texture={wood} radius={0.005} roughness={0.52} />
-    {(moving ? [ISIDORO_BOTTLE_SHELF_HEIGHT] : [ISIDORO_WORKTOP_HEIGHT, 0.92]).map(y => <group key={y} name={`Canaletto walnut shelf ${y}`}>
-      <Block size={[0.64, 0.018, HALF_DEPTH - 0.035]} position={[0, y, 0]}
-        color={PALETTE.walnut} texture={wood} radius={0.004} roughness={0.5} />
-      <ChromeRail y={y + 0.038} interiorSide={interiorSide} />
+    <Block size={[0.64, 0.018, HALF_DEPTH - 0.035]}
+      position={[0, ISIDORO_BOTTLE_DECK_TOP - 0.009, 0]}
+      color={PALETTE.walnut} texture={wood} radius={0.003} roughness={0.52} />
+    {(moving ? [ISIDORO_BOTTLE_SHELF_HEIGHT, ISIDORO_UPPER_SHELF_HEIGHT] : [ISIDORO_WORKTOP_HEIGHT, ISIDORO_UPPER_SHELF_HEIGHT]).map(y => <group key={y} name={`Canaletto walnut shelf ${y}`}>
+      <Block size={[0.64, ISIDORO_SHELF_THICKNESS, HALF_DEPTH - 0.035]} position={[0, y, 0]}
+        color={PALETTE.walnut} texture={wood} radius={0.0025} roughness={0.5} />
+      {(moving || y === ISIDORO_UPPER_SHELF_HEIGHT) && <ChromeRail y={y + 0.027} interiorSide={interiorSide} />}
     </group>)}
-    <Block size={[0.64, 0.405, 0.022]} position={[0, 0.31, outsideZ + interiorSide * 0.023]}
-      color={PALETTE.walnutDark} texture={wood} radius={0.007} roughness={0.54} />
     <LeatherSeam z={-interiorSide * (HALF_DEPTH / 2 + 0.0009)} />
+    {moving ? <IsidoroMovingHasps /> : <><IsidoroFixedHardware leather={leather} /><IsidoroDrawerStorage wood={wood} /></>}
     {children}
     <group name={moving ? 'swivel castors' : 'fixed feet'}>
       {[-0.29, 0.29].map(x => <group key={x} position={[x, 0.022, outsideZ]}>
@@ -113,21 +119,15 @@ export function IsidoroFixedHalf({ wood, children }: { readonly wood: Texture; r
   </group>;
 }
 
-export function IsidoroOpeningHalf({ wood, children }: { readonly wood: Texture; readonly children: ReactNode }) {
+export function IsidoroOpeningHalf({ wood, children, worktop }: {
+  readonly wood: Texture;
+  readonly children: ReactNode;
+  readonly worktop: RefObject<Group | null>;
+}) {
   return <group position={[ISIDORO_DIMENSIONS.width / 2, 0, -HALF_DEPTH / 2]}>
     <HalfShell interiorSide={1} moving wood={wood}>
       <group name="bottle collection with unmirrored labels" scale={[-1, 1, 1]}>{children}</group>
+      <IsidoroLowerBottleStorage wood={wood} worktop={worktop} />
     </HalfShell>
-    <group name="Pelle Frau carry handle" position={[0.29, 0.62, -HALF_DEPTH / 2 - 0.012]}>
-      <Rod from={[-0.018, -0.11, 0]} to={[-0.045, -0.075, -0.022]} radius={0.007} color={CHROME} metalness={0.84} />
-      <Rod from={[-0.045, -0.075, -0.022]} to={[-0.045, 0.075, -0.022]} radius={0.012} color={LEATHER} />
-      <Rod from={[-0.045, 0.075, -0.022]} to={[-0.018, 0.11, 0]} radius={0.007} color={CHROME} metalness={0.84} />
-    </group>
-    {[0.34, 0.83].map(y => <group key={y} name="chrome combination snap lock"
-      position={[0.31, y, -HALF_DEPTH / 2 - 0.014]}>
-      <Block size={[0.035, 0.067, 0.018]} color={CHROME} radius={0.004} roughness={0.18} metalness={0.9} />
-      {[-0.016, 0, 0.016].map(offset => <Block key={offset} size={[0.024, 0.009, 0.005]}
-        position={[0, offset, -0.011]} color={PALETTE.ink} radius={0.002} roughness={0.35} />)}
-    </group>)}
   </group>;
 }

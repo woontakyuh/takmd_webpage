@@ -3,6 +3,9 @@ import { useThree } from '@react-three/fiber';
 import { CanvasTexture, SRGBColorSpace } from 'three';
 import type { Presentation } from '../types';
 import { talkMedia } from '../collection';
+import { containPhoto, photoPageIndex, TV_PHOTO_BOARD, tvPhotoPages } from '../tvPhotoGallery';
+import { setWallTvContentEdges } from './hoverReactions';
+import { sampleTvImageEdges, TV_DARK_EDGES } from './tvBacklightColor';
 
 type Props = {
   readonly cover: string | null;
@@ -133,8 +136,12 @@ export function useTvPresentationTexture({ cover, talk, presentations, treeScrol
     const context = canvas.getContext('2d');
     if (!context) return;
     const media = talkMedia.find(item => item.id === talk?.id);
-    const current = Math.max(0, media?.slides.findIndex(slide => slide.src === cover) ?? 0);
-    const count = media?.slides.length ?? 0;
+    const gallery = tvPhotoPages(media);
+    const current = gallery.length ? photoPageIndex(gallery, cover) : Math.max(0, media?.slides.findIndex(slide => slide.src === cover) ?? 0);
+    const page = gallery[current];
+    let remainingPhotos = page?.photos.length ?? 0;
+    const photoBounds = { left: Infinity, top: Infinity, right: 0, bottom: 0 };
+    const count = gallery.length || media?.slides.length || 0;
     const photos = media?.kind === 'photos';
     drawLectureTree(context, talk, presentations, treeScrollOffset);
     let cancelled = false;
@@ -143,23 +150,42 @@ export function useTvPresentationTexture({ cover, talk, presentations, treeScrol
       drawLectureTree(context, talk, presentations, treeScrollOffset);
       texture.needsUpdate = true;
     });
-    context.fillStyle = photos ? '#17241F' : '#F6F3EA';
+    context.fillStyle = page ? TV_PHOTO_BOARD.paper : photos ? '#17241F' : '#F6F3EA';
     context.fillRect(TREE_WIDTH, 0, 1600 - TREE_WIDTH, 900 - FOOTER_HEIGHT);
     context.fillStyle = '#22312B';
     context.fillRect(TREE_WIDTH, 900 - FOOTER_HEIGHT, 1600 - TREE_WIDTH, FOOTER_HEIGHT);
     const images: HTMLImageElement[] = [];
     const load = (src: string, draw: (image: HTMLImageElement) => void) => {
       const image = new Image(); images.push(image);
-      image.onload = () => { draw(image); texture.needsUpdate = true; };
+      image.onload = () => { if (cancelled) return; draw(image); texture.needsUpdate = true; };
       image.src = src;
     };
-    if (cover) load(cover, image => {
+    if (page) {
+      const board = containPhoto(TV_PHOTO_BOARD.width, TV_PHOTO_BOARD.height,
+        { x: TREE_WIDTH, y: 0, width: 1600 - TREE_WIDTH, height: 900 - FOOTER_HEIGHT });
+      for (const photo of page.photos) load(photo.slide.src, image => {
+        const frame = photo.frame;
+        const fitted = containPhoto(image.naturalWidth, image.naturalHeight, {
+          x: board.x + frame.x * board.width, y: board.y + frame.y * board.height,
+          width: frame.width * board.width, height: frame.height * board.height,
+        });
+        context.drawImage(image, fitted.x, fitted.y, fitted.width, fitted.height);
+        photoBounds.left = Math.min(photoBounds.left, fitted.x); photoBounds.top = Math.min(photoBounds.top, fitted.y);
+        photoBounds.right = Math.max(photoBounds.right, fitted.x + fitted.width); photoBounds.bottom = Math.max(photoBounds.bottom, fitted.y + fitted.height);
+        remainingPhotos -= 1;
+        if (!remainingPhotos) setWallTvContentEdges(sampleTvImageEdges(canvas, page.photos.map(item => item.slide.src).join('|'), {
+          x: photoBounds.left, y: photoBounds.top, width: photoBounds.right - photoBounds.left, height: photoBounds.bottom - photoBounds.top,
+        }));
+      });
+    } else if (cover) load(cover, image => {
       const areaWidth = 1600 - TREE_WIDTH - (photos ? 48 : 0);
       const areaHeight = 900 - FOOTER_HEIGHT - (photos ? 48 : 0);
       const scale = Math.min(areaWidth / image.naturalWidth, areaHeight / image.naturalHeight);
       const width = image.naturalWidth * scale, height = image.naturalHeight * scale;
       context.drawImage(image, TREE_WIDTH + (1600 - TREE_WIDTH - width) / 2, (900 - FOOTER_HEIGHT - height) / 2, width, height);
+      setWallTvContentEdges(sampleTvImageEdges(image, cover));
     });
+    else setWallTvContentEdges(TV_DARK_EDGES);
     context.textBaseline = 'top';
     context.fillStyle = '#F6F3EA';
     context.font = '500 17px "Manrope Variable", "Avenir Next", sans-serif';
@@ -171,7 +197,7 @@ export function useTvPresentationTexture({ cover, talk, presentations, treeScrol
     context.font = '17px "Manrope Variable", "Avenir Next", sans-serif';
     context.fillText(count ? `${current + 1} / ${count}` : 'Record', 1510, 836);
     context.font = '14px "Manrope Variable", "Avenir Next", sans-serif';
-    context.fillText(count ? (photos ? 'Photos' : 'Slides') : '', 1510, 861);
+    context.fillText(count ? (page ? `${media?.slides.length} photos` : photos ? 'Photos' : 'Slides') : '', 1510, 861);
     texture.needsUpdate = true;
     return () => {
       cancelled = true;

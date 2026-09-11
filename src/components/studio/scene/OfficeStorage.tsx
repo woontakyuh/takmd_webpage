@@ -3,7 +3,8 @@ import type { StudioSceneProps } from '../types';
 import { Movable } from './Movable';
 import { WhiskyCabinet } from './WhiskyCabinet';
 import { WHISKY_CABINET } from './WhiskyCabinetLayout';
-import { BeosoundTheatre } from './BeosoundTheatre';
+import { Beosound9000 } from './Beosound9000';
+import { Beolab8000Pair } from './Beolab8000';
 import { RoyalSystem } from './RoyalSystem';
 import { UsmLowboard } from './UsmLowboard';
 
@@ -16,8 +17,9 @@ export function OfficeStorage({ wood, selected, reducedMotion, onAwardPhoto, lam
     <Movable id="whisky"><group position={[...WHISKY_CABINET.center]} rotation={[0, WHISKY_CABINET.rotation, 0]}>
       <WhiskyCabinet wood={wood} reducedMotion={reducedMotion} lamp={lamp} />
     </group></Movable>
-    <group name="Beosound Theatre shelf display" position={[0, 0.82, 3.111]} rotation={[0, Math.PI, 0]}>
-      <BeosoundTheatre />
+    <group name="Beosound 9000 shelf display" position={[0, 0.82, 3.111]} rotation={[0, Math.PI, 0]}>
+      <Beosound9000 reducedMotion={reducedMotion} />
     </group>
+    <Beolab8000Pair />
   </group>;
 }

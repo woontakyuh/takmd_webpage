@@ -66,8 +66,8 @@ export function CreditsDetails() {
     </section>)}
     <section className="studio-editorial-note"><span>Original adaptations</span><h3>Office objects.</h3>
       <p>The Florence Knoll Relaxed two-seater and Logitech MX Master 4 are original visual models made from reference photographs. They are not official manufacturer CAD models.</p>
-      <p>The Beosound Theatre uses Bang &amp; Olufsen’s published 3D planning geometry, adapted with natural-oak and silver materials for tabletop placement.</p>
-      <div className="office-detail-links"><SourceLink href="/models/beosound-theatre/PROVENANCE.md">Source and adaptation details</SourceLink></div>
+      <p>The Beosound 9000 is an original reference-based model in classic silver and black, using the manufacturer’s dimensions and near-upright shelf mounting arrangement.</p>
+      <div className="office-detail-links"><SourceLink href="/models/beosound-9000/PROVENANCE.md">Source and adaptation details</SourceLink></div>
       <p>The whisky collection uses bottle geometry traced from product silhouettes, with surface and label references from product photographs.</p>
       <div className="office-detail-links"><SourceLink href="/models/whisky/SOURCE.md">Product references and image sources</SourceLink></div>
     </section>

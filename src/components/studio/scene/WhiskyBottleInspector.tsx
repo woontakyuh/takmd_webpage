@@ -36,10 +36,11 @@ export function WhiskyBottleInspector({ bottleId, returning, onReturn }: {
     calculatePosition={(object, camera, viewport) => {
       if (object.parent && panel.current) {
         const bounds = whiskyCabinetScreenBounds(object.parent, camera, viewport);
-        const desiredLeft = layout.stacked ? layout.inset : bounds.right + layout.gap;
+        const desiredLeft = layout.stacked ? layout.inset : bounds.left - layout.gap - layout.panel.width;
         const desiredTop = layout.stacked ? bounds.bottom + layout.gap
           : Math.max(panel.current.offsetHeight / 2 + layout.inset, Math.min(viewport.height - panel.current.offsetHeight / 2 - layout.inset, (bounds.top + bounds.bottom) / 2));
-        const fits = desiredLeft + layout.panel.width <= viewport.width - layout.inset + 1 && (!layout.stacked || desiredTop <= viewport.height - layout.inset - 160);
+        const fits = desiredLeft >= layout.inset - 1 && desiredLeft + layout.panel.width <= viewport.width - layout.inset + 1
+          && (!layout.stacked || desiredTop <= viewport.height - layout.inset - 160);
         presented.current ||= fits;
         const left = Math.max(layout.inset, Math.min(desiredLeft, viewport.width - layout.inset - layout.panel.width));
         const top = layout.stacked ? Math.max(layout.inset, Math.min(desiredTop, viewport.height - layout.inset - 160)) : desiredTop;

@@ -1,5 +1,8 @@
 import type { SceneInspection } from './SceneInspection';
 import type { CollectionId } from './CollectionInspectionState';
+import type { Box3 } from 'three';
+import { fitCollectionItem } from './CollectionInspectionLayout';
+import type { CollectionCopyPlacement } from './CollectionInspectionLayout';
 
 export type CollectionItem = {
   readonly id: string;
@@ -9,7 +12,8 @@ export type CollectionItem = {
   readonly date: string;
   readonly description: string;
   readonly center: readonly [number, number, number];
-  readonly copy: 'left' | 'bottom' | 'right';
+  readonly copy: CollectionCopyPlacement;
+  readonly copyAvoid?: string;
 };
 
 export const CREDENTIAL_ITEMS = [
@@ -23,7 +27,7 @@ export const CREDENTIAL_ITEMS = [
     id: 'credential-snu', collection: 'credentials', label: 'Master of Science in Medicine',
     title: 'Seoul National University', date: 'February 26, 2018',
     description: 'Seoul National University conferred the degree of Master of Science in Medicine in recognition of academic achievement and the ability to conduct research.',
-    center: [1.935, 1.974, 3.12], copy: 'bottom',
+    center: [1.935, 1.974, 3.12], copy: 'upper-right', copyAvoid: 'credential-komiss',
   },
   {
     id: 'credential-komiss', collection: 'credentials', label: 'Life membership · No. 180',
@@ -58,8 +62,8 @@ export function collectionInspection(collection: CollectionId, width: number, he
   const credentials = collection === 'credentials';
   const target: readonly [number, number, number] = credentials ? [1.91, 1.965, 3.12] : [-1.875, 1.45, 3.11];
   const verticalFov = width < height ? 60 : 42;
-  const groupWidth = 0.91;
-  const distance = groupWidth / (0.84 * 2 * Math.tan(verticalFov * Math.PI / 360) * width / height);
+  const tangent = Math.tan(verticalFov * Math.PI / 360);
+  const distance = Math.max(0.97 / (0.84 * 2 * tangent * width / height), 0.35 / (0.76 * 2 * tangent)) + .04;
   return {
     id: `collection-${collection}`,
     position: [target[0], target[1], target[2] - distance],
@@ -67,11 +71,8 @@ export function collectionInspection(collection: CollectionId, width: number, he
   };
 }
 
-export function itemInspection(item: CollectionItem, compact: boolean): SceneInspection {
-  const [x, y, z] = item.center;
-  const middle = item.copy === 'bottom';
-  const offsetX = item.copy === 'left' ? 0.1 : item.copy === 'right' ? -0.1 : 0;
-  const target: readonly [number, number, number] = compact ? [x, y - 0.14, z] : [x + offsetX, y - (middle ? 0.1 : 0), z];
-  const distance = compact ? 0.82 : middle ? (item.collection === 'credentials' ? 0.65 : 0.55) : 0.55;
-  return { id: item.id, position: [target[0], target[1], z - distance], target };
+export function itemInspection(item: CollectionItem, width: number, height: number, bounds: Box3,
+  copyHeight = 240, obstacle?: Box3): SceneInspection {
+  const { position, target } = fitCollectionItem(bounds, item.copy, { width, height }, copyHeight, obstacle);
+  return { id: item.id, position, target };
 }

@@ -5,7 +5,10 @@ import type { ReactNode } from 'react';
 import { CanvasTexture, CylinderGeometry, SRGBColorSpace } from 'three';
 import type { StudioSceneProps } from '../types';
 import type { Point } from './config';
+import { ROOM } from './config';
+import { M4_MAC_MINI } from './MacMini';
 import { scheduleSceneSingleAction } from './sceneGesture';
+import { useRoomControlPanelAnchor } from './useRoomControlPanelAnchor';
 
 const DIAL = {
   diameter: 0.074,
@@ -24,18 +27,24 @@ const SURFACE_ROTATION = -Math.PI / 2 + DIAL.topTilt;
 
 type HaloDialProps = {
   readonly position: Point;
-} & Pick<StudioSceneProps, 'halo' | 'onHaloControls'>;
+} & Pick<StudioSceneProps, 'halo' | 'onHaloControls' | 'roomControlPanel'>;
 
-export function ScreenBarHalo2Dial({ position, halo, onHaloControls }: HaloDialProps) {
+export function ScreenBarHalo2Dial({ position, halo, onHaloControls, roomControlPanel }: HaloDialProps) {
   const shell = useMemo(() => createSlopedDialShell(), []);
   const display = useHaloDialDisplay(halo);
   const { gl } = useThree();
   const pointerStart = useRef<{ readonly pointerId: number; readonly x: number; readonly y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
+  const miniTop = useMemo(() => [-1, 1].flatMap(x => [-1, 1].map((z): Point => [
+    ROOM.macMini.position[0] - position[0] + x * M4_MAC_MINI.size[0] / 2,
+    ROOM.macMini.position[1] - position[1] + M4_MAC_MINI.size[1],
+    ROOM.macMini.position[2] - position[2] + z * M4_MAC_MINI.size[2] / 2,
+  ])), [position]);
+  const dialGroup = useRoomControlPanelAnchor('halo', roomControlPanel, miniTop);
   useCursor(hovered);
   useEffect(() => () => shell.dispose(), [shell]);
 
-  return <group name="ScreenBar Halo 2 wireless dial" position={[...position]}
+  return <group ref={dialGroup} name="ScreenBar Halo 2 wireless dial" position={[...position]}
     onPointerOver={event => { event.stopPropagation(); setHovered(event.pointerType !== 'touch' && event.buttons === 0); }}
     onPointerOut={() => setHovered(false)}
     onPointerDown={event => {

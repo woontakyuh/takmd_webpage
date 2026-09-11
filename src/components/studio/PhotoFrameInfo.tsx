@@ -41,7 +41,7 @@ export function PhotoFrameInfo({ memory, onClose, variant = 'frame' }: {
     return () => window.removeEventListener('resize', placeCaption);
   }, [variant]);
 
-  return <dialog ref={dialogRef} className={`office-frame-info${variant === 'award-pair' ? ' office-frame-info--award-pair' : ''}`} aria-labelledby="office-frame-title"
+  return <dialog ref={dialogRef} className={`office-frame-info office-frame-info--${variant === 'award-pair' ? 'award-pair' : 'family'}`} aria-labelledby="office-frame-title"
     aria-describedby="office-frame-description" aria-modal="false" lang="en"
     onCancel={event => { event.preventDefault(); onClose(); }}>
     <div className="office-frame-info-top">

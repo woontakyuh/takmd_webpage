@@ -302,6 +302,11 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     if (!orbit || previousSelected.current === selected) return;
     inspectionReturnPose.current = null;
     window.dispatchEvent(new CustomEvent('office:zoomed', { detail: false }));
+    if (!selected && inspection) {
+      previousSelected.current = selected;
+      if (camera instanceof PerspectiveCamera) { camera.clearViewOffset(); camera.updateProjectionMatrix(); }
+      return;
+    }
     if (selected) {
       if (!previousSelected.current) {
         savedFreePose.current = {
@@ -325,7 +330,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
         : toTransition('return', fallback);
     }
     previousSelected.current = selected;
-  }, [camera, compact, selected, size.width, size.height]);
+  }, [camera, compact, inspection, selected, size.width, size.height]);
 
   useEffect(() => {
     const orbit = controls.current;

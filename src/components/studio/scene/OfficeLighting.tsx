@@ -1,14 +1,18 @@
 import { Movable } from './Movable';
 import type { RoomLightPalette } from '../lightingPresets';
 import type { BlindLift } from '../types';
-import { useLayoutEffect, useRef } from 'react';
-import type { RectAreaLight } from 'three';
+import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { Color } from 'three';
+import type { MeshStandardMaterial, RectAreaLight } from 'three';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import { MantisFloor } from './MantisFloor';
 import { SigneFloor } from './SigneFloor';
 import { Block } from './Primitives';
 import { LIGHTING, PALETTE, ROOM, WALL_TV } from './config';
 import { useWallTvBacklight } from './hoverReactions';
+import { tvBacklightMix, TV_WARM_WHITE } from './tvBacklightColor';
+import type { TvEdgeLight } from './tvBacklightColor';
 
 RectAreaLightUniformsLib.init();
 
@@ -25,13 +29,15 @@ export function WindowDaylight({ daylight, blindLift }: { readonly daylight: num
   </group>;
 }
 
-export function OfficeLighting({ power, palette, tvFocused }: { readonly power: number; readonly palette: RoomLightPalette; readonly tvFocused: boolean }) {
+export function OfficeLighting({ power, palette, tvFocused, reducedMotion }: {
+  readonly power: number; readonly palette: RoomLightPalette; readonly tvFocused: boolean; readonly reducedMotion: boolean;
+}) {
   return <group name="warm-office-lighting">
     <Movable id="mantis"><MantisFloor power={power} color={palette.color} /></Movable>
     <Movable id="signe"><SigneFloor power={power} palette={palette} /></Movable>
     <UnderStorageWash power={power} color={palette.gradient[0]} />
     <ShelfWash palette={palette} power={power} />
-    <TvBacklight power={power} focused={tvFocused} />
+    <TvBacklight power={power} focused={tvFocused} reducedMotion={reducedMotion} />
   </group>;
 }
 
@@ -58,26 +64,39 @@ function WallWash({ x, width, color, power }: { readonly x: number; readonly wid
   </>;
 }
 
-function TvBacklight({ power, focused }: { readonly power: number; readonly focused: boolean }) {
+function TvBacklight({ power, focused, reducedMotion }: { readonly power: number; readonly focused: boolean; readonly reducedMotion: boolean }) {
   const inset = 0.04;
-  const { hovered, colors } = useWallTvBacklight();
+  const { hovered, edges } = useWallTvBacklight();
   const brightness = Math.max(power, 0.18) * (hovered || focused ? 1.55 : 1);
+  const strips = [
+    { edge: 'left', position: [WALL_TV.width / 2 - inset, 0, 0.025], width: 0.012, height: WALL_TV.height - inset * 2 },
+    { edge: 'top', position: [0, WALL_TV.height / 2 - inset, 0.025], width: WALL_TV.width - inset * 2, height: 0.012 },
+    { edge: 'right', position: [-WALL_TV.width / 2 + inset, 0, 0.025], width: 0.012, height: WALL_TV.height - inset * 2 },
+    { edge: 'bottom', position: [0, -WALL_TV.height / 2 + inset, 0.025], width: WALL_TV.width - inset * 2, height: 0.012 },
+  ] as const;
   return <group name="TV rear four-edge gradient lightstrip" position={[...ROOM.gallery.position]}>
-    {([-1, 1] as const).map(side => <group key={side}>
-      <RearStrip position={[0, side * (WALL_TV.height / 2 - inset), 0.025]}
-        width={WALL_TV.width - inset * 2} height={0.012} color={colors[side < 0 ? 0 : 1]} power={brightness} />
-      <RearStrip position={[side * (WALL_TV.width / 2 - inset), 0, 0.025]}
-        width={0.012} height={WALL_TV.height - inset * 2} color={colors[side < 0 ? 0 : 1]} power={brightness} />
-    </group>)}
+    {strips.map(strip => <RearStrip key={strip.edge} {...strip} sample={edges[strip.edge]} power={brightness} reducedMotion={reducedMotion} />)}
   </group>;
 }
 
-function RearStrip({ position, width, height, color, power }: {
-  readonly position: readonly [number, number, number]; readonly width: number; readonly height: number; readonly color: string; readonly power: number;
+function RearStrip({ position, width, height, sample, power, edge, reducedMotion }: {
+  readonly position: readonly [number, number, number]; readonly width: number; readonly height: number;
+  readonly sample: TvEdgeLight; readonly power: number; readonly edge: string; readonly reducedMotion: boolean;
 }) {
+  const light = useRef<RectAreaLight>(null);
+  const material = useRef<MeshStandardMaterial>(null);
+  const target = useMemo(() => new Color(sample.color), [sample.color]);
+  useFrame((_, delta) => {
+    if (!light.current || !material.current) return;
+    const mix = tvBacklightMix(delta, reducedMotion);
+    light.current.color.lerp(target, mix);
+    light.current.intensity += (power * sample.intensity * 24 - light.current.intensity) * mix;
+    material.current.emissive.copy(light.current.color);
+    material.current.emissiveIntensity = light.current.intensity / 12;
+  });
   return <group position={[...position]} rotation={[0, Math.PI, 0]}>
-    <mesh><planeGeometry args={[width, height]} /><meshStandardMaterial color={LIGHTING.reflector} emissive={color} emissiveIntensity={power * 2} /></mesh>
-    <rectAreaLight name="TV rear wall wash" position={[0, 0, 0.001]} color={color} intensity={power * 24} width={width} height={height} />
+    <mesh><planeGeometry args={[width, height]} /><meshStandardMaterial ref={material} color={LIGHTING.reflector} emissive={TV_WARM_WHITE} emissiveIntensity={0} /></mesh>
+    <rectAreaLight ref={light} name={`TV rear ${edge} wall wash`} position={[0, 0, 0.001]} color={TV_WARM_WHITE} intensity={0} width={width} height={height} />
   </group>;
 }
 

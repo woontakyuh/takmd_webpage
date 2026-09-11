@@ -36,6 +36,13 @@
   .office-frame-info[open] { animation: none; }
 }
 
+.office-frame-info--family {
+  inset: 0 auto auto 0; width: min(320px, calc(100vw - 32px)); max-width: none;
+  max-height: calc(100dvh - 144px); padding: 0; transform: none; overflow-wrap: anywhere;
+}
+.office-frame-info--family[open] { animation-name: office-family-caption-enter; }
+@keyframes office-family-caption-enter { from { opacity: 0; } to { opacity: 1; } }
+
 .office-frame-info--award-pair {
   inset: var(--award-caption-top, 68dvh) auto auto 50%;
   width: min(560px, calc(100vw - 48px)); max-width: none; max-height: none;

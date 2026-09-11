@@ -17,47 +17,11 @@ import { TvScreenReader } from './TvScreenReader';
 import { MonitorScreenReader } from './MonitorScreenReader';
 import { MONITOR_SCREEN } from './monitorReading';
 import { FOCUS, MONITOR, MOTION, PALETTE, ROOM, WALL_TV } from './config';
-import { setWallTvContentColors, setWallTvHovered, useWallTvBacklight } from './hoverReactions';
+import { setWallTvHovered, useWallTvBacklight } from './hoverReactions';
 import { monitorReadingPose } from './monitorReading';
 import { isScreenFocusSettled } from './screenFocus';
 
 type DisplaysProps = Pick<StudioSceneProps, 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'>;
-type RgbTotals = { red: number; green: number; blue: number; count: number };
-
-const TV_CONTENT_FALLBACK = ['#9D998F', '#9AA7A4'] as const;
-
-function toHex(value: number) {
-  return Math.round(Math.max(0, Math.min(255, value))).toString(16).padStart(2, '0');
-}
-
-function sampleTvEdge(data: Uint8ClampedArray, width: number, height: number, startX: number, endX: number) {
-  const totals: RgbTotals = { red: 0, green: 0, blue: 0, count: 0 };
-  for (let y = 0; y < height; y += 1) {
-    for (let x = startX; x < endX; x += 1) {
-      const offset = (y * width + x) * 4;
-      const alpha = data[offset + 3] ?? 0;
-      if (alpha < 220) continue;
-      totals.red += data[offset] ?? 0;
-      totals.green += data[offset + 1] ?? 0;
-      totals.blue += data[offset + 2] ?? 0;
-      totals.count += 1;
-    }
-  }
-  if (!totals.count) return null;
-  return `#${toHex(totals.red / totals.count)}${toHex(totals.green / totals.count)}${toHex(totals.blue / totals.count)}`;
-}
-
-function sampleTvContentColors(source: HTMLCanvasElement) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 24; canvas.height = 16;
-  const context = canvas.getContext('2d', { willReadFrequently: true });
-  if (!context) return;
-  context.drawImage(source, 0, 0, canvas.width, canvas.height);
-  const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
-  const left = sampleTvEdge(pixels, canvas.width, canvas.height, 0, 4);
-  const right = sampleTvEdge(pixels, canvas.width, canvas.height, canvas.width - 4, canvas.width);
-  setWallTvContentColors(left && right ? [left, right] : TV_CONTENT_FALLBACK);
-}
 
 export function Displays({ ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll }: DisplaysProps) {
   const camera = useThree(state => state.camera);
@@ -96,15 +60,6 @@ export function Displays({ ready, selected, onSelect, reducedMotion, halo, prese
   const talk = collection.presentation ?? featured;
   const cover = collection.talkSlide?.src ?? talkMedia.find(media => media.id === talk?.id)?.slides[0]?.src;
   const board = useTvPresentationTexture({ cover: cover ?? null, talk, presentations, treeScrollOffset: tvTreeScrollOffset });
-  useEffect(() => {
-    const sample = () => {
-      const image: unknown = board.image;
-      if (image instanceof HTMLCanvasElement) sampleTvContentColors(image);
-    };
-    board.onUpdate = sample;
-    sample();
-    return () => { board.onUpdate = null; };
-  }, [board]);
   return (
     <group>
       <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}

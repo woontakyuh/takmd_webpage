@@ -1,12 +1,15 @@
 import { Html, useCursor } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
-import { useEffect, useRef, useState } from 'react';
-import type { ReactNode, SyntheticEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { ReactNode, RefObject, SyntheticEvent } from 'react';
+import { Box3 } from 'three';
+import type { Group } from 'three';
 import { useArrangement } from '../arrangement';
 import { OfficeIcon } from '../OfficeIcon';
 import type { CollectionItem } from './CollectionInspectionData';
 import { collectionInspection, itemInspection } from './CollectionInspectionData';
+import { collectionCopyWidth, fitCollectionItem, positionCollectionCopy, projectCollectionBounds } from './CollectionInspectionLayout';
 import { inspectionBelongsToCollection, nextCollectionInspection } from './CollectionInspectionState';
 import type { CollectionId } from './CollectionInspectionState';
 import { useSceneInspection } from './SceneInspection';
@@ -18,6 +21,11 @@ const SETTLED_DISTANCE = 0.1;
 
 type Gesture = { readonly pointerId: number; readonly x: number; readonly y: number };
 
+function collectionBounds(group: Group, item: CollectionItem) {
+  const obstacle = item.copyAvoid ? group.parent?.getObjectByName(`${item.copyAvoid} inspection target`) : undefined;
+  return { bounds: new Box3().setFromObject(group, true), obstacle: obstacle ? new Box3().setFromObject(obstacle, true) : undefined };
+}
+
 export function CollectionInspectionItem({ item, children }: {
   readonly item: CollectionItem;
   readonly children: ReactNode;
@@ -26,9 +34,9 @@ export function CollectionInspectionItem({ item, children }: {
   const { camera, gl, size } = useThree();
   const { inspection, setInspection } = useSceneInspection();
   const latestInspection = useRef(inspection);
+  const group = useRef<Group>(null);
   const gesture = useRef<Gesture | null>(null);
   const [hovered, setHovered] = useState(false);
-  const compact = size.width < 760;
   const focused = inspection?.id === item.id;
   latestInspection.current = inspection;
   useCursor(hovered && !editing);
@@ -47,11 +55,14 @@ export function CollectionInspectionItem({ item, children }: {
     scheduleSceneSingleAction(gl.domElement, () => {
       if ((latestInspection.current?.id ?? null) !== currentId) return;
       const nextId = nextCollectionInspection(currentId, item.collection, item.id);
-      setInspection(nextId === item.id ? itemInspection(item, compact) : collectionInspection(item.collection, size.width, size.height));
+      if (nextId === item.id && group.current) {
+        const { bounds, obstacle } = collectionBounds(group.current, item);
+        setInspection(itemInspection(item, size.width, size.height, bounds, 240, obstacle));
+      } else setInspection(collectionInspection(item.collection, size.width, size.height));
     });
   };
 
-  return <group name={`${item.label} inspection target`}
+  return <group ref={group} name={`${item.id} inspection target`}
     onPointerOver={event => { if (!editing && event.buttons === 0) { event.stopPropagation(); setHovered(true); } }}
     onPointerOut={() => setHovered(false)}
     onPointerDown={event => {
@@ -63,7 +74,7 @@ export function CollectionInspectionItem({ item, children }: {
     onPointerCancel={() => { gesture.current = null; }} onPointerUp={onPointerUp}
     onClick={event => event.stopPropagation()} onDoubleClick={event => event.stopPropagation()}>
     {children}
-    {focused && <CollectionDescription item={item} />}
+    {focused && <CollectionDescription item={item} target={group} />}
   </group>;
 }
 
@@ -102,17 +113,57 @@ export function CollectionInspectionExit({ collection }: { readonly collection: 
   </Html> : null;
 }
 
-function CollectionDescription({ item }: { readonly item: CollectionItem }) {
+function CollectionDescription({ item, target }: { readonly item: CollectionItem; readonly target: RefObject<Group | null> }) {
+  const { camera, size } = useThree();
+  const { setInspection } = useSceneInspection();
+  const [section, setSection] = useState<HTMLElement | null>(null);
+  const content = useRef<HTMLDivElement>(null);
+  const placement = useRef<{
+    readonly bounds: Box3;
+    readonly obstacle: Box3 | undefined;
+    readonly layout: ReturnType<typeof fitCollectionItem>;
+  } | null>(null);
+  useLayoutEffect(() => {
+    const group = target.current, element = section, text = content.current;
+    if (!group || !element || !text) return;
+    const { bounds, obstacle } = collectionBounds(group, item);
+    let measuredHeight = 0;
+    const arrange = () => {
+      const height = text.getBoundingClientRect().height;
+      if (Math.abs(height - measuredHeight) < .5) return;
+      measuredHeight = height;
+      const layout = fitCollectionItem(bounds, item.copy, size, height, obstacle);
+      placement.current = { bounds, obstacle, layout };
+      element.style.maxHeight = `${layout.copyHeight}px`;
+      setInspection({ id: item.id, position: layout.position, target: layout.target });
+    };
+    arrange();
+    const observer = new ResizeObserver(arrange);
+    observer.observe(text);
+    return () => observer.disconnect();
+  }, [item, section, setInspection, size.width, size.height, target]);
+  useFrame(() => {
+    const current = placement.current, element = section;
+    if (!current || !element) return;
+    const object = projectCollectionBounds(current.bounds, camera, size);
+    const obstacle = current.obstacle ? projectCollectionBounds(current.obstacle, camera, size) : undefined;
+    const { left, top } = positionCollectionCopy(object, current.layout, size, obstacle);
+    element.style.transform = `translate3d(${left}px, ${top}px, 0)`;
+    element.style.visibility = 'visible';
+  });
   return <Html position={item.center} fullscreen zIndexRange={[40, 36]} style={{ pointerEvents: 'none' }}
     calculatePosition={(_, __, viewport) => [viewport.width / 2, viewport.height / 2]}>
-    <section className={`collection-inspection-copy collection-inspection-copy--${item.copy}`} role="dialog" aria-modal="false"
+    <section ref={setSection} className="collection-inspection-copy" role="dialog" aria-modal="false" tabIndex={0}
+      style={{ width: collectionCopyWidth(size), visibility: 'hidden' }}
       aria-labelledby={`collection-title-${item.id}`} data-item={item.id} lang="en"
       onPointerDown={event => event.stopPropagation()} onPointerUp={event => event.stopPropagation()}
-      onClick={event => event.stopPropagation()} onDoubleClick={event => event.stopPropagation()}>
+      onClick={event => event.stopPropagation()} onDoubleClick={event => event.stopPropagation()} onWheel={event => event.stopPropagation()}>
+      <div ref={content} className="collection-inspection-content">
       <p className="collection-inspection-label">{item.label}</p>
       <h2 id={`collection-title-${item.id}`}>{item.title}</h2>
       <p className="collection-inspection-date">{item.date}</p>
       <p>{item.description}</p>
+      </div>
     </section>
   </Html>;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type RefObject } from 'react';
 import { LIGHT_PRESETS, LIGHT_PRESET_IDS, type LightPreset } from './lightingPresets';
 import { OfficeIcon } from './OfficeIcon';
 import type { BlindLift, HaloSettings } from './types';
@@ -6,6 +6,7 @@ import type { BlindLift, HaloSettings } from './types';
 export type RoomControl = 'room' | 'halo' | 'shades';
 
 type Props = {
+  readonly panelRef?: RefObject<HTMLDivElement | null>;
   readonly preset: LightPreset;
   readonly onPreset: (preset: LightPreset) => void;
   readonly control: RoomControl | null;
@@ -196,9 +197,10 @@ function ShadeRocker({ side, lift, onLift }: { readonly side: 0 | 1; readonly li
   </div>;
 }
 
-export function OfficeRoomControls({ preset, onPreset, control, onClose, blindLift, lightsOn, automaticLight, onBlindLift, onLights, onAutomaticLight,
+export function OfficeRoomControls({ panelRef, preset, onPreset, control, onClose, blindLift, lightsOn, automaticLight, onBlindLift, onLights, onAutomaticLight,
   roomBrightness, onRoomBrightness, haloSettings, haloOn, onHaloSettings }: Props) {
-  const panel = useRef<HTMLDivElement>(null);
+  const localPanel = useRef<HTMLDivElement>(null);
+  const panel = panelRef ?? localPanel;
   useEffect(() => {
     if (control) {
       panel.current?.showPopover();

@@ -29,6 +29,8 @@ Preserve the full photo framing and apply its EXIF orientation before exporting.
 
 On 2026-09-09, all eight selected Spine Summit photos were matched to presentation ID `2c7908af25b980edbfc6df234f22a8f1`, dated 2026-02-26 in Phoenix, AZ, USA. The owner confirmed Faculty participation for this event. The collection contains seven landscape photos and one portrait photo, kept in their original framing, beginning with faculty teaching and ending with the Special Course 4 sign photo.
 
+The TV presents these eight photos as three composed slides: 1–3, 4–6 and 7–8. The first combines two landscape photographs with the portrait; the second uses one hero and two companion photographs; the final slide pairs practice with the course-sign photograph. Shared layout data in `tvPhotoGallery.ts` drives the resting screen and focused reader. Each photo can be enlarged within the TV. The manifest and original public images remain separate and unchanged; PDF decks retain their normal page sequence.
+
 ## Completed 2026 import
 
 The 2026 meeting-folder inventory on 2026-09-09 contains seven curated PDFs (107 pages) and the eight-photo Spine Summit collection:

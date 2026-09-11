@@ -205,6 +205,13 @@
   padding: 8px 14px 14px; border: 0; border-radius: 0; background: transparent; backdrop-filter: none;
   box-shadow: none; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin;
 }
+@media (min-width: 760px) {
+  .office-device-panel[data-device='room'][data-anchor-device='room'],
+  .office-device-panel[data-device='shades'][data-anchor-device='shades'],
+  .office-device-panel[data-device='halo'][data-anchor-device='halo'] {
+    inset: var(--office-control-top) auto auto var(--office-control-left);
+  }
+}
 .office-device-panel .office-device-header { margin: 0 0 8px; padding: 0 4px 0 10px; min-height: 48px; border: 1px solid var(--studio-line); border-radius: 12px; background: color-mix(in srgb,var(--studio-light) 82%,transparent); backdrop-filter: blur(5px); }
 .office-device-header strong { display: block; font-size: 11px; font-weight: 600; line-height: 1.4; }
 .office-device-header > div > span { display: block; color: var(--studio-muted); font-size: 9px; line-height: 1.4; }
@@ -287,9 +294,11 @@
 .office-approach-actions { position: fixed; right: 16px; bottom: 16px; z-index: 26; display: flex; gap: 8px; align-items: center; color: var(--studio-ink); }
 .office-approach-actions > button { min-height: 44px; padding-inline: 12px; border: 0; background: transparent; font: 400 16px/1.4 var(--studio-editorial); }
 
-.studio:is([data-selected], [data-inspecting]) .studio-stage { min-height: 0; height: 100dvh; }
+.studio:is([data-selected], [data-inspecting]) .studio-stage { min-height: 0; height: 100dvh; overflow: clip; }
 html:has(.studio:is([data-selected], [data-inspecting])),
 body:has(.studio:is([data-selected], [data-inspecting])) { overflow: clip; }
+/* Inspection surfaces set inline overflow; the body must never become their hidden scroll container. */
+body:has(.studio[data-inspecting]) { position: fixed; inset: 0; width: 100%; overflow: clip !important; }
 
 .office-overview-return { position: fixed; top: max(16px, env(safe-area-inset-top)); left: max(16px, env(safe-area-inset-left)); z-index: 90; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--studio-line); border-radius: 12px; background: var(--studio-paper); color: var(--studio-ink); font-size: 12px; cursor: pointer; }
 .office-overview-return svg { width: 18px; height: 18px; }
