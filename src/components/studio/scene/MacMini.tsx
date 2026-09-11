@@ -1,4 +1,4 @@
-import { DoubleSide } from 'three';
+import { DoubleSide, ExtrudeGeometry, InstancedMesh, MeshStandardMaterial, Object3D } from 'three';
 import { MacMiniStickers } from './MacMiniStickers';
 import { useEffect, useMemo } from 'react';
 import type { Point } from './config';
@@ -67,16 +67,36 @@ function MacMiniBase() {
       color={PALETTE.rubber} radius={0.003} roughness={0.82} metalness={0.06} />
     <FacePlate size={[0.108, 0.0062, 0.001]} position={[0, 0.0037, -0.0558]} facing="rear"
       color={PALETTE.rubber} radius={0.003} roughness={0.82} metalness={0.06} />
-    {Array.from({ length: 25 }, (_, index) => {
-      const x = -0.048 + index * 0.004;
-      return <group key={x}>
-        <FacePlate size={[0.0019, 0.0058, 0.0007]} position={[x, 0.0037, 0.0566]}
-          color={PALETTE.graphite} radius={0.00045} roughness={0.72} metalness={0.08} />
-        <FacePlate size={[0.0019, 0.0058, 0.0007]} position={[x, 0.0037, -0.0566]} facing="rear"
-          color={PALETTE.graphite} radius={0.00045} roughness={0.72} metalness={0.08} />
-      </group>;
-    })}
+    <MacMiniVentSlots />
   </group>;
+}
+
+function MacMiniVentSlots() {
+  const slots = useMemo(() => {
+    const geometry = new ExtrudeGeometry(roundedRectangle(0.0019, 0.0058, 0.00045), {
+      depth: 0.0007, bevelEnabled: false, curveSegments: 12,
+    });
+    const material = new MeshStandardMaterial({ color: PALETTE.graphite, roughness: 0.72, metalness: 0.08, side: DoubleSide });
+    const mesh = new InstancedMesh(geometry, material, 50);
+    mesh.name = 'Mac mini 50 repeated ventilation slots';
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    const transform = new Object3D();
+    for (let index = 0; index < 25; index++) {
+      for (const [face, direction] of [1, -1].entries()) {
+        transform.position.set(-0.048 + index * 0.004, 0.0037, direction * (0.0566 - 0.0007 / 2));
+        transform.rotation.y = face === 0 ? 0 : Math.PI;
+        transform.updateMatrix();
+        mesh.setMatrixAt(index * 2 + face, transform.matrix);
+      }
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingBox();
+    mesh.computeBoundingSphere();
+    return mesh;
+  }, []);
+  useEffect(() => () => { slots.geometry.dispose(); slots.material.dispose(); slots.dispose(); }, [slots]);
+  return <primitive object={slots} />;
 }
 
 function AppleMark() {

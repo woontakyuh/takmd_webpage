@@ -38,6 +38,15 @@ const ROOM_ENVIRONMENT = (
 export function StudioScene(props: StudioSceneProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [visible, setVisible] = useState(true);
+  const [coarsePointer, setCoarsePointer] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia('(pointer: coarse)');
+    const update = () => setCoarsePointer(query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+  const mobile = props.compact || coarsePointer;
   useEffect(() => {
     let inViewport = true;
     const update = () => setVisible(inViewport && !document.hidden);
@@ -55,14 +64,14 @@ export function StudioScene(props: StudioSceneProps) {
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
     <Canvas ref={canvas} frameloop={!visible || (props.paused && props.ready) ? 'never' : 'always'} camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
-      dpr={[1, props.selected === 'books' ? 2 : props.compact ? 1 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
+      dpr={[1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
       {ROOM_ENVIRONMENT}
       <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
       <hemisphereLight args={[sun.skyColor, PALETTE.walnut, 0.10 + skyFill * 0.48]} />
       <directionalLight position={[...position]} intensity={sun.sunIntensity}
-        color={sun.sunColor} castShadow shadow-mapSize={[props.compact ? 1024 : 2048, props.compact ? 1024 : 2048]}
+        color={sun.sunColor} castShadow shadow-mapSize={[mobile ? 1024 : 2048, mobile ? 1024 : 2048]}
         shadow-camera-left={-5} shadow-camera-right={5} shadow-camera-top={6} shadow-camera-bottom={-5}
         shadow-normalBias={0.018} shadow-bias={-0.0001} shadow-radius={3} />
       <directionalLight position={[4, 4, -3]} intensity={0.04 + skyFill * 0.18} color={PALETTE.paperLight} />
@@ -85,7 +94,7 @@ export function StudioScene(props: StudioSceneProps) {
       <Movable id="desk" handle={false}><Folio {...props} /></Movable>
       <Displays {...props} />
       <CameraRig {...props} reading={props.selected !== null} selected={props.focused ?? props.selected} />
-      <OfficeRenderer lighting={props.lighting} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
+      <OfficeRenderer lighting={props.lighting} mobile={mobile} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
     </Canvas>
   );
 }

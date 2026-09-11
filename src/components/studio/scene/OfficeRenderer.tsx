@@ -1,8 +1,9 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useLayoutEffect, useMemo, useRef } from 'react';
-import { Matrix4, Mesh, MeshPhysicalMaterial, Vector3 } from 'three';
+import { Frustum, Matrix4, Mesh, MeshPhysicalMaterial, Vector3 } from 'three';
 import type { BufferGeometry } from 'three';
 import type { StudioSceneProps } from '../types';
+import { DistantGlass } from './DistantGlass';
 
 type ShadowSnapshot = {
   readonly matrix: Matrix4;
@@ -10,7 +11,7 @@ type ShadowSnapshot = {
   frame: number;
 };
 
-export function OfficeRenderer({ lighting, environmentIntensity }: Pick<StudioSceneProps, 'lighting'> & { readonly environmentIntensity: number }) {
+export function OfficeRenderer({ lighting, environmentIntensity, mobile }: Pick<StudioSceneProps, 'lighting'> & { readonly environmentIntensity: number; readonly mobile: boolean }) {
   const gl = useThree(state => state.gl);
   const scene = useThree(state => state.scene);
   useLayoutEffect(() => { scene.environmentIntensity = environmentIntensity; }, [scene, environmentIntensity]);
@@ -18,6 +19,10 @@ export function OfficeRenderer({ lighting, environmentIntensity }: Pick<StudioSc
   const previousCount = useRef(0);
   const frame = useRef(0);
   const glassCenter = useMemo(() => new Vector3(), []);
+  const glass = useMemo(() => new DistantGlass(), []);
+  const frustum = useMemo(() => new Frustum(), []);
+  const projection = useMemo(() => new Matrix4(), []);
+  useLayoutEffect(() => () => glass.restore(), [glass]);
   useLayoutEffect(() => {
     const autoUpdate = gl.shadowMap.autoUpdate;
     const transmissionScale = gl.transmissionResolutionScale;
@@ -35,19 +40,24 @@ export function OfficeRenderer({ lighting, environmentIntensity }: Pick<StudioSc
     frame.current += 1;
     const currentFrame = frame.current;
     let count = 0;
-    let glassPixels = 0;
     scene.updateMatrixWorld();
+    frustum.setFromProjectionMatrix(projection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));
+    glass.beginFrame();
     scene.traverseVisible(object => {
       if (!(object instanceof Mesh)) return;
       const materials = Array.isArray(object.material) ? object.material : [object.material];
-      if (materials.some(material => material instanceof MeshPhysicalMaterial && material.transmission > 0)) {
+      if (materials.some(material => material instanceof MeshPhysicalMaterial && glass.tracks(material))) {
         if (!object.geometry.boundingSphere) object.geometry.computeBoundingSphere();
         const sphere = object.geometry.boundingSphere;
         if (sphere) {
           glassCenter.copy(sphere.center).applyMatrix4(object.matrixWorld).applyMatrix4(camera.matrixWorldInverse);
           const radius = sphere.radius * object.matrixWorld.getMaxScaleOnAxis();
-          if (glassCenter.z - radius < 0) glassPixels = Math.max(glassPixels,
-            radius * camera.projectionMatrix.elements[5] * size.height * gl.getPixelRatio() / Math.max(0.001, -glassCenter.z - radius));
+          const pixels = glassCenter.z - radius < 0 && frustum.intersectsObject(object)
+            ? radius * camera.projectionMatrix.elements[5] * size.height / Math.max(0.001, -glassCenter.z - radius) : 0;
+          materials.forEach(material => {
+            if (!(material instanceof MeshPhysicalMaterial)) return;
+            glass.observe(material, pixels);
+          });
         }
       }
       if (!object.castShadow) return;
@@ -68,6 +78,8 @@ export function OfficeRenderer({ lighting, environmentIntensity }: Pick<StudioSc
     });
     if (count !== previousCount.current) gl.shadowMap.needsUpdate = true;
     previousCount.current = count;
+    glass.update(mobile);
+    const glassPixels = glass.detailedPixels * gl.getPixelRatio();
     gl.transmissionResolutionScale = glassPixels > (gl.transmissionResolutionScale === 1 ? 96 : 112) ? 1 : 0.5;
     const autoUpdate = scene.matrixWorldAutoUpdate;
     scene.matrixWorldAutoUpdate = false;

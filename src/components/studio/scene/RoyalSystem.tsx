@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
-import { Color } from 'three';
+import { Suspense, useEffect, useMemo } from 'react';
+import { Color, CylinderGeometry, InstancedMesh, MeshStandardMaterial, Object3D, Vector3 } from 'three';
 import type { Texture } from 'three';
 import type { StudioSceneProps } from '../types';
 import { INTERIOR, PALETTE } from './config';
@@ -43,7 +43,6 @@ type ShelfProps = {
   readonly top: number;
   readonly width?: number;
   readonly wood: Texture;
-  readonly supportX?: readonly number[];
 };
 
 export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: RoyalSystemProps) {
@@ -61,15 +60,15 @@ export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: Roy
     <group name="two-connected-open-shelves-below-tv">
       {[-0.675, 0.675].map(centerX => <Shelf key={centerX} centerX={centerX} top={LOWER_SHELF_TOP}
         width={CENTER_SHELF_WIDTH} wood={wood} />)}
-      {[-1.35, 0, 1.35].map(x => <SteelHanger key={x} x={x} shelfTop={LOWER_SHELF_TOP} />)}
     </group>
 
     <group name="asymmetric-open-side-shelving">
       {LEFT_LEVELS.map(top => <Shelf key={`left-${top}`} centerX={-1.875} top={top}
-        width={SIDE_BAY_WIDTH} wood={wood} supportX={[-2.40, -1.35]} />)}
+        width={SIDE_BAY_WIDTH} wood={wood} />)}
       {RIGHT_LEVELS.map(top => <Shelf key={`right-${top}`} centerX={1.875} top={top}
-        width={SIDE_BAY_WIDTH} wood={wood} supportX={[1.35, 2.40]} />)}
+        width={SIDE_BAY_WIDTH} wood={wood} />)}
     </group>
+    <SteelHangers />
 
     <group name="personal-awards-collection">
       <Suspense fallback={null}><CertificateFrames /></Suspense>
@@ -162,27 +161,53 @@ function WallRail({ x, centerY, height, wood }: {
   </group>;
 }
 
-function Shelf({ centerX, top, width = SIDE_BAY_WIDTH, wood, supportX = [] }: ShelfProps) {
+function Shelf({ centerX, top, width = SIDE_BAY_WIDTH, wood }: ShelfProps) {
   const centerZ = WALL_FACE_Z - MOUNTING_STANDOFF - RAIL_DEPTH - SHELF_DEPTH / 2;
   return <group name={`royal-inspired-${width}m-shelf-top-${top}`}>
     <Block size={[width - 0.006, SHELF_THICKNESS, SHELF_DEPTH]}
       position={[centerX, top - SHELF_THICKNESS / 2, centerZ]}
       color={WOOD_COLOR} texture={wood} radius={0.004} roughness={0.5} />
-    {supportX.map(x => <SteelHanger key={x} x={x} shelfTop={top} />)}
   </group>;
 }
 
-function SteelHanger({ x, shelfTop }: { readonly x: number; readonly shelfTop: number }) {
-  const underside = shelfTop - SHELF_THICKNESS - 0.004;
-  const railFrontZ = WALL_FACE_Z - MOUNTING_STANDOFF - RAIL_DEPTH;
-  const backZ = railFrontZ - 0.006;
-  const frontZ = railFrontZ - SHELF_DEPTH + 0.025;
-  return <group name="slim-stainless-angled-hanger">
-    <Rod from={[x, underside, backZ]} to={[x, underside, frontZ]} radius={0.0045}
-      color={PALETTE.aluminiumEdge} metalness={1} />
-    <Rod from={[x, shelfTop + 0.145, backZ]} to={[x, underside, frontZ + 0.012]} radius={0.004}
-      color={PALETTE.aluminiumEdge} metalness={1} />
-    <Rod from={[x, shelfTop + 0.018, backZ]} to={[x, shelfTop + 0.145, backZ]} radius={0.004}
-      color={PALETTE.aluminiumEdge} metalness={1} />
-  </group>;
+function SteelHangers() {
+  const supports = useMemo(() => {
+    const hangers = [
+      ...[-1.35, 0, 1.35].map(x => ({ x, top: LOWER_SHELF_TOP })),
+      ...LEFT_LEVELS.flatMap(top => [-2.40, -1.35].map(x => ({ x, top }))),
+      ...RIGHT_LEVELS.flatMap(top => [1.35, 2.40].map(x => ({ x, top }))),
+    ];
+    const geometry = new CylinderGeometry(1, 1, 1, 16);
+    const material = new MeshStandardMaterial({ color: PALETTE.aluminiumEdge, metalness: 1, roughness: 0.48 });
+    const mesh = new InstancedMesh(geometry, material, hangers.length * 3);
+    mesh.name = 'Royal System 51 stainless hanger rods';
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    const railFrontZ = WALL_FACE_Z - MOUNTING_STANDOFF - RAIL_DEPTH;
+    const backZ = railFrontZ - 0.006, frontZ = railFrontZ - SHELF_DEPTH + 0.025;
+    const transform = new Object3D(), start = new Vector3(), end = new Vector3(), direction = new Vector3(), up = new Vector3(0, 1, 0);
+    let index = 0;
+    for (const { x, top } of hangers) {
+      const underside = top - SHELF_THICKNESS - 0.004;
+      const rods = [
+        [underside, backZ, underside, frontZ, 0.0045],
+        [top + 0.145, backZ, underside, frontZ + 0.012, 0.004],
+        [top + 0.018, backZ, top + 0.145, backZ, 0.004],
+      ] as const;
+      for (const [fromY, fromZ, toY, toZ, radius] of rods) {
+        start.set(x, fromY, fromZ); end.set(x, toY, toZ); direction.subVectors(end, start);
+        transform.position.copy(start).add(end).multiplyScalar(0.5);
+        transform.scale.set(radius, direction.length(), radius);
+        transform.quaternion.setFromUnitVectors(up, direction.normalize());
+        transform.updateMatrix();
+        mesh.setMatrixAt(index++, transform.matrix);
+      }
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingBox();
+    mesh.computeBoundingSphere();
+    return mesh;
+  }, []);
+  useEffect(() => () => { supports.geometry.dispose(); supports.material.dispose(); supports.dispose(); }, [supports]);
+  return <primitive object={supports} />;
 }
