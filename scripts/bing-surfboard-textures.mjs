@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import { BING_BOARD } from './bing-surfboard-geometry.mjs';
+import { BING_BOARD, boardSurface } from './bing-surfboard-geometry.mjs';
 
 const WIDTH=512, HEIGHT=2048;
 const clamp=(x)=>Math.max(0,Math.min(1,x));
@@ -36,8 +36,17 @@ function surfaceMaps(deck) {
     const i=(y*WIDTH+x)*3, u=(x-WIDTH/2)/(WIDTH/2);
     const wax=deck?waxAt(x,y):0;
     const grain=(noise(x,y)-.5)*1.5;
-    const rail=clamp((Math.abs(u)-.78)/.22);
-    const tint=[219-rail*13+grain,159-rail*19+grain,22-rail*8+grain];
+    const t=1-y/(HEIGHT-1), halfWidth=boardSurface(t,Math.PI/2,1).x;
+    const physicalX=Math.abs(u)*BING_BOARD.width/2;
+    const inset=halfWidth-physicalX;
+    const lap=clamp((.045-inset)/.002);
+    const rail=clamp((.017-inset)/.003);
+    const across=u*BING_BOARD.width/2/.25;
+    const leftLap=clamp((.21+.08*across-.04*across*across-t)/.001);
+    const rightLap=clamp((.21-.08*across-.04*across*across-t)/.001);
+    const cap=clamp((.71-.055*(physicalX/Math.max(.001,halfWidth))**1.3-t)/.0015);
+    const layers=deck?cap:leftLap+rightLap;
+    const tint=[219-lap*15-rail*20-layers*13+grain,159-lap*18-rail*17-layers*12+grain,22-lap*3-rail*5-layers*3+grain];
     const stringer=Math.abs((x+.5)-WIDTH/2)<WIDTH*.008/BING_BOARD.width/2;
     for(let c=0;c<3;c++) {
       const substrate=stringer?[91,59,30][c]+(noise(x,y)-.5)*13:tint[c];
@@ -52,7 +61,7 @@ function surfaceMaps(deck) {
   return {color,orm,normal};
 }
 
-export async function createBingTextures(sourceDirectory) {
+export async function createBingTextures(sourceDirectory,finReference) {
   const directory=await mkdtemp(join(tmpdir(),'bing-artwork-'));
   try {
     const converted=join(directory,'source.png');
@@ -74,6 +83,7 @@ export async function createBingTextures(sourceDirectory) {
       images.push({name:`bing-${side}-color`,bytes:color},{name:`bing-${side}-surface`,bytes:orm});
       if(side==='deck') images.push({name:'bing-deck-wax-normal',bytes:await sharp(maps.normal,{raw:{width:WIDTH,height:HEIGHT,channels:3}}).webp({lossless:true,effort:5}).toBuffer()});
     }
+    if(finReference) images.push({name:'bing-anniversary-fin-photo',bytes:await sharp(finReference).webp({quality:92,effort:5}).toBuffer()});
     return {images,artwork:{bing,badge},source:await readFile(join(sourceDirectory,'IMG_0981.heic'))};
   } finally { await rm(directory,{recursive:true,force:true}); }
 }

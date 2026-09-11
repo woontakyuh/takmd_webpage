@@ -1,7 +1,7 @@
-import { BoxGeometry, BufferGeometry, CylinderGeometry, ExtrudeGeometry, Float32BufferAttribute, Matrix4, Shape, Vector3 } from 'three';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { BoxGeometry, BufferGeometry, CylinderGeometry, Float32BufferAttribute, Vector3 } from 'three';
+import { anniversaryFin } from './bing-anniversary-fin.mjs';
 
-export const BING_BOARD = { length: 2.8956, width: 0.582, thickness: 0.076 };
+export const BING_BOARD = { length: 2.8956, width: 23.25 * .0254, thickness: 3 * .0254 };
 const OUTLINE = [[0, .095], [.008, .108], [.025, .127], [.06, .163], [.12, .207], [.23, .254],
   [.38, .283], [.52, .291], [.67, .287], [.79, .27], [.88, .239], [.94, .193], [.975, .138], [.993, .074], [1, 0]];
 const THICKNESS = [[0, .025], [.035, .044], [.14, .065], [.35, .076], [.62, .073], [.82, .059], [.94, .041], [.99, .015], [1, .001]];
@@ -21,8 +21,8 @@ export function boardSurface(t, angle, side) {
   const width = t>.993 ? .074*Math.sqrt(Math.max(0,(1-t)/.007)) : Math.max(0, smoothProfile(OUTLINE, t));
   const thickness = Math.max(.001, smoothProfile(THICKNESS, t));
   const rocker = -.055*t**7 - .028*(1-t)**5;
-  return new Vector3(width * Math.sin(angle), (t-.5)*BING_BOARD.length,
-    rocker + side*thickness/2*Math.max(0, Math.cos(angle))**.55);
+  return new Vector3(width * (BING_BOARD.width / .582) * Math.sin(angle), (t-.5)*BING_BOARD.length,
+    rocker + side*thickness*(BING_BOARD.thickness/.076)/2*Math.max(0, Math.cos(angle))**.55);
 }
 
 function boardFace(side) {
@@ -62,29 +62,26 @@ function tailCap() {
   const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(positions,3));g.setIndex(indices);g.computeVertexNormals();return g;
 }
 
-function fin() {
-  const shape=new Shape();
-  shape.moveTo(.17,0); shape.lineTo(.465,0);
-  shape.bezierCurveTo(.45,.085,.285,.219,.09,.256);
-  shape.bezierCurveTo(.072,.26,.076,.245,.088,.23);
-  shape.bezierCurveTo(.151,.156,.19,.057,.17,0);
-  const geometry=new ExtrudeGeometry(shape,{depth:.006,bevelEnabled:true,bevelSize:.0014,
-    bevelThickness:.0015,bevelSegments:3,curveSegments:24,steps:1});
-  geometry.translate(0,0,-.003);
-  geometry.applyMatrix4(new Matrix4().set(0,0,1,0, 1,0,0,-BING_BOARD.length/2, 0,1,0,.018, 0,0,0,1));
+function seatOnBottom(geometry) {
+  const vertices=geometry.getAttribute('position');
+  for(let i=0;i<vertices.count;i++) {
+    const t=vertices.getY(i)/BING_BOARD.length+.5;
+    vertices.setZ(i,vertices.getZ(i)+boardSurface(t,0,1).z);
+  }
+  geometry.computeVertexNormals(); geometry.computeBoundingBox();
   return geometry;
 }
 
 export function buildBingGeometry() {
-  const box=new RoundedBoxGeometry(.018,.32,.008,3,.003);
-  box.translate(0,-BING_BOARD.length/2+.31,.016);
-  const slot=new BoxGeometry(.009,.294,.008);slot.translate(0,-BING_BOARD.length/2+.315,.019);
-  const screw=new CylinderGeometry(.0034,.0034,.002,16);screw.rotateX(Math.PI/2);screw.translate(0,-BING_BOARD.length/2+.475,.024);
+  const box=new BoxGeometry(.018,.32,.008,1,32,1);
+  box.translate(0,-BING_BOARD.length/2+.31,-.0034); seatOnBottom(box);
+  const slot=new BoxGeometry(.010,.294,.008,1,32,1);slot.translate(0,-BING_BOARD.length/2+.315,-.0031); seatOnBottom(slot);
+  const screw=new CylinderGeometry(.0034,.0034,.002,16);screw.rotateX(Math.PI/2);screw.translate(0,-BING_BOARD.length/2+.2705,.0037); seatOnBottom(screw);
   return [
     {name:'Amber resin bottom with original Bing and 60 artwork',geometry:boardFace(1),material:'bottom'},
     {name:'Waxed deck with original Bing artwork',geometry:boardFace(-1),material:'deck'},
     {name:'Rounded amber tail edge',geometry:tailCap(),material:'rail'},
-    {name:'Single pale translucent swept fin',geometry:fin(),material:'fin'},
+    {name:'Bing 60th anniversary 9.5 inch fiberglass fin',geometry:seatOnBottom(anniversaryFin(BING_BOARD.length)),material:'fin'},
     {name:'Recessed dark single fin box',geometry:box,material:'box'},
     {name:'Single fin box opening',geometry:slot,material:'slot'},
     {name:'Fin box mounting screw',geometry:screw,material:'screw'},

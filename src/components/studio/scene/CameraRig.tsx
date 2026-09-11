@@ -13,6 +13,7 @@ import { useSceneInspection } from './SceneInspection';
 import { monitorReadingPose, monitorReadingFov } from './monitorReading';
 import { isSceneKeyboardEvent, panCameraWithArrow } from './cameraKeyboard';
 import { awardPairReadingFov, awardPairReadingLayout } from './awardPairReading';
+import { surfboardReadingLayout, surfboardReadingPose } from './surfboardReading';
 
 type CameraRigProps = Pick<StudioSceneProps,
   'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit' | 'paused' | 'ready'> & { readonly reading: boolean };
@@ -54,10 +55,10 @@ function clearOrbitMomentum(camera: Camera, orbit: OrbitControlsImpl): void {
   orbit.enableDamping = damping;
 }
 
-function applyOrbitLimits(orbit: OrbitControlsImpl, focused: boolean): void {
+function applyOrbitLimits(orbit: OrbitControlsImpl, focused: boolean, surfing = false): void {
   const limits = focused ? FOCUSED_ORBIT_LIMITS : FREE_ORBIT_LIMITS;
   orbit.minDistance = limits.minDistance;
-  orbit.maxDistance = limits.maxDistance;
+  orbit.maxDistance = surfing ? FREE_ORBIT_LIMITS.maxDistance : limits.maxDistance;
   orbit.minPolarAngle = limits.minPolarAngle;
   orbit.maxPolarAngle = limits.maxPolarAngle;
 }
@@ -96,7 +97,8 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   const objectReturnPose = useRef<SavedPose | null>(null);
   const previousObject = useRef(inspection);
   const focusPose = useCallback(() => moveFocus(selected === 'ai' ? monitorReadingPose()
-    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout]);
+    : selected === 'surfing' ? surfboardReadingPose(size.width, size.height)
+    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height]);
   const activeView = useRef<0 | 1 | 2>(viewCommand.view);
   const lastViewSequence = useRef(viewCommand.sequence);
   const previousSelected = useRef(selected);
@@ -139,10 +141,10 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     camera.position.copy(value.position);
     orbit.target.copy(value.target);
     if (camera instanceof PerspectiveCamera) { camera.fov = targetFov.current; camera.updateProjectionMatrix(); }
-    if (value.kind === 'focus') applyOrbitLimits(orbit, true);
+    if (value.kind === 'focus') applyOrbitLimits(orbit, true, selected === 'surfing');
     if (screenFocused) orbit.maxPolarAngle = Math.PI;
     if (value.kind === 'return') applyOrbitLimits(orbit, false);
-    if (value.kind === 'inspect' || value.kind === 'restore-inspection' || value.kind === 'object' || value.kind === 'restore-object') applyOrbitLimits(orbit, selected !== null);
+    if (value.kind === 'inspect' || value.kind === 'restore-inspection' || value.kind === 'object' || value.kind === 'restore-object') applyOrbitLimits(orbit, selected !== null, selected === 'surfing');
     orbit.update();
     transition.current = null;
     if (value.kind === 'return') savedFreePose.current = null;
@@ -373,6 +375,12 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     }
     if (selected === 'award-photo') {
       camera.setViewOffset(size.width, size.height, 0, awardPairReadingLayout(size.width, size.height).offsetY, size.width, size.height);
+      camera.updateProjectionMatrix();
+      return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
+    }
+    if (selected === 'surfing') {
+      const story = surfboardReadingLayout(size.width, size.height);
+      camera.setViewOffset(size.width, size.height, story.offsetX, story.offsetY, size.width, size.height);
       camera.updateProjectionMatrix();
       return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
     }

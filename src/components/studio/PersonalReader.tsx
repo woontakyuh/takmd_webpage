@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 import bjjData from '../../data/bjj-public.json';
 import { PERSONAL_LINKS, personalInterests } from './personal';
 import type { PersonalInterest } from './personal';
+import { SurfboardPurchasePhoto } from './SurfboardStory';
 import './office-details.css';
 
 function TrainingRecord() {
@@ -35,6 +36,7 @@ export function PersonalReader({ interest }: { readonly interest: PersonalIntere
     <p className="studio-panel-intro">{content.introduction}</p>
     <div className="studio-editorial-note"><span>In the room</span><h3>{content.object}</h3><p>{content.description}</p></div>
     {interest === 'bjj' && <TrainingRecord />}
+    {interest === 'surfing' && <SurfboardPurchasePhoto />}
     <a className="studio-text-link" href={PERSONAL_LINKS.instagram} target="_blank" rel="noreferrer">Instagram · @tak_md ↗</a>
     <a className="studio-panel-footer" href={`${PERSONAL_LINKS.email}?subject=${encodeURIComponent(content.emailSubject)}`}>Say hello by email<span aria-hidden="true">↗</span></a>
     <a className="studio-panel-footer" href={other.route}>{other.title}<span aria-hidden="true">→</span></a>

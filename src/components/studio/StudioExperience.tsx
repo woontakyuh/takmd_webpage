@@ -15,6 +15,7 @@ import { LoadingMonitorReader } from './LoadingMonitorReader';
 import { PERSONAL_BOOKS, personalBook, type PersonalBookId } from './personalBooks';
 import { bookPageAfter } from './personalBookInteraction';
 import { PhotoFrameInfo } from './PhotoFrameInfo';
+import { SurfboardStory } from './SurfboardStory';
 import { VisitorCount } from './VisitorCount';
 import { OfficePoster, SceneBoundary } from './OfficePoster';
 import { PHOTO_MEMORIES, selectFamilyPhoto, type PhotoMemory } from './photoMemories';
@@ -162,7 +163,7 @@ function OfficeExperience(content: StudioContent) {
   const approach = (id: ExhibitId) => {
     if (arrangement.editing) return;
     if (id === 'award') openAwardPhoto();
-    else if (id === 'ai' || id === 'family' || id === 'award-photo' || (id === 'education' && talkId !== null) || navigation.current.current.focused === id) open(id);
+    else if (id === 'ai' || id === 'family' || id === 'award-photo' || id === 'surfing' || (id === 'education' && talkId !== null) || navigation.current.current.focused === id) open(id);
     else { setExplored(true); navigation.go({ focused: id, selected: null, details: null }); }
   };
   const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(-1); open('books'); };
@@ -258,6 +259,7 @@ function OfficeExperience(content: StudioContent) {
           : <button className="office-secret-trigger" id="studio-exhibit-award" onClick={openAwardPhoto}>Inspect the gold award</button>}
         <button className="office-secret-trigger" id="studio-exhibit-award-photo" onClick={openAwardPhoto}>View the KOSESS award photograph</button>
         <a className="office-secret-trigger" href={PERSONAL_LINKS.hospital} target="_blank" rel="noopener noreferrer">Davos Hospital · physician coat (opens in a new tab)</a>
+        <button className="office-secret-trigger" id="studio-exhibit-surfing" onClick={() => open('surfing')}>Explore the Bing Beacon surfboard</button>
       </div>
       <header className="studio-header">
         <a className="studio-brand" href="/" aria-label="TakMD home"><span className="studio-brand-mark" aria-hidden="true">t.</span><div><h1>Woon Tak Yuh<span>, MD.</span></h1><span className="studio-brand-caption">Endoscopic spine surgery · Research · Teaching</span></div></a>
@@ -309,10 +311,11 @@ function OfficeExperience(content: StudioContent) {
     </section>
     <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/knowledge">Knowledge</a><a href="/media">Media</a><a href="/credits">Scene credits</a><VisitorCount /></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href="/education#overview">Education<small>Workshops & training</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
     {showOverviewReturn && <button className="office-overview-return" onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>}
-    <ReadingPanel {...content} detailsPath={details} selected={details ? null : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
+    <ReadingPanel {...content} detailsPath={details} selected={details ? null : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' || selected === 'surfing' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
     {zoomed && <div className="office-approach-actions"><button className="studio-icon-button" onClick={() => window.dispatchEvent(new Event('office:zoom-close'))} aria-label="Return from closer view"><OfficeIcon name="close" /></button></div>}
     {!zoomed && !selected && focused && !details && <div className="office-approach-actions"><button className="studio-icon-button" onClick={close} aria-label="Return to previous office view"><OfficeIcon name="close" /></button><button onClick={() => open(focused)}>Open {focused === 'ai' ? 'monitor' : focused === 'education' ? 'TV' : 'object'}</button></div>}
     {(selected === 'family' || selected === 'award-photo') && <PhotoFrameInfo memory={selected === 'family' ? familyPhoto : PHOTO_MEMORIES['kosess-award']} variant={selected === 'award-photo' ? 'award-pair' : 'frame'} onClose={close} />}
+    {ready && selected === 'surfing' && !details && !inspection && <SurfboardStory onClose={close} />}
     {(selected === 'books' || selected === 'bookshelf') && <BookReader selectedBook={selectedBook} pageIndex={bookPageIndex} browsingShelf={selected === 'bookshelf'} onBookSelect={selectBook} onPageChange={setBookPageIndex} onClose={close} />}
     {memory && <MemoryPhoto memory={memory} onClose={() => setMemory(null)} />}
   </div>;

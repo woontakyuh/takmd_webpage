@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test';
 import { viewAfterSceneInspection } from './officeDetailState.ts';
 
 describe('one active office detail', () => {
-  for (const selected of ['family', 'award-photo', 'books', 'research', 'education']) {
+  for (const selected of ['family', 'award-photo', 'books', 'research', 'education', 'surfing']) {
     it(`Given ${selected} is open, when another scene object is inspected, then the old reader and focus are released`, () => {
       const view = { selected, focused: selected, details: null };
       const next = viewAfterSceneInspection(view, null, 'conference-calendar');

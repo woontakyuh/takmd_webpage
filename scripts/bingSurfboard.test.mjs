@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { Box3, Euler, Matrix4, Vector3 } from 'three';
+import { anniversaryFin } from './bing-anniversary-fin.mjs';
 import { BING_BOARD, boardSurface, buildBingGeometry } from './bing-surfboard-geometry.mjs';
 
 describe('photograph-derived Bing surfboard',()=>{
@@ -14,6 +15,39 @@ describe('photograph-derived Bing surfboard',()=>{
     // Then: the length stays exact and no seam opens between the separately textured faces.
     expect(bounds.max.y-bounds.min.y).toBeCloseTo(2.8956,5);
     expect(Math.max(...gaps)).toBeLessThan(.000001);
+    parts.forEach(p=>p.geometry.dispose());
+  });
+  test('gives the fin a rounded full foil that remains substantial halfway to the tip',()=>{
+    const g=anniversaryFin(BING_BOARD.length),p=g.getAttribute('position');
+    const sections=[0,.5].map(h=>{
+      const points=[];
+      for(let i=0;i<p.count;i++)if(Math.abs(p.getZ(i)-h*9.5*.0254)<.00001)points.push({x:p.getX(i),y:p.getY(i)});
+      const width=Math.max(...points.map(v=>v.x))-Math.min(...points.map(v=>v.x));
+      const maxX=Math.max(...points.map(v=>v.x));
+      const thickest=points.find(v=>v.x===maxX);
+      const front=Math.max(...points.map(v=>v.y)),back=Math.min(...points.map(v=>v.y));
+      return {width,chordFraction:(front-thickest.y)/(front-back)};
+    });
+    expect(sections[0].width).toBeGreaterThan(.009);
+    expect(sections[0].width).toBeLessThan(.010);
+    expect(sections[1].width).toBeGreaterThan(.007);
+    expect(sections[0].chordFraction).toBeGreaterThan(.2);
+    expect(sections[0].chordFraction).toBeLessThan(.4);
+    g.dispose();
+  });
+  test('seats the box on the curved bottom and fastens the fin at its actual base',()=>{
+    const parts=buildBingGeometry();
+    const box=parts.find(p=>p.material==='box').geometry.getAttribute('position');
+    const surfaceOffsets=[];
+    for(let i=0;i<box.count;i++)surfaceOffsets.push(box.getZ(i)-boardSurface(box.getY(i)/BING_BOARD.length+.5,0,1).z);
+    expect(Math.max(...surfaceOffsets)).toBeCloseTo(.0006,5);
+    expect(Math.min(...surfaceOffsets)).toBeLessThan(-.006);
+    const screw=parts.find(p=>p.material==='screw').geometry;
+    screw.computeBoundingBox();
+    const center=screw.boundingBox.getCenter(new Vector3());
+    const trailingRoot=.278842;
+    expect(trailingRoot-(center.y+BING_BOARD.length/2)).toBeGreaterThan(.005);
+    expect(trailingRoot-(center.y+BING_BOARD.length/2)).toBeLessThan(.012);
     parts.forEach(p=>p.geometry.dispose());
   });
   test('keeps the complete board and fin inside the existing wall corner and above the floor',()=>{
@@ -43,7 +77,8 @@ describe('photograph-derived Bing surfboard',()=>{
     expect(bytes.readUInt32LE(8)).toBe(bytes.length);
     expect(json.materials.every(m=>!m.emissiveTexture&&!m.emissiveFactor)).toBe(true);
     expect(json.materials.filter(m=>m.extensions?.KHR_materials_transmission)).toHaveLength(1);
-    expect(json.images).toHaveLength(5);
+    expect(json.images).toHaveLength(6);
+    expect(json.extras.finHeightInches).toBe(9.5);
     expect(json.extras.lengthMetres).toBe(BING_BOARD.length);
     expect(json.bufferViews.every(v=>v.byteOffset+v.byteLength<=json.buffers[0].byteLength)).toBe(true);
   });

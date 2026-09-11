@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { personalInterests } from './studio/personal';
+import { SurfboardPurchasePhoto } from './studio/SurfboardStory';
 import type { PersonalInterest } from './studio/personal';
 
 interface Props { readonly interest: PersonalInterest }
@@ -20,6 +21,7 @@ const email = `mailto:woontak.yuh@gmail.com?subject=${encodeURIComponent(content
       <p class="eyebrow">An object in the office</p>
       <div><h2 id="personal-object-title">{content.object}</h2><p>{content.description}</p></div>
     </section>
+    {interest === 'surfing' && <div class="personal-purchase"><SurfboardPurchasePhoto /></div>}
     <nav class="personal-links" aria-label="Personal links">
       <a href="https://instagram.com/takmd" target="_blank" rel="noreferrer"><span>Personal profile</span><strong>Instagram · @takmd</strong><span aria-hidden="true">↗</span></a>
       <a href={email}><span>Get in touch</span><strong>Say hello by email</strong><span aria-hidden="true">↗</span></a>
@@ -37,6 +39,7 @@ const email = `mailto:woontak.yuh@gmail.com?subject=${encodeURIComponent(content
   .personal-object h2 { margin: 0 0 16px; font-size: 24px; letter-spacing: -.025em; }
   .personal-object p:not(.eyebrow) { max-width: 40rem; line-height: 1.75; color: var(--color-text-secondary); }
   .personal-links { margin-top: 24px; }
+  .personal-purchase { max-width: 420px; margin-block: 24px; }
   .personal-links a { display: grid; grid-template-columns: 1fr 2fr auto; align-items: center; gap: 32px; min-height: 80px; border-top: 1px solid var(--color-border); padding-block: 20px; }
   .personal-links a > span:first-child { font-size: 12px; color: var(--color-text-secondary); }
   .personal-links strong { font-weight: 500; }

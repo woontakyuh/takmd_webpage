@@ -1,0 +1,26 @@
+.surfboard-story {
+  visibility: hidden; position: fixed; inset: 0 auto auto 0; z-index: 40; margin: 0; padding: 0;
+  border: 0; border-radius: 0; background: transparent; box-shadow: none;
+}
+.surfboard-story h2 { padding-right: 44px; }
+.surfboard-story-close {
+  position: absolute; top: 0; right: 0; display: grid; place-items: center;
+  width: 44px; height: 44px; padding: 0; border: 0; color: inherit; background: transparent;
+}
+.surfboard-story-close svg { width: 18px; height: 18px; }
+.surfboard-story-close:hover { opacity: .65; }
+.surfboard-story-memory { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 16px; margin-top: 20px; }
+.surfboard-story-memory > p { margin: 0; }
+.surfboard-purchase-photo { margin: 0; }
+.surfboard-purchase-photo img { display: block; width: 100%; height: auto; }
+.surfboard-purchase-photo figcaption { margin-top: 8px; color: var(--studio-muted); font: 400 12px/1.5 var(--studio-editorial); }
+.personal-reader > .surfboard-purchase-photo { max-width: 360px; margin-block: 24px; }
+.studio[data-selected='surfing'] .studio-header,
+.studio[data-selected='surfing'] .studio-stage > .studio-tools { visibility: hidden; pointer-events: none; }
+@media (max-width: 759px), (orientation: portrait) {
+  .surfboard-story-memory { margin-top: 12px; }
+  .surfboard-story .surfboard-purchase-photo { display: contents; }
+  .surfboard-story .surfboard-purchase-photo img { grid-column: 1; grid-row: 1 / 3; }
+  .surfboard-story .surfboard-purchase-photo figcaption { grid-column: 2; grid-row: 2; margin: 0; }
+  .surfboard-story-memory > p { grid-column: 2; grid-row: 1; }
+}
