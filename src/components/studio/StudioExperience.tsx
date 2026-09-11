@@ -37,6 +37,7 @@ const exhibits = [
   { id: 'research', label: 'Research', detail: 'Papers & ideas' },
   { id: 'education', label: 'Talks', detail: 'Conferences & lectures' },
 ] as const satisfies readonly { readonly id: ExhibitId; readonly label: string; readonly detail: string }[];
+const showCollectionTabs = false;
 const socialLinks = [
   { label: 'Email', detail: 'woontak.yuh@gmail.com', href: PERSONAL_LINKS.email },
   { label: 'YouTube', detail: '@tak_md · Shorts', href: PERSONAL_LINKS.youtube },
@@ -163,7 +164,7 @@ function OfficeExperience(content: StudioContent) {
   const approach = (id: ExhibitId) => {
     if (arrangement.editing) return;
     if (id === 'award') openAwardPhoto();
-    else if (id === 'ai' || id === 'family' || id === 'award-photo' || id === 'surfing' || (id === 'education' && talkId !== null) || navigation.current.current.focused === id) open(id);
+    else if (id === 'ai' || id === 'education' || id === 'family' || id === 'award-photo' || id === 'surfing' || navigation.current.current.focused === id) open(id);
     else { setExplored(true); navigation.go({ focused: id, selected: null, details: null }); }
   };
   const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(-1); open('books'); };
@@ -260,6 +261,8 @@ function OfficeExperience(content: StudioContent) {
         <button className="office-secret-trigger" id="studio-exhibit-award-photo" onClick={openAwardPhoto}>View the KOSESS award photograph</button>
         <a className="office-secret-trigger" href={PERSONAL_LINKS.hospital} target="_blank" rel="noopener noreferrer">Davos Hospital · physician coat (opens in a new tab)</a>
         <button className="office-secret-trigger" id="studio-exhibit-surfing" onClick={() => open('surfing')}>Explore the Bing Beacon surfboard</button>
+        {!showCollectionTabs && exhibits.map(item => <button className="office-secret-trigger" id={`studio-exhibit-${item.id}`} key={item.id} onClick={() => item.id === 'ai' && (!ready || sceneFailed) ? openLoadingProfile() : open(item.id)}>{item.label}: {item.detail}</button>)}
+        {!showCollectionTabs && <button className="office-secret-trigger" id="studio-exhibit-projects" onClick={() => open('projects')}>AI projects</button>}
       </div>
       <header className="studio-header">
         <a className="studio-brand" href="/" aria-label="TakMD home"><span className="studio-brand-mark" aria-hidden="true">t.</span><div><h1>Woon Tak Yuh<span>, MD.</span></h1><span className="studio-brand-caption">Endoscopic spine surgery · Research · Teaching</span></div></a>
@@ -288,7 +291,7 @@ function OfficeExperience(content: StudioContent) {
         </div>
         <footer className="studio-stage-footer">
         <OfficeHelp ready={ready} explored={explored} compact={compact} onControl={setRoomControl} />
-        <div className="studio-collection">
+        {showCollectionTabs && <div className="studio-collection">
           <p id="office-collection-hint" className="office-collection-hint">Swipe to browse all seven <span aria-hidden="true">→</span></p>
           <nav className="studio-exhibits" aria-label="Office collection" aria-describedby="office-collection-hint">
             {exhibits.map(item => <button className="studio-exhibit" id={`studio-exhibit-${item.id}`} key={item.id} aria-label={`${item.label}: ${item.detail}`} aria-pressed={selected === item.id} onClick={() => item.id === 'ai' && (!ready || sceneFailed) ? openLoadingProfile() : open(item.id)}><OfficeIcon name={item.id === 'ai' ? 'cv' : item.id} /><span>{item.label}<small>{item.detail}</small></span></button>)}
@@ -300,7 +303,7 @@ function OfficeExperience(content: StudioContent) {
             <div className="office-social-heading"><span>Connect</span><button popoverTarget="office-social-links" popoverTargetAction="hide" aria-label="Close Connect links"><OfficeIcon name="close" /></button></div>
             {socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer"><span>{link.label}<small>{link.detail}</small></span><span aria-hidden="true">↗</span></a>)}
           </div>
-        </div>
+        </div>}
         <a className="office-index" href="#office-reading">Browse the work <span aria-hidden="true">↓</span></a>
         </footer>
       </div>

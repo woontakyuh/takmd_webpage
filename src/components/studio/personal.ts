@@ -14,10 +14,10 @@ export const SURFBOARD_STORY = {
   dateTime: '2019-09-30',
   dateLabel: '30 September 2019',
   place: 'Encinitas, California',
-  description: 'I picked up this 9′6″, 60th-anniversary Bing Beacon at the Bing factory in Encinitas on 30 September 2019.',
-  caption: 'At the factory with the owner, the shaper’s wife.',
+  description: 'Picked up at the Bing factory on 30 September 2019. A 9′6″ Beacon, made for Bing’s 60th anniversary.',
+  caption: 'Picking up my Beacon at the Bing factory.',
   photo: '/images/surfing/bing-factory-2019.webp',
-  photoAlt: 'Woon Tak Yuh and the factory owner shaking hands beside his amber Bing Beacon surfboard at the Bing factory in Encinitas.',
+  photoAlt: 'A handshake beside the amber Bing Beacon surfboard during pickup at the Bing factory in Encinitas.',
   photoWidth: 900,
   photoHeight: 1200,
 } as const;

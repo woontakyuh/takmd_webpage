@@ -21,7 +21,7 @@ export function SurfboardStory({ onClose }: { readonly onClose: () => void }) {
     const place = () => {
       const layout = surfboardReadingLayout(window.innerWidth, window.innerHeight);
       element.style.width = `${layout.copyWidth}px`;
-      element.style.maxHeight = `${layout.copyHeight}px`;
+      element.style.maxHeight = `${layout.placement === 'bottom' ? layout.copyHeight : window.innerHeight - 144}px`;
     };
     place();
     element.show();
@@ -42,9 +42,8 @@ export function SurfboardStory({ onClose }: { readonly onClose: () => void }) {
   return <dialog ref={dialog} className="collection-inspection-copy surfboard-story" aria-labelledby="surfboard-story-title"
     aria-modal="false" lang="en" onCancel={event => { event.preventDefault(); onClose(); }}>
     <button type="button" className="surfboard-story-close" onClick={onClose} aria-label="Close surfing story"><OfficeIcon name="close" /></button>
-    <p className="collection-inspection-label">{SURFBOARD_STORY.edition}</p>
-    <h2 id="surfboard-story-title">{SURFBOARD_STORY.title}</h2>
-    <p className="collection-inspection-date"><time dateTime={SURFBOARD_STORY.dateTime}>{SURFBOARD_STORY.dateLabel}</time> · {SURFBOARD_STORY.place}</p>
-    <div className="surfboard-story-memory"><SurfboardPurchasePhoto /><p>{SURFBOARD_STORY.description}</p></div>
+    <p className="collection-inspection-label">{SURFBOARD_STORY.title}</p>
+    <h2 id="surfboard-story-title"><time dateTime={SURFBOARD_STORY.dateTime}>Encinitas, 2019</time></h2>
+    <div className="surfboard-story-memory"><p>{SURFBOARD_STORY.description}</p><SurfboardPurchasePhoto /></div>
   </dialog>;
 }

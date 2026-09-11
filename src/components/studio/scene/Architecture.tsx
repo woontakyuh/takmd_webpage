@@ -48,8 +48,6 @@ export function Architecture({ night, sky, blindLift, reducedMotion }: Architect
       <MicrocementFloor />
       <CutawayWall axis="z" boundary={farZ - 0.08} direction={-1}>
         <PlasterWall {...FAR_WALL} axis="z" surface={plaster} />
-        <Block size={[width, 0.13, 0.12]} position={[0, 0.075, farZ - 0.05]}
-          color={INTERIOR.plaster} radius={0.005} />
         <Block size={[width, 0.075, 0.22]} position={[0, height - 0.035, farZ - 0.06]}
           color={INTERIOR.ivory} radius={0.004} />
         <Block size={[width, 0.05, 0.13]} position={[0, height - 0.097, farZ - 0.03]}
@@ -57,7 +55,6 @@ export function Architecture({ night, sky, blindLift, reducedMotion }: Architect
       </CutawayWall>
       <CutawayWall axis="x" boundary={leftX + 0.08}>
         {LEFT_WALLS.map((wall, index) => <PlasterWall key={index} {...wall} axis="x" surface={plaster} />)}
-        <Block size={[0.12, 0.13, depth]} position={[leftX + 0.04, 0.075, 0]} color={INTERIOR.plaster} radius={0.005} />
         <Block size={[0.22, 0.075, depth]} position={[leftX + 0.05, height - 0.035, 0]} color={INTERIOR.ivory} radius={0.004} />
         <Block size={[0.13, 0.05, depth]} position={[leftX + 0.03, height - 0.097, 0]} color={INTERIOR.plaster} radius={0.004} />
         <WindowBay night={night} sky={sky} blindLift={blindLift} reducedMotion={reducedMotion} />
