@@ -1,7 +1,6 @@
 import { BoxGeometry, BufferGeometry, Float32BufferAttribute, Shape } from 'three';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 
-export const ANNIVERSARY_FIN = { height: 9.5 * .0254, rootThickness: .0092, imageWidth: 1080, imageHeight: 1440 };
 const BASE = [.8659, -.5003], ORIGIN = [439, 1282];
 
 function photoOutline() {
@@ -20,17 +19,6 @@ function photoOutline() {
   });
 }
 
-function flexOutline() {
-  const s=new Shape();s.moveTo(296,-1344);
-  s.bezierCurveTo(420,-1190,543,-881,785,-708);
-  s.bezierCurveTo(920,-595,1083,-535,1146,-562);
-  s.bezierCurveTo(1189,-578,1149,-631,1086,-673);
-  s.bezierCurveTo(883,-817,799,-971,806,-1139);
-  s.bezierCurveTo(807,-1222,844,-1306,888,-1344);
-  s.lineTo(296,-1344);
-  return s.getPoints(80).map(p=>({x:p.x-296,y:p.y+1344}));
-}
-
 function section(points,height) {
   const hits=[];
   for(let i=0;i<points.length-1;i++) {
@@ -40,9 +28,18 @@ function section(points,height) {
   return [Math.min(...hits),Math.max(...hits)];
 }
 
+const referenceOutline=photoOutline();
+const referenceHeight=Math.max(...referenceOutline.map(p=>p.y));
+const rootBounds=section(referenceOutline,referenceHeight*.0001);
+const rootCenter=(rootBounds[0]+rootBounds[1])/2;
+const displayScale=1.1, height=9.5*.0254*displayScale, boxCenterFromTail=.31;
+const rootChord=(rootBounds[1]-rootBounds[0])/referenceHeight*height;
+export const ANNIVERSARY_FIN = { displayScale, height, rootThickness: .0092*displayScale, boxCenterFromTail,
+  fixingFromTail: boxCenterFromTail-rootChord/2-.0085*displayScale, imageWidth: 1080, imageHeight: 1440 };
+
 export function anniversaryFin(boardLength) {
-  const outline=flexOutline(),photo=photoOutline();
-  const maxHeight=Math.max(...outline.map(p=>p.y)),photoHeight=Math.max(...photo.map(p=>p.y));
+  const outline=referenceOutline,photo=outline;
+  const maxHeight=referenceHeight,photoHeight=maxHeight;
   const positions=[],uv=[],indices=[],rows=72,columns=20,sideCount=(rows+1)*(columns+1);
   for(const side of [-1,1]) for(let row=0;row<=rows;row++) {
     const h=row/rows,scan=Math.max(.0001,Math.min(.99999,h));
@@ -52,7 +49,7 @@ export function anniversaryFin(boardLength) {
       const u=col/columns,along=bounds[0]+u*(bounds[1]-bounds[0]);
       const sectionShape=5*(.2969*Math.sqrt(u)-.126*u-.3516*u*u+.2843*u**3-.1036*u**4);
       const foil=ANNIVERSARY_FIN.rootThickness*(1-.32*h)*(1-h**4)**.45*sectionShape;
-      positions.push(side*foil,.46-along/maxHeight*ANNIVERSARY_FIN.height-boardLength/2,h*ANNIVERSARY_FIN.height);
+      positions.push(side*foil,ANNIVERSARY_FIN.boxCenterFromTail-(along-rootCenter)/maxHeight*ANNIVERSARY_FIN.height-boardLength/2,h*ANNIVERSARY_FIN.height);
       const sourceAlong=pb[0]+(.065+.87*u)*(pb[1]-pb[0]);
       const px=ORIGIN[0]+BASE[0]*sourceAlong+BASE[1]*photoH;
       const py=ORIGIN[1]+BASE[1]*sourceAlong-BASE[0]*photoH;
@@ -67,7 +64,7 @@ export function anniversaryFin(boardLength) {
   const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(positions,3));
   g.setAttribute('uv',new Float32BufferAttribute(uv,2));g.setIndex(indices);
   const welded=mergeVertices(g,.0000001);g.dispose();welded.computeVertexNormals();welded.computeBoundingBox();
-  const tab=new BoxGeometry(.011,.027,.003);tab.translate(0,.273-boardLength/2,.001);
+  const tab=new BoxGeometry(.011*displayScale,.027*displayScale,.003*displayScale);tab.translate(0,ANNIVERSARY_FIN.fixingFromTail+.0025*displayScale-boardLength/2,.001);
   const tabUv=tab.getAttribute('uv');
   for(let i=0;i<tabUv.count;i++)tabUv.setXY(i,.63,.52);
   const joined=mergeGeometries([welded,tab]);welded.dispose();tab.dispose();joined.computeBoundingBox();

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { ANNIVERSARY_FIN } from './bing-anniversary-fin.mjs';
 import { BING_BOARD, buildBingGeometry } from './bing-surfboard-geometry.mjs';
 import { createBingTextures } from './bing-surfboard-textures.mjs';
 
@@ -18,7 +19,7 @@ const json={asset:{version:'2.0',generator:'TakMD reference-derived Bing surfboa
   accessors:[],bufferViews:[],buffers:[],extensionsUsed:['EXT_texture_webp','KHR_materials_clearcoat','KHR_materials_transmission','KHR_materials_volume','KHR_materials_ior'],
   extensionsRequired:['EXT_texture_webp'],extras:{lengthMetres:BING_BOARD.length,
     widthAndThickness:'Bing Beacon official size chart: 9ft6 x23.25in x3in',
-    finHeightInches:9.5,finReference:finReference?'Owner-supplied Bing 60th anniversary fin photograph':null,
+    finHeightInches:9.5,finDisplayScale:ANNIVERSARY_FIN.displayScale,finReference:finReference?'Owner-supplied Bing 60th anniversary fin photograph':null,
     referencePhotos:['IMG_0981.heic','IMG_0947.HEIC','IMG_0983.HEIC','IMG_0400.HEIC','IMG_5737.JPG']}};
 const buffers=[];let bytes=0;
 function view(data,target){const padded=Buffer.alloc(Math.ceil(data.byteLength/4)*4);Buffer.from(data.buffer??data,data.byteOffset??0,data.byteLength).copy(padded);
@@ -36,7 +37,7 @@ const materials={
   bottom:textured('Amber yellow pigmented resin bottom',0,1),deck:textured('Amber yellow waxed deck',2,3,4),
   rail:{name:'Amber tail rail resin',pbrMetallicRoughness:{baseColorFactor:[.70,.37,.008,1],metallicFactor:0,roughnessFactor:.19},extensions:{KHR_materials_clearcoat:{clearcoatFactor:1,clearcoatRoughnessFactor:.14}}},
   fin:{name:'Bing 60th anniversary 9.5 inch woven fiberglass fin',pbrMetallicRoughness:{...(finReference?{baseColorTexture:{index:5}}:{baseColorFactor:[.79,.87,.71,1]}),metallicFactor:0,roughnessFactor:.34},
-    extensions:{KHR_materials_transmission:{transmissionFactor:.08},KHR_materials_volume:{thicknessFactor:.0092,attenuationColor:[.94,.98,.87],attenuationDistance:.05},KHR_materials_ior:{ior:1.49},KHR_materials_clearcoat:{clearcoatFactor:.35,clearcoatRoughnessFactor:.28}}},
+    extensions:{KHR_materials_transmission:{transmissionFactor:.08},KHR_materials_volume:{thicknessFactor:ANNIVERSARY_FIN.rootThickness,attenuationColor:[.94,.98,.87],attenuationDistance:.05},KHR_materials_ior:{ior:1.49},KHR_materials_clearcoat:{clearcoatFactor:.35,clearcoatRoughnessFactor:.28}}},
   box:{name:'Dark fin-box surround',pbrMetallicRoughness:{baseColorFactor:[.025,.032,.028,1],metallicFactor:.04,roughnessFactor:.38}},
   slot:{name:'Recessed black fin slot',pbrMetallicRoughness:{baseColorFactor:[.006,.008,.007,1],metallicFactor:0,roughnessFactor:.58}},
   screw:{name:'Fin-box stainless fixing',pbrMetallicRoughness:{baseColorFactor:[.65,.69,.68,1],metallicFactor:1,roughnessFactor:.24}},
@@ -45,7 +46,7 @@ json.materials=Object.values(materials);
 for(const part of parts){const g=part.geometry,index=accessor(g.index?new Uint32Array(g.index.array):Uint32Array.from({length:g.getAttribute('position').count},(_,i)=>i),1,true),attributes={};
   for(const [name,semantic] of [['position','POSITION'],['normal','NORMAL'],['uv','TEXCOORD_0']]){const a=g.getAttribute(name);if(a)attributes[semantic]=accessor(new Float32Array(a.array),a.itemSize);}
   const mesh=json.meshes.length;json.meshes.push({name:part.name,primitives:[{attributes,indices:index,material:Object.keys(materials).indexOf(part.material)}]});
-  json.nodes.push({name:part.name,mesh});json.scenes[0].nodes.push(json.nodes.length-1);g.dispose();}
+  json.nodes.push({name:part.name,mesh,extras:{boardSurface:['bottom','deck','rail'].includes(part.material)}});json.scenes[0].nodes.push(json.nodes.length-1);g.dispose();}
 json.buffers=[{byteLength:bytes}];const body=Buffer.concat(buffers),document=Buffer.from(JSON.stringify(json)),padded=Buffer.alloc(Math.ceil(document.length/4)*4,0x20);document.copy(padded);
 const glb=Buffer.alloc(28+padded.length+body.length);glb.writeUInt32LE(0x46546c67,0);glb.writeUInt32LE(2,4);glb.writeUInt32LE(glb.length,8);glb.writeUInt32LE(padded.length,12);glb.writeUInt32LE(0x4e4f534a,16);padded.copy(glb,20);glb.writeUInt32LE(body.length,20+padded.length);glb.writeUInt32LE(0x004e4942,24+padded.length);body.copy(glb,28+padded.length);
 await writeFile(output,glb);

@@ -9,7 +9,7 @@ const FINISHED_FLOOR_TOP = 0.0185;
 const FIN_CLEARANCE = 0.065;
 
 export function Surfboard() {
-  const { scene } = useGLTF('/models/surfboard.glb?v=20260911-beacon-foil');
+  const { scene } = useGLTF('/models/surfboard.glb?v=20260912-centered-fin');
   const fitted = useMemo(() => {
     const model = scene.clone(true);
     model.traverse((child) => {
@@ -21,7 +21,11 @@ export function Surfboard() {
       child.castShadow = true;
       child.receiveShadow = true;
     });
-    const bounds = new Box3().setFromObject(model, true);
+    // A swept fin can extend past the tail; fit the board itself to its 9ft6 length.
+    const bounds = new Box3();
+    model.traverse(child => {
+      if (child instanceof Mesh && child.userData.boardSurface) bounds.expandByObject(child, true);
+    });
     const size = bounds.getSize(new Vector3());
     const center = bounds.getCenter(new Vector3());
     const scale = SURFBOARD_LENGTH / Math.max(size.y, 0.000_001);
@@ -93,4 +97,4 @@ export function Surfboard() {
   );
 }
 
-useGLTF.preload('/models/surfboard.glb?v=20260911-beacon-foil');
+useGLTF.preload('/models/surfboard.glb?v=20260912-centered-fin');

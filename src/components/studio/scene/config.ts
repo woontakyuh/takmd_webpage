@@ -79,7 +79,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   award: { position: [ROOM.award.position[0], 1.58, 2.215], target: [ROOM.award.position[0], 1.448, 3.06], zoom: 1 },
   projects: { position: [0.11473774, 1.44831439, -1.78846985], target: [-0.055, 0.815, -1.155], zoom: 1 },
   bjj: { position: [-1.25, 1.82, -1.02], target: [-2.505, 1.30, -2.318], zoom: 1 },
-  surfing: { position: [0.65, 1.85, -4.25], target: [-2.382, 1.46, -3.01], zoom: 1 },
+  surfing: { position: [0.15, 1.85, -5.5], target: [-2.382, 1.46, -3.01], zoom: 1 },
 };
 
 export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
@@ -100,7 +100,7 @@ export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   award: { position: [ROOM.award.position[0], 1.60, 2.135], target: [ROOM.award.position[0], 1.448, 3.06], zoom: 1 },
   projects: { position: [0.20583982, 1.75479586, -2.12846746], target: [-0.055, 0.815, -1.155], zoom: 1 },
   bjj: { position: [-0.7, 2.05, -0.88], target: [-2.505, 1.30, -2.318], zoom: 1 },
-  surfing: { position: [1.05, 2.15, -4.5], target: [-2.382, 1.46, -3.01], zoom: 1 },
+  surfing: { position: [0.5, 2.15, -5.8], target: [-2.382, 1.46, -3.01], zoom: 1 },
 };
 
 export const MOTION = { camera: 4.5, object: 8, hoverLift: 0.008 } as const;

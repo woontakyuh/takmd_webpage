@@ -1,14 +1,29 @@
 import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { Box3, Euler, Matrix4, Vector3 } from 'three';
-import { anniversaryFin } from './bing-anniversary-fin.mjs';
+import { ANNIVERSARY_FIN, anniversaryFin } from './bing-anniversary-fin.mjs';
 import { BING_BOARD, boardSurface, buildBingGeometry } from './bing-surfboard-geometry.mjs';
 
 describe('photograph-derived Bing surfboard',()=>{
+  test('retains the broad anniversary blade area with the requested ten percent enlargement',()=>{
+    // Given: the supplied anniversary photograph has a fuller blade than the later Flex template.
+    const g=anniversaryFin(BING_BOARD.length),p=g.getAttribute('position'),indices=g.index;
+    // When: both foil faces are projected onto their side plane (edge faces have zero projected area).
+    let area=0;
+    for(let i=0;i<indices.count;i+=3){
+      const a=indices.getX(i),b=indices.getX(i+1),c=indices.getX(i+2);
+      area+=Math.abs((p.getY(b)-p.getY(a))*(p.getZ(c)-p.getZ(a))-(p.getY(c)-p.getY(a))*(p.getZ(b)-p.getZ(a)))/4;
+    }
+    // Then: the blade occupies the photo-derived 48–52 square-inch reference range with the requested 1.1 linear scale.
+    expect(area/.0254**2/1.1**2).toBeGreaterThan(48);
+    expect(area/.0254**2/1.1**2).toBeLessThan(52);
+    expect(g.boundingBox.max.z).toBeCloseTo(9.5*.0254*1.1,5);
+    g.dispose();
+  });
   test('keeps the confirmed 9ft6 length while giving both faces a continuous rounded rail',()=>{
     // Given: the physical surfaces used in the generated asset.
     const parts=buildBingGeometry(),bounds=new Box3();
-    for(const p of parts){p.geometry.computeBoundingBox();bounds.union(p.geometry.boundingBox);}
+    for(const p of parts){p.geometry.computeBoundingBox();if(['bottom','deck','rail'].includes(p.material))bounds.union(p.geometry.boundingBox);}
     // When: deck and bottom positions are sampled at their shared rail.
     const gaps=[];
     for(let i=0;i<=100;i++)for(const edge of [-Math.PI/2,Math.PI/2])gaps.push(boardSurface(i/100,edge,1).distanceTo(boardSurface(i/100,edge,-1)));
@@ -21,16 +36,16 @@ describe('photograph-derived Bing surfboard',()=>{
     const g=anniversaryFin(BING_BOARD.length),p=g.getAttribute('position');
     const sections=[0,.5].map(h=>{
       const points=[];
-      for(let i=0;i<p.count;i++)if(Math.abs(p.getZ(i)-h*9.5*.0254)<.00001)points.push({x:p.getX(i),y:p.getY(i)});
+      for(let i=0;i<p.count;i++)if(Math.abs(p.getZ(i)-h*ANNIVERSARY_FIN.height)<.00001)points.push({x:p.getX(i),y:p.getY(i)});
       const width=Math.max(...points.map(v=>v.x))-Math.min(...points.map(v=>v.x));
       const maxX=Math.max(...points.map(v=>v.x));
       const thickest=points.find(v=>v.x===maxX);
       const front=Math.max(...points.map(v=>v.y)),back=Math.min(...points.map(v=>v.y));
       return {width,chordFraction:(front-thickest.y)/(front-back)};
     });
-    expect(sections[0].width).toBeGreaterThan(.009);
-    expect(sections[0].width).toBeLessThan(.010);
-    expect(sections[1].width).toBeGreaterThan(.007);
+    expect(sections[0].width).toBeGreaterThan(.0099);
+    expect(sections[0].width).toBeLessThan(.011);
+    expect(sections[1].width).toBeGreaterThan(.0077);
     expect(sections[0].chordFraction).toBeGreaterThan(.2);
     expect(sections[0].chordFraction).toBeLessThan(.4);
     g.dispose();
@@ -45,7 +60,13 @@ describe('photograph-derived Bing surfboard',()=>{
     const screw=parts.find(p=>p.material==='screw').geometry;
     screw.computeBoundingBox();
     const center=screw.boundingBox.getCenter(new Vector3());
-    const trailingRoot=.278842;
+    const fin=anniversaryFin(BING_BOARD.length),fp=fin.getAttribute('position'),root=[];
+    for(let i=0;i<fp.count;i++)if(Math.abs(fp.getZ(i))<.000001)root.push(fp.getY(i)+BING_BOARD.length/2);
+    const trailingRoot=Math.min(...root),leadingRoot=Math.max(...root);
+    expect((trailingRoot+leadingRoot)/2).toBeCloseTo(.31,5);
+    expect(trailingRoot-.15).toBeGreaterThan(.04);
+    expect(.47-leadingRoot).toBeGreaterThan(.04);
+    fin.dispose();
     expect(trailingRoot-(center.y+BING_BOARD.length/2)).toBeGreaterThan(.005);
     expect(trailingRoot-(center.y+BING_BOARD.length/2)).toBeLessThan(.012);
     parts.forEach(p=>p.geometry.dispose());
@@ -53,7 +74,7 @@ describe('photograph-derived Bing surfboard',()=>{
   test('keeps the complete board and fin inside the existing wall corner and above the floor',()=>{
     // Given: existing placement, lean, centering and cradle ground rule.
     const parts=buildBingGeometry(),bounds=new Box3();
-    for(const p of parts){p.geometry.computeBoundingBox();bounds.union(p.geometry.boundingBox);}
+    for(const p of parts){p.geometry.computeBoundingBox();if(['bottom','deck','rail'].includes(p.material))bounds.union(p.geometry.boundingBox);}
     const center=bounds.getCenter(new Vector3()),lean=new Euler(-.12,0,-.015),points=[];
     for(const p of parts){const a=p.geometry.getAttribute('position');for(let i=0;i<a.count;i++)points.push(new Vector3().fromBufferAttribute(a,i).sub(center).applyEuler(lean));}
     const lift=.0185+.065-Math.min(...points.map(p=>p.y));
@@ -79,7 +100,9 @@ describe('photograph-derived Bing surfboard',()=>{
     expect(json.materials.filter(m=>m.extensions?.KHR_materials_transmission)).toHaveLength(1);
     expect(json.images).toHaveLength(6);
     expect(json.extras.finHeightInches).toBe(9.5);
+    expect(json.extras.finDisplayScale).toBe(1.1);
     expect(json.extras.lengthMetres).toBe(BING_BOARD.length);
+    expect(json.nodes.filter(node=>node.extras.boardSurface)).toHaveLength(3);
     expect(json.bufferViews.every(v=>v.byteOffset+v.byteLength<=json.buffers[0].byteLength)).toBe(true);
   });
 });

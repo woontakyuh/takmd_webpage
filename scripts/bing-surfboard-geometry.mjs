@@ -1,5 +1,5 @@
 import { BoxGeometry, BufferGeometry, CylinderGeometry, Float32BufferAttribute, Vector3 } from 'three';
-import { anniversaryFin } from './bing-anniversary-fin.mjs';
+import { ANNIVERSARY_FIN, anniversaryFin } from './bing-anniversary-fin.mjs';
 
 export const BING_BOARD = { length: 2.8956, width: 23.25 * .0254, thickness: 3 * .0254 };
 const OUTLINE = [[0, .095], [.008, .108], [.025, .127], [.06, .163], [.12, .207], [.23, .254],
@@ -74,9 +74,9 @@ function seatOnBottom(geometry) {
 
 export function buildBingGeometry() {
   const box=new BoxGeometry(.018,.32,.008,1,32,1);
-  box.translate(0,-BING_BOARD.length/2+.31,-.0034); seatOnBottom(box);
+  box.translate(0,-BING_BOARD.length/2+ANNIVERSARY_FIN.boxCenterFromTail,-.0034); seatOnBottom(box);
   const slot=new BoxGeometry(.010,.294,.008,1,32,1);slot.translate(0,-BING_BOARD.length/2+.315,-.0031); seatOnBottom(slot);
-  const screw=new CylinderGeometry(.0034,.0034,.002,16);screw.rotateX(Math.PI/2);screw.translate(0,-BING_BOARD.length/2+.2705,.0037); seatOnBottom(screw);
+  const screw=new CylinderGeometry(.0034,.0034,.002,16);screw.rotateX(Math.PI/2);screw.translate(0,-BING_BOARD.length/2+ANNIVERSARY_FIN.fixingFromTail,.0037); seatOnBottom(screw);
   return [
     {name:'Amber resin bottom with original Bing and 60 artwork',geometry:boardFace(1),material:'bottom'},
     {name:'Waxed deck with original Bing artwork',geometry:boardFace(-1),material:'deck'},
