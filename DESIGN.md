@@ -859,3 +859,19 @@ Use all six supplied tracks with custom album-cover labels. Preserve the approve
 - Surfboard story: Bing Beacon label, Encinitas, 2019 heading, larger uncropped purchase photograph, concise factory-pickup copy, and warm ivory text at night. Keep it boxless and close to the board.
 - CD order: Paper Bag, 하루종일 (Band Ver.), High and Dry, Think About’ Chu, Raye, 비오는 압구정. Entry attempts CD 1 with a first-gesture fallback for blocked autoplay. Preload only the next source and move the carriage during the outgoing buffered tail for automatic 1–6–1 playback. Deliberate pause/standby or selection overrides continuation.
 - The closed cabinet approach rises above the desk sightline while keeping the door closed on the first click. The second handle click opens it; desktop and phone poses share this clearance rule.
+
+### Anniversary fin silhouette correction — 12 September 2026
+
+The supplied 60th-anniversary 9.5-inch fin photograph defines the full blade outline, not only its printed texture. Retain the photograph's wider root, fuller upper blade and swept rounded tip; this supersedes the narrower newer Flying Diamonds Flex template. The owner's subsequent explicit +10% request scales the blade and rounded foil to 265.43mm and 10.12mm, preserving the original photographed 9.5-inch printing. Center the foil root chord within the existing 320mm box, with its fixing tab adjacent to the root. Fit room placement from board-only bounds so the board remains 9ft6. Original HEIC views IMG_0947, IMG_0981 and IMG_0983 corroborate the installed shape. No extra polygons or texture resolution are required.
+
+The surfboard approach uses a three-quarter view so the fin blade is legible alongside the resin bottom. Preserve the board story position and entry/return interaction on desktop and phone.
+
+### Han River and rendering refinement — 12 September 2026
+
+Restore a bounded north-bank low-rise layer from saved OSM footprints; retain all original 850 building indices, tagged heights and bridge axes. Exclude footprint overlap with river, parks and woodland using even-odd holes; estimated heights remain marked. Use two merged batches capped at 20,000 triangles, without shadows or per-frame generation. Mineral forecourts use the existing coverage atlas with protected green masks taking final priority. Stable world/floor window occupancy replaces repetitive atlas emission without added geometry or animation.
+
+Repeated Mac mini vent slots and Royal System hanger rods share instanced geometry while preserving all 50 slots and 51 rods, dimensions, placements, materials, normals, UVs, shadow behavior and object-level picking. No silhouette simplification. A derived 2K coat retains the original GLB, all geometry/UV/material metadata and the independently mapped Davos emblem. Texture quality must pass matching day/night close views before acceptance; no blanket glass or river quality reductions are part of this room optimization.
+
+The exterior retains its cropped window render target. River reflection uses a reusable uncropped camera at the same world pose and 1024² target so oblique room views do not acquire a horizontal reflection boundary. Day/night center/right captures and the camera-isolation regression cover this correction.
+
+On compact or coarse-pointer devices, distant physical glass below 90 CSS pixels uses a lightweight transparent approximation and regains original refraction above 120 pixels. The two thresholds prevent rapid toggling; shared materials follow the largest visible instance. Fine inspection retains the original materials, and whisky liquid's environment-based absorption is untouched. Mobile DPR remains 1 in landscape and book inspection. Keep desktop optics unchanged. Compare both close material fidelity and frame cadence; a draw-call reduction alone is insufficient evidence of smoother interaction.

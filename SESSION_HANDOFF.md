@@ -1,3 +1,17 @@
+# Fin, Han River and performance handoff — 12 September 2026
+
+Current pass receipt: `.omo/evidence/fin-river-performance-2026-09-11/release.json`. Until that exists, the following pass is locally implemented and under final verification; older release receipts below are historical.
+
+The supplied anniversary-fin photo controls the complete broad blade outline. After approving that shape, the owner requested a further 10% enlargement and centered box placement: the displayed blade is 265.43mm deep with a 10.12mm root, and its root chord is centered 310mm from the tail. The original photographed 9.5-inch printing remains. Board-only bounds keep the Beacon at exactly 9ft6 even when the swept fin extends past its tail. The three-quarter approach, purchase story and graphics remain.
+
+The Han River gains 380 source-mapped low-rise footprints in two merged batches (6,512 triangles), with saved OSM provenance and estimated heights distinguished from tagged heights. Mineral ground patches preserve park/water masks; seeded facade occupancy reduces repeated orange dots. Water reflections use an uncropped copy of the exterior camera to remove the oblique-view reflection boundary while preserving the main window crop.
+
+Mac mini vents and shelf support rods are instanced with measured world-position, normal, UV, material and shadow parity. That initial change reduced main draw submissions 10.8% but did not improve measured frame cadence. The coat's three 4K maps have a verified 2K derivative; RGBA+mipmap arithmetic falls from 256 to 64MiB, not a resident-VRAM measurement.
+
+The subsequent iPhone response adds distance-based glass rendering on compact/coarse-pointer devices, including landscape: small distant glass uses alpha/specular approximation, while close objects restore their original physical transmission, alpha and depth behavior. A 90/120 CSS-pixel hysteresis prevents boundary flicker; shared materials use their largest visible instance. Mobile DPR stays at 1 even in books. The matched Chrome/Metal mobile simulation (390×844, CPU 4×, music playing) improved night median frame interval 83.0→29.7ms and main calls 1,648→843. This is a desktop simulation, not an actual iPhone result. Detailed glass and initial asset loading still have further optimization potential. Bare demand rendering was rejected because it skipped clock flips and did not idle during music.
+
+Preserve the preceding six-CD order/autoplay/continuation, TV arrival reader, no skirting or bottom collection tabs, nearby descriptions and cabinet approach clearance. See `docs/office-follow-up-2026-09-11.md` for deferred work. Unrelated untracked reference folders and Beolab8 experiments remain excluded.
+
 # Office handoff — 2026-09-11 late-evening continuity
 
 ## Late-evening continuity
