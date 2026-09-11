@@ -34,7 +34,8 @@ describe('Beolab 8000 floor pair fits the existing TV wall', () => {
       const column = new Box3().setFromObject(speakers[index]);
       expect(column.intersectsBox(shelf)).toBe(false);
       expect(column.intersectsBox(tv)).toBe(false);
-      expect(Math.abs(pose.position[0]) + B.grilleRadius).toBeLessThan(1.35);
+      expect(Math.abs(pose.position[0]) - B.baseWidth / 2).toBeGreaterThan(2.40);
+      expect(Math.abs(pose.position[0]) + B.baseWidth / 2).toBeLessThan(Math.abs(ROOM.architecture.leftX));
       expect(pose.position[2] + B.grilleRadius).toBeLessThan(2.961);
       expect(pose.position[1]).toBe(.0185);
       expect(pose.position[1] + B.height).toBeCloseTo(1.3385, 6);

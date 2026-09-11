@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import type { CameraPose, Point } from './scene/config';
+import { ROOM, type CameraPose, type Point } from './scene/config';
 import type { ExhibitId } from './types';
 import { WHISKY_CABINET } from './scene/WhiskyCabinetLayout';
 
@@ -11,7 +11,7 @@ export const FURNITURE = {
   lounge: { label: 'Eames & ottoman', center: [-0.9, 0, 2.12], radius: 0.66, handle: 1.05 },
   plant: { label: 'Palm', center: [2.18, 0, -0.55], radius: 0.28, handle: 2.15 },
   mantis: { label: 'Mantis', center: [-1.75, 0, 2.62], radius: 0.15, handle: 1.7 },
-  signe: { label: 'Signe', center: [-2.49, 0, 2.84], radius: 0.06, handle: 1.6 },
+  signe: { label: 'Signe', center: ROOM.signe.position, radius: ROOM.signe.radius, handle: 1.6 },
   whisky: { label: 'Isidoro drinks cabinet', center: WHISKY_CABINET.center,
     radius: Math.hypot(WHISKY_CABINET.width, WHISKY_CABINET.depth) / 2 + .04, handle: 2.25 },
   music: { label: 'Guitar & amp', center: [2.47, 0, -1.48], radius: 0.61, handle: 1.1 },

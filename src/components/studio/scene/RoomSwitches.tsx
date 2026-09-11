@@ -8,7 +8,7 @@ import { useArrangement } from '../arrangement';
 import { scheduleSceneSingleAction } from './sceneGesture';
 import { useRoomControlPanelAnchor } from './useRoomControlPanelAnchor';
 
-const SWITCH_HEIGHT = 1.22;
+const SWITCH_HEIGHT = 1.46;
 
 export function RoomSwitches({ onControl, panel }: {
   readonly onControl: (control: RoomControl) => void;

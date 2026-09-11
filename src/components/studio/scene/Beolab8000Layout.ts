@@ -12,6 +12,6 @@ export const BEOLAB_8000 = {
 } as const;
 
 export const BEOLAB_8000_PAIR = [
-  { channel: 'left', position: [-1.285, .0185, 2.86], rotation: Math.PI },
-  { channel: 'right', position: [1.285, .0185, 2.86], rotation: Math.PI },
+  { channel: 'left', position: [-2.57, .0185, 2.87], rotation: Math.PI },
+  { channel: 'right', position: [2.57, .0185, 2.87], rotation: Math.PI },
 ] as const;
