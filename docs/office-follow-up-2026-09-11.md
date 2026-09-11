@@ -1,13 +1,17 @@
 # Office follow-up — 11 September 2026
 
-## Current release scope
+## Evening refinement
+
+The current release receipt is `.omo/evidence/calendar-audio-refinement-2026-09-11/release.json`; absence means local work only. Placement A, raised switches, empty left cabinet shelves, separated Hue lamp, readable calendar ledger, six native music tracks and the Beacon/Flex anniversary fin are included. Older release descriptions below are historical.
+
+## Earlier release scope
 
 The afternoon release receipt in `.omo/evidence/isidoro-paper-fidelity-2026-09-11/release.json` is authoritative for this pass's commit, pushed remote and production deployment. Until that receipt exists, this pass remains local. The earlier `cabinet-entry-poster-2026-09-11/release.json` records the preceding checkpoint.
 
 1. Closed cabinet: first click approaches its front without opening; the next click opens it. Its physical left free edge closes it. Grip markers and visible instructional boxes are removed. The lecture paper sits 30mm further right and 35mm lower.
 2. Magnetic lecture: one substantial upper-left magnet holds the A3 stack. Click the right sheet for the next page, the parked left sheet for the previous page. The existing 26 approved slides, high-resolution images, X/Escape and reduced-motion support remain; no TV handoff button is shown.
 3. TV and monitor: the ordinary room contains only depth-tested screen geometry. A sharp interactive reader is mounted when the camera settles; the two surfaces are not shown together. The TV retains its selected lecture/page, and the CV retains its reading position without navigating away from the office.
-4. Wall controls: the blind switch stays on the left of the window. Both light and blind plates are 1.22m high and use a more visible subdued warm gray finish.
+4. Wall controls: the blind switch stays on the left of the window. Both light and blind plates are now 1.46m high and use a more visible subdued warm gray finish.
 5. Credentials and awards: a first click frames the three-object collection; selecting one then brings it closer and shows its English description without a panel box. X returns to the earlier room view; Overview remains available. Existing photographed originals and dimensions are preserved.
 6. Clock: one click opens the real clock with a paper-style monthly conference calendar beside it, or below it on a phone. The reviewed snapshot has 33 academic events, including attendance and faculty roles. Month edges and keyboard arrows navigate; event names remain readable in the scrollable ledger. This is a curated snapshot, not an automatic Notion watcher or comprehensive worldwide conference calendar.
 7. Information typography: book, photo, whisky and collection descriptions use quieter editorial type and unboxed layouts. Original Korean material and the Ppomppu Easter egg remain unchanged. The original CV portrait layout is retained.
@@ -22,11 +26,12 @@ The afternoon release receipt in `.omo/evidence/isidoro-paper-fidelity-2026-09-1
 - Increased the research viewing angle and corrected Mac mini focus to the front/right of the actual monitor geometry.
 - Composed eight Spine Summit photographs into three boards and connected four TV backlight regions to the displayed image colors.
 - Rebuilt the owner's amber Bing board from six photographs, with distinct deck/bottom graphics, wax texture, corrected fin and rounded profile.
-- Replaced the soundbar with Beosound 9000 and two Beolab 8000 speakers; physical CD selection, clamper movement, glass and transport/volume controls are available. Real music is pending as listed below.
+- Replaced the soundbar with Beosound 9000 and two Beolab 8000 speakers; physical CD selection, clamper movement, glass and transport/volume controls are available. Six supplied tracks are connected in the subsequent evening pass below.
 
 ## Decisions and work still open
 
-- **Speaker selected; actual audio still open.** The owner approved Beosound 9000 and the silver/black Beolab 8000 pair. Their models and integrated CD/glass/transport/volume controls are implemented in this pass. No source music is loaded and Play states this explicitly. The owner will select six albums; Asoto Union and Brown Eyes Reason 4 Breathing are favorites, not a completed playlist. Website-authorized audio gives the cleanest room-native experience; YouTube requires its visible player, while Spotify browser full-track playback requires each listener's eligible account. Audio playback, within-album track selection and optional EQ remain unimplemented. See `docs/beosound-9000.md`; the older speaker comparison is historical.
+- **Music library expansion:** all six supplied tracks are connected: Asoto Union, Brown Eyes, GIRIBOY, Two Ton Shoe, Radiohead and John Splithoff. All six use embedded album covers; CD 3 retains its approved image. The CD rack and swap flow were discussed and left for the next task when the owner closed this release scope. More tracks per album, seeking and EQ also remain open. See `docs/beosound-9000.md`.
+- **Surfboard purchase story:** Bing Beacon 60th Anniversary, bought 30 September 2019 at the Bing factory in Encinitas, with the original IMG_0282 purchase photo. The fin now has a rounded 9.2mm root and a fuller midsection instead of appearing like a thin sheet.
 - **Physical preset integration:** the proposed engraved touch labels with a small active LED remain a design recommendation. Existing presets work; the owner has not selected a replacement treatment.
 - **Performance: further optimization remains open.** The previous controlled profile recorded about 39MB of initial requests and costly transmission rendering. This release corrects duplicated screen surfaces; it does not establish smooth performance on low-end phones. Next: simplify distant glass rendering while preserving close-up refraction, batch compatible static meshes, then reduce large model/texture payloads. Remeasure each change under the same conditions. See `docs/office-performance-2026-09-10.md`.
 - **Han River: further detail remains open.** Earlier releases already added mapped terrain, bridge locations and silhouettes, facade detail and instanced trees. Distant building density, greenery and approaches remain coarse. Next: refine those against mapped aerial/close references while preserving the visible bridge geography and the performance budget. No new river-fidelity change is claimed in this release.

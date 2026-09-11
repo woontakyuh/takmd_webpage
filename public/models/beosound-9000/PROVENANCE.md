@@ -20,7 +20,7 @@ The model replaces the previous soundbar at the same shelf anchor. Its closed ca
 
 Selecting a CD moves the clamper. Load opens or closes the glass; standby closes it and parks at CD 1. Volume and mute retain their chosen settings. Controls appear on the operating panel during inspection; touch screens enlarge the plate from the same panel edge.
 
-No audio files, playlist or streaming service are currently connected. A play request shows an availability message in the device display. The interface does not claim playback, advance a track timer or rotate a CD. The model represents a source system; separate loudspeaker geometry is not included in this change.
+Six owner-supplied tracks are connected to the six album-cover discs. Audio is loaded after a play request and remains muted until the clamper reaches the selected slot. Only the playing disc rotates; pausing or stopping returns its label to its resting orientation. Volume and mute affect the native audio through Web Audio gain. The source system is paired with separate Beolab 8000 loudspeakers in the room.
 
 ## Implementation
 

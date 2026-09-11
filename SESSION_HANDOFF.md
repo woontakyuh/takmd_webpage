@@ -1,3 +1,15 @@
+# Office session handoff — 2026-09-11 evening audio and Beacon refinement
+
+The authoritative current release receipt is `.omo/evidence/calendar-audio-refinement-2026-09-11/release.json`. Its absence means this pass is not yet released. The matching directory holds the plan, browser captures, real-media checks and reference receipts. Older entries below describe earlier checkpoints.
+
+A placement, horizontal Beosound, 1.46m switches and empty left Isidoro shelves are preserved. Hue moves into the corner while the speaker keeps rear-wall clearance. The calendar reserves independent ledger space, keeps month arrows fixed and resets ledger scroll on month change.
+
+Six owner-supplied tracks are assigned to CD 1–6; native playback is synchronized with the carriage and selected-disc rotation. Audio is fetched only on intent, remains active while exploring, and responds to real pause/end/error events. All six CDs now use embedded album covers as explicitly chosen by the owner; the approved GIRIBOY cover is unchanged. The photographed CD 1/2 labels were rejected and replaced. See `docs/beosound-9000.md` for exact behavior and limits. CD rack/replacement remains a next-step proposal. The fin now has a 9.2mm rounded foil and fuller midsection. The board opens a nearby purchase-photo story for 30 September 2019 at Bing’s Encinitas factory.
+
+The Bing is the confirmed Beacon, 9ft6 × 23.25in × 3in. Both tail laminate layers, their darker overlap, the deck cap and darker rails are restored. The fin uses the linked Flying Diamonds Flex outline at the requested 9.5in height, tapered foil and the supplied 60th-anniversary printing. The box follows bottom curvature; its retaining screw attaches beside the actual foil root. Profiles and small hardware dimensions are photo-derived approximations, not factory CAD.
+
+Pending work remains explicit in `docs/office-follow-up-2026-09-11.md`: remaining music/track choices, optional EQ, physical preset styling, further measured performance work, Han River detail, permanent arrangements and deferred lecture imports. Do not silently report those finished. Unrelated reference folders and unused Beolab8 experiments remain excluded.
+
 # Office session handoff — 2026-09-11 afternoon fidelity release
 
 This is the canonical current pass. `.omo/evidence/isidoro-paper-fidelity-2026-09-11/release.json` records the exact commit, pushed branch, production deployment and live verification. Until that receipt exists this pass is local. Earlier entries below are historical and do not override this entry. The task plan and browser evidence are in `.omo/plans/isidoro-paper-fidelity-2026-09-11.md` and the matching evidence directory.
