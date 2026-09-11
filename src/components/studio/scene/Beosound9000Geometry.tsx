@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { Suspense, useLayoutEffect, useRef } from 'react';
+import { Suspense, useLayoutEffect, useRef, useState } from 'react';
 import type { Group, Mesh, Texture } from 'three';
 import { BeosoundDiscArt } from './BeosoundDiscArt';
 import { BEOSOUND_ALBUMS } from './BeosoundAlbums';
@@ -96,21 +96,25 @@ export function Beosound9000Geometry({ state, active, disabled, reducedMotion, o
 }) {
   const carriage = useRef<Group>(null), glass = useRef<Group>(null);
   const moving = useRef(false);
+  const [arrivedDisc, setArrivedDisc] = useState<CdSlot | null>(1);
   const settleDelay = useRef(0);
   const invalidate = useThree(current => current.invalidate);
   const discTexture = useCompactDiscTexture(), panelTexture = useBeosoundPanelTexture(state);
-  const target = cdPosition(state.disc), glassTarget = state.doorOpen ? GLASS_OPEN_ANGLE : 0;
+  const target = cdPosition(state.carriageDisc), glassTarget = state.doorOpen ? GLASS_OPEN_ANGLE : 0;
   useLayoutEffect(() => {
     moving.current = true;
-    settleDelay.current = state.playback === 'loading' && !reducedMotion ? .4 : 0;
+    const traveling = carriage.current?.position.x !== target;
+    if (traveling) setArrivedDisc(null);
+    settleDelay.current = traveling && !reducedMotion ? .4 : 0;
     if (reducedMotion) {
       if (carriage.current) carriage.current.position.x = target;
       if (glass.current) glass.current.rotation.x = glassTarget;
       moving.current = false;
-      onCarriageReady(state.disc);
+      setArrivedDisc(state.carriageDisc);
+      onCarriageReady(state.carriageDisc);
     }
     invalidate();
-  }, [glassTarget, invalidate, onCarriageReady, reducedMotion, state.disc, state.playback, state.transportRequest, target]);
+  }, [glassTarget, invalidate, onCarriageReady, reducedMotion, state.carriageDisc, state.playback, state.transportRequest, target]);
   useFrame((_, delta) => {
     if (!moving.current || !carriage.current || !glass.current) return;
     if (settleDelay.current > 0) { settleDelay.current -= Math.min(delta, .1); invalidate(); return; }
@@ -119,7 +123,7 @@ export function Beosound9000Geometry({ state, active, disabled, reducedMotion, o
     glass.current.rotation.x = Math.abs(gap) <= step ? glassTarget : glass.current.rotation.x + Math.sign(gap) * step;
     moving.current = carriage.current.position.x !== target || glass.current.rotation.x !== glassTarget;
     if (moving.current) invalidate();
-    else onCarriageReady(state.disc);
+    else { setArrivedDisc(state.carriageDisc); onCarriageReady(state.carriageDisc); }
   });
   return <group name="Beosound 9000 869 × 301 × 70 mm chassis">
     <Block size={[B.width, B.height, B.depth]} position={[0, B.height / 2, 0]} radius={.003} color="#373d39" roughness={.45} metalness={.6} />
@@ -130,7 +134,7 @@ export function Beosound9000Geometry({ state, active, disabled, reducedMotion, o
     </mesh>}
     <Block size={[.817, .007, .009]} position={[0, .144, .045]} radius={.001} color="#323a35" metalness={.75} roughness={.3} />
     {CD_SLOTS.map(disc => <CompactDisc key={disc} disc={disc} selected={state.disc === disc && state.display !== 'standby'}
-      texture={discTexture} disabled={disabled} playing={state.disc === disc && state.playback === 'playing'} reducedMotion={reducedMotion} onSelect={onSelect} />)}
+      texture={discTexture} disabled={disabled} playing={state.disc === disc && state.carriageDisc === disc && arrivedDisc === disc && state.playback === 'playing'} reducedMotion={reducedMotion} onSelect={onSelect} />)}
     <group ref={carriage} name="Beosound 9000 moving CD clamper" position={[cdPosition(1), B.discY, .057]}>
       <Clamper texture={discTexture} />
     </group>

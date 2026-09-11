@@ -4,6 +4,14 @@ import { Box3, Euler, Vector3 } from 'three';
 import { BEOSOUND_9000, CD_SLOTS, INITIAL_BEOSOUND, beosoundReducer, cdPosition, moveClamper } from './Beosound9000State.ts';
 
 describe('Beosound 9000 physical CD controller', () => {
+  it('moves the pickup during the buffered tail without relabelling the audible track', () => {
+    const playing = { ...INITIAL_BEOSOUND, playback: 'playing' };
+    const prepared = beosoundReducer(playing, { type: 'prepare', disc: 2 });
+    expect(prepared).toMatchObject({ disc: 1, carriageDisc: 2, playback: 'playing' });
+    const paused = beosoundReducer(prepared, { type: 'pause' });
+    const resumed = beosoundReducer(paused, { type: 'play' });
+    expect(resumed).toMatchObject({ disc: 1, carriageDisc: 1, playback: 'loading' });
+  });
   it('selects the sixth physical CD without claiming playback', () => {
     // Given the source-free initial device.
     const initial = INITIAL_BEOSOUND;
