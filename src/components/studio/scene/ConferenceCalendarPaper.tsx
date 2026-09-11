@@ -18,6 +18,7 @@ export default function ConferenceCalendar({ onClose }: { readonly onClose: () =
   const now = new Date();
   const [month, setMonth] = useState<CalendarMonth>({ year: now.getFullYear(), month: now.getMonth() });
   const closeButton = useRef<HTMLButtonElement>(null);
+  const ledger = useRef<HTMLDivElement>(null);
   const eventDetails = useRef(new Map<string, HTMLElement>());
   const cells = useMemo(() => monthGrid(month), [month]);
   const monthEvents = useMemo(() => conferenceEvents.filter(event => {
@@ -32,6 +33,8 @@ export default function ConferenceCalendar({ onClose }: { readonly onClose: () =
     detail?.focus({ preventScroll: true });
     detail?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
   };
+
+  useEffect(() => { ledger.current?.scrollTo({ top: 0 }); }, [month]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -98,7 +101,7 @@ export default function ConferenceCalendar({ onClose }: { readonly onClose: () =
           })}
         </div>)}
       </div>
-      <div className="conference-calendar-ledger" id="conference-calendar-ledger" aria-live="polite" tabIndex={0} aria-label="Conference details">
+      <div ref={ledger} className="conference-calendar-ledger" id="conference-calendar-ledger" aria-live="polite" tabIndex={0} aria-label="Conference details">
         {monthEvents.length === 0 ? <p className="conference-calendar-empty">No conferences listed this month.</p>
           : monthEvents.map(event => <article key={event.id} id={`conference-event-${event.id}`} tabIndex={-1}
             ref={element => { if (element) eventDetails.current.set(event.id, element); else eventDetails.current.delete(event.id); }}>
