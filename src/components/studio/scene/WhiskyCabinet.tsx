@@ -5,7 +5,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import type { Group, Texture } from 'three';
 import { OfficeIcon } from '../OfficeIcon';
 import { useArrangement } from '../arrangement';
-import { IsidoroBarware, IsidoroOpeningGlassware } from './IsidoroBarware';
+import { IsidoroBarware } from './IsidoroBarware';
 import { IsidoroFixedHalf } from './IsidoroCabinetGeometry';
 import { IsidoroWorktop, WhiskyCabinetDoor, useCabinetAction, useIsidoroMotion } from './WhiskyCabinetDoor';
 import { WHISKY_CABINET } from './WhiskyCabinetLayout';
@@ -153,7 +153,6 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       <group ref={bottles} name="complete seven-bottle whisky and Armagnac collection">
         <Suspense fallback={null}><WhiskyCollection cabinet={cabinet} selection={selection}
           enabled={ready && !editing} reducedMotion={reducedMotion || editing} onSelect={chooseBottle} onReturned={returned} /></Suspense>
-        <IsidoroOpeningGlassware />
         <IsidoroInteriorLighting lowerShelf={0.648} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />
       </group>
     </WhiskyCabinetDoor>

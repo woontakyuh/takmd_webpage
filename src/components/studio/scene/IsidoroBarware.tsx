@@ -9,7 +9,7 @@ import {
   type IsidoroBarwareGeometries,
 } from './IsidoroBarwareGeometry';
 import { Block, Rod } from './Primitives';
-import { ISIDORO_BOTTLE_SHELF_TOP, ISIDORO_STORAGE_TOP, ISIDORO_UPPER_SHELF_HEIGHT, ISIDORO_SHELF_THICKNESS } from './WhiskyCabinetLayout';
+import { ISIDORO_UPPER_SHELF_HEIGHT, ISIDORO_SHELF_THICKNESS } from './WhiskyCabinetLayout';
 
 type BarwareMaterials = ReturnType<typeof createBarwareMaterials>;
 
@@ -161,20 +161,5 @@ export function IsidoroBarware() {
     <MixingGlass geometries={geometries} materials={materials} />
     <Jigger geometries={geometries} materials={materials} />
     <BarSpoon geometries={geometries} materials={materials} />
-  </group>;
-}
-
-export function IsidoroOpeningGlassware() {
-  const { geometries, materials } = useBarwareResources();
-  return <group name="left leaf reference glassware compartments">
-    {[-0.25, -0.15, -0.05, 0.05, 0.15, 0.25].map(x => <mesh key={x}
-      name="small faceted tumbler on upper chrome-guard shelf"
-      position={[x, ISIDORO_UPPER_SHELF_HEIGHT + ISIDORO_SHELF_THICKNESS / 2, 0.028]}
-      scale={[0.55, 0.55, 0.55]} geometry={geometries.mixingGlass} material={materials.cutGlass} />)}
-    {[-0.05, 0.08, 0.21].map(x => <GlencairnGlass key={x} x={x} z={0.025}
-      y={ISIDORO_BOTTLE_SHELF_TOP} geometries={geometries} materials={materials} />)}
-    {[-0.23, -0.08, 0.08, 0.23].map(x => <mesh key={x} name="low tumblers above window-door storage"
-      position={[x, ISIDORO_STORAGE_TOP, 0.018]} scale={[0.62, 0.62, 0.62]}
-      geometry={geometries.mixingGlass} material={materials.cutGlass} />)}
   </group>;
 }
