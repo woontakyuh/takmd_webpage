@@ -1,5 +1,9 @@
 # Office follow-up — 11 September 2026
 
+## Late-evening continuity
+
+Release receipt: `.omo/evidence/hide-collection-tabs-2026-09-11/release.json`; absent means not yet deployed. Hidden on-room tabs, automatic 1–6–1 music with Paper Bag first, flush wall/floor junction, single-click TV reader arrival, and larger night-readable surfboard story are included. Browser autoplay may require a first gesture. Open items below remain open.
+
 ## Evening refinement
 
 The current release receipt is `.omo/evidence/calendar-audio-refinement-2026-09-11/release.json`; absence means local work only. Placement A, raised switches, empty left cabinet shelves, separated Hue lamp, readable calendar ledger, six native music tracks and the Beacon/Flex anniversary fin are included. Older release descriptions below are historical.

@@ -1,3 +1,9 @@
+# Office handoff — 2026-09-11 late-evening continuity
+
+## Late-evening continuity
+
+Release receipt: `.omo/evidence/hide-collection-tabs-2026-09-11/release.json`; absent means not yet deployed. Hidden on-room tabs, automatic 1–6–1 music with Paper Bag first, flush wall/floor junction, single-click TV reader arrival, and larger night-readable surfboard story are included. Browser autoplay may require a first gesture. Open items below remain open.
+
 # Office session handoff — 2026-09-11 evening audio and Beacon refinement
 
 The authoritative current release receipt is `.omo/evidence/calendar-audio-refinement-2026-09-11/release.json`. Its absence means this pass is not yet released. The matching directory holds the plan, browser captures, real-media checks and reference receipts. Older entries below describe earlier checkpoints.

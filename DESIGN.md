@@ -850,3 +850,12 @@ The 60th-anniversary retaining screw sits on a small tailward tab beside the foi
 ### Six-CD listening and surfing purchase story, 11 September 2026
 
 Use all six supplied tracks with custom album-cover labels. Preserve the approved GIRIBOY image; all other embedded covers receive proportion-preserving circular UVs. Audio loads only on playback intent. CD storage and swapping are a later extension, not part of this checkpoint. Surfboard information follows the nearby unboxed serif photo/credential pattern, with the purchase photo and 30 September 2019 Encinitas factory story. The anniversary fin uses a visibly rounded 9.2mm root foil and fuller midsection; this is reference-derived visual thickness rather than a factory measurement.
+
+## Late-evening continuity — 11 September 2026
+
+- Hide on-room collection tabs behind one reversible flag; keep object routes, accessible shortcuts and the below-room footer. Empty stage-footer space passes pointer input through.
+- One physical TV click approaches and automatically enables the reader once the camera settles, preserving lecture/page across exit and re-entry.
+- Walls meet the floor without raised skirting; retain upper trim and furniture.
+- Surfboard story: Bing Beacon label, Encinitas, 2019 heading, larger uncropped purchase photograph, concise factory-pickup copy, and warm ivory text at night. Keep it boxless and close to the board.
+- CD order: Paper Bag, 하루종일 (Band Ver.), High and Dry, Think About’ Chu, Raye, 비오는 압구정. Entry attempts CD 1 with a first-gesture fallback for blocked autoplay. Preload only the next source and move the carriage during the outgoing buffered tail for automatic 1–6–1 playback. Deliberate pause/standby or selection overrides continuation.
+- The closed cabinet approach rises above the desk sightline while keeping the door closed on the first click. The second handle click opens it; desktop and phone poses share this clearance rule.
