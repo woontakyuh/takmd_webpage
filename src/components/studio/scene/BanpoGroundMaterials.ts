@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import geography from '../../../../public/models/han-river/geography.json';
 import landcover from '../../../../public/models/han-river/landcover.json';
+import urbanFabric from '../../../../public/models/han-river/urban-fabric.json';
 
 const EXTENT = landcover.extent;
 const COVER_SIZE = 1024;
@@ -19,7 +20,7 @@ function landCoverage() {
     ring.forEach((p, i) => { const [x, y] = point(p); if (i) context.lineTo(x, y); else context.moveTo(x, y); });
     context.closePath();
   };
-  for (const [features, color] of [[landcover.urban, '#f00'], [landcover.park, '#00f'], [landcover.woodland, '#0f0']] as const) {
+  for (const [features, color] of [[landcover.urban, '#f00']] as const) {
     context.fillStyle = color;
     for (const feature of features) {
       context.beginPath();
@@ -28,7 +29,7 @@ function landCoverage() {
     }
   }
   context.fillStyle = context.strokeStyle = '#f00';
-  for (const building of geography.buildings) {
+  for (const building of [...geography.buildings, ...urbanFabric]) {
     context.beginPath();
     path(building.p);
     context.lineWidth = 18 / EXTENT.width * COVER_SIZE; context.fill(); context.stroke();
@@ -39,6 +40,14 @@ function landCoverage() {
     context.beginPath();
     road.forEach((p, i) => { const [x, y] = point(p); if (i) context.lineTo(x, y); else context.moveTo(x, y); });
     context.stroke();
+  }
+  for (const [features, color] of [[landcover.park, '#00f'], [landcover.woodland, '#0f0']] as const) {
+    context.fillStyle = color;
+    for (const feature of features) {
+      context.beginPath();
+      feature.rings.forEach(path);
+      context.fill('evenodd');
+    }
   }
   context.fillStyle = '#000';
   context.beginPath();
@@ -102,7 +111,7 @@ export function applyBanpoGroundMaterials(model: THREE.Group, gravel: THREE.Text
               diffuseColor.rgb=mix(diffuseColor.rgb,woodland,cover.g);
               diffuseColor.rgb=mix(diffuseColor.rgb,mineral,cover.r);`);
         };
-        material.customProgramCacheKey = () => 'banpo-geographic-ground-v3';
+        material.customProgramCacheKey = () => 'banpo-geographic-ground-v4';
       }
       material.needsUpdate = true;
     }

@@ -71,6 +71,13 @@ const WATER_SHADER = {
   `,
 } as const;
 
+export function updateRiverReflectionCamera(source: THREE.PerspectiveCamera, target: THREE.PerspectiveCamera): void {
+  target.copy(source);
+  target.clearViewOffset();
+  target.updateProjectionMatrix();
+  target.updateMatrixWorld();
+}
+
 export function createRiverAtmosphere(scene: THREE.Scene, fog: THREE.Fog) {
   const time = { value: 0 };
   const nightMix = { value: 0 };
@@ -100,6 +107,15 @@ export function createRiverAtmosphere(scene: THREE.Scene, fog: THREE.Fog) {
     textureWidth: 1024, textureHeight: 1024, clipBias: 0.002, multisample: 0, shader: WATER_SHADER,
   });
   if (!(water.material instanceof THREE.ShaderMaterial)) throw new TypeError('Reflector requires a shader material');
+  const reflectionSource = new THREE.PerspectiveCamera();
+  const renderReflection = water.onBeforeRender;
+  water.onBeforeRender = (renderer, renderScene, camera, geometry, material, group) => {
+    if (camera instanceof THREE.PerspectiveCamera) {
+      // The window crop must not truncate the reflected scene at oblique room views.
+      updateRiverReflectionCamera(camera, reflectionSource);
+      renderReflection.call(water, renderer, renderScene, reflectionSource, geometry, material, group);
+    } else renderReflection.call(water, renderer, renderScene, camera, geometry, material, group);
+  };
   Object.assign(water.material.uniforms, {
     color: waterColor, normalSampler: { value: normals },
     uTime: time, uNightMix: nightMix, uFogColor: { value: fog.color },

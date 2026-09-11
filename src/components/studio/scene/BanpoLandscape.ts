@@ -8,6 +8,9 @@ import { createBanpoVegetation } from './BanpoVegetation';
 import { createRiverAtmosphere } from './HanRiverAtmosphere';
 import { createHanRiverLandscape } from './HanRiverLandscape';
 import { createRiverTraffic } from './HanRiverTraffic';
+import urbanBuildings from '../../../../public/models/han-river/urban-fabric.json';
+import { createBanpoUrbanFabric } from './BanpoUrbanFabric';
+import { applyBanpoFacadeMaterial } from './BanpoFacadeMaterial';
 
 function disposeModel(root: THREE.Object3D) {
   const geometries = new Set<THREE.BufferGeometry>();
@@ -47,6 +50,7 @@ export function createBanpoLandscape() {
     subtle: false,
   });
   const emissive = new Map<THREE.MeshStandardMaterial, number>();
+  const facadeMaterials: ReturnType<typeof applyBanpoFacadeMaterial>[] = [];
   let loaded = false;
   let disposed = false;
   let currentNight = 0;
@@ -55,6 +59,7 @@ export function createBanpoLandscape() {
   let groundMaterials: ReturnType<typeof applyBanpoGroundMaterials> | null = null;
   let vegetation: ReturnType<typeof createBanpoVegetation> | null = null;
   let bridges: ReturnType<typeof createBanpoBridges> | null = null;
+  let urbanFabric: ReturnType<typeof createBanpoUrbanFabric> | null = null;
   const pilotCameraOffset = new THREE.Vector3(280, 300, -1400);
   const fallbackCameraOffset = new THREE.Vector3(0, 340, 0);
 
@@ -64,6 +69,7 @@ export function createBanpoLandscape() {
     atmosphere.setNightMix(currentNight);
     traffic.setNightMix(currentNight);
     facadeDetails?.setNightMix(currentNight);
+    facadeMaterials.forEach(material => material.setNightMix(currentNight));
     bridges?.setNightMix(currentNight);
     fog.color.lerpColors(new THREE.Color(0xc9dce3), new THREE.Color(0x081727), currentNight);
     sky.intensity = THREE.MathUtils.lerp(1.2, 0.25, currentNight);
@@ -88,8 +94,7 @@ export function createBanpoLandscape() {
         if (!(material instanceof THREE.MeshStandardMaterial)) continue;
         material.emissiveIntensity = 0;
         if (material.name.startsWith('North bank facade')) {
-          material.emissive.setRGB(1, 1, 1);
-          emissive.set(material, 0.65);
+          facadeMaterials.push(applyBanpoFacadeMaterial(material));
         } else if (material.name === 'Bridge lights') {
           material.emissive.setRGB(0.99, 0.73, 0.41);
           emissive.set(material, 4);
@@ -104,6 +109,9 @@ export function createBanpoLandscape() {
     model.rotation.y = Math.PI / 2;
     model.name = 'OSM Banpo and Sebitseom model';
     scene.add(model);
+    urbanFabric = createBanpoUrbanFabric(urbanBuildings);
+    model.add(urbanFabric.group);
+    facadeMaterials.push(applyBanpoFacadeMaterial(urbanFabric.wallMaterial));
     groundMaterials = applyBanpoGroundMaterials(model, atmosphere.bankTexture);
     facadeDetails = createBanpoFacadeDetails();
     model.add(facadeDetails.group);
@@ -134,6 +142,7 @@ export function createBanpoLandscape() {
       bridges?.dispose();
       facadeDetails?.dispose();
       groundMaterials?.dispose();
+      urbanFabric?.dispose();
       if (model) { model.removeFromParent(); disposeModel(model); }
       atmosphere.dispose();
       const waterObject = scene.getObjectByName('Normal-mapped Han River water');
