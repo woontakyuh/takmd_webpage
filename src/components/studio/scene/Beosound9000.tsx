@@ -1,12 +1,13 @@
 import { Html } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { useCallback, useEffect, useReducer, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Vector3 } from 'three';
 import type { Group } from 'three';
 import { useArrangement } from '../arrangement';
 import { Beosound9000Controls } from './Beosound9000Controls';
 import { Beosound9000Bracket, Beosound9000Geometry } from './Beosound9000Geometry';
-import { BEOSOUND_9000 as B, INITIAL_BEOSOUND, beosoundReducer } from './Beosound9000State';
+import { BEOSOUND_9000 as B } from './Beosound9000State';
+import { useBeosoundAudio } from './Beosound9000Audio';
 import type { CdSlot } from './Beosound9000State';
 import { useSceneInspection } from './SceneInspection';
 import { cancelSceneSingleAction } from './sceneGesture';
@@ -14,7 +15,7 @@ import { useCabinetAction } from './WhiskyCabinetDoor';
 
 export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolean }) {
   const [body, setBody] = useState<Group | null>(null);
-  const [state, dispatch] = useReducer(beosoundReducer, INITIAL_BEOSOUND);
+  const { state, dispatch, onCarriageReady } = useBeosoundAudio();
   const { size, camera, gl } = useThree();
   const { editing } = useArrangement();
   const { inspection, setInspection } = useSceneInspection();
@@ -49,7 +50,7 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
   return <group name="Bang & Olufsen Beosound 9000" userData={{ sceneControl: true, active, selectedDisc: state.disc }}>
     <Beosound9000Bracket />
     <group ref={setBody} position={[0, B.bracketHeight, 0]} rotation={[B.tilt, 0, 0]} {...(!active ? handlers : {})}>
-      <Beosound9000Geometry state={state} active={active} disabled={editing} reducedMotion={reducedMotion} onSelect={select} />
+      <Beosound9000Geometry state={state} active={active} disabled={editing} reducedMotion={reducedMotion} onSelect={select} onCarriageReady={onCarriageReady} />
       {active && <Beosound9000Controls state={state} compact={compact} dispatch={dispatch} onClose={close} />}
       {!active && !editing && <Html position={[-.416, .04, .079]} center occlude={body ? [{ current: body }] : undefined} zIndexRange={[30, 26]}>
         <button className="beosound-entry" type="button" aria-label="Inspect Beosound 9000 CD system"

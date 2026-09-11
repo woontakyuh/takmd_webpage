@@ -35,3 +35,6 @@
 .beosound-operation-panel[data-compact="true"] .beosound-keys, .beosound-operation-panel[data-compact="true"] .beosound-disc-keys, .beosound-operation-panel[data-compact="true"] .beosound-level-keys { display: contents; }
 .beosound-operation-panel[data-compact="true"] button { min-width: 44px; min-height: 44px; font-size: 12px; }
 .beosound-operation-panel[data-compact="true"] .beosound-level-key { grid-column: span 2; }
+.beosound-track-caption { margin: 0; width: max-content; max-width: calc(100vw - 32px); font-family: var(--font-body, sans-serif); font-size: 12px; line-height: 1.5; color: var(--studio-ink, #25352f); text-align: center; text-shadow: 0 1px 7px #f5f0e6; pointer-events: none; }
+
+.beosound-operation-panel[data-compact="true"] .beosound-track-caption { grid-column: 1 / -1; width: auto; max-width: 100%; padding: 5px 0 2px; color: var(--beosound-letter); text-shadow: none; }

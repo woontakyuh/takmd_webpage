@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test';
+import { BEOSOUND_ALBUMS } from './BeosoundAlbums.ts';
 import { Box3, Euler, Vector3 } from 'three';
 import { BEOSOUND_9000, CD_SLOTS, INITIAL_BEOSOUND, beosoundReducer, cdPosition, moveClamper } from './Beosound9000State.ts';
 
@@ -14,13 +15,26 @@ describe('Beosound 9000 physical CD controller', () => {
   });
   it('reports unavailable audio only after a play request', () => {
     // Given a selected CD with its glass raised.
-    const initial = { ...INITIAL_BEOSOUND, disc: 3, doorOpen: true };
+    const initial = { ...INITIAL_BEOSOUND, disc: 4, doorOpen: true };
     // When play is requested before any audio source exists.
-    const next = beosoundReducer(initial, { type: 'play' });
+    const album = BEOSOUND_ALBUMS[4];
+    let next;
+    try {
+      delete BEOSOUND_ALBUMS[4];
+      next = beosoundReducer(initial, { type: 'play' });
+    } finally { BEOSOUND_ALBUMS[4] = album; }
     // Then the glass closes and the display reports source availability.
     expect(next.display).toBe('unavailable');
     expect(next.doorOpen).toBe(false);
-    expect(next.disc).toBe(3);
+    expect(next.disc).toBe(4);
+  });
+  it('re-arms arrival when a still-loading CD is selected again', () => {
+    const first = beosoundReducer(INITIAL_BEOSOUND, { type: 'disc', disc: 3 });
+    const repeated = beosoundReducer(first, { type: 'disc', disc: 3 });
+    expect(repeated.playback).toBe('loading');
+    expect(repeated.disc).toBe(first.disc);
+    expect(repeated.transportRequest).toBeGreaterThan(first.transportRequest);
+    expect(beosoundReducer(repeated, { type: 'media', playback: 'playing' }).playback).toBe('playing');
   });
   it('parks the carriage at CD 1 when standby is pressed', () => {
     // Given a device left at CD 6 with its glass open.

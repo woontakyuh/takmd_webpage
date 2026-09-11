@@ -1,6 +1,6 @@
 # Beosound 9000 reference model
 
-An original procedural interpretation of the classic Bang & Olufsen Beosound 9000 in silver aluminium and black glass. This is not manufacturer CAD. The owner's three supplied product photographs guided the visible CD row, clamper, glass and silver/black finish; those photographs are not redistributed as textures. CDs use original neutral reflective surfaces without invented album artwork.
+An original procedural interpretation of the classic Bang & Olufsen Beosound 9000 in silver aluminium and black glass. This is not manufacturer CAD. The owner's three supplied product photographs guided the visible CD row, clamper, glass and silver/black finish; those photographs are not redistributed as textures. The six custom CD labels use embedded album covers selected by the owner.
 
 ## Sources
 
@@ -24,4 +24,4 @@ No audio files, playlist or streaming service are currently connected. A play re
 
 ## Implementation
 
-Original geometry, textures and interaction code live in `src/components/studio/scene/Beosound9000*`. No external model or texture downloads are required. Textures are disposed on replacement/unmount. Mechanical animation only updates while the carriage or glass is moving; reduced motion applies final positions immediately.
+Original geometry, textures and interaction code live in `src/components/studio/scene/Beosound9000*`. The chassis uses original geometry and procedural surfaces; the six assigned disc labels use the documented embedded album covers in `../audio/PROVENANCE.md`. Textures are disposed on replacement/unmount. Mechanical animation updates while the carriage/glass moves or the selected audio disc spins/settles; reduced motion applies final positions immediately.

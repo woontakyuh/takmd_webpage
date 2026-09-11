@@ -1,26 +1,30 @@
 # Beosound 9000 implementation
 
-[Public provenance and primary references](../public/models/beosound-9000/PROVENANCE.md) record the measured envelope and the distinction between exact dimensions and visual approximations.
+[Product provenance](../public/models/beosound-9000/PROVENANCE.md) records the measured envelope. The horizontal player stays at `[0, 0.82, 3.111]` on a near-upright shelf bracket. Placement A puts Beolab 8000 outside the bookcase ends at x = ±2.57m, z = 2.87m. Both wall-switch centers are 1.46m; blinds stay left of the window.
 
-The model is mounted at `[0, 0.82, 3.111]`, facing the room, in place of the Theatre. `OfficeStorage` retains every other child. The new component uses the existing arbitrary-ID `SceneInspection` route (`beosound-9000`), so camera return uses the same lifecycle as other inspected objects. It does not add an ExhibitId or modify CameraRig.
+The speakers retain about 39cm of clearance from their rear bodies to the rear wall. Hue Signe moves to `[-2.63, .0185, 3.18]`, leaving about 17cm between its base and the adjacent speaker base. This separates the objects while keeping the speaker away from the rear wall. It is a plausible visual placement, not a room-acoustics simulation or measured optimum; the window-side wall remains closer than on the opposite side.
 
-## Boundaries
+## Playback
 
-- `Beosound9000.tsx`: inspection pose, responsive framing, native entry marker, local reducer ownership.
-- The chassis only owns its approach pointer handlers before inspection. During inspection, direct CD groups own the physical hits; the decorative moving clamper must not swallow a selection as it crosses another disc.
-- `Beosound9000Geometry.tsx`: chassis, discs, bracket, glass, physical hit targets and mechanical movement. CD travel is 168.75 mm/s; frame steps are capped at 100 ms to avoid a jump when returning from an inactive tab.
-- `Beosound9000State.ts`: six disc slots, bounded volume, mute/load/transport commands and display state. There is deliberately no `playing` or current-track state without an audio adapter.
-- `Beosound9000Controls.tsx` / `beosound-9000.css`: HTML controls sit on the physical operation panel on desktop. Compact screens attach an enlarged touch plate to that panel's upper edge, with at least 44 px button targets and 12 px control/readout text. Non-transform Html must omit distanceFactor so CSS pixels retain their actual screen size. The passive panel texture is hidden while either active control surface is shown. Escape and the nearby × restore the preceding inspection pose.
-- `Beosound9000Textures.ts`: original static disc sheen and event-driven panel texture; no per-frame canvas drawing.
+- CD 1: Asoto Union — Think About’ Chu, Sound Renovates A Structure.
+- CD 2: Brown Eyes — 비오는 압구정, Reason 4 Breathing?
+- CD 3: GIRIBOY — 하루종일 (Band Ver.), 땡큐 / Thank You.
+- CD 4: Two Ton Shoe — Paper Bag, Resoled.
+- CD 5: Radiohead — High and Dry, The Bends.
+- CD 6: John Splithoff — Raye, Make It Happen (Deluxe Edition).
 
-## Future audio integration
+The owner supplied all six MP3 originals. Delivery copies are AAC at 160kbps with fast-start metadata. Originals remain unchanged. [Artwork provenance](../public/models/audio/PROVENANCE.md) records the embedded album covers used as custom circular labels, as requested. CD 3 retains its approved image.
 
-The reducer's typed commands and `CdSlot` are the connection point for an explicitly supplied playlist. Add a real media adapter and map available media to the six slots before adding a playback state. Start real audio from the native play button gesture. Reflect actual media success, pause, end and error events; do not make the visual carriage imply playback success. Keep album/title data limited to supplied metadata. No audio plugin, third-party iframe or fabricated library is needed for the present object.
+`Beosound9000Audio.ts` owns one native audio element and a Web Audio gain node. Neither audio element nor audio network request exists before a playback action. The native play and AudioContext resume calls run inside that action, silently buffering during the mechanical change. When the old disc has settled and the carriage reaches the selected slot, the track seeks to its intended start/resume time, the gain opens, and the selected disc starts rotating. Media success, pause, end and errors drive the display. Repeated requests invalidate old promises and re-arm arrival, including a repeated click on the same buffering CD.
 
-## Validation
+Music continues while the visitor explores other objects. Pause returns the CD label to its resting orientation. Standby stops and parks at CD 1. Load pauses and raises the glass; Play closes it before sound resumes. Volume and mute affect the actual gain. Reduced motion applies carriage/cover positions immediately and suppresses rotation while retaining playback.
 
-`bun test src/components/studio/scene/Beosound9000State.test.mjs` covers selection, unavailable playback, standby parking, slot wrap, volume limits/mute, glass loading, movement reversal, arrival/overshoot, reduced motion, idle stability and the existing shelf/TV/clock clearances.
+## Room-native controls
 
-Coordinated browser QA remains with the root task: inspect from overview, select CD 6 then CD 2 during travel, press load/close, change volume and mute, press play to check the source message, use standby, Escape and ×, return to the prior view, resize and repeat on touch/reduced-motion. Inspect silver/black material, glass visibility, controls aligned to the black plate, and preservation of clock and shelf contents.
+A distant click approaches the player. During inspection, the actual CD groups and operation plate own input; the decorative clamper does not intercept clicks. Desktop controls coincide with the black operation plate. On a compact screen, an enlarged plate is attached beside the player with 44px targets. A small artist/track caption sits nearby. There is no separate album card or persistent global player. X/Escape returns to the preceding inspection pose without interrupting music.
 
-The mobile regression probe `probeBeosoundMobileControls(page)` in the shared QA evidence checks one active touch plate, a 1:1 CSS-to-screen width ratio, all 15 actual button bounds at least 44 px, and viewport containment. Run on the existing real mobile page; it does not create another browser.
+## Validation and limits
+
+The reducer/geometry tests cover slot selection, loading request identity, unavailable playback, volume, cover, mechanical travel, reduced motion and shelf clearances. Browser evidence in `.omo/evidence/calendar-audio-refinement-2026-09-11/` covers real audio amplitude, slot switching, label rest, pause/resume, volume/mute, continued room playback, all six supplied tracks, failures/retry, reduced motion and narrow touch controls. Physical iPhone/Safari listening has not been verified by desktop viewport emulation.
+
+One supplied track belongs to each assigned slot. A separate CD rack and replacement flow, full album track lists, seek UI and EQ are not implemented. The transport arrows change discs.

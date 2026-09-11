@@ -4,6 +4,7 @@ import type { Dispatch, SyntheticEvent } from 'react';
 import { CD_SLOTS, beosoundDisplay } from './Beosound9000State';
 import type { BeosoundAction, BeosoundState } from './Beosound9000State';
 import './beosound-9000.css';
+import { BEOSOUND_ALBUMS } from './BeosoundAlbums';
 
 const stopEvent = (event: SyntheticEvent) => event.stopPropagation();
 
@@ -12,6 +13,7 @@ export function Beosound9000Controls({ state, compact, dispatch, onClose }: {
   readonly dispatch: Dispatch<BeosoundAction>; readonly onClose: () => void;
 }) {
   const closeButton = useRef<HTMLButtonElement>(null);
+  const album = BEOSOUND_ALBUMS[state.disc];
   useEffect(() => {
     const previous = document.activeElement;
     closeButton.current?.focus({ preventScroll: true });
@@ -61,7 +63,11 @@ export function Beosound9000Controls({ state, compact, dispatch, onClose }: {
           {!compact && loadingKeys}
         </div>
         {compact && <div className="beosound-level-keys">{levelKeys}</div>}
+        {compact && album && <p className="beosound-track-caption">{album.artist} · {album.track}</p>}
       </div>
     </Html>
+    {!compact && album && <Html position={[0, -.017, .06]} center zIndexRange={[43, 39]}>
+      <p className="beosound-track-caption">{album.artist} · {album.track}</p>
+    </Html>}
   </>;
 }
