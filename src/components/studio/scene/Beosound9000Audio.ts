@@ -10,7 +10,7 @@ const nextDisc = (disc: CdSlot): CdSlot => CD_SLOTS[disc % CD_SLOTS.length] ?? 1
 export function useBeosoundAudio() {
   const [state, reduce] = useReducer(beosoundReducer, INITIAL_BEOSOUND);
   const current = useRef(state), media = useRef<Player | null>(null);
-  const request = useRef(0), entryPending = useRef(true);
+  const request = useRef(0);
   const pending = useRef<{ disc: CdSlot; resume: number; arrived: boolean; ready: boolean } | null>(null);
   const prepared = useRef<{ disc: CdSlot; moving: boolean } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -83,11 +83,11 @@ export function useBeosoundAudio() {
     const source = player.decks[player.active];
     source.audio.currentTime = next.resume;
     source.gain.gain.value = current.current.muted ? 0 : current.current.volume / 90;
-    pending.current = null; entryPending.current = false;
+    pending.current = null;
     update({ type: 'media', playback: 'playing' });
     prepareNext();
   }, [prepareNext, update]);
-  const playDeck = useCallback((player: Player, generation: number, entry: boolean) => {
+  const playDeck = useCallback((player: Player, generation: number) => {
     const { audio } = player.decks[player.active];
     void Promise.all([player.context.resume(), audio.play()]).then(() => {
       if (generation !== request.current || !pending.current) return;
@@ -97,12 +97,10 @@ export function useBeosoundAudio() {
       if (generation !== request.current) return;
       pending.current = null; audio.pause();
       const blocked = error instanceof Error && error.name === 'NotAllowedError';
-      entryPending.current = entry && blocked;
       update({ type: 'media', playback: blocked ? 'stopped' : 'error' });
     });
   }, [startWhenReady, update]);
-  const dispatchAction = useCallback((action: BeosoundAction, entry = false) => {
-    if (!entry) entryPending.current = false;
+  const dispatchAction = useCallback((action: BeosoundAction) => {
     const previous = current.current;
     if (action.type === 'play' && previous.playback === 'playing') return;
     update(action);
@@ -121,7 +119,7 @@ export function useBeosoundAudio() {
         if (source.audio.getAttribute('src') !== album.audio) source.audio.src = album.audio;
         else if (source.audio.error) source.audio.load();
         pending.current = { disc: next.disc, resume, arrived: false, ready: false };
-        playDeck(player, generation, entry);
+        playDeck(player, generation);
         return;
       }
       case 'pause': case 'standby': case 'load':
@@ -163,17 +161,11 @@ export function useBeosoundAudio() {
       prepared.current = null;
       update({ type: 'disc', disc });
       pending.current = { disc, resume: 0, arrived: true, ready: false };
-      playDeck(player, ++request.current, false);
+      playDeck(player, ++request.current);
     };
   }, [clearTimer, playDeck, prepareNext, update]);
   useEffect(() => {
-    const enter = () => { if (entryPending.current) dispatchAction({ type: 'play' }, true); };
-    enter();
-    document.addEventListener('pointerdown', enter, true);
-    document.addEventListener('keydown', enter, true);
     return () => {
-      document.removeEventListener('pointerdown', enter, true);
-      document.removeEventListener('keydown', enter, true);
       ++request.current; clearTimer(); pending.current = null; prepared.current = null;
       const player = media.current;
       media.current = null;
@@ -183,6 +175,6 @@ export function useBeosoundAudio() {
       }
       void player.context.close();
     };
-  }, [clearTimer, dispatchAction]);
+  }, [clearTimer]);
   return { state, dispatch, onCarriageReady };
 }
