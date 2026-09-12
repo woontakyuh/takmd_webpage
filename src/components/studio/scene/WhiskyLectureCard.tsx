@@ -5,16 +5,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SRGBColorSpace } from 'three';
 import type { Group } from 'three';
 import { OfficeIcon } from '../OfficeIcon';
-import { talkMedia } from '../collection';
 import { useSceneInspection } from './SceneInspection';
 import { useCabinetAction } from './WhiskyCabinetDoor';
 import { WHISKY_LECTURE, whiskyLecturePose } from './WhiskyLectureLayout';
 import { advanceLecturePage } from './WhiskyLectureMotion';
 import { WhiskyLecturePaper } from './WhiskyLecturePaper';
 import { WhiskyLectureStack } from './WhiskyLectureStack';
+import { whiskyLecturePages as slides } from './whiskyLecturePages';
 import './whisky-lecture.css';
 
-const slides = talkMedia.find(talk => talk.id === WHISKY_LECTURE.id)?.slides ?? [];
 const cover = slides[0];
 
 export function WhiskyLectureCard({ open, disabled, onApproach, onReturn }: {

@@ -3,7 +3,7 @@ import type { ThreeEvent } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DoubleSide } from 'three';
 import type { Texture } from 'three';
-import type { TalkSlide } from '../types';
+import type { WhiskyCardSlide } from './whiskyLecturePages';
 import { PALETTE } from './config';
 import { WHISKY_LECTURE } from './WhiskyLectureLayout';
 import { lectureStackState, stepLectureTurn, visibleLecturePages } from './WhiskyLectureMotion';
@@ -12,7 +12,7 @@ import { useLectureTextures } from './WhiskyLectureTextures';
 
 export function WhiskyLectureStack({ target, slides, cover, reducedMotion, onTurn, onPage }: {
   readonly target: number;
-  readonly slides: readonly TalkSlide[];
+  readonly slides: readonly WhiskyCardSlide[];
   readonly cover: Texture;
   readonly reducedMotion: boolean;
   readonly onTurn: (direction: -1 | 1) => void;
@@ -41,7 +41,7 @@ export function WhiskyLectureStack({ target, slides, cover, reducedMotion, onTur
     event.stopPropagation();
     if (event.button === 0 && event.delta < 5) onTurn(direction);
   };
-  return <group name="26 physical whisky lecture sheets" userData={{ leftSheets: page, rightSheets: slides.length - page,
+  return <group name="Physical whisky lecture and bar photograph sheets" userData={{ leftSheets: page, rightSheets: slides.length - page,
     targetPage: target, cursor: cursor.current, loadedPages: [...textures.keys()] }}
     onPointerDown={event => event.stopPropagation()} onDoubleClick={event => event.stopPropagation()}>
     {slides.map((_slide, leaf) => {
@@ -55,7 +55,8 @@ export function WhiskyLectureStack({ target, slides, cover, reducedMotion, onTur
       </mesh>;
     })}
     {visible.map(leaf => <group key={leaf} onClick={event => turn(event, cursor.current - leaf >= .5 ? -1 : 1)}>
-      <WhiskyLectureSheet page={leaf} count={slides.length} cursor={cursor} texture={textures.get(leaf) ?? (leaf === 0 ? cover : undefined)} />
+      <WhiskyLectureSheet page={leaf} count={slides.length} cursor={cursor} photoAspect={slides[leaf]?.photoAspect}
+        texture={textures.get(leaf) ?? (leaf === 0 ? cover : undefined)} />
     </group>)}
   </group>;
 }
