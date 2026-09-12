@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { CanopyPlacement } from './BanpoCanopyPlacement';
 import canopyPlacements from '../../../../public/models/han-river/vegetation/canopy-placements.json';
+import { BANPO_APPEARANCE } from './BanpoAppearance';
+import { preserveDistantLeafCoverage } from './BanpoLeafCoverage';
 
 interface CanopyIndexChange {
   readonly geometry: THREE.BufferGeometry;
@@ -97,18 +99,23 @@ function removeCrudeCanopies(model: THREE.Group): CanopyIndexChange[] {
   return changes;
 }
 
-function instanceTreeParts(source: THREE.Group, group: THREE.Group): void {
+function instanceTreeParts(source: THREE.Group, group: THREE.Group, placements: readonly CanopyPlacement[]): void {
   source.updateWorldMatrix(true, true);
   source.traverse(object => {
     if (!(object instanceof THREE.Mesh)) return;
     const material = Array.isArray(object.material) ? object.material[0] : object.material;
     if (!material) return;
+    if (material.name === 'tree_small_02_leaves') {
+      preserveDistantLeafCoverage(object.geometry, BANPO_APPEARANCE.park.leafClusterScale);
+      material.alphaTest = BANPO_APPEARANCE.park.leafAlphaCutoff;
+      material.needsUpdate = true;
+    }
     for (const value of Object.values(material)) if (value instanceof THREE.Texture) value.anisotropy = 4;
-    const mesh = new THREE.InstancedMesh(object.geometry, material, BANPO_REPLACEMENT_TREES.length);
+    const mesh = new THREE.InstancedMesh(object.geometry, material, placements.length);
     mesh.name = `Near-bank detailed trees ${material.name}`;
     mesh.castShadow = false;
     mesh.receiveShadow = false;
-    BANPO_REPLACEMENT_TREES.forEach(({ east, north, elevation, scale, rotation }, index) => {
+    placements.forEach(({ east, north, elevation, scale, rotation }, index) => {
       const placement = new THREE.Matrix4().compose(
         new THREE.Vector3(east, elevation, -north),
         new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotation),
@@ -123,7 +130,7 @@ function instanceTreeParts(source: THREE.Group, group: THREE.Group): void {
   });
 }
 
-export function createBanpoVegetation(model: THREE.Group, assetUrl: string = TREE_ASSET): BanpoVegetation {
+export function createBanpoVegetation(model: THREE.Group, assetUrl: string = TREE_ASSET, additional: readonly CanopyPlacement[] = []): BanpoVegetation {
   const group = new THREE.Group();
   group.name = 'Near-bank detailed deciduous trees';
   model.add(group);
@@ -136,7 +143,7 @@ export function createBanpoVegetation(model: THREE.Group, assetUrl: string = TRE
         resolve(false);
         return;
       }
-      instanceTreeParts(gltf.scene, group);
+      instanceTreeParts(gltf.scene, group, [...BANPO_REPLACEMENT_TREES, ...additional]);
       gltf.scene.clear();
       canopyChanges.push(...removeCrudeCanopies(model));
       resolve(true);

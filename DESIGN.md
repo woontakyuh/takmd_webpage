@@ -857,7 +857,7 @@ Use all six supplied tracks with custom album-cover labels. Preserve the approve
 - One physical TV click approaches and automatically enables the reader once the camera settles, preserving lecture/page across exit and re-entry.
 - Walls meet the floor without raised skirting; retain upper trim and furniture.
 - Surfboard story: Bing Beacon label, Encinitas, 2019 heading, larger uncropped purchase photograph, concise factory-pickup copy, and warm ivory text at night. Keep it boxless and close to the board.
-- CD order: Paper Bag, 하루종일 (Band Ver.), High and Dry, Think About’ Chu, Raye, 비오는 압구정. Entry attempts CD 1 with a first-gesture fallback for blocked autoplay. Preload only the next source and move the carriage during the outgoing buffered tail for automatic 1–6–1 playback. Deliberate pause/standby or selection overrides continuation.
+- CD order: Paper Bag, 하루종일 (Band Ver.), High and Dry, Think About’ Chu, Raye, 비오는 압구정. As requested on 12 September, entry stays stopped and creates no audio context or media elements. Only a CD selection or transport play request starts music; general room clicks and keyboard navigation do not. After intentional playback, preload only the next source and move the carriage during the outgoing buffered tail for automatic 1–6–1 playback. Deliberate pause/standby or selection overrides continuation.
 - The closed cabinet approach rises above the desk sightline while keeping the door closed on the first click. The second handle click opens it; desktop and phone poses share this clearance rule.
 
 ### Anniversary fin silhouette correction — 12 September 2026
@@ -889,3 +889,19 @@ Day water uses a restrained grey-green body (#4e655e) with the existing physical
 At distances beyond 650m, Shindonga retains the same mapped shells, rooflines and lift-head silhouettes while its thirteen-floor facade uses derivative-filtered window coverage in one opaque mesh. This prevents subpixel balcony geometry from producing a diagonal checker pattern. Near inspection restores the physical balcony geometry; 8% switching hysteresis prevents boundary flicker. Both levels share the transformed complex center and preserve source coordinates.
 
 The opaque closed Isidoro shell conceals two independently referenced interior groups. Hide those groups only after the door is fully closed and restore them before opening begins. Exterior handles, locks, paper, feet and the complete open interior remain unchanged. Pixel-identical closed/open checks accompany draw-cost measurements.
+
+### Banpo park completeness, 2026-09-12
+
+Preserve the accepted north-bank buildings, coordinates, material tokens and LOD. The new park layer follows the bounded OSM source extract for Banpo ground, Seoraeseom, three footbridges, paths, paved areas, parking, basketball courts and Yebitseom. The island is a separate land polygon; its channel must remain water. A closed cycleway remains a line unless explicitly tagged as an area.
+
+Use batched, lit geometry with no new shadow maps or animation loops. Park palette: grass `#687956`, island meadow `#879069`, paving `#aaa694`, cycle/service asphalt `#696c65`, stone `#b6b19d`, court `#647b70`, markings `#e3ddc6`, rail/screen frame `#646b68`, screen `#27343a`, foliage `#576b46`. Surfaces use roughness 0.96; rails 0.55. Shared polygon/ribbon primitives preserve source positions and drape onto the existing terrain. Additional source-constrained trees reuse the existing tree asset and material batches, with at most 48 additional instances.
+
+The official Moonlight waterfront-stage point anchors photo-informed tier geometry; the source fountain polygon is retained as a separate circle. The tier outline, rail dimensions, path widths absent from OSM, park elevation outside the SRTM grid and parking stall spacing are estimates, not surveyed measurements. Record those limitations in source provenance. The user prioritizes recognizable, correctly located park elements over photorealism. Validate actual office-window views and close diagnostic views separately, in daylight and evening, without altering the approved skyline to improve a diagnostic image.
+
+Detailed tree leaves retain the source texture, triangle count and shared material batch. Their aggressively thinned leaf clusters enlarge 2.4 times around individual cluster centers to retain foliage coverage at landscape distances; trunk, branch and cluster positions stay fixed. Use leaf alpha cutoff 0.22 for mipmapped coverage. These are distant rendering treatments, not measured leaf dimensions. Branches and trunks remain opaque. Assign small, distinct surface offsets to lawn, paving and circulation layers to prevent coplanar intersections.
+
+### Jamsu and deliberate music playback — 12 September 2026
+
+Keep Jamsu visibly distinct beneath the existing Banpo upper roadway: continuous low deck, broad raised navigation passage, utilitarian open railings and road/cycle surfaces. The 795 m × 18 m lower bridge stays on the retained upper axis; exact crest and bank approach dimensions remain visual estimates documented in `public/models/han-river/JAMSU.md`. Four static batches replace the two baked lower meshes without altering the accepted city buildings or camera.
+
+Music begins only from an explicit CD selection or transport command. Opening the office, ordinary room interaction and inspecting the Beosound do not allocate audio elements or an AudioContext. Once the visitor starts playback, keep automatic next-track continuation and physical carriage/disc motion.

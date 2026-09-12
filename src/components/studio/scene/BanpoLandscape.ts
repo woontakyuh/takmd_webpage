@@ -17,6 +17,9 @@ import { createBanpoCaelitus } from './BanpoCaelitus';
 import { replaceBanpoBuildingIndices } from './BanpoBuildingReplacement';
 import localStreetsData from '../../../../public/models/han-river/local-streets.json';
 import { createBanpoLocalStreets } from './BanpoLocalStreets';
+import { createBanpoPark, BANPO_PARK_FEATURES } from './BanpoPark';
+import { generateParkTrees } from './BanpoParkPlanting';
+import { createBanpoJamsu } from './BanpoJamsu';
 
 const IDENTIFIED_BUILDINGS = buildingIdentities.buildings.flatMap(building => {
   if (building.blockNumber === null || building.floors === null) return [];
@@ -79,6 +82,8 @@ export function createBanpoLandscape() {
   let apartments: ReturnType<typeof createBanpoApartmentComplex> | null = null;
   let caelitus: ReturnType<typeof createBanpoCaelitus> | null = null;
   let localStreets: ReturnType<typeof createBanpoLocalStreets> | null = null;
+  let park: ReturnType<typeof createBanpoPark> | null = null;
+  let jamsu: ReturnType<typeof createBanpoJamsu> | null = null;
   let buildingReplacement: ReturnType<typeof replaceBanpoBuildingIndices> | null = null;
   const pilotCameraOffset = new THREE.Vector3(280, 300, -1400);
   const fallbackCameraOffset = new THREE.Vector3(0, 340, 0);
@@ -91,6 +96,7 @@ export function createBanpoLandscape() {
     facadeDetails?.setNightMix(currentNight);
     facadeMaterials.forEach(material => material.setNightMix(currentNight));
     bridges?.setNightMix(currentNight);
+    jamsu?.setNightMix(currentNight);
     apartments?.setNightMix(currentNight);
     caelitus?.setNightMix(currentNight);
     fog.color.lerpColors(new THREE.Color(0xc9dce3), new THREE.Color(0x081727), currentNight);
@@ -146,11 +152,15 @@ export function createBanpoLandscape() {
     groundMaterials = applyBanpoGroundMaterials(model, atmosphere.bankTexture);
     localStreets = createBanpoLocalStreets(localStreetsData.features);
     model.add(localStreets.group);
+    park = createBanpoPark();
+    model.add(park.group);
     facadeDetails = createBanpoFacadeDetails(REPLACED_IDS);
     model.add(facadeDetails.group);
-    vegetation = createBanpoVegetation(model);
+    vegetation = createBanpoVegetation(model, undefined, generateParkTrees(BANPO_PARK_FEATURES));
     bridges = createBanpoBridges();
     model.add(bridges.group);
+    jamsu = createBanpoJamsu(model);
+    model.add(jamsu.group);
     loaded = true;
     fallback.dispose();
     setNightMix(currentNight);
@@ -173,9 +183,11 @@ export function createBanpoLandscape() {
       if (!loaded) fallback.dispose();
       vegetation?.dispose();
       bridges?.dispose();
+      jamsu?.dispose();
       facadeDetails?.dispose();
       groundMaterials?.dispose();
       localStreets?.dispose();
+      park?.dispose();
       urbanFabric?.dispose();
       apartments?.dispose();
       caelitus?.dispose();

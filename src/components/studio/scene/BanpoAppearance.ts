@@ -28,6 +28,11 @@ export const BANPO_APPEARANCE = {
     },
   },
   streets: { color: 0x727573, roughness: 1, metalness: 0 },
+  park: {
+    grass: 0x687956, meadow: 0x879069, paving: 0xaaa694, asphalt: 0x696c65,
+    stone: 0xb6b19d, court: 0x647b70, marking: 0xe3ddc6, rail: 0x646b68,
+    screen: 0x27343a, foliage: 0x576b46, roughness: .96, leafAlphaCutoff: .22, leafClusterScale: 2.4,
+  },
   urbanFabric: {
     wall: { color: 0xc0bbae, roughness: 0.85 },
     roof: { color: 0x777f7d, roughness: 0.94 },
