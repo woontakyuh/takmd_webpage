@@ -138,6 +138,13 @@ export function useBeosoundAudio() {
     }
   }, [clearTimer, ensureMedia, playDeck, update]);
   const dispatch = useCallback((action: BeosoundAction) => dispatchAction(action), [dispatchAction]);
+  useEffect(() => {
+    const pauseForMemory = (event: Event) => {
+      if (event.target instanceof HTMLVideoElement && event.target.dataset.officeMemory === 'proposal') dispatch({ type: 'pause' });
+    };
+    document.addEventListener('play', pauseForMemory, true);
+    return () => document.removeEventListener('play', pauseForMemory, true);
+  }, [dispatch]);
   const onCarriageReady = useCallback((disc: CdSlot) => {
     if (pending.current?.disc !== disc) return;
     pending.current.arrived = true; startWhenReady();
