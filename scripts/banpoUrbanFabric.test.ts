@@ -9,6 +9,7 @@ import preparedBuildings from '../public/models/han-river/urban-fabric.json';
 import { generateUrbanFabric, intersectsProtectedFeature, parseUrbanSource } from './prepare-banpo-urban-fabric';
 import { createBanpoUrbanFabric } from '../src/components/studio/scene/BanpoUrbanFabric';
 import { insideFeature } from '../src/components/studio/scene/BanpoCanopyPlacement';
+import { terrainSurfaceNormal } from '../src/components/studio/scene/BanpoGroundMaterials';
 
 const source = parseUrbanSource(gunzipSync(readFileSync(new URL('./fixtures/banpo-buildings-osm-2026-07-15.json.gz', import.meta.url))).toString());
 const before = JSON.stringify(geography.buildings);
@@ -21,7 +22,7 @@ test('fills omitted low-rise footprints deterministically without changing index
   // Then: enough genuine omitted footprints survive, and original indices remain unchanged.
   assert.deepEqual(repeated, buildings);
   assert.deepEqual(preparedBuildings, buildings);
-  assert.ok(buildings.length >= 250 && buildings.length <= 380);
+  assert.ok(buildings.length > 380 && buildings.length <= 1000);
   assert.equal(JSON.stringify(geography.buildings), before);
   const existing = new Set(geography.buildings.map(building => building.id));
   const rawIds = new Set(source.map(element => element.id));
@@ -29,8 +30,12 @@ test('fills omitted low-rise footprints deterministically without changing index
     assert.equal(existing.has(building.id), false);
     assert.equal(rawIds.has(building.id), true);
     assert.ok(building.h > 0 && building.h <= 28);
+    assert.ok(building.area >= 50 && building.area < 500);
     assert.ok(building.p.length >= 3);
   }
+  assert.equal(new Set(buildings.map(building => building.id)).size, buildings.length);
+  assert.ok(buildings.some(building => building.p.every(point => point[1] > 3000)),
+    'the north-bank fabric must reach the mapped neighborhoods beyond the old 3 km cutoff');
 });
 
 test('preserves park and woodland interiors and permits a protected polygon hole', () => {
@@ -63,4 +68,16 @@ test('renders complete footprint walls and roofs in at most two batches and 2000
   assert.ok(triangles > 1000 && triangles <= 20000);
   fabric.dispose();
   assert.equal(disposals, 2);
+});
+
+test('smooths sourced hill normals while preserving low riverbanks and terrain boundaries', () => {
+  const normal = terrainSurfaceNormal(300, 3100, 102);
+  assert.ok(normal);
+  const eastTangent = new THREE.Vector3(0, (86 - 109) / 200, -1);
+  const northTangent = new THREE.Vector3(-1, (111 - 93) / 200, 0);
+  assert.ok(Math.abs(normal.dot(eastTangent)) < 1e-8);
+  assert.ok(Math.abs(normal.dot(northTangent)) < 1e-8);
+  assert.ok(Math.abs(normal.length() - 1) < 1e-8);
+  assert.equal(terrainSurfaceNormal(300, 3100, 20), undefined);
+  assert.equal(terrainSurfaceNormal(-3500, -200, 100), undefined);
 });

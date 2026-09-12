@@ -1,6 +1,6 @@
 # Banpo Han River pilot
 
-This interim scene is the default office exterior. The owner accepted its current building and greenery limitations on 2026-09-09 while requesting that the bridge be visible in the overview.
+This geographic scene is the default office exterior, with Banpo Bridge retained in the overview composition.
 
 ## Geometry sources
 
@@ -15,7 +15,7 @@ Real building footprints and tagged building heights are retained where availabl
 
 Banpo's paired piers, upper road, lower Jamsu crossing, railings, lamps and structural girders are original reference-based geometry, not engineering CAD. The Sebitseom envelopes and N Seoul Tower details are also reference models. The user's photographs guide proportions and composition; no reference photo is used as the window background or baked over the scene.
 
-Location: source origin 37.5101 N / 126.9918 E. The web observer is 280 m south and 1,400 m east of that origin, with an exterior eye height of 300 m. This fixed translation follows the room camera without automatic camera motion. The scene includes the principal Banpo crossing and three adjacent bridge silhouettes; more detailed city architecture remains future work.
+Location: source origin 37.5101 N / 126.9918 E. The web observer is 280 m south and 1,400 m east of that origin, with an exterior eye height of 300 m. This fixed translation follows the room camera without automatic camera motion. The scene includes the principal Banpo crossing and three adjacent bridge silhouettes. Named residential complexes are detailed below; other architecture remains generalized.
 
 ## Editable source
 
@@ -25,7 +25,7 @@ Input preparation: `scripts/prepare-banpo-geography.py`; initial Blender scene: 
 
 `scripts/optimize-banpo.mjs` uses glTF Transform 4.5.0 and meshoptimizer 1.0.1. Only tree crowns are simplified (50% target, maximum error 0.0001 of mesh radius); bridge, city and pavilion geometry are preserved. Meshopt compression uses 16-bit positions. Repeating texture coordinates outside 0–1 intentionally remain unquantized.
 
-Water reflections and 56 moving cars remain native Three.js geometry/shading. Day and night use the same mesh. This remains an interim geographic interpretation. The overview is framed across the bridge; detailed facades, greenery and device frame-time targets remain future work. It does not claim a measured view from a particular apartment.
+Water reflections and 56 moving cars remain native Three.js geometry/shading. Day and night use the same mesh. The overview is framed across the bridge. It does not claim a measured view from a particular apartment.
 
 ## Adjacent bridges and landscape detail, 2026-09-09
 
@@ -38,3 +38,11 @@ Primary silhouette references: [Dongjak close photograph](https://data.si.re.kr/
 The closest riverbank trees use a reduced CC0 Poly Haven Tree Small 02 asset, and ground uses CC0 Leafy Grass maps with mapped OSM road/building coverage. See [vegetation sources](./vegetation/SOURCE.md) and [ground sources](./ground/SOURCE.md). Far buildings and vegetation retain the coarse distant representation.
 
 The 2026-09-10 ground pass uses 1,099 mapped developed, park and woodland features to distinguish neighborhoods from Namsan and riverside parks on the same elevation mesh. See [landcover provenance and downloadable ODbL data](./LANDCOVER.md). Bridge geometry, water, buildings and vegetation are unchanged by this pass; missing building density and distant canopy detail remain future work.
+
+## Named buildings and local streets, 2026-09-12
+
+The [building inventory](./building-identities.json) joins real OSM footprints to 15 Seobinggo Shindonga blocks and the three Raemian Caelitus towers. [Building sources and confidence](./BUILDINGS.md) separate confirmed identities and floor counts from estimated metric heights. The original geographic cutoff had omitted Shindonga block 5 and Caelitus blocks 101 and 102; those mapped footprints are now restored. Existing generic walls, roofs and lift housings for the other 15 selected buildings are removed before their replacements are drawn.
+
+The new facades are original geometry informed by photographs of the completed buildings: Shindonga's thirteen-floor balcony bands and pale numbered gables, and Caelitus's curtain walls and two connections at the skybridge level. Fine facade dimensions, roof equipment and night window occupancy are visual interpretations. Conflicting published and OSM Caelitus heights are recorded in the inventory; none are presented as surveyed elevations.
+
+The [local street network](./STREETS.md) uses mapped road centerlines and a single-channel coverage texture draped onto the same terrain. [Supplemental urban fabric](./URBAN-FABRIC.md) now contains 1,000 real building footprints. Untagged low-rise heights remain estimates. Mountain surface normals interpolate the existing elevation samples to soften lighting without changing the terrain or shoreline. No map or source photograph is used as a scene background.

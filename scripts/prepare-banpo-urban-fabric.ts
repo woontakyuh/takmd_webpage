@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { gunzipSync } from 'node:zlib';
 import { z } from 'astro/zod';
 import geography from '../public/models/han-river/geography.json';
 import landcover from '../public/models/han-river/landcover.json';
@@ -20,6 +21,11 @@ const existing = new Set(geography.buildings.map(building => building.id));
 const longitudeScale = 111320 * Math.cos(geography.origin[0] * Math.PI / 180);
 const round = (value: number): number => Math.round(value * 10) / 10;
 const cross = (a: Point, b: Point, c: Point): number => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+
+function buildingCenter(building: UrbanBuilding): readonly [number, number] {
+  return [building.p.reduce((sum, point) => sum + point[0], 0) / building.p.length,
+    building.p.reduce((sum, point) => sum + point[1], 0) / building.p.length];
+}
 
 function crosses(a: Point, b: Point, c: Point, d: Point): boolean {
   return cross(a, b, c) * cross(a, b, d) < 0 && cross(c, d, a) * cross(c, d, b) < 0;
@@ -48,7 +54,7 @@ export function generateUrbanFabric(elements: readonly Element[]): readonly Urba
     if (polygon.length < 3 || polygon.length > 24) continue;
     const east = polygon.reduce((sum, p) => sum + p[0], 0) / polygon.length;
     const north = polygon.reduce((sum, p) => sum + p[1], 0) / polygon.length;
-    if (east < -1800 || east > 2550 || north < 950 || north > 3000) continue;
+    if (east < -2500 || east > 3000 || north < 650 || north > 4200) continue;
     const area = Math.abs(polygon.reduce((sum, a, index) => {
       const b = polygon[(index + 1) % polygon.length]; return sum + a[0] * b[1] - b[0] * a[1];
     }, 0)) / 2;
@@ -66,28 +72,50 @@ export function generateUrbanFabric(elements: readonly Element[]): readonly Urba
   }
   selected.sort((a, b) => {
     const distance = (building: UrbanBuilding): number => {
-      const east = building.p.reduce((sum, p) => sum + p[0], 0) / building.p.length;
-      const north = building.p.reduce((sum, p) => sum + p[1], 0) / building.p.length;
+      const [east, north] = buildingCenter(building);
       return Math.hypot(east - 350, (north - 1650) * 1.7);
     };
     return distance(a) - distance(b) || a.id - b.id;
   });
-  const result: UrbanBuilding[] = []; let triangles = 0;
+  const core = selected.filter(building => {
+    const [east, north] = buildingCenter(building);
+    return east >= -1800 && east <= 2550 && north >= 950 && north <= 3000;
+  }).slice(0, 380);
+  const coreIds = new Set(core.map(building => building.id));
+  const neighborhoods = new Map<string, UrbanBuilding[]>();
   for (const building of selected) {
+    if (coreIds.has(building.id)) continue;
+    const [east, north] = buildingCenter(building);
+    const key = `${Math.floor(east / 500)},${Math.floor(north / 500)}`;
+    const neighborhood = neighborhoods.get(key) ?? [];
+    neighborhood.push(building); neighborhoods.set(key, neighborhood);
+  }
+  const ordered = [...core];
+  const groups = [...neighborhoods.values()];
+  for (let depth = 0; groups.some(group => depth < group.length); depth++) {
+    for (const group of groups) {
+      const building = group[depth];
+      if (building) ordered.push(building);
+    }
+  }
+  const result: UrbanBuilding[] = []; let triangles = 0;
+  for (const building of ordered) {
     const cost = building.p.length * 3 - 2;
-    if (triangles + cost > 20000 || result.length === 380) break;
+    if (triangles + cost > 20000 || result.length === 1000) break;
     result.push(building); triangles += cost;
   }
   return result;
 }
 
 if (import.meta.main) {
-  const input = new URL('../.omo/evidence/han-river-banpo-2026-09-09/osm-raw.json', import.meta.url);
-  const bytes = readFileSync(input); const buildings = generateUrbanFabric(parseUrbanSource(bytes.toString()));
+  const input = new URL('./fixtures/banpo-buildings-osm-2026-07-15.json.gz', import.meta.url);
+  const fixtureBytes = readFileSync(input);
+  const bytes = gunzipSync(fixtureBytes); const buildings = generateUrbanFabric(parseUrbanSource(bytes.toString()));
   const output = JSON.stringify(buildings);
   writeFileSync(new URL('../public/models/han-river/urban-fabric.json', import.meta.url), `${output}\n`);
   process.stdout.write(`${JSON.stringify({ buildings: buildings.length, bytes: Buffer.byteLength(output),
     triangleUpperBound: buildings.reduce((sum, b) => sum + b.p.length * 3 - 2, 0),
+    fixtureSha256: createHash('sha256').update(fixtureBytes).digest('hex'),
     sourceSha256: createHash('sha256').update(bytes).digest('hex'),
     existingGeographySha256: createHash('sha256').update(readFileSync(new URL('../public/models/han-river/geography.json', import.meta.url))).digest('hex') }, null, 2)}\n`);
 }

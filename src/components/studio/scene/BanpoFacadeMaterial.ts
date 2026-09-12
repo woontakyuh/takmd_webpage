@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { BANPO_APPEARANCE, banpoGlslColor } from './BanpoAppearance';
 
 const FACADE_SHADER = `
   vec2 facadeGrid = vFacadeUv * 4.0;
@@ -12,19 +13,19 @@ const FACADE_SHADER = `
   vec2 facadeWindow = smoothstep(vec2(0.18, 0.22) - facadeAa, vec2(0.18, 0.22) + facadeAa, facadeLocal)
     * (1.0 - smoothstep(vec2(0.79, 0.81) - facadeAa, vec2(0.79, 0.81) + facadeAa, facadeLocal));
   float facadeMask = facadeWindow.x * facadeWindow.y;
-  vec3 facadeMasonry = mix(vec3(0.28, 0.30, 0.285), vec3(0.46, 0.445, 0.40), facadeSeed);
-  vec3 facadeGlass = mix(vec3(0.075, 0.12, 0.14), vec3(0.16, 0.205, 0.21), facadeSeed);
+  vec3 facadeMasonry = mix(${banpoGlslColor(BANPO_APPEARANCE.genericFacade.linear.masonryDark)}, ${banpoGlslColor(BANPO_APPEARANCE.genericFacade.linear.masonryLight)}, facadeSeed);
+  vec3 facadeGlass = mix(${banpoGlslColor(BANPO_APPEARANCE.genericFacade.linear.glassDark)}, ${banpoGlslColor(BANPO_APPEARANCE.genericFacade.linear.glassLight)}, facadeSeed);
   diffuseColor.rgb = mix(facadeMasonry, facadeGlass, facadeMask);
   diffuseColor.rgb *= 0.96 + 0.04 * smoothstep(0.04, 0.1, facadeLocal.y);
   float facadeOccupied = step(facadeRoom, 0.17 + facadeSeed * 0.27) * step(0.18, facadeFloor);
-  vec3 facadeLamp = mix(vec3(0.88, 0.71, 0.46), vec3(0.72, 0.82, 0.89), step(0.78, facadeRoom * 2.9));
+  vec3 facadeLamp = mix(${banpoGlslColor(BANPO_APPEARANCE.genericFacade.linear.lampWarm)}, ${banpoGlslColor(BANPO_APPEARANCE.genericFacade.linear.lampCool)}, step(0.78, facadeRoom * 2.9));
   totalEmissiveRadiance = facadeLamp * facadeMask * facadeOccupied * (0.23 + facadeRoom * 0.55) * uFacadeNight;
 `;
 
 export function applyBanpoFacadeMaterial(material: THREE.MeshStandardMaterial) {
   const night = { value: 0 };
-  material.roughness = 0.79;
-  material.metalness = 0.025;
+  material.roughness = BANPO_APPEARANCE.genericFacade.roughness;
+  material.metalness = BANPO_APPEARANCE.genericFacade.metalness;
   material.onBeforeCompile = shader => {
     shader.uniforms.uFacadeNight = night;
     shader.vertexShader = shader.vertexShader.replace('#include <common>',

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { BANPO_APPEARANCE, banpoGlslColor } from './BanpoAppearance';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
 
@@ -7,7 +8,7 @@ import { Sky } from 'three/examples/jsm/objects/Sky.js';
 const WATER_SHADER = {
   name: 'HanRiverWater',
   uniforms: {
-    color: { value: new THREE.Color(0x386173) },
+    color: { value: new THREE.Color(BANPO_APPEARANCE.atmosphere.waterDay) },
     tDiffuse: { value: null },
     textureMatrix: { value: new THREE.Matrix4() },
     normalSampler: { value: null },
@@ -41,10 +42,10 @@ const WATER_SHADER = {
         + texture2D(normalSampler, uv / 107.0 - vec2(time / -19.0, time / 31.0))
         + texture2D(normalSampler, uv / vec2(8907.0, 9803.0) + vec2(time / 101.0, time / 97.0))
         + texture2D(normalSampler, uv / vec2(1091.0, 1027.0) - vec2(time / 109.0, time / -113.0));
-      return normalize((noise * 0.5 - 1.0).xzy * vec3(0.42, 1.0, 0.42));
+      return normalize((noise * 0.5 - 1.0).xzy * vec3(0.23, 1.0, 0.23));
     }
     void main() {
-      vec3 normal = riverNormal(vWorldPosition.xz * 4.0);
+      vec3 normal = riverNormal(vWorldPosition.xz * 18.0);
       vec3 worldToEye = cameraPosition - vWorldPosition;
       vec3 eyeDirection = normalize(worldToEye);
       float distanceToEye = length(worldToEye);
@@ -62,7 +63,7 @@ const WATER_SHADER = {
       float sunGlint = pow(max(dot(eyeDirection, reflect(-sunDirection, normal)), 0.0), 110.0);
       vec3 scatter = color * (0.66 + max(dot(normal, sunDirection), 0.0) * 0.34);
       vec3 result = mix(scatter, reflection, clamp(reflectance * 0.64 + 0.025, 0.0, 0.67));
-      result += vec3(1.0, 0.9, 0.72) * sunGlint * 0.5 * (1.0 - uNightMix);
+      result += ${banpoGlslColor(BANPO_APPEARANCE.atmosphere.sunGlint)} * sunGlint * 0.5 * (1.0 - uNightMix);
       result = mix(result, uFogColor, smoothstep(2000.0, 4800.0, distanceToEye));
       gl_FragColor = vec4(result, 1.0);
       #include <tonemapping_fragment>
@@ -81,7 +82,7 @@ export function updateRiverReflectionCamera(source: THREE.PerspectiveCamera, tar
 export function createRiverAtmosphere(scene: THREE.Scene, fog: THREE.Fog) {
   const time = { value: 0 };
   const nightMix = { value: 0 };
-  const waterColor = { value: new THREE.Color(0x386173) };
+  const waterColor = { value: new THREE.Color(BANPO_APPEARANCE.atmosphere.waterDay) };
   const sunPosition = { value: new THREE.Vector3(900, 1400, -1100) };
   const sky = new Sky();
   sky.name = 'Three atmospheric sky';
@@ -96,8 +97,8 @@ export function createRiverAtmosphere(scene: THREE.Scene, fog: THREE.Fog) {
   sky.material.fragmentShader = `uniform float uNightMix;\n${sky.material.fragmentShader}`
     .replace('gl_FragColor = vec4( texColor, 1.0 );', `
       float horizon = 1.0 - smoothstep(0.0, 0.5, max(direction.y, 0.0));
-      vec3 nightSky = mix(vec3(0.002, 0.006, 0.018), vec3(0.025, 0.036, 0.062), horizon);
-      gl_FragColor = vec4(mix(texColor * 0.82, nightSky, uNightMix), 1.0);`);
+      vec3 nightSky = mix(${banpoGlslColor(BANPO_APPEARANCE.atmosphere.nightZenith)}, ${banpoGlslColor(BANPO_APPEARANCE.atmosphere.nightHorizon)}, horizon);
+      gl_FragColor = vec4(mix(texColor * ${BANPO_APPEARANCE.atmosphere.skyDayIntensity}, nightSky, uNightMix), 1.0);`);
   scene.add(sky);
 
   const normals = new THREE.TextureLoader().load('/textures/river-water-normals.jpg');
@@ -137,7 +138,7 @@ export function createRiverAtmosphere(scene: THREE.Scene, fog: THREE.Fog) {
     setTime: (seconds: number): void => { time.value = seconds; },
     setNightMix: (mix: number): void => {
       nightMix.value = mix;
-      waterColor.value.lerpColors(new THREE.Color(0x386173), new THREE.Color(0x112c3c), mix);
+      waterColor.value.lerpColors(new THREE.Color(BANPO_APPEARANCE.atmosphere.waterDay), new THREE.Color(BANPO_APPEARANCE.atmosphere.waterNight), mix);
     },
     dispose: (): void => { water.dispose(); normals.dispose(); bankTexture.dispose(); },
   };

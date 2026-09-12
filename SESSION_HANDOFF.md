@@ -1,3 +1,17 @@
+# Real Han River buildings and runtime handoff — 12 September 2026
+
+Current pass receipt: `.omo/evidence/river-real-fidelity-2026-09-12/release.json`. Until present, this pass remains locally implemented and under verification. Older receipts below are historical. Work began at 04:24:30 UTC with a two-hour execution budget.
+
+The source-mapped north bank now identifies all 15 existing Seobinggo Shindonga blocks and 3 Raemian Caelitus towers. Original footprints remain; selected baked surfaces are removed before replacement. The actual-GLB regression removes 333 matching triangles and preserves both named control neighbors. Shindonga block 5 and Caelitus 101/102 were absent under the old geographic cutoff and are restored on their source coordinates. The 15-block, 13-storey complex and Caelitus 17th-floor connecting bridges are photograph-informed; metric heights and detail uncertainty are explicit in BUILDINGS.md. Do not move buildings to force them into a screenshot: a physically valid western window pose shows these complexes.
+
+The low-rise layer grows from 380 to 1,000 source footprints in two batches, preserving all 380 existing entries. A single terrain-following road layer contains 2,611 source ways; both datasets regenerate from checked-in compressed fixtures without ignored evidence files. SRTM lighting smooths distant terrain without changing elevations, and water uses finer restrained normals. BanpoAppearance.ts centralizes appearance values. Exterior camera range is independent of room close-inspection, with near 100m / far 12,000m at the retained geographic camera offset.
+
+Beyond 650m, the Shindonga facades use derivative-filtered thirteen-floor window coverage on the same mapped shells and roof silhouettes. Near inspection restores physical balcony geometry; 8% hysteresis keeps transitions stable. The distant treatment fixes the observed diagonal checker artifact without moving or blanking the buildings.
+
+Closed-cabinet interior culling removes 50 concealed meshes without altering the opaque shell, handles, paper or feet. Interior groups restore before opening and hide only after full closure. All three matched closed/open/closed-again image comparisons are pixel-identical. Preserve the established first-click approach and second-click opening.
+
+Matched Chrome/Metal measurements, source receipts, independent reviews and screenshots are under the current evidence directory. Physical iPhone Safari is still unmeasured. Other apartment facades, most low-rise metric heights and fine vegetation placement are approximate; the city is not photogrammetry. Music/CD rack, EQ, presets, permanent arrangements and deferred lecture work remain explicitly open in docs/office-follow-up-2026-09-11.md. Unrelated untracked reference folders and Beolab8 experiments remain excluded.
+
 # Fin, Han River and performance handoff — 12 September 2026
 
 Current pass receipt: `.omo/evidence/fin-river-performance-2026-09-11/release.json`. Until that exists, the following pass is locally implemented and under final verification; older release receipts below are historical.

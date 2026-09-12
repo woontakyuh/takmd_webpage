@@ -11,6 +11,22 @@ import { createRiverTraffic } from './HanRiverTraffic';
 import urbanBuildings from '../../../../public/models/han-river/urban-fabric.json';
 import { createBanpoUrbanFabric } from './BanpoUrbanFabric';
 import { applyBanpoFacadeMaterial } from './BanpoFacadeMaterial';
+import buildingIdentities from '../../../../public/models/han-river/building-identities.json';
+import { createBanpoApartmentComplex } from './BanpoApartmentComplex';
+import { createBanpoCaelitus } from './BanpoCaelitus';
+import { replaceBanpoBuildingIndices } from './BanpoBuildingReplacement';
+import localStreetsData from '../../../../public/models/han-river/local-streets.json';
+import { createBanpoLocalStreets } from './BanpoLocalStreets';
+
+const IDENTIFIED_BUILDINGS = buildingIdentities.buildings.flatMap(building => {
+  if (building.blockNumber === null || building.floors === null) return [];
+  return [{ id: building.id, p: building.p, z: building.z, heightM: building.heightM,
+    blockNumber: building.blockNumber, floors: building.floors, complex: building.complex }];
+});
+const SHINDONGA_BUILDINGS = IDENTIFIED_BUILDINGS.filter(building => building.complex === 'Seobinggo Shindonga');
+const CAELITUS_BUILDINGS = IDENTIFIED_BUILDINGS.filter(building => building.complex === 'Raemian Caelitus');
+const REPLACED_BUILDINGS = [...SHINDONGA_BUILDINGS, ...CAELITUS_BUILDINGS];
+const REPLACED_IDS = new Set(REPLACED_BUILDINGS.map(building => building.id));
 
 function disposeModel(root: THREE.Object3D) {
   const geometries = new Set<THREE.BufferGeometry>();
@@ -60,6 +76,10 @@ export function createBanpoLandscape() {
   let vegetation: ReturnType<typeof createBanpoVegetation> | null = null;
   let bridges: ReturnType<typeof createBanpoBridges> | null = null;
   let urbanFabric: ReturnType<typeof createBanpoUrbanFabric> | null = null;
+  let apartments: ReturnType<typeof createBanpoApartmentComplex> | null = null;
+  let caelitus: ReturnType<typeof createBanpoCaelitus> | null = null;
+  let localStreets: ReturnType<typeof createBanpoLocalStreets> | null = null;
+  let buildingReplacement: ReturnType<typeof replaceBanpoBuildingIndices> | null = null;
   const pilotCameraOffset = new THREE.Vector3(280, 300, -1400);
   const fallbackCameraOffset = new THREE.Vector3(0, 340, 0);
 
@@ -71,6 +91,8 @@ export function createBanpoLandscape() {
     facadeDetails?.setNightMix(currentNight);
     facadeMaterials.forEach(material => material.setNightMix(currentNight));
     bridges?.setNightMix(currentNight);
+    apartments?.setNightMix(currentNight);
+    caelitus?.setNightMix(currentNight);
     fog.color.lerpColors(new THREE.Color(0xc9dce3), new THREE.Color(0x081727), currentNight);
     sky.intensity = THREE.MathUtils.lerp(1.2, 0.25, currentNight);
     sun.intensity = THREE.MathUtils.lerp(2.6, 0.035, currentNight);
@@ -109,11 +131,22 @@ export function createBanpoLandscape() {
     model.rotation.y = Math.PI / 2;
     model.name = 'OSM Banpo and Sebitseom model';
     scene.add(model);
-    urbanFabric = createBanpoUrbanFabric(urbanBuildings);
+    buildingReplacement = replaceBanpoBuildingIndices(model, REPLACED_BUILDINGS.map(building => ({
+      p: building.p, z: building.z, h: building.heightM,
+    })));
+    apartments = createBanpoApartmentComplex(SHINDONGA_BUILDINGS);
+    apartments.group.userData.replacedTriangles = buildingReplacement.removedTriangles;
+    apartments.group.userData.replacedMeshes = buildingReplacement.modifiedMeshes;
+    model.add(apartments.group);
+    caelitus = createBanpoCaelitus(CAELITUS_BUILDINGS);
+    model.add(caelitus.group);
+    urbanFabric = createBanpoUrbanFabric(urbanBuildings.filter(building => !REPLACED_IDS.has(building.id)));
     model.add(urbanFabric.group);
     facadeMaterials.push(applyBanpoFacadeMaterial(urbanFabric.wallMaterial));
     groundMaterials = applyBanpoGroundMaterials(model, atmosphere.bankTexture);
-    facadeDetails = createBanpoFacadeDetails();
+    localStreets = createBanpoLocalStreets(localStreetsData.features);
+    model.add(localStreets.group);
+    facadeDetails = createBanpoFacadeDetails(REPLACED_IDS);
     model.add(facadeDetails.group);
     vegetation = createBanpoVegetation(model);
     bridges = createBanpoBridges();
@@ -142,7 +175,11 @@ export function createBanpoLandscape() {
       bridges?.dispose();
       facadeDetails?.dispose();
       groundMaterials?.dispose();
+      localStreets?.dispose();
       urbanFabric?.dispose();
+      apartments?.dispose();
+      caelitus?.dispose();
+      buildingReplacement?.restore();
       if (model) { model.removeFromParent(); disposeModel(model); }
       atmosphere.dispose();
       const waterObject = scene.getObjectByName('Normal-mapped Han River water');

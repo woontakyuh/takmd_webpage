@@ -6,6 +6,19 @@ import urbanFabric from '../../../../public/models/han-river/urban-fabric.json';
 const EXTENT = landcover.extent;
 const COVER_SIZE = 1024;
 
+export function terrainSurfaceNormal(east: number, north: number, height: number): THREE.Vector3 | undefined {
+  if (height <= 35) return;
+  const column = Math.round((east + 3500) / 100);
+  const row = Math.round((north + 200) / 100);
+  const westHeight = geography.terrain[row]?.[column - 1];
+  const eastHeight = geography.terrain[row]?.[column + 1];
+  const southHeight = geography.terrain[row - 1]?.[column];
+  const northHeight = geography.terrain[row + 1]?.[column];
+  if (westHeight === undefined || eastHeight === undefined || southHeight === undefined || northHeight === undefined
+    || Math.min(westHeight, eastHeight, southHeight, northHeight) <= 4) return;
+  return new THREE.Vector3((northHeight - southHeight) / 200, 1, (eastHeight - westHeight) / 200).normalize();
+}
+
 function landCoverage() {
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = COVER_SIZE;
@@ -75,11 +88,22 @@ export function applyBanpoGroundMaterials(model: THREE.Group, gravel: THREE.Text
     const materials = Array.isArray(object.material) ? object.material : [object.material];
     if (!materials.some(material => material.name.startsWith('Terrain '))) return;
     const positions = object.geometry.getAttribute('position');
+    const normals = object.geometry.getAttribute('normal');
+    const worldNormalToLocal = new THREE.Matrix3().getNormalMatrix(object.matrixWorld).invert();
+    const originalNormal = new THREE.Vector3();
     const uv = new Float32Array(positions.count * 2);
     for (let i = 0; i < positions.count; i++) {
       world.fromBufferAttribute(positions, i).applyMatrix4(object.matrixWorld);
       uv[i * 2] = world.x / 4; uv[i * 2 + 1] = world.z / 4;
+      const surfaceNormal = terrainSurfaceNormal(-world.z, -world.x, world.y);
+      if (normals && surfaceNormal) {
+        surfaceNormal.applyMatrix3(worldNormalToLocal).normalize();
+        originalNormal.fromBufferAttribute(normals, i)
+          .lerp(surfaceNormal, THREE.MathUtils.smoothstep(world.y, 35, 65)).normalize();
+        normals.setXYZ(i, originalNormal.x, originalNormal.y, originalNormal.z);
+      }
     }
+    if (normals) normals.needsUpdate = true;
     object.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     for (const material of materials) {
       if (!(material instanceof THREE.MeshStandardMaterial) || !material.name.startsWith('Terrain ')) continue;

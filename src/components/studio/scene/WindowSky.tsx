@@ -103,6 +103,8 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
     if (output.width !== region.width || output.height !== region.height) output.setSize(region.width, region.height);
     exteriorCamera.copy(camera);
     exteriorCamera.position.add(exterior.cameraOffset);
+    // The kilometre-scale exterior needs its own depth range to keep balcony layers distinct.
+    exteriorCamera.near = 100;
     exteriorCamera.far = 12000;
     exteriorCamera.updateProjectionMatrix();
     cropExteriorCamera(exteriorCamera, region, width, height);

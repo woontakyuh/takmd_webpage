@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { BANPO_APPEARANCE } from './BanpoAppearance';
 
 export interface UrbanBuilding {
   readonly id: number;
@@ -34,8 +35,8 @@ export function createBanpoUrbanFabric(buildings: readonly UrbanBuilding[]) {
   const roofGeometry = new THREE.BufferGeometry();
   roofGeometry.setAttribute('position', new THREE.Float32BufferAttribute(roofs, 3));
   roofGeometry.computeVertexNormals();
-  const wallMaterial = new THREE.MeshStandardMaterial({ name: 'North bank low-rise facade', color: 0xc0bbae, roughness: 0.85, side: THREE.DoubleSide });
-  const roofMaterial = new THREE.MeshStandardMaterial({ name: 'Low-rise mineral roofs', color: 0x777f7d, roughness: 0.94, side: THREE.DoubleSide });
+  const wallMaterial = new THREE.MeshStandardMaterial({ name: 'North bank low-rise facade', ...BANPO_APPEARANCE.urbanFabric.wall, side: THREE.DoubleSide });
+  const roofMaterial = new THREE.MeshStandardMaterial({ name: 'Low-rise mineral roofs', ...BANPO_APPEARANCE.urbanFabric.roof, side: THREE.DoubleSide });
   const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial); wallMesh.name = 'Merged mapped low-rise walls';
   const roofMesh = new THREE.Mesh(roofGeometry, roofMaterial); roofMesh.name = 'Merged mapped low-rise roofs';
   group.add(wallMesh, roofMesh);

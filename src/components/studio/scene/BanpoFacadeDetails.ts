@@ -43,7 +43,7 @@ function occupancy(osmId: number, floor: number, bay: number): number {
   return (seed ^ (seed >>> 16)) >>> 0;
 }
 
-export function createBanpoFacadeDetails(): BanpoFacadeDetails {
+export function createBanpoFacadeDetails(excludedIds: ReadonlySet<number> = new Set()): BanpoFacadeDetails {
   const group = new THREE.Group();
   group.name = 'OSM-aligned north-bank facade details';
   const bands: DetailInstance[] = [];
@@ -51,6 +51,7 @@ export function createBanpoFacadeDetails(): BanpoFacadeDetails {
   const lights: DetailInstance[] = [];
 
   BANPO_FACADE_SOURCES.forEach(spec => {
+    if (excludedIds.has(spec.osmId)) return;
     const frame = edgeFrame(spec);
     const palette = spec.osmIndex % STRUCTURE_PALETTE.length;
     const structureColor = new THREE.Color(STRUCTURE_PALETTE[palette]);
