@@ -1,5 +1,13 @@
 # Office follow-up — 12 September 2026
 
+## Latest archive and river work
+
+Han River/Jamsu and click-only music are released under `.omo/evidence/banpo-park-completeness-2026-09-12/release.json`: mapped park facilities, three Seoraeseom footbridges, and the continuous lower Jamsu crossing beneath Banpo. Entry and ordinary room clicks remain silent; explicit CD/transport starts playback.
+
+The archive pass is recorded separately in `.omo/evidence/edbm-magazine-2026-09-12/release.json` (absent means local only). The physical Liquor Journal belongs inside the left Isidoro shelf. Bar exterior/interior photographs follow the original magnetic lecture cover, then the original lecture resumes. No separate magnetic photo is intended. The supplied pages are excerpts, not a complete issue scan.
+
+The amplifier proposal frame has asset-gated integration only. The owner's edited video and poster are still needed; no fake media is present. CD rack/swapping, additional album tracks, EQ, physical presets, permanent arrangements, deferred lectures and actual-device iPhone profiling below remain open.
+
 ## Real north-bank buildings and exterior depth
 
 Current receipt: `.omo/evidence/river-real-fidelity-2026-09-12/release.json`; absent means this pass is still local. All fifteen existing Seobinggo Shindonga blocks and the three Raemian Caelitus towers use individual mapped footprints. Source-led facades replace their old baked surfaces. The retained smaller-neighborhood layer now totals 1,000 footprints, and 2,611 eligible local road ways supply a single terrain-following street layer. Water and distant terrain shading are refined. Shared appearance tokens and a separate exterior camera depth range keep the result coherent at the real viewing distance. Closed-cabinet interior culling preserves pixel-identical closed/open views while removing 50 concealed meshes when closed.
