@@ -41,10 +41,14 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const ready = useIsidoroMotion(doorPivot, worktopPivot, open, reducedMotion, editing);
   const barware = useRef<Group>(null);
   const bottles = useRef<Group>(null);
+  const fixedInterior = useRef<Group>(null);
+  const movingInterior = useRef<Group>(null);
   useFrame(() => {
     const exposed = (open && !editing) || (doorPivot.current?.rotation.y ?? 0) !== 0;
     if (barware.current) barware.current.visible = exposed;
     if (bottles.current) bottles.current.visible = exposed;
+    if (fixedInterior.current) fixedInterior.current.visible = exposed;
+    if (movingInterior.current) movingInterior.current.visible = exposed;
   });
   const approached = inspection?.id === 'whisky-cabinet' || inspection?.id.startsWith('whisky:') === true;
   const approachCabinet = useCallback((opened = open) => {
@@ -140,13 +144,13 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     }} {...(!open ? handlers : {
       onPointerDown: stopInteriorClick, onPointerUp: stopInteriorClick, onClick: stopInteriorClick,
     })}>
-    <IsidoroFixedHalf wood={wood}>
+    <IsidoroFixedHalf wood={wood} interior={fixedInterior}>
       <group ref={barware} name="Enclosed Isidoro barware">
       <IsidoroBarware />
       <IsidoroInteriorLighting lowerShelf={0.973} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />
       </group>
     </IsidoroFixedHalf>
-    <WhiskyCabinetDoor open={open} pivot={doorPivot} worktop={worktopPivot} wood={wood}
+    <WhiskyCabinetDoor open={open} pivot={doorPivot} worktop={worktopPivot} interior={movingInterior} wood={wood}
       exterior={<Suspense fallback={null}><WhiskyLectureCard open={open} disabled={editing}
         onApproach={visitClosedCabinet} onReturn={approachCabinet} /></Suspense>}
       disabled={editing} onActivate={toggle}>

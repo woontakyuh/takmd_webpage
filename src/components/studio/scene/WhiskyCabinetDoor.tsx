@@ -139,16 +139,17 @@ export function useIsidoroMotion(door: RefObject<Group | null>, worktop: RefObje
   return ready;
 }
 
-export function WhiskyCabinetDoor({ open, wood, pivot, worktop, children, exterior, ...action }: Omit<DoorProps, 'reducedMotion'> & {
+export function WhiskyCabinetDoor({ open, wood, pivot, worktop, interior, children, exterior, ...action }: Omit<DoorProps, 'reducedMotion'> & {
   readonly pivot: RefObject<Group | null>;
   readonly worktop: RefObject<Group | null>;
+  readonly interior: RefObject<Group | null>;
 }) {
   const { hovered, handlers } = useCabinetAction(action);
   const target = open && !action.disabled ? -ISIDORO_OPEN_ANGLE : 0;
   return <group ref={pivot} name="Isidoro book-opening mobile half"
     position={[ISIDORO_DIMENSIONS.width / 2, 0, 0]}
     userData={{ open: open && !action.disabled, angle: target }} {...(!open ? handlers : {})}>
-    <group scale={[-1, 1, 1]}><IsidoroOpeningHalf wood={wood} worktop={worktop}>{children}</IsidoroOpeningHalf></group>
+    <group scale={[-1, 1, 1]}><IsidoroOpeningHalf wood={wood} worktop={worktop} interior={interior}>{children}</IsidoroOpeningHalf></group>
     {exterior}
     {open && <group name="Isidoro left outer edge and leather handle close target" {...handlers}>
       <mesh position={[-0.6975, 0.595, -0.1275]}>

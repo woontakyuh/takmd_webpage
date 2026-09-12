@@ -24,8 +24,10 @@ const CHROME = PALETTE.aluminiumEdge;
 
 type HalfProps = {
   readonly interiorSide: -1 | 1;
+  readonly interior: RefObject<Group | null>;
   readonly moving?: boolean;
   readonly wood: Texture;
+  readonly storage?: ReactNode;
   readonly children?: ReactNode;
 };
 
@@ -74,14 +76,12 @@ function LeatherSeam({ z }: { readonly z: number }) {
   </mesh>;
 }
 
-function HalfShell({ interiorSide, moving = false, wood, children }: HalfProps) {
+function HalfShell({ interiorSide, interior, moving = false, wood, storage, children }: HalfProps) {
   const outsideZ = -interiorSide * (HALF_DEPTH / 2 - PANEL / 2);
   const leather = useLeatherGrain();
   return <group name={moving ? 'opening leather trunk half' : 'fixed leather trunk half'}>
     <Block size={[ISIDORO_DIMENSIONS.width, ISIDORO_DIMENSIONS.height - 0.04, PANEL]}
       position={[0, 0.595, outsideZ]} color={LEATHER} radius={0.022} roughness={0.83} material={leather} />
-    <Block size={[ISIDORO_DIMENSIONS.width - 0.055, ISIDORO_DIMENSIONS.height - 0.095, 0.012]}
-      position={[0, 0.59, outsideZ + interiorSide * 0.019]} color={FABRIC} radius={0.015} roughness={0.94} />
     {[-1, 1].map(side => <Block key={side} size={[PANEL, ISIDORO_DIMENSIONS.height - 0.07, HALF_DEPTH]}
       position={[side * (ISIDORO_DIMENSIONS.width - PANEL) / 2, 0.595, 0]}
       color={LEATHER} radius={0.018} roughness={0.83} material={leather} />)}
@@ -89,6 +89,9 @@ function HalfShell({ interiorSide, moving = false, wood, children }: HalfProps) 
       color={LEATHER} radius={0.018} roughness={0.83} material={leather} />
     <Block size={[ISIDORO_DIMENSIONS.width, PANEL, HALF_DEPTH]} position={[0, 0.0475, 0]}
       color={LEATHER} radius={0.014} roughness={0.83} material={leather} />
+    <group ref={interior} name="Isidoro enclosed structural interior" visible={false}>
+    <Block size={[ISIDORO_DIMENSIONS.width - 0.055, ISIDORO_DIMENSIONS.height - 0.095, 0.012]}
+      position={[0, 0.59, outsideZ + interiorSide * 0.019]} color={FABRIC} radius={0.015} roughness={0.94} />
     <Block size={[0.64, 0.018, HALF_DEPTH - 0.035]}
       position={[0, ISIDORO_BOTTLE_DECK_TOP - 0.009, 0]}
       color={PALETTE.walnut} texture={wood} radius={0.003} roughness={0.52} />
@@ -97,8 +100,11 @@ function HalfShell({ interiorSide, moving = false, wood, children }: HalfProps) 
         color={PALETTE.walnut} texture={wood} radius={0.0025} roughness={0.5} />
       {(moving || y === ISIDORO_UPPER_SHELF_HEIGHT) && <ChromeRail y={y + 0.027} interiorSide={interiorSide} />}
     </group>)}
+    {!moving && <IsidoroDrawerStorage wood={wood} />}
+    {storage}
+    </group>
     <LeatherSeam z={-interiorSide * (HALF_DEPTH / 2 + 0.0009)} />
-    {moving ? <IsidoroMovingHasps /> : <><IsidoroFixedHardware leather={leather} /><IsidoroDrawerStorage wood={wood} /></>}
+    {moving ? <IsidoroMovingHasps /> : <IsidoroFixedHardware leather={leather} />}
     {children}
     <group name={moving ? 'swivel castors' : 'fixed feet'}>
       {[-0.29, 0.29].map(x => <group key={x} position={[x, 0.022, outsideZ]}>
@@ -113,21 +119,24 @@ function HalfShell({ interiorSide, moving = false, wood, children }: HalfProps) 
   </group>;
 }
 
-export function IsidoroFixedHalf({ wood, children }: { readonly wood: Texture; readonly children: ReactNode }) {
+export function IsidoroFixedHalf({ wood, interior, children }: {
+  readonly wood: Texture; readonly interior: RefObject<Group | null>; readonly children: ReactNode;
+}) {
   return <group position={[0, 0, ISIDORO_FIXED_HALF_OFFSET_Z]}>
-    <HalfShell interiorSide={-1} wood={wood}>{children}</HalfShell>
+    <HalfShell interiorSide={-1} interior={interior} wood={wood}>{children}</HalfShell>
   </group>;
 }
 
-export function IsidoroOpeningHalf({ wood, children, worktop }: {
+export function IsidoroOpeningHalf({ wood, interior, children, worktop }: {
   readonly wood: Texture;
+  readonly interior: RefObject<Group | null>;
   readonly children: ReactNode;
   readonly worktop: RefObject<Group | null>;
 }) {
   return <group position={[ISIDORO_DIMENSIONS.width / 2, 0, -HALF_DEPTH / 2]}>
-    <HalfShell interiorSide={1} moving wood={wood}>
+    <HalfShell interiorSide={1} interior={interior} moving wood={wood}
+      storage={<IsidoroLowerBottleStorage wood={wood} worktop={worktop} />}>
       <group name="bottle collection with unmirrored labels" scale={[-1, 1, 1]}>{children}</group>
-      <IsidoroLowerBottleStorage wood={wood} worktop={worktop} />
     </HalfShell>
   </group>;
 }
