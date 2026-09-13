@@ -78,7 +78,12 @@ export function Displays({ ready, selected, onSelect, reducedMotion, halo, prese
         fixed onHoverChange={setWallTvHovered}>
         <group name={WALL_TV.model}>
           <Block size={[WALL_TV.width, WALL_TV.height, WALL_TV.depth]} color={PALETTE.graphite} radius={0.005} roughness={0.32} metalness={0.5} />
-          <mesh visible={focusedScreen !== 'education'} name="Wall TV screen" position={[0, 0.003, WALL_TV.depth / 2 + 0.001]}><planeGeometry args={[WALL_TV.screenWidth, WALL_TV.screenHeight]} /><meshStandardMaterial ref={tvMaterial} map={board} emissiveMap={board} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
+          <mesh visible={focusedScreen !== 'education'} name="Wall TV screen" position={[0, 0.003, WALL_TV.depth / 2 + 0.001]}>
+            <planeGeometry args={[WALL_TV.screenWidth, WALL_TV.screenHeight]} />
+            {/* Keep the shallow screen clear of its chassis at distant, oblique camera angles. */}
+            <meshStandardMaterial ref={tvMaterial} map={board} emissiveMap={board} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4}
+              polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+          </mesh>
           {focusedScreen === 'education' && <TvScreenReader active hovered={tvHovered} talk={talk} slide={collection.talkSlide} presentations={presentations}
             onTalk={onTalk} onSlide={onTalkSlide} onClose={onClose} treeScrollOffset={tvTreeScrollOffset} onTreeScrollOffset={setTvTreeScrollOffset} />}
           <mesh position={[WALL_TV.width / 2 - 0.034, -WALL_TV.height / 2 + 0.008, 0.017]}><sphereGeometry args={[0.0015, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
