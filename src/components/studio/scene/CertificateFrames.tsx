@@ -60,7 +60,15 @@ const AWARD_PHOTO = {
   position: [2.01, 1.3025, 3.12], paperSize: [.27, .27 * 2633 / 3395],
 } as const;
 
-type CredentialSpec = (typeof CREDENTIALS)[number];
+export type CredentialSpec = {
+  readonly id: string;
+  readonly name: string;
+  readonly texture: string;
+  readonly width: number;
+  readonly height: number;
+  readonly position: readonly [number, number, number];
+  readonly paperSize: readonly [number, number];
+};
 
 type FramedCredentialProps = {
   readonly credential: CredentialSpec;

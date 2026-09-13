@@ -1,4 +1,4 @@
-export type CollectionId = 'credentials' | 'awards';
+export type CollectionId = 'credentials' | 'awards' | 'honors' | 'certificates';
 
 export function inspectionBelongsToCollection(currentId: string | null, collectionId: CollectionId): boolean {
   return currentId === `collection-${collectionId}` || currentId?.startsWith(`${collectionId.slice(0, -1)}-`) === true;

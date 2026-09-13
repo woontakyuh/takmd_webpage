@@ -10,6 +10,7 @@ import { KomissAward } from './KomissAward';
 import { AwardCeremonyPhoto, CertificateFrames } from './CertificateFrames';
 import { CollectionInspectionExit, CollectionInspectionItem } from './CollectionInspection';
 import { AWARD_ITEMS } from './CollectionInspectionData';
+import { AdditionalHonors } from './AdditionalHonors';
 
 const WOOD_BASE = new Color(PALETTE.paperLight);
 const WOOD_TINT = new Color(INTERIOR.lightWood).multiply(
@@ -71,6 +72,7 @@ export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: Roy
     <SteelHangers />
 
     <group name="personal-awards-collection">
+      <Suspense fallback={null}><AdditionalHonors /></Suspense>
       <Suspense fallback={null}><CertificateFrames /></Suspense>
       <Suspense fallback={null}><AwardCeremonyPhoto onOpen={onAwardPhoto} selected={selected} reducedMotion={reducedMotion} /></Suspense>
       <CollectionInspectionItem item={AWARD_ITEMS[0]}>

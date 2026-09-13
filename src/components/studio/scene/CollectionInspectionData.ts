@@ -59,8 +59,11 @@ export const AWARD_ITEMS = [
 ] as const satisfies readonly CollectionItem[];
 
 export function collectionInspection(collection: CollectionId, width: number, height: number): SceneInspection {
-  const credentials = collection === 'credentials';
-  const target: readonly [number, number, number] = credentials ? [1.91, 1.965, 3.12] : [-1.875, 1.45, 3.11];
+  const targets = {
+    credentials: [1.91, 1.965, 3.12], awards: [-1.875, 1.45, 3.11],
+    honors: [-1.875, 2.55, 3.12], certificates: [1.875, 2.38, 3.12],
+  } as const;
+  const target = targets[collection];
   const verticalFov = width < height ? 60 : 42;
   const tangent = Math.tan(verticalFov * Math.PI / 360);
   const distance = Math.max(0.97 / (0.84 * 2 * tangent * width / height), 0.35 / (0.76 * 2 * tangent)) + .04;
