@@ -2,7 +2,7 @@ import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import { MathUtils, SRGBColorSpace, Vector3 } from 'three';
-import type { MeshStandardMaterial } from 'three';
+import type { MeshStandardMaterial, Texture } from 'three';
 import { Block } from './Primitives';
 
 const FRAME = { tilt: -0.16, radius: 0.0025, depth: 0.018, width: 0.246, height: 0.19 } as const;
@@ -14,9 +14,11 @@ type DigitalPhotoFrameProps = {
   readonly reducedMotion: boolean;
   readonly width?: number;
   readonly height?: number;
+  readonly screenTexture?: Texture | null;
+  readonly screenInset?: readonly [number, number];
 };
 
-function Photograph({ src, hovered, active, reducedMotion, width, height }: Required<DigitalPhotoFrameProps>) {
+function Photograph({ src, hovered, active, reducedMotion, width, height, screenTexture, screenInset }: Required<DigitalPhotoFrameProps>) {
   const source = useTexture(src);
   const material = useRef<MeshStandardMaterial>(null);
   const texture = useMemo(() => {
@@ -29,7 +31,7 @@ function Photograph({ src, hovered, active, reducedMotion, width, height }: Requ
   useEffect(() => () => texture.dispose(), [texture]);
   const image = source.image;
   const ratio = image instanceof HTMLImageElement ? image.naturalWidth / image.naturalHeight : 4 / 3;
-  const photoWidth = Math.min(width - 0.036, (height - 0.044) * ratio);
+  const photoWidth = Math.min(width - screenInset[0] * 2, (height - screenInset[1] * 2) * ratio);
   useFrame((_, delta) => {
     if (!material.current) return;
     const targetBrightness = hovered || active ? 0.5 : 0.1;
@@ -38,12 +40,13 @@ function Photograph({ src, hovered, active, reducedMotion, width, height }: Requ
   });
   return <mesh name="digital-photo-screen" position={[0, 0, 0.0102]}>
     <planeGeometry args={[photoWidth, photoWidth / ratio]} />
-    <meshStandardMaterial ref={material} map={texture} emissiveMap={texture} emissive="#ffffff"
-      emissiveIntensity={0.1} roughness={0.4} />
+    {screenTexture ? <meshBasicMaterial map={screenTexture} toneMapped={false} />
+      : <meshStandardMaterial ref={material} map={texture} emissiveMap={texture} emissive="#ffffff"
+        emissiveIntensity={0.1} roughness={0.4} />}
   </mesh>;
 }
 
-export function DigitalPhotoFrame({ src, hovered, active, reducedMotion, width = FRAME.width, height = FRAME.height }: DigitalPhotoFrameProps) {
+export function DigitalPhotoFrame({ src, hovered, active, reducedMotion, width = FRAME.width, height = FRAME.height, screenTexture = null, screenInset = [0.018, 0.022] }: DigitalPhotoFrameProps) {
   const support = useMemo(() => {
     const centerY = (height / 2 - FRAME.radius) * Math.cos(FRAME.tilt)
       + (FRAME.depth / 2 - FRAME.radius) * Math.abs(Math.sin(FRAME.tilt)) + FRAME.radius;
@@ -62,7 +65,8 @@ export function DigitalPhotoFrame({ src, hovered, active, reducedMotion, width =
       <Block size={[width, height, FRAME.depth]} color="#30332F" radius={FRAME.radius} roughness={0.48} />
       <Block size={[width - 0.016, height - 0.016, 0.001]} position={[0, 0, 0.0095]}
         color="#151815" radius={0.0004} />
-      <Photograph src={src} hovered={hovered} active={active} reducedMotion={reducedMotion} width={width} height={height} />
+      <Photograph src={src} hovered={hovered} active={active} reducedMotion={reducedMotion} width={width} height={height}
+        screenTexture={screenTexture} screenInset={screenInset} />
     </group>
     <group name="photo-frame-hinged-easel">
       <mesh name="photo-frame-easel-hinge" position={support.hinge} rotation={[0, 0, Math.PI / 2]} castShadow>

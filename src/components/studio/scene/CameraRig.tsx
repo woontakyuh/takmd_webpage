@@ -227,7 +227,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       window.dispatchEvent(new CustomEvent('office:zoomed', { detail: false }));
     };
     const escapeZoom = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && inspectionReturnPose.current) { event.preventDefault(); event.stopImmediatePropagation(); restoreZoom(); }
+      if (event.key === 'Escape' && !document.fullscreenElement && inspectionReturnPose.current) { event.preventDefault(); event.stopImmediatePropagation(); restoreZoom(); }
     };
     window.addEventListener('office:zoom-close', restoreZoom);
     window.addEventListener('keydown', escapeZoom, true);

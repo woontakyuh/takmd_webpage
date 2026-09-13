@@ -28,6 +28,11 @@ export function RoomArchiveCaption({ object, width, height, bounds, side = false
     close.current?.focus({ preventScroll: true });
     const key = (event: KeyboardEvent) => {
       if (event.defaultPrevented || document.querySelector('dialog:modal')) return;
+      if (event.key === 'Escape' && document.fullscreenElement) {
+        event.preventDefault(); event.stopImmediatePropagation();
+        void document.exitFullscreen();
+        return;
+      }
       if (event.key === 'Escape') { event.preventDefault(); onClose(); }
       if (onStep && (event.key === 'ArrowRight' || event.key === 'ArrowLeft')) {
         event.preventDefault(); onStep(event.key === 'ArrowRight' ? 1 : -1);
