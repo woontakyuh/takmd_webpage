@@ -21,20 +21,20 @@ export const FENDER_MUSIC_CORNER_BOUNDS = {
 export function FenderMusicCorner({ reducedMotion = false }: { readonly reducedMotion?: boolean }) {
   const corner = useRef<Group>(null);
   const close = useRef<HTMLButtonElement>(null);
-  const { size } = useThree();
+  const { width, height } = useThree(state => state.size);
   const { editing } = useArrangement();
   const { inspection, setInspection } = useSceneInspection();
   const selected = inspection?.id === 'music-corner';
   const approach = useCallback(() => {
     if (!corner.current || editing) return;
-    const tangent = Math.tan(focusFov(null, size.width < 760, size.width, size.height) * Math.PI / 360);
-    const distance = Math.max(1.24 * size.height / Math.max(100, size.width - 64),
-      1.28 * size.height / Math.max(100, size.height - 128)) / (2 * tangent);
+    const tangent = Math.tan(focusFov(null, width < 760, width, height) * Math.PI / 360);
+    const distance = Math.max(1.24 * height / Math.max(100, width - 64),
+      1.28 * height / Math.max(100, height - 128)) / (2 * tangent);
     const target = new Vector3(0.386, 0.57, 0.02);
     const position = target.clone().add(new Vector3(distance * 0.62, distance * 0.18, distance));
     corner.current.updateWorldMatrix(true, false);
     setInspection({ id: 'music-corner', position: corner.current.localToWorld(position).toArray(), target: corner.current.localToWorld(target).toArray() });
-  }, [editing, setInspection, size]);
+  }, [editing, setInspection, width, height]);
   const guitar = useCabinetAction({ disabled: editing, onActivate: approach });
   const amplifier = useCabinetAction({ disabled: editing, onActivate: approach });
   useEffect(() => { if (selected) approach(); }, [approach, selected]);

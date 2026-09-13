@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { SRGBColorSpace, VideoTexture } from 'three';
 import { attachProposalVideo } from './proposalVideoSource';
 
@@ -7,18 +7,24 @@ const INITIAL = { playing: false, time: 0, duration: 0, muted: false, volume: 0.
 
 export function useProposalPlayback({ src, hlsSrc }: { readonly src: string | null | undefined; readonly hlsSrc: string | null | undefined }, onPlay?: () => void) {
   const recording = useRef<Recording | null>(null);
+  const [resource, setResource] = useState<Recording | null>(null);
   const [texture, setTexture] = useState<VideoTexture | null>(null);
   const [state, setState] = useState<{ playing: boolean; time: number; duration: number; muted: boolean; volume: number; message: string }>(INITIAL);
   const onPlayRef = useRef(onPlay);
   useEffect(() => { onPlayRef.current = onPlay; }, [onPlay]);
+  useLayoutEffect(() => () => {
+    if (recording.current === resource) recording.current = null;
+    resource?.dispose();
+  }, [resource]);
 
   const reset = useCallback(() => {
-    recording.current?.dispose();
+    recording.current?.video.pause();
     recording.current = null;
+    setResource(null);
     setTexture(null);
     setState(INITIAL);
   }, []);
-  useEffect(() => () => { recording.current?.dispose(); recording.current = null; }, [src, hlsSrc]);
+  useEffect(reset, [src, hlsSrc, reset]);
 
   const play = useCallback(() => {
     if (!src) return;
@@ -41,7 +47,7 @@ export function useProposalPlayback({ src, hlsSrc }: { readonly src: string | nu
         muted: video.muted, volume: video.volume }));
       const timeout = window.setTimeout(() => {
         if (video.readyState >= 2 || recording.current?.video !== video) return;
-        recording.current.dispose(); recording.current = null; setTexture(null);
+        recording.current.video.pause(); recording.current = null; setResource(null); setTexture(null);
         setState(previous => ({ ...previous, playing: false, message: 'The recording is taking too long to load. Press Play to try again.' }));
       }, 20000);
       const ready = () => {
@@ -76,6 +82,7 @@ export function useProposalPlayback({ src, hlsSrc }: { readonly src: string | nu
         video.pause(); video.removeAttribute('src'); video.load(); video.remove(); videoTexture?.dispose();
       } };
       recording.current = current;
+      setResource(current);
     }
     const active = current;
     if (active.video.error) active.video.load();

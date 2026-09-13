@@ -10,6 +10,7 @@ import { archivePose } from './roomArchiveLayout';
 import { useSceneInspection } from './SceneInspection';
 import type { SceneInspection } from './SceneInspection';
 import { useProposalPlayback } from './useProposalPlayback';
+import { cancelSceneSingleAction } from './sceneGesture';
 
 export type ProposalMemory = { readonly posterSrc: string | null; readonly videoSrc?: string | null; readonly hlsSrc?: string | null; readonly title?: string; readonly kicker?: string; readonly story?: string };
 type Props = ProposalMemory & { readonly reducedMotion?: boolean; readonly onVideoPlay?: () => void };
@@ -24,7 +25,8 @@ export function ProposalMemoryFrame({ posterSrc, videoSrc, hlsSrc, title = 'Marr
   const wasSelected = useRef(false);
   const returnInspection = useRef<SceneInspection | null>(null);
   const [hovered, setHovered] = useState(false);
-  const { size } = useThree();
+  const { width, height } = useThree(state => state.size);
+  const canvas = useThree(state => state.gl.domElement);
   const { inspection, setInspection } = useSceneInspection();
   const { editing } = useArrangement();
   const playback = useProposalPlayback({ src: videoSrc, hlsSrc }, onVideoPlay);
@@ -35,15 +37,16 @@ export function ProposalMemoryFrame({ posterSrc, videoSrc, hlsSrc, title = 'Marr
   useCursor(hovered && enabled);
   const approach = useCallback(() => {
     if (!frame.current) return;
-    const pose = archivePose(frame.current, size, FRAME.width, FRAME.height, true);
+    const pose = archivePose(frame.current, { width, height }, FRAME.width, FRAME.height, true);
     setInspection({ id: 'proposal-memory', position: pose.position, target: pose.target });
-  }, [setInspection, size]);
+  }, [setInspection, width, height]);
   const activate = useCallback(() => {
     if (!enabled || selected) return;
+    cancelSceneSingleAction(canvas);
     returnInspection.current = inspection?.id === 'music-corner' ? inspection : null;
     play();
     approach();
-  }, [approach, enabled, inspection, play, selected]);
+  }, [approach, canvas, enabled, inspection, play, selected]);
   const onClose = useCallback(() => { reset(); setInspection(returnInspection.current); }, [reset, setInspection]);
   useEffect(() => { if (selected && !editing) approach(); }, [approach, editing, selected]);
   useEffect(() => {
