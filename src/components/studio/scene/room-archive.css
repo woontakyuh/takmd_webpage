@@ -3,7 +3,7 @@
 .room-archive-caption p { margin: 6px 0; }
 .room-archive-caption .room-archive-label { font: 500 11px/1.5 Manrope, sans-serif; letter-spacing: .06em; }
 .room-archive-caption nav { display: flex; gap: 12px; margin-top: 4px; }
-.room-archive-caption nav button { width: 44px; height: 44px; padding: 0; border: 0; background: transparent; color: inherit; font: 28px/1 var(--studio-editorial); cursor: pointer; }
+.room-archive-caption nav button { width: 44px; height: 44px; padding: 0; border: 0; background: transparent; color: inherit; font: 28px/1 var(--studio-editorial); text-shadow: inherit; cursor: pointer; }
 .room-archive-caption nav button:disabled { opacity: .28; cursor: default; }
 .room-archive-caption nav button:focus-visible { outline: 2px solid var(--studio-teal); outline-offset: -3px; }
 .studio[data-night='true'] .room-archive-caption { color: #f8f6f0; text-shadow: 0 1px 10px #111, 0 0 3px #111; }

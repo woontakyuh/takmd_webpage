@@ -1,7 +1,7 @@
 import { Suspense, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { MathUtils } from 'three';
-import type { BookSurface } from '../personalBookSurfaces';
+import type { MagazineSurface } from './MagazinePrint';
 import { PALETTE } from './config';
 import { MagazineLeaf } from './MagazineLeaf';
 import { magazinePacketLayout } from './MagazineGeometry';
@@ -10,14 +10,14 @@ import { stepLectureTurn } from './WhiskyLectureMotion';
 import { useCabinetAction } from './WhiskyCabinetDoor';
 
 export type MagazineSpread = {
-  readonly left?: BookSurface;
-  readonly right: BookSurface;
+  readonly left?: MagazineSurface;
+  readonly right: MagazineSurface;
   readonly label: string;
   readonly leftLeaves?: number;
 };
 
 export type MagazineProps = MagazineDimensions & {
-  readonly cover: BookSurface;
+  readonly cover: MagazineSurface;
   readonly spreads: readonly MagazineSpread[];
   readonly active: boolean;
   readonly reducedMotion: boolean;
@@ -61,14 +61,16 @@ export function Magazine({ width, height, thickness, cover, spreads, active,
     invalidate();
   });
   return <group name={name}>
-    <mesh name="Magazine back softcover" position={[width / 2, 0, -thickness / 2 + layout.coverThickness / 2]}
-      castShadow receiveShadow>
-      <boxGeometry args={[width, height, layout.coverThickness]} />
-      <meshStandardMaterial color={PALETTE.paper} roughness={.78} />
+    <mesh name="Magazine bound spine" position={[0, 0, 0]} castShadow receiveShadow>
+      <boxGeometry args={[.0014, height, thickness]} />
+      <meshStandardMaterial color={PALETTE.paper} roughness={.84} />
     </mesh>
     <Suspense fallback={null}>
+      <MagazineLeaf name="Magazine back softcover" shape={{ width, height, depth: layout.coverThickness,
+        startZ: -thickness / 2 + layout.coverThickness / 2, endZ: -thickness / 2 + layout.coverThickness / 2 }}
+        cursor={stationary} openingCursor={cursor} leafIndex={0} cover />
       <MagazineLeaf name="Magazine remaining right paper stack" shape={remaining}
-        front={showContent ? spreads.at(-1)?.right : undefined} cursor={stationary} leafIndex={0}
+        front={showContent ? spreads.at(-1)?.right : undefined} cursor={stationary} openingCursor={cursor} leafIndex={0}
         reading={active || cursor.current > 0} handlers={active ? next.handlers : undefined} />
       {shapes.map((shape, index) => <MagazineLeaf key={index} shape={shape} cursor={cursor} leafIndex={index}
         name={index === 0 ? 'Magazine flexible front cover' : `Magazine page packet ${index}`}

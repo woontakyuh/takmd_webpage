@@ -1,12 +1,12 @@
 import { Html } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils } from 'three';
 import type { Group } from 'three';
 import { EDBM_MAGAZINE } from '../edbmArchive';
 import { Magazine } from './Magazine';
 import { RoomArchiveCaption } from './RoomArchiveCaption';
-import { archivePose } from './roomArchiveLayout';
+import { magazineReadingLayout } from './MagazineReadingLayout';
 import { useSceneInspection } from './SceneInspection';
 import { useCabinetAction } from './WhiskyCabinetDoor';
 import { MAGAZINE_READING, MAGAZINE_REST, whiskyMagazineTransform } from './WhiskyMagazineMotion';
@@ -33,10 +33,15 @@ export function WhiskyMagazine({ enabled, reducedMotion, onBusyChange, onReturn 
   const [settled, setSettled] = useState(false);
   const [returning, setReturning] = useState(false);
   const spread = page >= 0;
+  const readingLayout = useMemo(() => magazineReadingLayout(EDBM_MAGAZINE, EDBM_MAGAZINE.spreads, page, size),
+    [page, size.width, size.height]);
   const frame = useCallback(() => {
-    if (poseAnchor.current) setInspection({ id: ID,
-      ...archivePose(poseAnchor.current, { width: size.width, height: size.height }, width * (spread ? 2 : 1), height, true) });
-  }, [setInspection, size.width, size.height, spread]);
+    const anchor = poseAnchor.current;
+    if (!anchor) return;
+    anchor.updateWorldMatrix(true, false);
+    setInspection({ id: ID, position: anchor.localToWorld(readingLayout.position.clone()).toArray(),
+      target: anchor.localToWorld(readingLayout.target.clone()).toArray() });
+  }, [setInspection, readingLayout]);
   const take = useCallback(() => {
     if (!enabled || busy.current) return;
     motionReturning.current = false;
@@ -80,7 +85,7 @@ export function WhiskyMagazine({ enabled, reducedMotion, onBusyChange, onReturn 
     progress.current = Math.abs(next - target) < .0008 ? target : next;
     const transform = whiskyMagazineTransform(progress.current);
     moving.current.position.set(transform.x, transform.y, transform.z);
-    moving.current.rotation.y = transform.yaw;
+    moving.current.rotation.set(transform.pitch, transform.yaw, 0, 'YXZ');
     moving.current.userData.progress = progress.current;
     if (progress.current !== target) state.invalidate();
     if ((progress.current === 1) !== settled) setSettled(progress.current === 1);
@@ -92,21 +97,21 @@ export function WhiskyMagazine({ enabled, reducedMotion, onBusyChange, onReturn 
   });
   return <>
     <group position={[MAGAZINE_READING.x, MAGAZINE_READING.y, MAGAZINE_READING.z]}>
-      <group ref={poseAnchor} position={[spread ? -width / 2 : 0, 0, 0]} />
+      <group ref={poseAnchor} />
     </group>
     <group ref={moving} name="Liquor Journal on the Isidoro shelf" position={[MAGAZINE_REST.x, MAGAZINE_REST.y, MAGAZINE_REST.z]}
-      rotation={[0, MAGAZINE_REST.yaw, 0]} userData={{ sceneControl: true, active }} {...(!active ? handlers : {})}>
+      rotation={[MAGAZINE_REST.pitch, MAGAZINE_REST.yaw, 0, 'YXZ']} userData={{ sceneControl: true, active }} {...(!active ? handlers : {})}>
       <group position={[-width / 2, 0, 0]}>
         <Magazine {...EDBM_MAGAZINE} active={active && settled && !returning} pageIndex={page}
           reducedMotion={reducedMotion} onPageChange={pageChanged} onSettled={index => { pagesClosed.current = index === -1; }} />
       </group>
-      <group ref={captionAnchor} position={[spread ? -width / 2 : 0, 0, 0]} />
+      <group ref={captionAnchor} />
       {enabled && !busy.current && <Html center position={[0, 0, .012]} occlude style={{ pointerEvents: 'none' }}>
         <button className="whisky-lecture-trigger" aria-label="Read Liquor Journal" onClick={event => { if (event.detail === 0) take(); }} />
       </Html>}
     </group>
     {active && busy.current && !returning && <RoomArchiveCaption object={captionAnchor} width={width * (spread ? 2 : 1)} height={height}
-      side title="A chapter behind the bar" label={`Liquor Journal · October 2017 · No. 217`}
+      bounds={readingLayout.bounds} side title="A chapter behind the bar" label={`Liquor Journal · October 2017 · No. 217`}
       description={page < 0 ? 'Eat Drink & Be Merry, in print. A few pages from the years I ran a little bar in Seoul.' : EDBM_MAGAZINE.spreads[page]?.label ?? ''}
       onClose={close} onStep={step} previous={settled && page >= 0} next={settled && page < EDBM_MAGAZINE.spreads.length - 1} />}
   </>;

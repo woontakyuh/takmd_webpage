@@ -55,7 +55,7 @@ export function WhiskyLectureStack({ target, slides, cover, reducedMotion, onTur
       </mesh>;
     })}
     {visible.map(leaf => <group key={leaf} onClick={event => turn(event, cursor.current - leaf >= .5 ? -1 : 1)}>
-      <WhiskyLectureSheet page={leaf} count={slides.length} cursor={cursor} photoAspect={slides[leaf]?.photoAspect}
+      <WhiskyLectureSheet page={leaf} count={slides.length} cursor={cursor} photo={slides[leaf]?.photo}
         texture={textures.get(leaf) ?? (leaf === 0 ? cover : undefined)} />
     </group>)}
   </group>;

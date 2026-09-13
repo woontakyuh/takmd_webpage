@@ -1,6 +1,6 @@
 import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { ReactNode, RefObject, SyntheticEvent } from 'react';
 import { Vector3 } from 'three';
 import type { Group } from 'three';
@@ -10,15 +10,20 @@ import './room-archive.css';
 
 const stopSceneEvent = (event: SyntheticEvent) => event.stopPropagation();
 
-export function RoomArchiveCaption({ object, width, height, side = false, title, label, description, onClose, onStep, previous, next, children }: {
+export function RoomArchiveCaption({ object, width, height, bounds, side = false, title, label, description, onClose, onStep, previous, next, children }: {
   readonly object: RefObject<Group | null>; readonly width: number; readonly height: number; readonly side?: boolean;
   readonly title: string; readonly label: string; readonly description: string;
   readonly onClose: () => void; readonly onStep?: (direction: -1 | 1) => void; readonly previous?: boolean; readonly next?: boolean;
   readonly children?: ReactNode;
+  readonly bounds?: readonly (readonly [number, number, number])[];
 }) {
   const caption = useRef<HTMLElement>(null);
   const close = useRef<HTMLButtonElement>(null);
   const point = useRef(new Vector3());
+  const corners = useMemo(() => bounds ?? [
+    [-width / 2, -height / 2, .006], [-width / 2, height / 2, .006],
+    [width / 2, -height / 2, .006], [width / 2, height / 2, .006],
+  ], [bounds, width, height]);
   useEffect(() => {
     close.current?.focus({ preventScroll: true });
     const key = (event: KeyboardEvent) => {
@@ -36,8 +41,8 @@ export function RoomArchiveCaption({ object, width, height, side = false, title,
     if (!el || !group) return;
     const layout = archiveLayout(size, width / height, side);
     let right = -Infinity, bottom = -Infinity, top = Infinity, left = Infinity;
-    for (const x of [-width / 2, width / 2]) for (const y of [-height / 2, height / 2]) {
-      point.current.set(x, y, .006);
+    for (const [x, y, z] of corners) {
+      point.current.set(x, y, z);
       group.localToWorld(point.current).project(camera);
       const px = (point.current.x + 1) * size.width / 2, py = (1 - point.current.y) * size.height / 2;
       right = Math.max(right, px); left = Math.min(left, px); bottom = Math.max(bottom, py); top = Math.min(top, py);

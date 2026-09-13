@@ -32,14 +32,18 @@ export function magazinePacketLayout(dimensions: MagazineDimensions,
   return { coverThickness, paperDepth, baseZ, packets, remainingDepth: paperDepth - previousDepth };
 }
 
-export function magazineSheetPoint({ distance, width, progress }: {
+export function magazineSheetPoint({ distance, width, progress, opening = 0, spreadAngle = Math.PI * .92 }: {
   readonly distance: number;
   readonly width: number;
   readonly progress: number;
+  readonly opening?: number;
+  readonly spreadAngle?: number;
 }) {
   const turn = MathUtils.clamp(progress, 0, 1);
   const bend = 1.32 * Math.sin(Math.PI * turn);
-  const rootAngle = -Math.PI * turn - bend / 2;
+  const cradleAngle = .04 * Math.PI * MathUtils.clamp(opening, 0, 1);
+  const travel = opening > 0 ? spreadAngle : Math.PI;
+  const rootAngle = -cradleAngle - travel * turn - bend / 2;
   const angle = rootAngle + bend * distance / width;
   if (Math.abs(bend) < .00001) {
     return { x: distance * Math.cos(rootAngle), z: -distance * Math.sin(rootAngle), angle };

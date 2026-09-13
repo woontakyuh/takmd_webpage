@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { Box3, Group, Matrix4, Vector3 } from 'three';
+import { Box3, Euler, Group, Matrix4, Vector3 } from 'three';
 import { EDBM_MAGAZINE } from '../edbmArchive';
 import { isidoroOpeningObstacles } from './IsidoroCollisionGeometry';
 import { WHISKY_BOTTLES } from './WhiskyBottleSpecs';
@@ -63,7 +63,7 @@ const obstacles = [
 
 function magazineCorners(progress: number) {
   const pose = whiskyMagazineTransform(progress);
-  const transform = new Matrix4().makeRotationY(pose.yaw);
+  const transform = new Matrix4().makeRotationFromEuler(new Euler(pose.pitch ?? 0, pose.yaw, 0, 'YXZ'));
   transform.setPosition(pose.x, pose.y, pose.z);
   const corners: Vector3[] = [];
   for (const x of [-width / 2, width / 2]) for (const y of [-height / 2, height / 2]) for (const z of [-depth / 2, depth / 2]) {
@@ -71,6 +71,12 @@ function magazineCorners(progress: number) {
   }
   return corners;
 }
+
+// Given a stored softcover, its lower edge rests on the shelf and its upper edge leans on the lining.
+const restingBounds = new Box3().setFromPoints(magazineCorners(0));
+assert.ok(Math.abs(restingBounds.min.y - shelfTop) < .001, 'magazine rests on shelf');
+assert.ok(Math.abs(restingBounds.min.z - liningFront) < .001, 'magazine leans against lining');
+assert.ok(Math.abs(whiskyMagazineTransform(0).pitch ?? 0) > .1, 'softcover is visibly leaning');
 
 // Given the lift/pull/turn trajectory, when all corners sweep each complete stage,
 // then conservative continuous volumes remain disjoint from the actual shell and contents.

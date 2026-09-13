@@ -36,6 +36,7 @@ try {
   await page.getByRole('button', { name: 'Open Isidoro drinks cabinet', exact: true }).press('Enter');
   await page.waitForFunction(() => window.magazineTestScene()?.scene.getObjectByName('Liquor Journal on the Isidoro shelf'));
   await page.waitForTimeout(2000);
+  const restZ = await page.evaluate(() => window.magazineTestScene().scene.getObjectByName('Liquor Journal on the Isidoro shelf').position.z);
   const point = await page.evaluate(() => {
     const state = window.magazineTestScene();
     const magazine = state.scene.getObjectByName('Liquor Journal on the Isidoro shelf');
@@ -59,7 +60,7 @@ try {
   assert.equal(result.active, false, 'returning must release magazine inspection');
   assert.equal(result.caption, false, 'the magazine caption must stay dismissed after return');
   assert.equal(result.cabinetOpen, true, 'returning the magazine must leave the cabinet open');
-  assert.ok(Math.abs(result.z - .014) < .0001, 'the magazine must finish returning to its shelf');
+  assert.ok(Math.abs(result.z - restZ) < .0001, 'the magazine must finish returning to its shelf');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(2000);
   await page.getByRole('button', { name: 'Read Liquor Journal', exact: true }).press('Enter');
@@ -85,7 +86,7 @@ try {
     }));
   }
   assert.ok(transfer.some(sample => sample.selected), 'a visible bottle click must leave magazine inspection');
-  assert.ok(transfer.every(sample => sample.bottleProgress === 0 || Math.abs(sample.magazineZ - .014) < .0001),
+  assert.ok(transfer.every(sample => sample.bottleProgress === 0 || Math.abs(sample.magazineZ - restZ) < .0001),
     'the bottle must wait until the magazine has returned');
   assert.deepEqual(errors, [], 'archive interaction must not produce browser errors');
   console.log('PASS magazine return, keyboard reopen, and physical bottle selection after safe magazine return');
