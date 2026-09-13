@@ -47,7 +47,7 @@ export function WhiskyLectureStack({ target, slides, cover, reducedMotion, onTur
     {slides.map((_slide, leaf) => {
       if (visible.includes(leaf)) return null;
       const parked = leaf < page;
-      const depth = (parked ? leaf : slides.length - leaf - 1) * WHISKY_LECTURE.sheetThickness;
+      const depth = (slides.length - leaf - 1) * WHISKY_LECTURE.sheetThickness;
       return <mesh key={leaf} name={`${parked ? 'Turned' : 'Remaining'} paper layer ${leaf + 1}`}
         geometry={shapes[parked ? 1 : 0]} position={[0, 0, depth]} receiveShadow castShadow
         onClick={event => turn(event, parked ? -1 : 1)}>

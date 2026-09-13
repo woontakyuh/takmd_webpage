@@ -77,10 +77,11 @@ export function WhiskyLectureCard({ open, disabled, onApproach, onReturn }: {
       trigger.current?.focus({ preventScroll: true });
     };
   }, [active, close, turn]);
-  return <group ref={card} name="Magnetic whisky lecture card" position={[-0.255, 0.865, -0.2565]}
+  return <group ref={card} name="Magnetic whisky lecture card" position={[-0.255, 0.865, WHISKY_LECTURE.cabinetFront]}
     rotation={[0, Math.PI, -Math.PI / 45]} userData={{ lectureId: WHISKY_LECTURE.id, active }} {...handlers}>
     <WhiskyLecturePaper texture={texture} focused={active} hovered={hovered} count={slides.length} />
-    {!open && !disabled && !active && <Html center position={[0, 0, .002]} occlude zIndexRange={[16, 12]} style={{ pointerEvents: 'none' }}>
+    {!open && !disabled && !active && <Html center position={[0, 0, slides.length * WHISKY_LECTURE.sheetThickness + .004]}
+      occlude zIndexRange={[16, 12]} style={{ pointerEvents: 'none' }}>
       <button ref={trigger} type="button" className="whisky-lecture-trigger" aria-label="Read whisky lecture"
         onClick={event => { if (event.detail === 0) approach(); }} />
     </Html>}
@@ -97,7 +98,7 @@ export function WhiskyLectureCard({ open, disabled, onApproach, onReturn }: {
           <button type="button" className="whisky-lecture-keyboard" disabled={index === slides.length - 1}
             onClick={() => turn(1)}>Next whisky lecture slide</button>
           <p className="whisky-lecture-instructions" role="status">Page {shownPage + 1} of {slides.length}. {slides[shownPage]?.caption}</p>
-          <p className="whisky-lecture-instructions">Click the right sheet for the next page. Click the turned left sheet to return. Arrow keys also turn pages.</p>
+          <p className="whisky-lecture-instructions">Click the lower sheet for the next page. Click the turned upper sheet to return. Arrow keys also turn pages.</p>
         </section>
       </Html>
     </>}

@@ -1,4 +1,4 @@
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import type { RefObject } from 'react';
 import { BackSide, FrontSide, MathUtils, PlaneGeometry } from 'three';
@@ -23,7 +23,7 @@ export function shapeLectureSheet(geometry: PlaneGeometry, progress: number, wid
 }
 
 export function createLectureSheet(progress: number) {
-  const geometry = new PlaneGeometry(WHISKY_LECTURE.width, WHISKY_LECTURE.height, 64, 24);
+  const geometry = new PlaneGeometry(WHISKY_LECTURE.width, WHISKY_LECTURE.height, 24, 96);
   shapeLectureSheet(geometry, progress);
   return geometry;
 }
@@ -35,27 +35,30 @@ export function WhiskyLectureSheet({ page, count, cursor, texture, photo: source
   readonly texture: Texture | undefined;
   readonly photo?: WhiskyPhoto;
 }) {
+  const compact = useThree(state => state.size.width < 760);
   const geometry = useMemo(() => createLectureSheet(MathUtils.clamp(cursor.current - page, 0, 1)), [cursor, page]);
   const photo = useMemo(() => {
     if (!sourcePhoto) return null;
-    const height = Math.min(WHISKY_LECTURE.height * .69, (WHISKY_LECTURE.width - .036) / sourcePhoto.aspect);
-    return { geometry: new PlaneGeometry(height * sourcePhoto.aspect, height, 64, 24), width: height * sourcePhoto.aspect, height, centerY: WHISKY_LECTURE.height * .105 };
-  }, [sourcePhoto]);
-  const caption = useMemo(() => sourcePhoto ? createWhiskyPhotoCaption(sourcePhoto) : null, [sourcePhoto]);
+    const height = Math.min(WHISKY_LECTURE.height * (compact ? .60 : .66), (WHISKY_LECTURE.width - .036) / sourcePhoto.aspect);
+    return { geometry: new PlaneGeometry(height * sourcePhoto.aspect, height, 24, 96), width: height * sourcePhoto.aspect, height, centerY: WHISKY_LECTURE.height * (compact ? .095 : .075) };
+  }, [compact, sourcePhoto]);
+  const caption = useMemo(() => sourcePhoto ? createWhiskyPhotoCaption(sourcePhoto, compact) : null, [compact, sourcePhoto]);
   useEffect(() => () => caption?.dispose(), [caption]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => () => photo?.geometry.dispose(), [photo]);
-  useFrame(() => {
+  useFrame(({ gl }) => {
     const progress = MathUtils.clamp(cursor.current - page, 0, 1);
-    if (geometry.userData.progress === progress) return;
+    if (geometry.userData.progress === progress && (!photo || photo.geometry.userData.progress === progress)) return;
     geometry.userData.progress = progress;
     shapeLectureSheet(geometry, progress);
-    const depth = ((count - page - 1) * (1 - progress) + page * progress) * WHISKY_LECTURE.sheetThickness;
+    const depth = (count - page - 1) * WHISKY_LECTURE.sheetThickness;
     geometry.translate(0, 0, depth);
     if (photo) {
+      photo.geometry.userData.progress = progress;
       shapeLectureSheet(photo.geometry, progress, photo.width, photo.height, photo.centerY);
       photo.geometry.translate(0, 0, depth + .00006);
     }
+    gl.shadowMap.needsUpdate = true;
   });
   return <group name={`Whisky lecture sheet ${page + 1}`}>
     <mesh geometry={geometry} receiveShadow castShadow>

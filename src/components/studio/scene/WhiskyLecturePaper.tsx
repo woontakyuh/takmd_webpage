@@ -26,8 +26,9 @@ export function WhiskyLecturePaper({ texture, focused, hovered, count }: {
           roughness={.96} side={DoubleSide} />
       </mesh>
     </>}
-    <group name="Single upper-left nickel paper magnet" position={[WHISKY_LECTURE.pinX, WHISKY_LECTURE.pinY, depth + .00005]}>
+    {WHISKY_LECTURE.pinXs.map(x => <group key={x} name="Fixed top-edge nickel paper magnet"
+      position={[x, WHISKY_LECTURE.pinY, depth + .00005]} scale={WHISKY_LECTURE.magnetScale}>
       <WhiskyLectureMagnet />
-    </group>
+    </group>)}
   </>;
 }

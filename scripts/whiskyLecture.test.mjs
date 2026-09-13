@@ -45,18 +45,19 @@ describe('cabinet lecture page turns', () => {
     const sheet = createLectureSheet(1);
     // When
     const normal = sheet.getAttribute('normal');
-    const center = 12 * 65 + 50;
+    const center = Math.floor(normal.count / 2);
     // Then
-    expect(normal.getZ(center)).toBeLessThan(-.99);
+    expect(normal.getZ(center)).toBeLessThan(-.9);
+    expect(Math.abs(normal.getY(center))).toBeGreaterThan(.05);
     sheet.dispose();
   });
 
-  test('Given a turned stack, when sampling below the magnet, then its blank sheets stay to the left of the readable slide', () => {
+  test('Given a turned stack, when sampling its free area, then its blank sheets stay above the readable slide', () => {
     // Given
-    const leftEdge = -WHISKY_LECTURE.width / 2;
+    const topEdge = WHISKY_LECTURE.height / 2;
     // When / Then
-    for (const x of [leftEdge, -.1, 0, .1, WHISKY_LECTURE.width / 2]) {
-      expect(lectureSheetPoint(x, 0, 1).x).toBeLessThan(leftEdge + .00001);
+    for (const y of [0, -WHISKY_LECTURE.height / 4, -WHISKY_LECTURE.height / 2]) {
+      expect(lectureSheetPoint(0, y, 1).y).toBeGreaterThan(topEdge);
     }
   });
   test('Given any turn position, when the stacks are composed, then all 26 sheets are conserved', () => {
@@ -71,25 +72,27 @@ describe('cabinet lecture page turns', () => {
 
   test('Given a half-turned sheet, when its surface is sampled, then it bends out of the cabinet while the magnet corner stays fixed', () => {
     // Given
-    const { pinX, pinY, width } = WHISKY_LECTURE;
+    const { pinXs, pinY, height } = WHISKY_LECTURE;
+    const pinX = pinXs[0];
     // When
     const pin = lectureSheetPoint(pinX, pinY, .5);
     const middle = lectureSheetPoint(0, 0, .5);
-    const tip = lectureSheetPoint(width / 2, 0, .5);
+    const tip = lectureSheetPoint(0, -height / 2, .5);
     // Then
     expect(pin).toEqual({ x: pinX, y: pinY, z: 0 });
-    expect(tip.z).toBeGreaterThan(.25);
-    expect(Math.abs(middle.x - tip.x)).toBeGreaterThan(.015);
+    expect(tip.z).toBeGreaterThan(.15);
+    expect(Math.abs(middle.y - tip.y)).toBeGreaterThan(.015);
   });
 
-  test('Given a completed turn, when the sheet is sampled, then its printed face is reversed on the left of the pin', () => {
+  test('Given a completed turn, when the sheet is sampled, then its printed face is reversed above the pins with a shallow curl', () => {
     // Given
-    const { pinX, width } = WHISKY_LECTURE;
+    const { pinY, height } = WHISKY_LECTURE;
     // When
-    const point = lectureSheetPoint(width / 2, 0, 1);
+    const point = lectureSheetPoint(0, -height / 2, 1);
     // Then
-    expect(point.x).toBeLessThanOrEqual(2 * pinX - width / 2);
-    expect(point.z).toBeLessThan(.01);
+    expect(point.y).toBeGreaterThan(pinY + height / 2);
+    expect(point.z).toBeGreaterThan(.05);
+    expect(point.z).toBeLessThan(.1);
   });
 
   test('Given a turn in flight, when the target reverses, then the same continuous cursor returns without jumping', () => {

@@ -35,20 +35,22 @@ export function stepLectureTurn(cursor: number, target: number, delta: number, r
 export function lectureSheetPoint(x: number, y: number, progress: number) {
   const turn = MathUtils.clamp(progress, 0, 1);
   const angle = Math.PI * turn;
-  const pinDistance = (y - WHISKY_LECTURE.pinY) / .028;
-  const hinge = -WHISKY_LECTURE.width / 2 + .031 * Math.exp(-(pinDistance ** 2));
-  const span = WHISKY_LECTURE.width / 2 - hinge;
-  const distance = x - hinge;
-  const bend = .95 * Math.sin(angle);
-  const hingeAngle = angle + bend / 2;
-  const tipAngle = hingeAngle - bend * distance / span;
-  const curved = Math.abs(bend) > .00001 && distance > 0;
-  const dx = curved ? span * (Math.sin(hingeAngle) - Math.sin(tipAngle)) / bend : distance * Math.cos(angle);
-  const lift = curved ? span * (Math.cos(tipAngle) - Math.cos(hingeAngle)) / bend : Math.abs(distance) * Math.sin(angle);
-  const down = Math.max(0, (WHISKY_LECTURE.pinY - y) / WHISKY_LECTURE.height);
+  const { foldY, foldRadius, height } = WHISKY_LECTURE;
+  const distance = foldY - y;
+  if (distance <= 0) return { x, y, z: 0 };
+  // The clamped strip stays beneath both magnets; a rounded fold clears their caps.
+  const curvedLength = Math.min(distance, foldRadius * angle);
+  const curvedAngle = curvedLength / foldRadius;
+  const freeLength = distance - curvedLength;
+  const bend = 1.3 * Math.sin(angle) + .52 * turn;
+  const curvature = bend / (foldY + height / 2 - foldRadius * angle);
+  const tipAngle = angle - curvature * freeLength;
+  const broadBend = curvature > .00001;
+  const sweep = broadBend ? (Math.sin(angle) - Math.sin(tipAngle)) / curvature : freeLength * Math.cos(angle);
+  const lift = broadBend ? (Math.cos(tipAngle) - Math.cos(angle)) / curvature : freeLength * Math.sin(angle);
   return {
-    x: hinge + dx,
-    y: y - (.0015 + .006 * turn) * down ** 2 * Math.min(1, Math.abs(distance) / span),
-    z: Math.max(0, lift) + (.0018 * (1 - turn) * down ** 3 + .003 * turn * down ** 2) * (distance / span) ** 2,
+    x,
+    y: foldY - foldRadius * Math.sin(curvedAngle) - sweep,
+    z: foldRadius * (1 - Math.cos(curvedAngle)) + lift,
   };
 }

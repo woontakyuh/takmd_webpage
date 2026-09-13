@@ -72,7 +72,7 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'clos
   const top = 1 - 2 * area.top / height;
   const bottom = 1 - 2 * area.bottom / height;
   const centerX = (left + right) / 2, centerY = (top + bottom) / 2;
-  const outward = (closed ? new Vector3(-0.55, 0.8, -1)
+  const outward = (closed ? new Vector3(-0.55, 0.22, -1)
     : new Vector3(-1.57, inspecting && layout.stacked ? 2.5 : 0.8, -1.7)).normalize();
   const horizontal = new Vector3(0, 1, 0).cross(outward).normalize();
   const vertical = outward.clone().cross(horizontal);
