@@ -62,7 +62,7 @@ export function Magazine({ width, height, thickness, cover, spreads, active,
   });
   return <group name={name}>
     <mesh name="Magazine bound spine" position={[0, 0, 0]} castShadow receiveShadow>
-      <boxGeometry args={[.0014, height, thickness]} />
+      <cylinderGeometry args={[thickness / 2, thickness / 2, height, 20, 1, false, Math.PI, Math.PI]} />
       <meshStandardMaterial color={PALETTE.paper} roughness={.84} />
     </mesh>
     <Suspense fallback={null}>

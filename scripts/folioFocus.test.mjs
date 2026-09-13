@@ -4,7 +4,7 @@ import { createRoot, extend } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Group, PerspectiveCamera, Raycaster, Scene, Vector3 } from 'three';
 import { FOCUS, MOBILE_FOCUS, MONITOR, ROOM, SIDE_READER_SPACE, focusFov } from '../src/components/studio/scene/config';
-import { folioReadingPanelLeft } from '../src/components/studio/scene/folioFocus';
+import { folioReadingPanelLeft, folioReadingPose, folioReadingView } from '../src/components/studio/scene/folioFocus';
 import { MONITOR_SCREEN } from '../src/components/studio/scene/monitorReading';
 import { MonitorArm } from '../src/components/studio/scene/MonitorArm';
 import { Block } from '../src/components/studio/scene/Primitives';
@@ -134,4 +134,35 @@ describe('object reading camera composition', () => {
     // Given / When / Then
     expect(folioReadingPanelLeft(360, 800)).toBeUndefined();
   });
+  for (const [width, height] of [[375, 812], [390, 844], [667, 375], [812, 375]]) {
+    test(`the physical printed folio remains completely clear of the ${width}x${height} compact reader`, () => {
+      const view = folioReadingView(width, height), pose = folioReadingPose(width, height);
+      const camera = new PerspectiveCamera(view.fov, width / height, .02, 80);
+      camera.position.set(...pose.position);
+      camera.lookAt(new Vector3(...pose.target));
+      camera.setViewOffset(width, height, view.offsetX, view.offsetY, width, height);
+      camera.updateMatrixWorld(true);
+      const book = new Group();
+      book.position.set(...ROOM.folio.position);
+      book.rotation.y = ROOM.folio.rotation;
+      book.scale.setScalar(.3);
+      book.updateMatrixWorld(true);
+      const corners = [-.515, .515].flatMap(x => [-.68, .68].map(z => book.localToWorld(new Vector3(x, .06, z)).project(camera)));
+      const left = Math.min(...corners.map(point => (point.x + 1) * width / 2));
+      const right = Math.max(...corners.map(point => (point.x + 1) * width / 2));
+      const top = Math.min(...corners.map(point => (1 - point.y) * height / 2));
+      const bottom = Math.max(...corners.map(point => (1 - point.y) * height / 2));
+      expect(left).toBeGreaterThanOrEqual(15.9);
+      expect(top).toBeGreaterThanOrEqual(79.9);
+      expect(right - left).toBeGreaterThan(200);
+      expect(bottom - top).toBeGreaterThan(270);
+      if (width > height) {
+        expect(right).toBeLessThanOrEqual(folioReadingPanelLeft(width, height) - 15.9);
+        expect(bottom).toBeLessThanOrEqual(height - 15.9);
+      } else {
+        expect(right).toBeLessThanOrEqual(width - 15.9);
+        expect(bottom).toBeLessThanOrEqual(height * .52 - 19.9);
+      }
+    });
+  }
 });

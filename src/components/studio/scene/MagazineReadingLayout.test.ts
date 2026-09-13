@@ -17,8 +17,8 @@ for (const [width, height] of [[375, 844], [768, 1024], [1280, 800], [844, 390]]
         `page ${page} must fit ${width}x${height}: ${p.toArray()}`);
     }
     const depth = Math.max(...pose.bounds.map(p => p[2])) - Math.min(...pose.bounds.map(p => p[2]));
-    if (page === 0) assert.ok(depth > .15, 'single-sided excerpt retains a partly open cover');
-    if (page === 1) assert.ok(depth > .02 && depth < .05, 'article has an open binding rather than a flat plane');
+    if (page === 0) assert.ok(depth > .15, 'the contributor cover remains partly turned');
+    if (page === 1) assert.ok(depth > .035 && depth < .065, 'the article retains a supported open binding');
   }
 }
 console.log('Physical magazine cover, partial opening and bound spread fit portrait and landscape viewports.');

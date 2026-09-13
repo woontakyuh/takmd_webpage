@@ -29,8 +29,9 @@ export const MAGAZINE_PRINT_PATCHES: Readonly<Record<NonNullable<MagazineSurface
     { box: [.800,.407,.20,.45], quad: [[.800,.406],[1,.414],[1,.863],[.810,.843]], ink: true },
   ],
   'feature-left': [
+    { box: [.547,.005,.070,.023], quad: [[.999,.266],[.999,.305],[.975,.305],[.975,.266]], ink: true },
     { box: [0,.038,1,.722], quad: [[.939,0],[.883,.496],[.253,.512],[.237,0]], topCurve: -.06 },
-    { box: [.015,.79,.97,.20], quad: [[.224,.008],[.250,.505],[.009,.510],[.009,.008]], ink: true },
+    { box: [.015,.79,.97,.20], quad: [[.224,.008],[.240,.496],[.009,.497],[.009,.008]], ink: true },
   ],
   'feature-right': [
     { box: [.035,.055,.34,.57], quad: [[.87,.518],[.878,.640],[.346,.653],[.356,.519]] },
@@ -94,22 +95,22 @@ export function restoreMagazinePrint(material: MeshStandardMaterial,surface: Mag
           vec3 original=textureGrad(map,vec2(source.x,1.0-source.y),dx*vec2(1,-1),dy*vec2(1,-1)).rgb;
           if(printInk[i]>.5) {
             // Neutralize the photographed paper cast while retaining the original ink.
-            float density=dot(original,vec3(.65,.30,.05));
+            float density=dot(original,vec3(.2126,.7152,.0722));
             float paper=density;
+            vec3 paperColor=original;
             vec2 imagePoint=vec2(source.x,1.0-source.y);
             for(int j=0;j<8;j++) {
               float angle=float(j)*.785398163;
               vec2 offset=vec2(cos(angle),sin(angle))*.008;
               vec3 nearby=textureGrad(map,imagePoint+offset,dx*vec2(1,-1),dy*vec2(1,-1)).rgb;
-              paper=max(paper,dot(nearby,vec3(.65,.30,.05)));
+              float lightness=dot(nearby,vec3(.2126,.7152,.0722));
+              if(lightness>paper) { paper=lightness; paperColor=nearby; }
             }
-            float loss=max(0.0,1.0-density/max(.01,paper)-.025);
-            float ink=clamp(1.0-1.55*loss,0.0,1.0);
+            vec3 loss=max(vec3(0),1.0-original/max(vec3(.01),paperColor)-.02);
+            vec3 ink=clamp(1.0-1.3*loss,0.0,1.0);
             color=ink*printPaper;
           } else color=original*vec3(1.0,1.02,1.04);
         }
-        ${kind==='contributors'?'color=mix(color,printPaper,smoothstep(.955,1.0,p.x));':''}
-        ${kind==='cover'?'color=mix(color,printPaper,1.0-smoothstep(.004,.012,p.y));':''}
         return color;
       }`)
       .replace('#include <map_fragment>','vec3 restoredPaper = magazinePrint(); diffuseColor.rgb *= restoredPaper;')

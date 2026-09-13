@@ -41,7 +41,7 @@ export function magazineSheetPoint({ distance, width, progress, opening = 0, spr
 }) {
   const turn = MathUtils.clamp(progress, 0, 1);
   const bend = 1.32 * Math.sin(Math.PI * turn);
-  const cradleAngle = .04 * Math.PI * MathUtils.clamp(opening, 0, 1);
+  const cradleAngle = Math.PI * .067 * MathUtils.clamp(opening, 0, 1);
   const travel = opening > 0 ? spreadAngle : Math.PI;
   const rootAngle = -cradleAngle - travel * turn - bend / 2;
   const angle = rootAngle + bend * distance / width;

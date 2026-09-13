@@ -8,6 +8,7 @@ import { ProposalPlaybackControls } from './ProposalPlaybackControls';
 import { RoomArchiveCaption } from './RoomArchiveCaption';
 import { archivePose } from './roomArchiveLayout';
 import { useSceneInspection } from './SceneInspection';
+import type { SceneInspection } from './SceneInspection';
 import { useProposalPlayback } from './useProposalPlayback';
 
 export type ProposalMemory = { readonly posterSrc: string | null; readonly videoSrc?: string | null; readonly hlsSrc?: string | null; readonly title?: string; readonly kicker?: string; readonly story?: string };
@@ -21,6 +22,7 @@ export function ProposalMemoryFrame({ posterSrc, videoSrc, hlsSrc, title = 'Marr
   const trigger = useRef<HTMLButtonElement>(null);
   const gesture = useRef<Gesture | null>(null);
   const wasSelected = useRef(false);
+  const returnInspection = useRef<SceneInspection | null>(null);
   const [hovered, setHovered] = useState(false);
   const { size } = useThree();
   const { inspection, setInspection } = useSceneInspection();
@@ -38,10 +40,11 @@ export function ProposalMemoryFrame({ posterSrc, videoSrc, hlsSrc, title = 'Marr
   }, [setInspection, size]);
   const activate = useCallback(() => {
     if (!enabled || selected) return;
+    returnInspection.current = inspection?.id === 'music-corner' ? inspection : null;
     play();
     approach();
-  }, [approach, enabled, play, selected]);
-  const onClose = useCallback(() => { reset(); setInspection(null); }, [reset, setInspection]);
+  }, [approach, enabled, inspection, play, selected]);
+  const onClose = useCallback(() => { reset(); setInspection(returnInspection.current); }, [reset, setInspection]);
   useEffect(() => { if (selected && !editing) approach(); }, [approach, editing, selected]);
   useEffect(() => {
     if ((!selected || editing) && wasSelected.current) reset();
@@ -67,7 +70,7 @@ export function ProposalMemoryFrame({ posterSrc, videoSrc, hlsSrc, title = 'Marr
     };
   }, []);
   if (!available) return null;
-  return <group name="proposal memory frame" position={[0.18, 0.410, 0]} rotation={[0, -1.893, 0]}
+  return <group name="proposal memory frame" position={[0.14, 0.410, 0.045]}
     onPointerOver={event => { event.stopPropagation(); setHovered(enabled && event.pointerType !== 'touch' && event.buttons === 0); }}
     onPointerOut={() => setHovered(false)}
     onPointerDown={event => {

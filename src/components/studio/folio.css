@@ -56,6 +56,33 @@
   .studio-dialog[data-expanded='true'] .folio-document img { max-height: 520px; }
   .studio-dialog[data-expanded='true'] .studio-publications { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
+@media (max-width: 759px), (max-height: 559px) {
+  .studio-dialog[data-exhibit='research'][open] {
+    --folio-reader-height: 48dvh;
+    display: flex; flex-direction: column; height: var(--folio-reader-height); max-height: var(--folio-reader-height);
+    inset: auto 8px 8px; width: calc(100vw - 16px); padding: 12px 16px; overflow: hidden;
+  }
+  .studio-dialog[data-exhibit='research'] .studio-panel-top { position: static; flex-shrink: 0; }
+  .studio-dialog[data-exhibit='research'] .research-folio { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+  .studio-dialog[data-exhibit='research'] .research-profile,
+  .studio-dialog[data-exhibit='research'] .folio-toolbar { flex-shrink: 0; }
+  .studio-dialog[data-exhibit='research'] .folio-toolbar { margin-bottom: 8px; }
+  .studio-dialog[data-exhibit='research'] .folio-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  .studio-dialog[data-exhibit='research']:not([data-expanded='true']) .research-folio[data-archive='false'] .research-profile { display: flex; justify-content: space-between; gap: 8px; }
+  .studio-dialog[data-exhibit='research']:not([data-expanded='true']) .research-folio[data-archive='false'] .research-profile__metrics { gap: 8px; }
+  .studio-dialog[data-exhibit='research']:not([data-expanded='true']) .research-folio[data-archive='false'] .research-profile__links { display: none; }
+  .studio-dialog[data-exhibit='research']:not([data-expanded='true']) .research-folio[data-archive='false'] .research-profile__source { font-size: 9px; flex-shrink: 0; }
+  .studio-dialog[data-exhibit='research']:not([data-expanded='true']) .folio-context h3 { font-size: 18px; line-height: 1.35; margin: 4px 0 8px; }
+  .studio-dialog[data-exhibit='research']:not([data-expanded='true']) .folio-context > :is(.folio-byline, .folio-citation, .folio-identifiers, .folio-access, .folio-source) { order: 1; }
+  .studio-dialog[data-exhibit='research']:not([data-expanded='true']) .folio-abstract { padding-top: 8px; }
+  .studio-dialog[data-exhibit='research'] .folio-navigation { gap: 8px; }
+  .studio-dialog[data-exhibit='research'] .folio-navigation button { font-size: 11px; }
+  .studio-dialog[data-exhibit='research'] .folio-navigation button > span { display: none; }
+  .studio-dialog[data-exhibit='research'][data-expanded='true'] { inset: 12px 8px; margin: auto; height: calc(100dvh - 24px); max-height: calc(100dvh - 24px); width: calc(100vw - 16px); }
+}
+@media (orientation: landscape) and (max-height: 559px) {
+  .studio-dialog[data-exhibit='research'][open]:not([data-expanded='true']) { inset: 8px 8px 8px auto; width: min(48vw, 360px); height: calc(100dvh - 16px); max-height: none; }
+}
 @keyframes folio-leaf { from { opacity: 0; transform: rotateY(var(--folio-entry-angle)); } to { opacity: 1; transform: rotateY(0deg); } }
 @media (prefers-reduced-motion: reduce) { .folio-document { animation: none; } }
 @media (max-width: 759px) {

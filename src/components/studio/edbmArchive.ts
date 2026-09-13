@@ -2,7 +2,7 @@ import type { MagazineSurface } from './scene/MagazinePrint';
 
 export const EDBM_MAGAZINE = {
   width: .207, height: .27, thickness: .006,
-  cover: { src: '/models/edbm/cover.webp', restoration: 'cover', quad: [[.066, .027], [.977, .03], [1, .987], [.004, .96]] },
+  cover: { src: '/models/edbm/cover.webp', restoration: 'cover', quad: [[.066, .027], [.977, .03], [.999, .955], [.004, .94]] },
   spreads: [
     { label: 'Contributors · photographed excerpt', leftLeaves: 2,
       right: { src: '/models/edbm/contributors.webp', restoration: 'contributors', quad: [[0, 0], [1, 0], [1, 1], [0, 1]] } },

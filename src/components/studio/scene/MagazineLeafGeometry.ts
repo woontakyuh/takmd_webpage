@@ -44,12 +44,12 @@ export function createMagazineLeafGeometry(shape: MagazineLeafShape, faces: {
   return { geometry, flat };
 }
 
-export function magazineLeafPose(cursor: number, leafIndex: number, cover: boolean) {
+export function magazineLeafPose(cursor: number, leafIndex: number) {
   const opening = MathUtils.clamp(cursor, 0, 1);
   return {
     progress: MathUtils.clamp(cursor - leafIndex, 0, 1), opening,
-    spreadAngle: Math.PI * MathUtils.lerp(.55, .92, MathUtils.smoothstep(cursor, 1, 2)),
-    arch: (cover ? .006 : .015) * opening,
+    spreadAngle: Math.PI * MathUtils.lerp(.59, .866, MathUtils.smoothstep(cursor, 1, 2)),
+    arch: .014 * opening,
   };
 }
 
@@ -63,7 +63,9 @@ export type MagazineLeafPose = MagazineLeafShape & {
 export function magazineLeafPoint(distance: number, offset: number, pose: MagazineLeafPose) {
   const point = magazineSheetPoint({ distance, width: pose.width, progress: pose.progress,
     opening: pose.opening, spreadAngle: pose.spreadAngle });
-  const arch = (pose.arch ?? 0) * pageArchAt(distance, pose.width) * Math.cos(Math.PI * pose.progress) ** 2;
+  const u = distance / pose.width;
+  const arch = (pose.arch ?? 0) * (pageArchAt(distance, pose.width) + .43 * Math.sin(Math.PI * u))
+    * Math.cos(Math.PI * pose.progress) ** 2;
   return { x: point.x + Math.sin(point.angle) * offset,
     z: MathUtils.lerp(pose.startZ, pose.endZ, pose.progress) + point.z + arch + Math.cos(point.angle) * offset };
 }

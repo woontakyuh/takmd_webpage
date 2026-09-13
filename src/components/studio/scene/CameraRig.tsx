@@ -14,6 +14,7 @@ import { monitorReadingPose, monitorReadingFov } from './monitorReading';
 import { isSceneKeyboardEvent, panCameraWithArrow } from './cameraKeyboard';
 import { awardPairReadingFov, awardPairReadingLayout } from './awardPairReading';
 import { surfboardReadingLayout, surfboardReadingPose } from './surfboardReading';
+import { folioReadingPose, folioReadingView } from './folioFocus';
 
 type CameraRigProps = Pick<StudioSceneProps,
   'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit' | 'paused' | 'ready'> & { readonly reading: boolean };
@@ -97,6 +98,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   const objectReturnPose = useRef<SavedPose | null>(null);
   const previousObject = useRef(inspection);
   const focusPose = useCallback(() => moveFocus(selected === 'ai' ? monitorReadingPose()
+    : selected === 'research' ? folioReadingPose(size.width, size.height)
     : selected === 'surfing' ? surfboardReadingPose(size.width, size.height)
     : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height]);
   const activeView = useRef<0 | 1 | 2>(viewCommand.view);
@@ -145,6 +147,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     if (screenFocused) orbit.maxPolarAngle = Math.PI;
     if (value.kind === 'return') applyOrbitLimits(orbit, false);
     if (value.kind === 'inspect' || value.kind === 'restore-inspection' || value.kind === 'object' || value.kind === 'restore-object') applyOrbitLimits(orbit, selected !== null, selected === 'surfing');
+    if (selected === 'research') orbit.minPolarAngle = 0.25;
     orbit.update();
     transition.current = null;
     if (value.kind === 'return') savedFreePose.current = null;
@@ -366,6 +369,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
     targetFov.current = selected === 'ai' ? monitorReadingFov(size.width, size.height)
+      : selected === 'research' ? folioReadingView(size.width, size.height).fov
       : selected === 'award-photo' ? awardPairReadingFov(size.width, size.height)
       : focusFov(selected, compact, size.width, size.height);
     if (!selected || screenFocused) {
@@ -384,9 +388,15 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       camera.updateProjectionMatrix();
       return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
     }
+    if (selected === 'research') {
+      const folio = folioReadingView(size.width, size.height);
+      camera.setViewOffset(size.width, size.height, folio.offsetX, folio.offsetY, size.width, size.height);
+      camera.updateProjectionMatrix();
+      return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
+    }
     const compactReader = selected === 'family' || selected === 'books' || selected === 'bookshelf';
     const xOffset = compact ? 0 : (compactReader ? 352 : SIDE_READER_SPACE) / 2;
-    const yOffset = compact ? size.height * (selected === 'research' ? 0.16 : 0.24) : 0;
+    const yOffset = compact ? size.height * 0.24 : 0;
     camera.setViewOffset(size.width, size.height, xOffset, yOffset, size.width, size.height);
     camera.updateProjectionMatrix();
     return () => {

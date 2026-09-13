@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FEATURED_DOI, FOLIO_ASSETS, mediaForPaper, orderedPapers } from './collection';
 import publicationDetails from '../../data/publication-details.json';
 import type { PaperMedia, Publication } from './types';
@@ -45,6 +45,8 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
   const [query, setQuery] = useState('');
   const [year, setYear] = useState('all');
   const [figure, setFigure] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { contentRef.current?.scrollTo({ top: 0 }); }, [publication?.id, archive]);
   const papers = orderedPapers(publications);
   const index = papers.findIndex(paper => paper.id === publication?.id);
   const years = [...new Set(publications.map(paper => paper.year))].sort((a, b) => b - a);
@@ -53,7 +55,7 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
   const detail = publication ? detailsFor(publication) : undefined;
   const selectPaper = (paper: Publication | undefined) => { if (paper) { setArchive(false); setFigure(false); onPaper(paper.id); } };
 
-  return <div className="research-folio" data-active-paper={publication?.id} data-direction={direction}>
+  return <div className="research-folio" data-active-paper={publication?.id} data-direction={direction} data-archive={archive}>
     <ResearchProfile compact />
     <div className="folio-toolbar">
       <nav className="folio-navigation" aria-label="Research views">
@@ -65,7 +67,7 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
         <button aria-label="Next paper" disabled={index === papers.length - 1} onClick={() => selectPaper(papers[index + 1])}>→</button>
       </div></div>}
     </div>
-    {!archive && publication ? <>
+    <div className="folio-content" ref={contentRef}>{!archive && publication ? <>
       <article className="folio-spread" key={publication.id} data-direction={direction}>
         <div className="folio-context"><p className="studio-kicker">{publication.journal} / {publication.year}</p><h3>{publication.title}</h3>
           <a className="folio-doi" href={publication.doiUrl} target="_blank" rel="noreferrer" aria-label={`Open DOI ${normalizeDoi(publication.doiUrl)}`}><span>DOI</span><span>{normalizeDoi(publication.doiUrl)}</span><span aria-hidden="true">↗</span></a>
@@ -90,6 +92,6 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
       <div className="studio-publications">{filtered.map(paper => <button className="reader-record-button" key={paper.id} onClick={() => selectPaper(paper)}><span className="studio-paper-meta"><span>{paper.journal} / {paper.year}</span><span>{mediaForPaper(paper) ? 'First page' : 'Details'}</span></span><strong>{paper.title}</strong><span>{authorRole(paper.role)} · Open in the folio ↗</span></button>)}</div>
       {filtered.length === 0 && <div className="studio-empty"><p>No papers match that search.</p><button className="studio-text-link" onClick={() => { setQuery(''); setYear('all'); }}>Clear filters ↗</button></div>}
       <a className="studio-panel-footer" href="/research#overview">Research interests & authorship <span>↗</span></a>
-    </>}
+    </>}</div>
   </div>;
 }

@@ -23,7 +23,7 @@ export function magazineReadingLayout(dimensions: MagazineDimensions,
 
   const points: Vector3[] = [];
   for (const packet of packets) {
-    const pose = { ...packet, ...magazineLeafPose(cursor, packet.leaf, packet.cover),
+    const pose = { ...packet, ...magazineLeafPose(cursor, packet.leaf),
       progress: packet.stationary ? 0 : Math.max(0, Math.min(1, cursor - packet.leaf)) };
     for (let column = 0; column <= 48; column += 1) for (const y of [-packet.height / 2, packet.height / 2]) {
       for (const offset of [-packet.depth / 2, packet.depth / 2]) {
@@ -32,22 +32,36 @@ export function magazineReadingLayout(dimensions: MagazineDimensions,
       }
     }
   }
-  const normal = new Vector3(0, .18, 1).normalize();
-  const up = new Vector3(0, normal.z, -normal.y);
-  const projected = new Box3().setFromPoints(points.map(p => new Vector3(p.x, p.dot(up), p.dot(normal))));
+  const normal = new Vector3(page < 0 ? -.12 : page === 0 ? -.55 : .30, page === 0 ? .30 : .40, 1).normalize();
+  const right = new Vector3(0, 1, 0).cross(normal).normalize();
+  const up = normal.clone().cross(right);
+  const projected = new Box3().setFromPoints(points.map(p => new Vector3(p.dot(right), p.dot(up), p.dot(normal))));
   const center = projected.getCenter(new Vector3());
   const extent = projected.getSize(new Vector3());
   const frame = archiveLayout(viewport, extent.x / extent.y, true);
-  const scale = frame.imageHeight / extent.y;
-  const target = new Vector3(center.x, 0, 0).addScaledVector(up, center.y).addScaledVector(normal, center.z);
-  target.x += (viewport.width / 2 - frame.left - frame.imageWidth / 2) / scale;
-  target.addScaledVector(up, (frame.top + frame.imageHeight / 2 - viewport.height / 2) / scale);
   const tangent = Math.tan(focusFov(null, viewport.width < 760, viewport.width, viewport.height) * Math.PI / 360);
-  const distance = viewport.height / (2 * scale * tangent) + extent.z / 2;
+  const focal = viewport.height / (2 * tangent);
+  const left = frame.left - viewport.width / 2, top = viewport.height / 2 - frame.top;
+  let distance = 0;
+  for (const point of points) {
+    const x = point.dot(right) - center.x, y = point.dot(up) - center.y, z = point.dot(normal) - center.z;
+    distance = Math.max(distance,
+      -(focal * x + left * z) / (frame.imageWidth / 2),
+      (focal * x + (left + frame.imageWidth) * z) / (frame.imageWidth / 2),
+      (focal * y + top * z) / (frame.imageHeight / 2),
+      -(focal * y + (top - frame.imageHeight) * z) / (frame.imageHeight / 2));
+  }
+  distance *= 1.025;
+  const target = right.clone().multiplyScalar(center.x).addScaledVector(up, center.y).addScaledVector(normal, center.z);
+  target.addScaledVector(right, (viewport.width / 2 - frame.left - frame.imageWidth / 2) * distance / focal);
+  target.addScaledVector(up, (frame.top + frame.imageHeight / 2 - viewport.height / 2) * distance / focal);
   const position = target.clone().addScaledVector(normal, distance);
-  const box = new Box3().setFromPoints(points);
   const bounds: [number, number, number][] = [];
-  for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z])
-    bounds.push([x, y, z]);
+  for (const axis of [right, normal, new Vector3(1, 0, 0), new Vector3(0, 0, 1)]) {
+    for (const direction of [-1, 1]) {
+      const edge = points.reduce((a, b) => direction * a.dot(axis) > direction * b.dot(axis) ? a : b);
+      for (const y of [-height / 2, height / 2]) bounds.push([edge.x, y, edge.z]);
+    }
+  }
   return { position, target, bounds };
 }

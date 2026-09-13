@@ -43,7 +43,7 @@ export function MagazineLeaf({ shape, front, back, cursor, openingCursor = curso
   const { geometry, flat } = useMemo(() => {
     const created = createMagazineLeafGeometry(shape, { front, back });
     shapeMagazineLeaf(created.geometry, created.flat, {
-      ...shape, ...magazineLeafPose(openingCursor.current, leafIndex, cover),
+      ...shape, ...magazineLeafPose(openingCursor.current, leafIndex),
       progress: MathUtils.clamp(cursor.current - leafIndex, 0, 1),
     });
     return created;
@@ -68,7 +68,7 @@ export function MagazineLeaf({ shape, front, back, cursor, openingCursor = curso
     lastCursor.current = cursor.current;
     lastOpeningCursor.current = openingCursor.current;
     shapeMagazineLeaf(geometry, flat, { ...shape,
-      ...magazineLeafPose(openingCursor.current, leafIndex, cover),
+      ...magazineLeafPose(openingCursor.current, leafIndex),
       progress: MathUtils.clamp(cursor.current - leafIndex, 0, 1) });
   });
   return <group {...handlers} name={name}>

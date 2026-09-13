@@ -1,3 +1,13 @@
+# Mobile reader and music/archive repair — 13 September 2026
+
+Release receipt: `.omo/evidence/room-repair-2026-09-13/release.json`. This repair is local until that receipt contains matching commit, remote and live production evidence. It supersedes the rejected earlier magazine and missing guitar/amp approach claims below.
+
+Mobile research now keeps the real open paper above a 48dvh portrait sheet or beside a short-landscape sheet. Fixed title/dated metrics/toolbar surround a single inner paper scrollbar. DOI and the start of the abstract remain visible, and each paper change resets details scroll. Six viewport real-tap sweeps, forward/back turns, rotation, DOI navigation and X/Overview transitions were checked. Actual iPhone Safari performance remains unmeasured; emulation is not a device benchmark.
+
+Both guitar and amplifier physically approach the corner without loading media. The frame faces with the amplifier, sits beside its handle and clears the plant stand. The actual 23-second poster and final proposal recording are already supplied and playable; old asset-gated notes below are historical. Only a deliberate frame click starts video. Close returns to the corner if entered through it; another close returns to the preceding room view. Direct frame entry returns directly. Original HLS, CD audio coordination and cleanup are preserved.
+
+Magazine source print now follows a continuous paper/cover crown with rounded spine and adjacent packet contact. The article opens around156 degrees; the contributor cover is partly turned. Original Place header and red address ink are preserved, without inventing the cropped page numbers/text. Closed-cover approach clears the side panel at844×390. Latest screenshots/tests and two independent magazine reviews are under this repair's `magazine/` evidence; prior flat-book approvals are superseded.
+
 # Archive refinement — 13 September 2026
 
 Current release evidence: `.omo/evidence/archive-refinement-2026-09-13/release.json` (local until receipt exists). Both magnetic photographs have printed Sangsu-dong/bar-era/date captions; source EXIF dates are 14 September 2017 and 2 September 2017. The magazine leans against the lining with 0.5mm geometric clearance above its shelf and from the lining. It unleans while lifting before the existing clearance path.
