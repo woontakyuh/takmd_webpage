@@ -72,7 +72,7 @@ export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: Roy
     <SteelHangers />
 
     <group name="personal-awards-collection">
-      <Suspense fallback={null}><AdditionalHonors /></Suspense>
+      <Suspense fallback={null}><AdditionalHonors wood={wood} /></Suspense>
       <Suspense fallback={null}><CertificateFrames /></Suspense>
       <Suspense fallback={null}><AwardCeremonyPhoto onOpen={onAwardPhoto} selected={selected} reducedMotion={reducedMotion} /></Suspense>
       <CollectionInspectionItem item={AWARD_ITEMS[0]}>

@@ -10,6 +10,7 @@ import { DigitalPhotoFrame } from './DigitalPhotoFrame';
 import { CollectionInspectionExit, CollectionInspectionItem } from './CollectionInspection';
 import { CREDENTIAL_ITEMS } from './CollectionInspectionData';
 import { certificatePaperGeometry } from './CertificatePaperGeometry';
+import { AWARD_PRINTS, AwardPrintSurface } from './AwardPrintSurface';
 
 const FRAME = {
   face: 0.008,
@@ -141,9 +142,9 @@ export function FramedCredential({ credential, texture }: FramedCredentialProps)
       <planeGeometry args={[credential.width - FRAME.face * 2, credential.height - FRAME.face * 2]} />
       <meshStandardMaterial color="#e5dfd1" roughness={0.88} />
     </mesh>
-    <mesh name={`${credential.id}-document-paper`} geometry={paperGeometry} position={[0, credential.height / 2, FRAME.depth / 2 + 0.00045]} receiveShadow>
+    {AWARD_PRINTS[credential.id] ? <AwardPrintSurface id={credential.id} texture={texture} width={paperWidth} height={paperHeight} position={[0, credential.height / 2, FRAME.depth / 2 + 0.00045]} /> : <mesh name={`${credential.id}-document-paper`} geometry={paperGeometry} position={[0, credential.height / 2, FRAME.depth / 2 + 0.00045]} receiveShadow>
       <meshStandardMaterial map={texture} color="#ffffff" roughness={0.76} />
-    </mesh>
+    </mesh>}
     <mesh name={`${credential.id}-physical-glazing`} position={[0, credential.height / 2, FRAME.depth / 2 + 0.00082]}>
       <planeGeometry args={[credential.width - FRAME.face * 2 - 0.0008, credential.height - FRAME.face * 2 - 0.0008]} />
       <meshPhysicalMaterial color="#edf3ef" transparent opacity={0.055} roughness={0.14} metalness={0}

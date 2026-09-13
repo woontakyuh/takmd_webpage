@@ -1,12 +1,13 @@
 import { useTexture } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { SRGBColorSpace } from 'three';
+import type { Texture } from 'three';
 import { ADDITIONAL_DOCUMENTS, SNU_MASTERS_ITEM } from './AdditionalHonorsData';
 import { FramedCredential } from './CertificateFrames';
 import { CollectionInspectionExit, CollectionInspectionItem } from './CollectionInspection';
 import { SnuMastersPlaque } from './SnuMastersPlaque';
 
-export function AdditionalHonors() {
+export function AdditionalHonors({ wood }: { wood: Texture }) {
   const sources = useTexture(ADDITIONAL_DOCUMENTS.map(document => document.frame.texture));
   const textures = useMemo(() => sources.map(source => {
     const texture = source.clone();
@@ -24,7 +25,7 @@ export function AdditionalHonors() {
       </CollectionInspectionItem> : null;
     })}
     <CollectionInspectionItem item={SNU_MASTERS_ITEM}>
-      <group position={[-1.515, 2.4, 3.12]} rotation={[0, Math.PI, 0]}><SnuMastersPlaque /></group>
+      <group position={[-1.515, 2.4, 3.12]} rotation={[0, Math.PI, 0]}><SnuMastersPlaque wood={wood} /></group>
     </CollectionInspectionItem>
     <CollectionInspectionExit collection="honors" />
     <CollectionInspectionExit collection="certificates" />
