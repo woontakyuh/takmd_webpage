@@ -1,11 +1,11 @@
 import { RESEARCH_PROFILE } from '../../data/research-profile';
 import './research-profile.css';
 
-export function ResearchProfile() {
+export function ResearchProfile({ compact = false }: { readonly compact?: boolean }) {
   const { name, scholar, researchGate } = RESEARCH_PROFILE;
 
   return (
-    <section className="research-profile" aria-label="Research profile">
+    <section className="research-profile" data-compact={compact} aria-label={`${name} · Research profile`}>
       <header className="research-profile__heading">
         <p className="research-profile__eyebrow">Research profile</p>
         <h2 className="research-profile__name">{name}</h2>
@@ -19,7 +19,7 @@ export function ResearchProfile() {
         ))}
       </dl>
       <p className="research-profile__source">
-        {scholar.period} · Source: {scholar.label}
+        <span className={compact ? 'studio-sr-only' : undefined}>{scholar.period} · Source: {scholar.label}</span>
         <span>Checked <time dateTime={scholar.checkedAt}>{scholar.checkedAt}</time></span>
       </p>
       <nav className="research-profile__links" aria-label="Research profiles">

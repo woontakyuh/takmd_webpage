@@ -37,6 +37,7 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
   const [expanded, setExpanded] = useState(false);
   const [folioLeft, setFolioLeft] = useState<number>();
   const active = detailsPath || selected;
+  const researchFocused = !detailsPath && selected === 'research';
   const screenFocused = !detailsPath && (selected === 'education' || selected === 'ai');
   const modal = expanded || screenFocused;
   const resetScroll = () => dialogRef.current?.scrollTo({ top: 0 });
@@ -92,13 +93,13 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
     >
       {active && <>
         <div className="studio-panel-top">
-          <span className="studio-kicker">TakMD / {detailsPath ? 'Office collection' : selected === 'spine' ? 'Clinical practice' : selected === 'ai' ? 'CV' : selected}</span>
+          {researchFocused ? <h2 id="studio-panel-title">Research folio</h2> : <span className="studio-kicker">TakMD / {detailsPath ? 'Office collection' : selected === 'spine' ? 'Clinical practice' : selected === 'ai' ? 'CV' : selected}</span>}
           <div className="studio-panel-actions">
             {!screenFocused && <button className="studio-icon-button" onClick={() => setExpanded(value => !value)} aria-label={expanded ? 'Return to side reader' : 'Expand reading view'}><OfficeIcon name={expanded ? 'collapse' : 'expand'} /></button>}
             <button className="studio-icon-button" onClick={onClose} aria-label="Close and return to office" data-reader-close><OfficeIcon name="close" /></button>
           </div>
         </div>
-        <h2 id="studio-panel-title">{detailsPath ? officeDetailsTitle(detailsPath) : selected ? titles[selected] : ''}</h2>
+        {!researchFocused && <h2 id="studio-panel-title">{detailsPath ? officeDetailsTitle(detailsPath) : selected ? titles[selected] : ''}</h2>}
         {detailsPath && <OfficeDetails path={detailsPath} publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}
         {selected === 'research' && <ResearchFolio publications={publications} updatedAt={updatedAt} publication={collection.publication} media={collection.paperMedia} direction={collection.paperDirection} onPaper={id => { onPaper(id); resetScroll(); }} />}
         {selected === 'spine' && <OfficeDetails path="/ube" publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}

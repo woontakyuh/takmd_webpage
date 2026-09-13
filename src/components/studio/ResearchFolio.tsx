@@ -54,31 +54,34 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
   const selectPaper = (paper: Publication | undefined) => { if (paper) { setArchive(false); setFigure(false); onPaper(paper.id); } };
 
   return <div className="research-folio" data-active-paper={publication?.id} data-direction={direction}>
-    <ResearchProfile />
-    <nav className="folio-navigation" aria-label="Research views">
-      <button aria-pressed={!archive} onClick={() => setArchive(false)}>On the desk <span>{String(index + 1).padStart(2, '0')}</span></button>
-      <button aria-pressed={archive} onClick={() => setArchive(true)}>All publications <span>{publications.length}</span></button>
-    </nav>
-    {!archive && publication ? <>
-      <div className="folio-paging"><span role="status">{String(index + 1).padStart(2, '0')} / {papers.length} · Research folio</span><div>
+    <ResearchProfile compact />
+    <div className="folio-toolbar">
+      <nav className="folio-navigation" aria-label="Research views">
+        <button aria-pressed={!archive} onClick={() => setArchive(false)}>On the desk</button>
+        <button aria-pressed={archive} onClick={() => setArchive(true)}>All papers <span>{publications.length}</span></button>
+      </nav>
+      {!archive && publication && <div className="folio-paging"><span role="status" aria-label={`Paper ${index + 1} of ${papers.length}`}>{String(index + 1).padStart(2, '0')} / {papers.length}</span><div>
         <button aria-label="Previous paper" disabled={index <= 0} onClick={() => selectPaper(papers[index - 1])}>←</button>
         <button aria-label="Next paper" disabled={index === papers.length - 1} onClick={() => selectPaper(papers[index + 1])}>→</button>
-      </div></div>
+      </div></div>}
+    </div>
+    {!archive && publication ? <>
       <article className="folio-spread" key={publication.id} data-direction={direction}>
         <div className="folio-context"><p className="studio-kicker">{publication.journal} / {publication.year}</p><h3>{publication.title}</h3>
+          <a className="folio-doi" href={publication.doiUrl} target="_blank" rel="noreferrer" aria-label={`Open DOI ${normalizeDoi(publication.doiUrl)}`}><span>DOI</span><span>{normalizeDoi(publication.doiUrl)}</span><span aria-hidden="true">↗</span></a>
           <p className="folio-byline">{detail?.authors.length ? detail.authors.join(', ') : `Woon Tak Yuh · ${authorRole(publication.role)}`}</p>
           {detail && <p className="folio-citation">{detail.citation}<br />Published {detail.publicationDate}</p>}
-          {publication.doiUrl.endsWith(FEATURED_DOI) && <button className="folio-turn-link" onClick={() => setFigure(value => !value)}>{showFigure ? 'Return to the first page' : 'Look inside: camera systems'} <span aria-hidden="true">↗</span></button>}
-          <dl className="folio-identifiers"><dt>DOI</dt><dd><a href={publication.doiUrl} target="_blank" rel="noreferrer">{normalizeDoi(publication.doiUrl)} ↗</a></dd>{detail?.pmid && <><dt>PMID</dt><dd><a href={`https://pubmed.ncbi.nlm.nih.gov/${detail.pmid}/`} target="_blank" rel="noreferrer">{detail.pmid} ↗</a></dd></>}<dt>Contribution</dt><dd>{authorRole(publication.role)}</dd></dl>
+
+          <section className="folio-abstract" aria-labelledby={`abstract-${publication.id}`}><h4 id={`abstract-${publication.id}`}>Abstract</h4>{detail?.abstract ? <div className="folio-abstract-copy">{abstractSections(detail.abstract).map((section, sectionIndex) => <section key={`${section.label ?? 'abstract'}-${sectionIndex}`}>{section.label && <h5>{section.label}</h5>}<p>{section.text}</p></section>)}</div> : <p className="folio-abstract-missing">No source abstract is available for this operative-video record.</p>}{detail?.abstractSource && <small>Source: {detail.abstractSource}</small>}</section>
+          <dl className="folio-identifiers">{detail?.pmid && <><dt>PMID</dt><dd><a href={`https://pubmed.ncbi.nlm.nih.gov/${detail.pmid}/`} target="_blank" rel="noreferrer">{detail.pmid} ↗</a></dd></>}<dt>Contribution</dt><dd>{authorRole(publication.role)}</dd></dl>
           <div className="folio-access">
             {detail?.access.kind === 'public-pdf' && detail.access.url && <a className="studio-text-link" href={detail.access.url} target="_blank" rel="noreferrer">View public PDF ↗</a>}
             {detail?.access.oaStatus === 'free-public-pdf' && <small>Free publisher PDF; reuse license not confirmed.</small>}
             {detail?.access.oaStatus !== 'confirmed-oa' && <><a className="studio-text-link" href={requestCopyUrl(publication)}>Request a copy by email ↗</a><small>Opens your email app with the title and DOI filled in. Nothing is sent automatically.</small></>}
           </div>
-          <section className="folio-abstract" aria-labelledby={`abstract-${publication.id}`}><h4 id={`abstract-${publication.id}`}>Abstract</h4>{detail?.abstract ? <div className="folio-abstract-copy">{abstractSections(detail.abstract).map((section, sectionIndex) => <section key={`${section.label ?? 'abstract'}-${sectionIndex}`}>{section.label && <h5>{section.label}</h5>}<p>{section.text}</p></section>)}</div> : <p className="folio-abstract-missing">No source abstract is available for this operative-video record.</p>}{detail?.abstractSource && <small>Source: {detail.abstractSource}</small>}</section>
           {media && <p className="folio-source">{showFigure ? 'Yuh et al. · Original Figure 2 · CC BY 4.0' : `${media.credit} · ${media.license}`}<br /><a href={media.sourceUrl} target="_blank" rel="noreferrer">View the source document ↗</a></p>}
         </div>
-        {media ? <figure className="folio-document" data-figure={showFigure} data-direction={direction}><a href={showFigure ? FOLIO_ASSETS.figure : media.pageImage} target="_blank" rel="noreferrer" aria-label="Open paper preview image"><img src={showFigure ? FOLIO_ASSETS.figure : media.pageImage} alt={showFigure ? 'Published Figure 2: single-chip and three-chip camera sensor systems.' : `First page of ${publication.title}`} /></a><figcaption>{showFigure ? 'Inside the paper / Camera systems' : 'From the published paper / First page'}</figcaption></figure> : <div className="reader-record"><span className="studio-kicker">Publication record</span><p>A first-page preview is not available for this paper.</p>{publication.doiUrl && <a className="studio-text-link" href={publication.doiUrl} target="_blank" rel="noreferrer">Open the original paper ↗</a>}</div>}
+        {media ? <figure className="folio-document" data-figure={showFigure} data-direction={direction}>{publication.doiUrl.endsWith(FEATURED_DOI) && <button className="folio-turn-link" onClick={() => setFigure(value => !value)}>{showFigure ? 'Return to the first page' : 'Look inside: camera systems'} <span aria-hidden="true">↗</span></button>}<a href={showFigure ? FOLIO_ASSETS.figure : media.pageImage} target="_blank" rel="noreferrer" aria-label="Open paper preview image"><img src={showFigure ? FOLIO_ASSETS.figure : media.pageImage} alt={showFigure ? 'Published Figure 2: single-chip and three-chip camera sensor systems.' : `First page of ${publication.title}`} /></a><figcaption>{showFigure ? 'Inside the paper / Camera systems' : 'From the published paper / First page'}</figcaption></figure> : <div className="reader-record"><span className="studio-kicker">Publication record</span><p>A first-page preview is not available for this paper.</p>{publication.doiUrl && <a className="studio-text-link" href={publication.doiUrl} target="_blank" rel="noreferrer">Open the original paper ↗</a>}</div>}
       </article>
       <p className="folio-snapshot">Publication record from Notion · {updatedAt}</p>
     </> : <>
