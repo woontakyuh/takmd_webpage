@@ -210,12 +210,12 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       if (editing || screenReading) return;
       cancelSceneSingleAction(gl.domElement);
       const hit = surfaceAt(x, y);
-      if (!hit) return;
+      const point = hit?.point ?? raycaster.ray.at(camera.position.distanceTo(orbit.target), new Vector3());
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
       if (!inspectionReturnPose.current) inspectionReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
       window.dispatchEvent(new CustomEvent('office:zoomed', { detail: true }));
-      const pose = zoomPoseForPoint(camera.position, hit.point);
+      const pose = zoomPoseForPoint(camera.position, point);
       transition.current = { kind: 'inspect', position: pose.position, target: pose.target };
       userMoved.current = true;
     };
@@ -274,7 +274,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       canvas.removeEventListener('pointerup', touchUp);
       canvas.removeEventListener('pointercancel', cancelTouch, true);
     };
-  }, [camera, gl, surfaceAt, editing, screenReading]);
+  }, [camera, gl, raycaster, surfaceAt, editing, screenReading]);
 
   useEffect(() => {
     const orbit = controls.current;
