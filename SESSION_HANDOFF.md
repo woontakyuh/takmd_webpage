@@ -1,3 +1,11 @@
+# Archive refinement — 13 September 2026
+
+Current release evidence: `.omo/evidence/archive-refinement-2026-09-13/release.json` (local until receipt exists). Both magnetic photographs have printed Sangsu-dong/bar-era/date captions; source EXIF dates are 14 September 2017 and 2 September 2017. The magazine leans against the lining with 0.5mm geometric clearance above its shelf and from the lining. It unleans while lifting before the existing clearance path.
+
+`MagazinePrint.ts` reconstructs source-pixel print blocks and original Korean ink, omitting photographed tabletop/gutter and softening the cropped contributor edge. A generative trial changed source content and was rejected. No full publisher scan was found. After the owner rejected the flat spread, the magazine was revised to share the existing book's binding curvature and 165.6-degree opening. The one-sided excerpt keeps its cover partly open; the back cover/spine are physical, illumination is restrained, and framing samples actual 3D deformation bounds. Fresh bound-magazine QA supersedes the earlier rejected visual reports. Preserve the previous safe return/bottle queue lifecycle.
+
+Window and background double-clicks now share the existing zoom/return behavior using the clicked ray if no mesh is hit. Touch double-tap, drag and DOM/CV/arrangement ownership were checked. Performance remains unresolved on actual iPhone: see `docs/performance-status-2026-09-13.md`; existing desktop simulations must not be called physical-phone benchmarks.
+
 # Eat Drink & Be Merry archive — 12 September 2026
 
 Current pass receipt: `.omo/evidence/edbm-magazine-2026-09-12/release.json`; until it exists this work is local. The magazine stands inside the LEFT opening Isidoro shelf, extracts closed first, then turns through the supplied opening excerpt and pp. 52–53. X/Escape closes the pages before returning along the shelf-clearance path, leaving the cabinet open. A queued bottle waits for the magazine to return. A local-return/context-bridge race and overlay click-through were found in real-browser QA and corrected; keep the completed return state until the next deliberate take.
