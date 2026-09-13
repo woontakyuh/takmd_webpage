@@ -1,120 +1,119 @@
-import { Color, Matrix3, Vector4 } from 'three';
+import { MathUtils, Vector2 } from 'three';
 import type { MeshStandardMaterial } from 'three';
-import type { BookQuad, BookSurface } from '../personalBookSurfaces';
+import type { BookSurface, BookUv } from '../personalBookSurfaces';
 import { bookUvAt } from './BookSurface';
-import { PALETTE } from './config';
 
 export type MagazineSurface = BookSurface & {
   readonly restoration?: 'cover' | 'contributors' | 'feature-left' | 'feature-right';
 };
-type PrintPatch = {
-  readonly box: readonly [number, number, number, number];
-  readonly quad: BookQuad;
-  readonly ink?: boolean;
-  readonly topCurve?: number;
-};
+type PrintRow = { readonly v: number; readonly points: readonly BookUv[] };
+type PageWarp = { readonly columns: readonly number[]; readonly rows: readonly PrintRow[] };
 
-// Rectify the photographed print blocks separately; page edges, tabletop and gutter
-// shadows are not part of the printed artwork. Coordinates refer to the supplied scans.
-export const MAGAZINE_PRINT_PATCHES: Readonly<Record<NonNullable<MagazineSurface['restoration']>, readonly PrintPatch[]>> = {
-  cover: [],
-  contributors: [
-    { box: [.17,.065,.60,.305], quad: [[.173,.067],[.769,.083],[.757,.376],[.169,.359]] },
-    { box: [.045,.29,.225,.20], quad: [[.053,.294],[.267,.295],[.260,.49],[.048,.487]] },
-    { box: [.30,.385,.215,.345], quad: [[.306,.378],[.517,.390],[.518,.730],[.289,.723]], ink: true },
-    { box: [.55,.38,.215,.18], quad: [[.554,.381],[.758,.385],[.764,.562],[.555,.56]] },
-    { box: [.553,.575,.219,.405], quad: [[.554,.573],[.762,.575],[.779,.981],[.548,.973]], ink: true },
-    { box: [.041,.503,.22,.42], quad: [[.045,.5],[.262,.506],[.240,.923],[.009,.924]], ink: true },
-    { box: [.799,.206,.201,.19], quad: [[.806,.210],[1,.212],[1,.398],[.800,.397]] },
-    { box: [.800,.407,.20,.45], quad: [[.800,.406],[1,.414],[1,.863],[.810,.843]], ink: true },
-  ],
-  'feature-left': [
-    { box: [.547,.005,.070,.023], quad: [[.999,.266],[.999,.305],[.975,.305],[.975,.266]], ink: true },
-    { box: [0,.038,1,.722], quad: [[.939,0],[.883,.496],[.253,.512],[.237,0]], topCurve: -.06 },
-    { box: [.015,.79,.97,.20], quad: [[.224,.008],[.240,.496],[.009,.497],[.009,.008]], ink: true },
-  ],
-  'feature-right': [
-    { box: [.035,.055,.34,.57], quad: [[.87,.518],[.878,.640],[.346,.653],[.356,.519]] },
-    { box: [.43,.085,.535,.51], quad: [[.861,.677],[.850,.969],[.374,.971],[.376,.676]], ink: true },
-    { box: [.035,.645,.28,.275], quad: [[.337,.524],[.338,.657],[.083,.655],[.084,.526]] },
-    { box: [.329,.645,.361,.275], quad: [[.340,.672],[.339,.853],[.091,.847],[.085,.670]] },
-    { box: [.704,.645,.261,.275], quad: [[.340,.863],[.339,.981],[.102,.980],[.095,.860]] },
+// These are continuous page coordinates measured on the original photographs.
+// Every cell shares its edges: print, whitespace and cropped source edges stay together.
+const CONTRIBUTORS: PageWarp = {
+  columns: [0, .17, .30, .55, .77, 1],
+  rows: [
+    { v: 0, points: [[0, 0], [.17, 0], [.30, 0], [.55, 0], [.77, 0], [1, 0]] },
+    { v: .075, points: [[0, .057], [.173, .067], [.303, .071], [.552, .077], [.769, .083], [1, .090]] },
+    { v: .375, points: [[0, .354], [.169, .359], [.297, .365], [.541, .370], [.757, .376], [1, .381]] },
+    { v: .56, points: [[0, .540], [.158, .550], [.290, .556], [.552, .560], [.765, .565], [1, .580]] },
+    { v: .98, points: [[0, .98], [.147, .98], [.270, .98], [.550, .98], [.779, .988], [1, .99]] },
+    { v: 1, points: [[0, 1], [.17, 1], [.30, 1], [.55, 1], [.77, 1], [1, 1]] },
   ],
 };
 
-function projectiveMatrix(quad: BookQuad) {
-  const [a,b,c,d] = quad;
-  const x1=b[0]-c[0],x2=d[0]-c[0],y1=b[1]-c[1],y2=d[1]-c[1];
-  const x3=a[0]-b[0]+c[0]-d[0],y3=a[1]-b[1]+c[1]-d[1];
-  const determinant=x1*y2-x2*y1;
-  const g=(x3*y2-x2*y3)/determinant,h=(x1*y3-x3*y1)/determinant;
-  return new Matrix3().set(b[0]-a[0]+g*b[0],d[0]-a[0]+h*d[0],a[0],
-    b[1]-a[1]+g*b[1],d[1]-a[1]+h*d[1],a[1],g,h,1);
+const FEATURE_COLUMNS = [0, .25, .5, .625, .75, .875, .9375, .96875, .984375, .9921875, .9975, .9992, 1] as const;
+const FEATURE_ROWS = [0, .07, .66, .76, .895, .92, 1] as const;
+const GUTTER_X = [.493, .494, .508, .514, .500, .500, .500] as const;
+const GUTTER_Y = [.068, 145 / 1050, .658, .747, .872, .902476, 1] as const;
+const LEFT_PHOTO_TOP = [66, 64, 59, 55, 59, 72, 86, 98, 107, 114, 123, 127, 145].map(y => y / 1050);
+const LEFT_PHOTO_BOTTOM = [.765, .765, .762, .760, .758, .753, .751, .749, .748, .748, .747, .747, .747] as const;
+const LEFT_TITLE_BASELINE = [.9005, .8985, .8955, .893, .8905, .883, .878, .875, .8735, .873, .872, .872, .872] as const;
+const LEFT_TOP = [0, 0, 0, 0, 0, .008, .025, .044, .054, .061, .065, .067, .068] as const;
+const RIGHT_COLUMNS = [0, .0625, .125, .1875, .25, .30, .5, .75, 1] as const;
+const RIGHT_TOP = [72, 56, 49, 47, 49, 52, 69, 81, 83].map(y => y / 1050);
+const RIGHT_PHOTO_TOP = [145, 133, 126, 122, 120, 120, 129, 144, 148].map(y => y / 1050);
+const RIGHT_LOWER_TOP = [.658, .657, .656, .656, .656, .657, .661, .660, .660] as const;
+const RIGHT_LOWER_BOTTOM = [.916, .918, .921, .922, .920, .919, .915, .907, .900] as const;
+const RIGHT_EDGE = [.982, .985, 1, 1, 1, 1, 1] as const;
+
+function featureWarp(side: 'left' | 'right'): PageWarp {
+  const columns = side === 'left' ? FEATURE_COLUMNS : RIGHT_COLUMNS;
+  const heights = side === 'left' ? [LEFT_TOP, LEFT_PHOTO_TOP,
+    LEFT_PHOTO_TOP.map((top, i) => MathUtils.lerp(top, LEFT_PHOTO_BOTTOM[i], .59 / .69)),
+    LEFT_PHOTO_BOTTOM, LEFT_TITLE_BASELINE,
+    LEFT_TITLE_BASELINE.map(baseline => MathUtils.lerp(baseline, 1, .025 / .105)),
+    columns.map(() => 1)] : [RIGHT_TOP, RIGHT_PHOTO_TOP, RIGHT_LOWER_TOP,
+    RIGHT_LOWER_TOP.map((top, i) => MathUtils.lerp(top, RIGHT_LOWER_BOTTOM[i], .1 / .26)),
+    RIGHT_LOWER_TOP.map((top, i) => MathUtils.lerp(top, RIGHT_LOWER_BOTTOM[i], .235 / .26)),
+    RIGHT_LOWER_BOTTOM, columns.map(() => 1)];
+  return { columns, rows: FEATURE_ROWS.map((v, row) => ({ v,
+    points: columns.map((u, column): BookUv => {
+      const gutter = side === 'left' ? column === columns.length - 1 : column === 0;
+      const x = side === 'left' ? u * GUTTER_X[row] : MathUtils.lerp(GUTTER_X[row], RIGHT_EDGE[row], u);
+      // IMG_5247 is sideways after EXIF normalization; rotate its coordinates only.
+      return [1 - (gutter ? GUTTER_Y[row] : heights[row][column]), x];
+    }),
+  })) };
 }
 
-export function magazinePrintUv(surface: MagazineSurface,u: number,v: number) {
-  return bookUvAt(surface.quad,u,v);
+export const MAGAZINE_PAGE_WARPS: Readonly<Record<NonNullable<MagazineSurface['restoration']>, PageWarp>> = {
+  cover: { columns: [0, .125, .25, .5, .75, .875, 1], rows: [
+    { v: 0, points: [[.066, .027], [.174, .016], [.290, .016], [.518, .027], [.750, .029], [.862, .030], [.977, .030]] },
+    { v: .18, points: [[.051, .195], [.168, .190], [.285, .188], [.518, .192], [.752, .195], [.870, .196], [.987, .196]] },
+    { v: 1, points: [[.004, .943], [.128, .944], [.253, .945], [.501, .947], [.750, .949], [.875, .950], [.999, .951]] },
+  ] },
+  contributors: CONTRIBUTORS,
+  'feature-left': featureWarp('left'),
+  'feature-right': featureWarp('right'),
+};
+
+export function magazinePrintUv(surface: MagazineSurface, u: number, v: number): BookUv {
+  if (!surface.restoration) return bookUvAt(surface.quad, u, v);
+  const warp = MAGAZINE_PAGE_WARPS[surface.restoration];
+  const column = Math.max(0, warp.columns.findIndex((end, i) => i > 0 && u <= end) - 1);
+  const row = Math.max(0, warp.rows.findIndex((end, i) => i > 0 && v <= end.v) - 1);
+  const x = (u - warp.columns[column]) / (warp.columns[column + 1] - warp.columns[column]);
+  const y = (v - warp.rows[row].v) / (warp.rows[row + 1].v - warp.rows[row].v);
+  const [a, b] = [warp.rows[row], warp.rows[row + 1]];
+  return [MathUtils.lerp(MathUtils.lerp(a.points[column][0], a.points[column + 1][0], x),
+    MathUtils.lerp(b.points[column][0], b.points[column + 1][0], x), y),
+  MathUtils.lerp(MathUtils.lerp(a.points[column][1], a.points[column + 1][1], x),
+    MathUtils.lerp(b.points[column][1], b.points[column + 1][1], x), y)];
 }
 
-export function restoreMagazinePrint(material: MeshStandardMaterial,surface: MagazineSurface) {
-  const kind=surface.restoration;
-  if (!kind) return;
-  const patches = kind === 'cover' ? [{box:[0,0,1,1] as const,quad:surface.quad}] : MAGAZINE_PRINT_PATCHES[kind];
-  material.customProgramCacheKey=()=>`magazine-print-blocks-${kind}`;
-  material.onBeforeCompile=shader=>{
-    shader.uniforms.printPaper={value:new Color(PALETTE.paperLight)};
-    shader.uniforms.printBoxes={value:patches.map(p=>new Vector4(...p.box))};
-    shader.uniforms.printTransforms={value:patches.map(p=>projectiveMatrix(p.quad))};
-    shader.uniforms.printInk={value:patches.map(p=>'ink' in p&&p.ink?1:0)};
-    shader.uniforms.printCurve={value:patches.map(p=>'topCurve' in p?p.topCurve:0)};
-    shader.vertexShader=shader.vertexShader.replace('#include <common>',
+export function restoreMagazinePrint(material: MeshStandardMaterial, surface: MagazineSurface) {
+  if (!surface.restoration) return;
+  const warp = MAGAZINE_PAGE_WARPS[surface.restoration];
+  const width = warp.columns.length, height = warp.rows.length;
+  material.customProgramCacheKey = () => `magazine-whole-page-${surface.restoration}`;
+  material.onBeforeCompile = shader => {
+    shader.uniforms.printColumns = { value: warp.columns };
+    shader.uniforms.printRows = { value: warp.rows.map(row => row.v) };
+    shader.uniforms.printPoints = { value: warp.rows.flatMap(row => row.points.map(point => new Vector2(...point))) };
+    shader.vertexShader = shader.vertexShader.replace('#include <common>',
       '#include <common>\nattribute vec2 printCoordinate; varying vec2 vPrintCoordinate;')
-      .replace('#include <begin_vertex>','#include <begin_vertex>\nvPrintCoordinate=printCoordinate;');
-    shader.fragmentShader=shader.fragmentShader.replace('#include <map_pars_fragment>',`#include <map_pars_fragment>
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvPrintCoordinate=printCoordinate;');
+    shader.fragmentShader = shader.fragmentShader.replace('#include <map_pars_fragment>', `#include <map_pars_fragment>
       varying vec2 vPrintCoordinate;
-      uniform vec3 printPaper;
-      uniform vec4 printBoxes[${patches.length}];
-      uniform mat3 printTransforms[${patches.length}];
-      uniform float printInk[${patches.length}];
-      uniform float printCurve[${patches.length}];
-      vec3 magazinePrint() {
-        vec3 color=printPaper;
-        vec2 p=vPrintCoordinate;
-        vec2 pixelX=dFdx(p),pixelY=dFdy(p);
-        for(int i=0;i<${patches.length};i++) {
-          vec4 b=printBoxes[i];vec2 q=(p-b.xy)/b.zw;
-          if(q.x<0.0||q.y<0.0||q.x>1.0||q.y>1.0) continue;
-          q.y+=printCurve[i]*sin(3.14159265*q.x)*(1.0-q.y);
-          vec3 project=printTransforms[i]*vec3(q,1.0);
-          vec2 source=project.xy/project.z;
-          vec3 columnU=printTransforms[i][0],columnV=printTransforms[i][1];
-          vec2 du=(columnU.xy*project.z-project.xy*columnU.z)/(project.z*project.z);
-          vec2 dv=(columnV.xy*project.z-project.xy*columnV.z)/(project.z*project.z);
-          vec2 dx=du*pixelX.x/b.z+dv*pixelX.y/b.w;
-          vec2 dy=du*pixelY.x/b.z+dv*pixelY.y/b.w;
-          vec3 original=textureGrad(map,vec2(source.x,1.0-source.y),dx*vec2(1,-1),dy*vec2(1,-1)).rgb;
-          if(printInk[i]>.5) {
-            // Neutralize the photographed paper cast while retaining the original ink.
-            float density=dot(original,vec3(.2126,.7152,.0722));
-            float paper=density;
-            vec3 paperColor=original;
-            vec2 imagePoint=vec2(source.x,1.0-source.y);
-            for(int j=0;j<8;j++) {
-              float angle=float(j)*.785398163;
-              vec2 offset=vec2(cos(angle),sin(angle))*.008;
-              vec3 nearby=textureGrad(map,imagePoint+offset,dx*vec2(1,-1),dy*vec2(1,-1)).rgb;
-              float lightness=dot(nearby,vec3(.2126,.7152,.0722));
-              if(lightness>paper) { paper=lightness; paperColor=nearby; }
-            }
-            vec3 loss=max(vec3(0),1.0-original/max(vec3(.01),paperColor)-.02);
-            vec3 ink=clamp(1.0-1.3*loss,0.0,1.0);
-            color=ink*printPaper;
-          } else color=original*vec3(1.0,1.02,1.04);
-        }
-        return color;
+      uniform float printColumns[${width}];
+      uniform float printRows[${height}];
+      uniform vec2 printPoints[${width * height}];
+      vec2 magazineSource() {
+        vec2 p=clamp(vPrintCoordinate,0.0,1.0);
+        int column=0; int row=0;
+        for(int i=1;i<${width - 1};i++) if(p.x>printColumns[i]) column=i;
+        for(int i=1;i<${height - 1};i++) if(p.y>printRows[i]) row=i;
+        float x=(p.x-printColumns[column])/(printColumns[column+1]-printColumns[column]);
+        float y=(p.y-printRows[row])/(printRows[row+1]-printRows[row]);
+        int a=row*${width}+column; int b=a+${width};
+        return mix(mix(printPoints[a],printPoints[a+1],x),mix(printPoints[b],printPoints[b+1],x),y);
       }`)
-      .replace('#include <map_fragment>','vec3 restoredPaper = magazinePrint(); diffuseColor.rgb *= restoredPaper;')
-      .replace('#include <emissivemap_fragment>','totalEmissiveRadiance *= restoredPaper;');
+      .replace('#include <map_fragment>', `vec2 source=magazineSource();
+        vec3 originalPrint=texture2D(map,vec2(source.x,1.0-source.y)).rgb;
+        diffuseColor.rgb*=originalPrint;`)
+      .replace('#include <emissivemap_fragment>', 'totalEmissiveRadiance*=originalPrint;');
   };
-  material.needsUpdate=true;
+  material.needsUpdate = true;
 }
