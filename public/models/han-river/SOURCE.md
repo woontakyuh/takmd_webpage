@@ -46,3 +46,7 @@ The [building inventory](./building-identities.json) joins real OSM footprints t
 The new facades are original geometry informed by photographs of the completed buildings: Shindonga's thirteen-floor balcony bands and pale numbered gables, and Caelitus's curtain walls and two connections at the skybridge level. Fine facade dimensions, roof equipment and night window occupancy are visual interpretations. Conflicting published and OSM Caelitus heights are recorded in the inventory; none are presented as surveyed elevations.
 
 The [local street network](./STREETS.md) uses mapped road centerlines and a single-channel coverage texture draped onto the same terrain. [Supplemental urban fabric](./URBAN-FABRIC.md) now contains 1,000 real building footprints. Untagged low-rise heights remain estimates. Mountain surface normals interpolate the existing elevation samples to soften lighting without changing the terrain or shoreline. No map or source photograph is used as a scene background.
+
+## South-bank skyline, 2026-09-13
+
+The missing Banpo/Jamwon bank is restored from a new dated OSM extract, including building parts and named complexes. Municipal site-plan tracing adds the visible Clast construction district; current heights and crane silhouettes remain explicit visual estimates. The south terrain and park tree belt are additive. See [south-bank sources, assumptions and verification](./SOUTH-BANK.md) and [downloadable geometry](./south-bank.json).

@@ -20,6 +20,8 @@ import { createBanpoLocalStreets } from './BanpoLocalStreets';
 import { createBanpoPark, BANPO_PARK_FEATURES } from './BanpoPark';
 import { generateParkTrees } from './BanpoParkPlanting';
 import { createBanpoJamsu } from './BanpoJamsu';
+import { createBanpoSouthBank } from './BanpoSouthBank';
+import southBankData from '../../../../public/models/han-river/south-bank.json';
 
 const IDENTIFIED_BUILDINGS = buildingIdentities.buildings.flatMap(building => {
   if (building.blockNumber === null || building.floors === null) return [];
@@ -84,6 +86,7 @@ export function createBanpoLandscape() {
   let localStreets: ReturnType<typeof createBanpoLocalStreets> | null = null;
   let park: ReturnType<typeof createBanpoPark> | null = null;
   let jamsu: ReturnType<typeof createBanpoJamsu> | null = null;
+  let southBank: ReturnType<typeof createBanpoSouthBank> | null = null;
   let buildingReplacement: ReturnType<typeof replaceBanpoBuildingIndices> | null = null;
   const pilotCameraOffset = new THREE.Vector3(280, 300, -1400);
   const fallbackCameraOffset = new THREE.Vector3(0, 340, 0);
@@ -99,6 +102,7 @@ export function createBanpoLandscape() {
     jamsu?.setNightMix(currentNight);
     apartments?.setNightMix(currentNight);
     caelitus?.setNightMix(currentNight);
+    southBank?.setNightMix(currentNight);
     fog.color.lerpColors(new THREE.Color(0xc9dce3), new THREE.Color(0x081727), currentNight);
     sky.intensity = THREE.MathUtils.lerp(1.2, 0.25, currentNight);
     sun.intensity = THREE.MathUtils.lerp(2.6, 0.035, currentNight);
@@ -161,6 +165,8 @@ export function createBanpoLandscape() {
     model.add(bridges.group);
     jamsu = createBanpoJamsu(model);
     model.add(jamsu.group);
+    southBank = createBanpoSouthBank(southBankData, atmosphere.bankTexture);
+    model.add(southBank.group);
     loaded = true;
     fallback.dispose();
     setNightMix(currentNight);
@@ -184,6 +190,7 @@ export function createBanpoLandscape() {
       vegetation?.dispose();
       bridges?.dispose();
       jamsu?.dispose();
+      southBank?.dispose();
       facadeDetails?.dispose();
       groundMaterials?.dispose();
       localStreets?.dispose();
