@@ -11,10 +11,14 @@ export function attachProposalVideo(video: HTMLVideoElement, source: ProposalVid
     return { ready: null, dispose };
   }
   const playlist = source.hlsSrc;
+  if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = playlist;
+    return { ready: null, dispose };
+  }
   const ready = import('hls.js').then(({ default: Hls }) => {
     if (disposed) return;
     if (!Hls.isSupported()) {
-      video.src = video.canPlayType('application/vnd.apple.mpegurl') ? playlist : source.src;
+      video.src = source.src;
       return;
     }
     return new Promise<void>(resolve => {
