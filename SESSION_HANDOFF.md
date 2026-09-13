@@ -1,3 +1,15 @@
+# Initial music sightline, Safari and steady rendering — 13 September 2026
+
+Five additional owner-photographed awards are now on the top shelves: SNU 2018 master's plaque, Neurospine 2025 reviewer award, KOSESS 2025 best-paper certificate, WCMISST 2026 speaker certificate and TSESS 2026 instructor certificate. IMG_0986 thank-you card was explicitly excluded. Source-only rectification/provenance and desktop/mobile inspection evidence: `.omo/evidence/new-awards-2026-09-13/`. Existing frames and two-stage group/item inspection are reused; SNU has a separate stepped wood/metal/rod model. Dimensions are photo-based estimates.
+
+The latest entry brief starts from a seated desk viewpoint: the complete CV monitor, keyboard, desktop and background TV/room remain visible. After scene readiness, a continuous camera pullback reveals the overview. This supersedes both the old whole-room loading still and the rejected fullscreen CV introduction. The reading action remains explicit, preserves reading intent during loading, and deep links bypass the introduction. The matching day/night loading images are generated from the same seated scene camera.
+
+Current release receipt: `.omo/evidence/safari-camera-load-2026-09-13/release.json`; require matching commit, remote and production evidence. Initial desktop view rotates 15 degrees to reveal guitar/amplifier backs. The mobile rear-quarter view retains the full room through a measured larger radius; free-orbit distance derives from that overview so it is not clamped. Close-up poses and the shared workshop arrangement are preserved.
+
+Desktop distant-glass LOD removes the repeated transmission pass while restoring physical refraction near glass. One SceneFrameLoop owns all scene ticks: settled views 30 FPS, gestures/transitions up to 60, proposal viewing native display cadence. Do not restore CameraRig's old setFrameloop observer: it restarts an uncapped second loop. Both 30 and 60 FPS video caps were rejected because sustained playback dropped frames. Final native-cadence 1080p playback remained stable for three minutes (5/5612 dropped frames); CD resources also stayed stable. Detailed limitations and measurements: `docs/performance-status-2026-09-13.md`.
+
+Proposal playback prefers native HLS synchronously, retains explicit frame-click playback and safe close cleanup, and now credits the owner's lyrics, composition, vocals, guitar, drums, keyboards and music-video creation. The proposal was on the evening of 11 March 2021, confirmed by the owner and IMG_1780.jpg creation metadata (21:35:57) in Dropbox/Tak/Down. The caption uses that date, not the 2026 re-edit date. Physical iPhone crashes and MacBook temperature still require the owner's actual-device verification.
+
 # Interaction stability and source corrections — 13 September 2026
 
 Release receipt: `.omo/evidence/interaction-stability-2026-09-13/release.json`; this pass is local until commit, remote and production entries match.

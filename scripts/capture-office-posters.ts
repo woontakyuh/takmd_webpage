@@ -155,7 +155,9 @@ async function captureVariant(browser: Browser, baseUrl: string, variant: Captur
     page.on('response', response => { if (response.status() >= 400) responseErrors.push(`${response.status()} ${response.url()}`); });
     await page.route('**/api/visits', route => route.fulfill({ status: 204 }));
     await page.clock.setFixedTime(new Date(referenceTime));
-    await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 120_000 });
+    const captureUrl = new URL(baseUrl);
+    captureUrl.searchParams.set('office-capture', 'seated');
+    await page.goto(captureUrl.href, { waitUntil: 'domcontentloaded', timeout: 120_000 });
     await page.locator('.office-poster[data-ready="true"]').waitFor({ state: 'attached', timeout: 120_000 });
     const lightButton = page.locator('.studio-tools > button').nth(1);
     await lightButton.click();

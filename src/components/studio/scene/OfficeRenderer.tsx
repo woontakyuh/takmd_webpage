@@ -11,7 +11,7 @@ type ShadowSnapshot = {
   frame: number;
 };
 
-export function OfficeRenderer({ lighting, environmentIntensity, mobile }: Pick<StudioSceneProps, 'lighting'> & { readonly environmentIntensity: number; readonly mobile: boolean }) {
+export function OfficeRenderer({ lighting, environmentIntensity }: Pick<StudioSceneProps, 'lighting'> & { readonly environmentIntensity: number }) {
   const gl = useThree(state => state.gl);
   const scene = useThree(state => state.scene);
   useLayoutEffect(() => { scene.environmentIntensity = environmentIntensity; }, [scene, environmentIntensity]);
@@ -78,7 +78,7 @@ export function OfficeRenderer({ lighting, environmentIntensity, mobile }: Pick<
     });
     if (count !== previousCount.current) gl.shadowMap.needsUpdate = true;
     previousCount.current = count;
-    glass.update(mobile);
+    glass.update(true);
     const glassPixels = glass.detailedPixels * gl.getPixelRatio();
     gl.transmissionResolutionScale = glassPixels > (gl.transmissionResolutionScale === 1 ? 96 : 112) ? 1 : 0.5;
     const autoUpdate = scene.matrixWorldAutoUpdate;

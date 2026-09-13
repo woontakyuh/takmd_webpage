@@ -3,6 +3,7 @@ import type { RefObject } from 'react';
 import type { RoomLightPalette } from './lightingPresets';
 import type { RoomControl } from './OfficeRoomControls';
 import type { OfficeLight } from './localTime';
+import type { OfficeEntryPhase } from './officeEntry';
 
 export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing' | 'projects' | 'family' | 'award' | 'award-photo' | 'bookshelf' | 'books';
 
@@ -55,6 +56,8 @@ export type HaloSettings = {
 export type BlindLift = readonly [number, number];
 
 export type StudioSceneProps = {
+  readonly entry: OfficeEntryPhase;
+  readonly onEntryComplete: () => void;
   readonly ready: boolean;
   readonly paused?: boolean;
   readonly focused: ExhibitId | null;

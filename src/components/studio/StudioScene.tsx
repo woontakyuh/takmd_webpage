@@ -5,6 +5,7 @@ import { Environment, Lightformer } from '@react-three/drei';
 import { useEffect, useRef, useState } from 'react';
 import { MathUtils, PCFSoftShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
+import { SceneFrameLoop } from './scene/SceneFrameLoop';
 import { GoldAward } from './scene/GoldAward';
 import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
@@ -63,10 +64,11 @@ export function StudioScene(props: StudioSceneProps) {
   const skyFill = MathUtils.smoothstep(sun.altitude, -6, 32);
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
-    <Canvas ref={canvas} frameloop={!visible || (props.paused && props.ready) ? 'never' : 'always'} camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
+    <Canvas ref={canvas} frameloop="never" camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
       dpr={[1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
+      <SceneFrameLoop active={visible && (!props.paused || !props.ready)} />
       {ROOM_ENVIRONMENT}
       <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
       <hemisphereLight args={[sun.skyColor, PALETTE.walnut, 0.10 + skyFill * 0.48]} />
@@ -94,7 +96,7 @@ export function StudioScene(props: StudioSceneProps) {
       <Movable id="desk" handle={false}><Folio {...props} /></Movable>
       <Displays {...props} />
       <CameraRig {...props} reading={props.selected !== null} selected={props.focused ?? props.selected} />
-      <OfficeRenderer lighting={props.lighting} mobile={mobile} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
+      <OfficeRenderer lighting={props.lighting} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
     </Canvas>
   );
 }

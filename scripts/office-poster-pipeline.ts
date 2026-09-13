@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url';
 import { Euler, PerspectiveCamera, Vector3 } from 'three';
 import presentationsData from '../src/data/presentations.json';
 import talkRecords from '../src/data/studio-talk-media.json';
-import { MONITOR, MOBILE_TOUR, ROOM, TOUR } from '../src/components/studio/scene/config';
+import { MONITOR, ROOM } from '../src/components/studio/scene/config';
+import type { CameraPose } from '../src/components/studio/scene/config';
+import { DESKTOP_ENTRY, MOBILE_ENTRY } from '../src/components/studio/officeEntry';
 import { MONITOR_SCREEN } from '../src/components/studio/scene/monitorReading';
 
 export const POSTER_ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -75,7 +77,7 @@ export type CaptureVariant = {
   readonly width: number;
   readonly height: number;
   readonly compact: boolean;
-  readonly camera: typeof TOUR[number];
+  readonly camera: CameraPose;
   readonly fov: number;
 };
 
@@ -91,19 +93,19 @@ export type PosterGeometry = {
 export const CAPTURE_VARIANTS = {
   mobilePortrait: {
     id: 'mobile-portrait', media: '(max-width: 759px) and (aspect-ratio < 1/1)',
-    width: 759, height: 760, compact: true, camera: MOBILE_TOUR[0], fov: 60,
+    width: 759, height: 760, compact: true, camera: MOBILE_ENTRY, fov: 60,
   },
   mobileLandscape: {
     id: 'mobile-landscape', media: '(max-width: 759px) and (aspect-ratio >= 1/1)',
-    width: 759, height: 320, compact: true, camera: MOBILE_TOUR[0], fov: 42,
+    width: 759, height: 320, compact: true, camera: MOBILE_ENTRY, fov: 42,
   },
   desktopPortrait: {
     id: 'desktop-portrait', media: '(min-width: 760px) and (aspect-ratio < 1/1)',
-    width: 1024, height: 1025, compact: false, camera: TOUR[0], fov: 60,
+    width: 1024, height: 1025, compact: false, camera: DESKTOP_ENTRY, fov: 60,
   },
   desktopLandscape: {
     id: 'desktop-landscape', media: null,
-    width: 3840, height: 1080, compact: false, camera: TOUR[0], fov: 42,
+    width: 3840, height: 1080, compact: false, camera: DESKTOP_ENTRY, fov: 42,
   },
 } as const satisfies Readonly<Record<string, CaptureVariant>>;
 

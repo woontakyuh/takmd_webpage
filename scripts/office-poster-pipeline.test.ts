@@ -9,19 +9,18 @@ import {
 } from './office-poster-pipeline';
 
 describe('office poster projection', () => {
-  test('Given the desktop opening camera, when projecting the monitor, then it matches the current rendered bezel', () => {
+  test('Given the seated opening camera, the complete monitor leaves room for the desk and background TV', () => {
     const geometry = projectMonitorGeometry({
       ...CAPTURE_VARIANTS.desktopLandscape,
       width: 1440,
       height: 900,
     });
 
-    assert.ok(Math.abs(geometry.x - 740.46) < 0.1);
-    assert.ok(Math.abs(geometry.y - 487.45) < 0.1);
-    assert.ok(Math.abs(geometry.across[0] - 88.47) < 0.1);
-    assert.ok(Math.abs(geometry.across[1] + 19.75) < 0.1);
-    assert.ok(Math.abs(geometry.down[0] - 1.40) < 0.1);
-    assert.ok(Math.abs(geometry.down[1] - 66.90) < 0.1);
+    assert.ok(geometry.x > 32 && geometry.x + geometry.across[0] < 1408);
+    assert.ok(geometry.y > 180 && geometry.y + geometry.down[1] < 720);
+    assert.ok(geometry.across[0] > 1440 * 0.25 && geometry.across[0] < 1440 * 0.55);
+    assert.ok(CAPTURE_VARIANTS.desktopLandscape.camera.position[1] >= 1.2
+      && CAPTURE_VARIANTS.desktopLandscape.camera.position[1] <= 1.4);
   });
 
   test('Given common responsive viewports, when each wide poster is cropped, then its monitor projection matches a direct render', () => {

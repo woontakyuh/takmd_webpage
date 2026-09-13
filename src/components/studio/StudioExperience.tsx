@@ -26,6 +26,7 @@ import type { LightMode } from './localTime';
 import { LIGHT_PRESETS, type LightPreset } from './lightingPresets';
 import { PERSONAL_LINKS } from './personal';
 import { SceneInspectionProvider, useSceneInspection } from './scene/SceneInspection';
+import { officeEntryPhase, type OfficeEntryPhase } from './officeEntry';
 
 const Scene = lazy(async () => {
   const module = await import('./StudioScene');
@@ -98,11 +99,19 @@ function OfficeExperience(content: StudioContent) {
   const night = (lighting?.sun.daylight ?? 1) < 0.35;
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
+  const [entry, setEntry] = useState<OfficeEntryPhase>('seated');
+  const [posterHidden, setPosterHidden] = useState(false);
+  const onPosterHidden = useCallback(() => setPosterHidden(true), []);
+  const onEntryComplete = useCallback(() => setEntry('complete'), []);
+  useLayoutEffect(() => { setEntry(officeEntryPhase(new URL(window.location.href))); }, []);
   const [sceneFailed, setSceneFailed] = useState(false);
   const onSceneError = useCallback(() => setSceneFailed(true), []);
   const [loadingProfileSession, setLoadingProfileSession] = useState(false);
   const loadingProfileOpen = selected === 'ai' && (loadingProfileSession || !ready || sceneFailed);
   useLayoutEffect(() => { setLoadingProfileSession(loadingProfileOpen); }, [loadingProfileOpen]);
+  useEffect(() => {
+    if (posterHidden && entry === 'seated' && !loadingProfileOpen) setEntry('revealing');
+  }, [entry, loadingProfileOpen, posterHidden]);
   const [zoomed, setZoomed] = useState(false);
   const [explored, setExplored] = useState(false);
   const [compact, setCompact] = useState(false);
@@ -153,12 +162,13 @@ function OfficeExperience(content: StudioContent) {
   const featuredTalk = featuredPresentation(content.presentations);
   const open = useCallback((id: ExhibitId) => {
     if (arrangement.editing) return;
+    if (id !== 'ai' || (ready && entry !== 'seated')) setEntry('complete');
     const active = document.activeElement;
     returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id === 'bookshelf' ? 'books' : id}`);
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
     setExplored(true); setSelected(id);
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [featuredTalk?.id, arrangement.editing, setSelected]);
+  }, [featuredTalk?.id, arrangement.editing, setSelected, ready, entry]);
   const openAwardPhoto = useCallback(() => open('award-photo'), [open]);
   const openLoadingProfile = () => open('ai');
   const approach = (id: ExhibitId) => {
@@ -195,6 +205,7 @@ function OfficeExperience(content: StudioContent) {
       if (url.origin !== window.location.origin && url.origin !== 'https://takmd.com') return false;
       const next = officePathView(url.pathname + url.search + url.hash, navigation.current.current);
       if (!next) return false;
+      setEntry('complete');
       setExplored(true);
       const requestedTalk = next.selected === 'education'
         ? content.presentations.find(talk => talk.id === url.searchParams.get('talk')) : undefined;
@@ -233,6 +244,7 @@ function OfficeExperience(content: StudioContent) {
   useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
   const goToView = (view: 0 | 1 | 2) => {
+    setEntry('complete');
     setExplored(true);
     setInspection(null);
     setZoomed(false);
@@ -243,15 +255,15 @@ function OfficeExperience(content: StudioContent) {
 
   const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed);
 
-  return <div className="studio" data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
+  return <div className="studio" data-entry={entry} data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
     <section className="studio-stage" aria-label="TakMD's office">
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <div style={{ display: 'contents' }} inert={loadingProfileOpen} aria-hidden={loadingProfileOpen || undefined}><SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary></div>
-        <OfficePoster ready={ready} failed={sceneFailed} night={night} interactive={mounted} onProfile={openLoadingProfile} />
+        <OfficePoster ready={ready} failed={sceneFailed} night={night} interactive={mounted} onProfile={openLoadingProfile} onExplore={() => goToView(0)} onHidden={onPosterHidden} />
         {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
         <button className="office-secret-trigger" id="studio-exhibit-books" onClick={approachBookshelf}>Browse personal books</button>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
