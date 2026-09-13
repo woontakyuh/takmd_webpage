@@ -45,7 +45,7 @@ export const ROOM = {
   architecture: { height: 3.2, farZ: 3.36, leftX: -2.76,
     window: { centerZ: 0.55, width: 3.4, bottom: 0.75, top: 2.6 } },
   desk: { position: [-0.05, 0, -1.5], rotation: Math.PI, width: 1.8, depth: 0.9, height: 0.755 },
-  spine: { position: [-2.38, 0.5695, 1.22], height: 0.54, rotation: Math.PI / 2 - 0.12 },
+  spine: { position: [-2.42, 0.5695, 1.22], height: 0.54, rotation: Math.PI / 2 - 0.12 },
   folio: { position: [0.38, 0.7805, -1.66], rotation: Math.PI - 0.17 },
   monitor: { position: [-0.05, 0.781, -1.2], rotation: Math.PI },
   macMini: { position: [0.005, 0.7735, -0.345] },
@@ -91,7 +91,7 @@ export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
 export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   bookshelf: FOCUS.bookshelf,
   books: FOCUS.books,
-  spine: { position: [-0.3, 1.9, -0.28], target: [-2.38, 0.9, 1.22], zoom: 1 },
+  spine: { position: [1.9, 2.77, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   research: { position: [0.34403977, 1.59559296, -1.88147424], target: [0.392, 0.7985, -1.658], zoom: 1 },
   education: FOCUS.education,
   ai: FOCUS.ai,

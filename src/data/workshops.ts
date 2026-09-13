@@ -14,8 +14,8 @@ export const workshops = [
   {
     slug: 'dummy',
     title: 'Dummy workshop',
-    objectLabel: 'Spine training dummy',
-    description: 'Simulation-based spine training for portal setup, instrument orientation, and stepwise rehearsal.',
+    objectLabel: 'UpSurgeOn Endoscopic LumbarBox',
+    description: 'Simulation-based spine training with the UpSurgeOn Endoscopic LumbarBox for portal setup, instrument orientation, and stepwise rehearsal.',
     focus: ['Portal setup', 'Instrument orientation', 'Stepwise rehearsal'],
   },
   {
