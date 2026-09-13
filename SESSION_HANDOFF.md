@@ -1,3 +1,11 @@
+# Interaction stability and source corrections — 13 September 2026
+
+Release receipt: `.omo/evidence/interaction-stability-2026-09-13/release.json`; this pass is local until commit, remote and production entries match.
+
+The prior music QA missed a severe feedback loop: the guitar/amp and frame approach effects depended on R3F size-object identity, repeatedly sending identical inspection poses and keeping controls disabled. These callbacks now depend on numeric dimensions. A normal-motion regression reproduced 1,020 extra geometries over 60 frames before the fix; corrected settled corner and playback remain stable. Proposal cleanup now releases video/texture after material detachment, with immediate pause. Preserve click-only music and full-screen Escape handling.
+
+New UpSurgeON Endoscopic Lumbar Box replaces the dummy body. The owner's final arrangement keeps spine, box and pig as one practice collection, with the shared instrument tray at the far right and nothing inserted into the dummy. Full-source magazine geometric rectification supersedes all earlier donor-block print reconstructions below. South-bank map coverage and municipal Clast plan traces restore previously excluded geography; source assumptions and still-unmapped parcels are listed in `public/models/han-river/SOUTH-BANK.md`. Evidence and latest limitations are under the release folder above. Physical iPhone performance remains unmeasured.
+
 # Mobile reader and music/archive repair — 13 September 2026
 
 Release receipt: `.omo/evidence/room-repair-2026-09-13/release.json`. This repair is local until that receipt contains matching commit, remote and live production evidence. It supersedes the rejected earlier magazine and missing guitar/amp approach claims below.

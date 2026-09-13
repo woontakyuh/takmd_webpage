@@ -945,3 +945,13 @@ Clicking either the physical guitar or amplifier approaches the shared corner fr
 ### Softcover magazine repair — 13 September 2026
 
 The photographed excerpts sit on a continuous curved paper packet with a rounded six-millimetre spine. Paper and cover share the same full-width crown and gutter bend so adjacent layers touch. The feature spread opens about 156 degrees; the contributor excerpt uses a partly turned cover and a narrower reading angle. Preserve original Place running-header, Korean text and red address ink. Rectify only the supplied source print regions, exclude photographed tabletop, and never invent missing page text or page numbers.
+
+## 13 September 2026: stable object inspection and source fidelity
+
+Guitar and amplifier approach remains silent, with orbit/pinch/wheel controls available after arrival. Reframing responds to numeric viewport dimensions, never a new R3F size-object identity. The proposal frame starts only on a deliberate click. Closing pauses immediately and releases its decoder/video texture after the scene material detaches; repeated playback and orientation changes must not accumulate resources.
+
+The workshop dummy is the assembled UpSurgeON Endoscopic Lumbar Box: near-black tiered rounded shell, curved ivory carrier and peach silicone. The spine model, Lumbar Box and pig form one practice collection; the existing shared endoscope/instrument tray sits at its far right, with no tools permanently inserted into a specimen. Center the collection on the USM top so its complete envelopes remain supported. Workshop routes remain. Dimensions are visual estimates from the owner's photographs and manufacturer references. Geometry is merged by material, with a small locally drawn badge; no new downloaded scene textures or animation loop.
+
+The magazine preserves each complete photographed page's original composition and source pixels. Correct the continuous paper surface into flat print before applying the magazine's physical paper curve. Do not extract donor blocks, reflow columns, invent missing text or replace photographed faces.
+
+South-bank Banpo/Jamwon geography uses sourced footprints and height tags, including building parts. Municipal plan traces supply simplified Clast construction envelopes. Construction progress and untagged heights are explicitly approximate in the source receipt. Existing north bank, water, Banpo/Jamsu bridge axes and office camera are retained. Merge static geometry and instance trees/cranes; no per-frame generation. See public/models/han-river/SOUTH-BANK.md for data and limitations.
