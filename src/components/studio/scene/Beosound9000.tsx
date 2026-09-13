@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Vector3 } from 'three';
 import type { Group } from 'three';
 import { useArrangement } from '../arrangement';
+import { BeosoundRack, BeosoundExchange } from './BeosoundRack';
 import { Beosound9000Controls } from './Beosound9000Controls';
 import { Beosound9000Bracket, Beosound9000Geometry } from './Beosound9000Geometry';
 import { BEOSOUND_9000 as B } from './Beosound9000State';
@@ -14,6 +15,7 @@ import { cancelSceneSingleAction } from './sceneGesture';
 import { useCabinetAction } from './WhiskyCabinetDoor';
 
 export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolean }) {
+  const [libraryOpen, setLibraryOpen] = useState(false);
   const [body, setBody] = useState<Group | null>(null);
   const { state, dispatch, onCarriageReady } = useBeosoundAudio();
   const { size, camera, gl } = useThree();
@@ -23,9 +25,9 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
   const pose = useCallback(() => {
     if (!body) return null;
     const fov = 'fov' in camera && typeof camera.fov === 'number' ? camera.fov : 42;
-    const distance = Math.max(.82, (compact ? .95 : 1.04) / (2 * Math.tan(fov * Math.PI / 360) * size.width / size.height));
-    const target = body.localToWorld(new Vector3(0, compact ? .04 : .15, .02));
-    const position = body.localToWorld(new Vector3(0, (compact ? .04 : .15) + .045, distance));
+    const distance = Math.max(.82, (compact ? 1.22 : 1.3) / (2 * Math.tan(fov * Math.PI / 360) * size.width / size.height));
+    const target = body.localToWorld(new Vector3(.10, compact ? .04 : .15, .02));
+    const position = body.localToWorld(new Vector3(.10, (compact ? .04 : .15) + .045, distance));
     return { id: 'beosound-9000', position: position.toArray(), target: target.toArray() };
   }, [body, camera, compact, size.height, size.width]);
   const open = useCallback(() => {
@@ -49,9 +51,11 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
   useEffect(() => { if (editing && active) setInspection(null); }, [active, editing, setInspection]);
   return <group name="Bang & Olufsen Beosound 9000" userData={{ sceneControl: true, active, selectedDisc: state.disc }}>
     <Beosound9000Bracket />
+    <BeosoundRack state={state} active={active} disabled={editing} compact={compact} onOpen={open} onExpanded={setLibraryOpen} dispatch={dispatch} />
+    {state.exchange && <BeosoundExchange exchange={state.exchange} reducedMotion={reducedMotion} onComplete={() => dispatch({ type: 'exchange-complete' })} />}
     <group ref={setBody} position={[0, B.bracketHeight, 0]} rotation={[B.tilt, 0, 0]} {...(!active ? handlers : {})}>
-      <Beosound9000Geometry state={state} active={active} disabled={editing} reducedMotion={reducedMotion} onSelect={select} onCarriageReady={onCarriageReady} />
-      {active && <Beosound9000Controls state={state} compact={compact} dispatch={dispatch} onClose={close} />}
+      <Beosound9000Geometry state={state} active={active} disabled={editing || state.exchange !== null} reducedMotion={reducedMotion} onSelect={select} onCarriageReady={onCarriageReady} />
+      {active && <Beosound9000Controls state={state} compact={compact} hidden={(compact || size.height < 600) && libraryOpen} dispatch={dispatch} onClose={close} />}
       {!active && !editing && <Html position={[-.416, .04, .079]} center occlude={body ? [{ current: body }] : undefined} zIndexRange={[30, 26]}>
         <button className="beosound-entry" type="button" aria-label="Inspect Beosound 9000 CD system"
           onPointerDown={event => event.stopPropagation()} onPointerUp={event => event.stopPropagation()}

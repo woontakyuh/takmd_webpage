@@ -1,4 +1,5 @@
-import type { CdSlot } from './Beosound9000State';
+export const ALBUM_IDS = [1, 2, 3, 4, 5, 6] as const;
+export type AlbumId = typeof ALBUM_IDS[number];
 
 export type BeosoundAlbum = {
   readonly artist: string;
@@ -8,7 +9,7 @@ export type BeosoundAlbum = {
   readonly cover: string;
 };
 
-export const BEOSOUND_ALBUMS: Partial<Record<CdSlot, BeosoundAlbum>> = {
+export const BEOSOUND_ALBUMS: Record<AlbumId, BeosoundAlbum> = {
   1: { artist: 'Two Ton Shoe', album: 'Resoled', track: 'Paper Bag', audio: '/audio/two-ton-shoe-paper-bag.m4a', cover: '/models/audio/two-ton-shoe-resoled-cover.webp' },
   2: { artist: 'GIRIBOY', album: '땡큐', track: '하루종일 (Band Ver.)', audio: '/audio/giriboy-all-day-band.m4a', cover: '/models/audio/giriboy-thank-you-cover.jpg' },
   3: { artist: 'Radiohead', album: 'The Bends', track: 'High and Dry', audio: '/audio/radiohead-high-and-dry.m4a', cover: '/models/audio/radiohead-the-bends-cover.webp' },

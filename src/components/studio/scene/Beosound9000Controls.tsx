@@ -1,19 +1,18 @@
 import { Html } from '@react-three/drei';
 import { useEffect, useRef } from 'react';
 import type { Dispatch, SyntheticEvent } from 'react';
-import { CD_SLOTS, beosoundDisplay } from './Beosound9000State';
+import { CD_SLOTS, beosoundDisplay, albumAtSlot } from './Beosound9000State';
 import type { BeosoundAction, BeosoundState } from './Beosound9000State';
 import './beosound-9000.css';
-import { BEOSOUND_ALBUMS } from './BeosoundAlbums';
 
 const stopEvent = (event: SyntheticEvent) => event.stopPropagation();
 
-export function Beosound9000Controls({ state, compact, dispatch, onClose }: {
-  readonly state: BeosoundState; readonly compact: boolean;
+export function Beosound9000Controls({ state, compact, hidden, dispatch, onClose }: {
+  readonly state: BeosoundState; readonly compact: boolean; readonly hidden: boolean;
   readonly dispatch: Dispatch<BeosoundAction>; readonly onClose: () => void;
 }) {
   const closeButton = useRef<HTMLButtonElement>(null);
-  const album = BEOSOUND_ALBUMS[state.disc];
+  const album = albumAtSlot(state, state.disc);
   useEffect(() => {
     const previous = document.activeElement;
     closeButton.current?.focus({ preventScroll: true });
@@ -43,7 +42,7 @@ export function Beosound9000Controls({ state, compact, dispatch, onClose }: {
       <button className="beosound-close" ref={closeButton} type="button" aria-label="Return from Beosound 9000"
         onPointerDown={stopEvent} onPointerUp={stopEvent} onClick={event => { stopEvent(event); onClose(); }}>×</button>
     </Html>
-    <Html transform={!compact} distanceFactor={compact ? undefined : .4} position={compact ? [0, .1135, .052] : [0, .064, .049]}
+    {!hidden && <Html transform={!compact} distanceFactor={compact ? undefined : .4} position={compact ? [.10, .1135, .052] : [0, .064, .049]}
       zIndexRange={[43, 39]}>
       <div className="beosound-operation-panel" data-compact={compact} role="group" aria-label="Beosound 9000 controls"
         onPointerDown={stopEvent} onPointerUp={stopEvent} onClick={stopEvent} onDoubleClick={stopEvent} onWheel={stopEvent}>
@@ -65,7 +64,7 @@ export function Beosound9000Controls({ state, compact, dispatch, onClose }: {
         {compact && <div className="beosound-level-keys">{levelKeys}</div>}
         {compact && album && <p className="beosound-track-caption">{album.artist} · {album.track}</p>}
       </div>
-    </Html>
+    </Html>}
     {!compact && album && <Html position={[0, -.017, .06]} center zIndexRange={[43, 39]}>
       <p className="beosound-track-caption">{album.artist} · {album.track}</p>
     </Html>}

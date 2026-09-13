@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
-import { BEOSOUND_ALBUMS } from './BeosoundAlbums';
-import { BEOSOUND_9000, CD_SLOTS, INITIAL_BEOSOUND, beosoundReducer, cdPosition } from './Beosound9000State';
+import { BEOSOUND_9000, albumAtSlot, nextLoadedSlot, INITIAL_BEOSOUND, beosoundReducer, cdPosition } from './Beosound9000State';
 import type { BeosoundAction, CdSlot } from './Beosound9000State';
 
 type Deck = { audio: HTMLAudioElement; gain: GainNode };
 type Player = { context: AudioContext; decks: readonly [Deck, Deck]; active: 0 | 1 };
-const nextDisc = (disc: CdSlot): CdSlot => CD_SLOTS[disc % CD_SLOTS.length] ?? 1;
 
 export function useBeosoundAudio() {
   const [state, reduce] = useReducer(beosoundReducer, INITIAL_BEOSOUND);
@@ -28,8 +26,9 @@ export function useBeosoundAudio() {
     if (!player || pending.current || current.current.playback !== 'playing') return;
     const { audio } = player.decks[player.active];
     if (audio.paused) return;
-    const disc = nextDisc(current.current.disc), album = BEOSOUND_ALBUMS[disc];
-    if (!album) return;
+    const disc = nextLoadedSlot(current.current, 1);
+    const album = disc ? albumAtSlot(current.current, disc) : undefined;
+    if (!disc || !album) return;
     const spare = player.decks[player.active === 0 ? 1 : 0];
     if (prepared.current?.disc !== disc) {
       spare.gain.gain.value = 0;
@@ -102,12 +101,14 @@ export function useBeosoundAudio() {
   }, [startWhenReady, update]);
   const dispatchAction = useCallback((action: BeosoundAction) => {
     const previous = current.current;
+    if (previous.exchange && !['exchange-complete', 'volume', 'mute'].includes(action.type)) return;
+    if (action.type === 'exchange' && previous.slots[action.slot - 1] === action.album) return;
     if (action.type === 'play' && previous.playback === 'playing') return;
     update(action);
     const next = current.current;
     switch (action.type) {
       case 'disc': case 'step': case 'play': {
-        const generation = ++request.current, album = BEOSOUND_ALBUMS[next.disc];
+        const generation = ++request.current, album = albumAtSlot(next, next.disc);
         clearTimer(); prepared.current = null;
         const old = media.current?.decks[media.current.active];
         const resume = action.type === 'play' && previous.playback === 'paused' ? old?.audio.currentTime ?? 0 : 0;
@@ -122,18 +123,18 @@ export function useBeosoundAudio() {
         playDeck(player, generation);
         return;
       }
-      case 'pause': case 'standby': case 'load':
+      case 'pause': case 'standby': case 'load': case 'exchange':
         ++request.current; clearTimer(); pending.current = null; prepared.current = null;
         if (media.current) {
           const source = media.current.decks[media.current.active];
           source.audio.pause();
-          if (action.type === 'standby') source.audio.currentTime = 0;
+          if (action.type === 'standby' || action.type === 'exchange') source.audio.currentTime = 0;
         }
         return;
       case 'volume': case 'mute':
         if (media.current && !pending.current) media.current.decks[media.current.active].gain.gain.value = next.muted ? 0 : next.volume / 90;
         return;
-      case 'media': case 'prepare': return;
+      case 'media': case 'prepare': case 'exchange-complete': return;
       default: { const exhaustive: never = action; return exhaustive; }
     }
   }, [clearTimer, ensureMedia, playDeck, update]);
@@ -154,8 +155,9 @@ export function useBeosoundAudio() {
     advance.current = () => {
       const player = media.current;
       if (!player) return;
-      const disc = nextDisc(current.current.disc), album = BEOSOUND_ALBUMS[disc];
-      if (!album) { update({ type: 'media', playback: 'stopped' }); return; }
+      const disc = nextLoadedSlot(current.current, 1);
+      const album = disc ? albumAtSlot(current.current, disc) : undefined;
+      if (!disc || !album) { update({ type: 'media', playback: 'stopped' }); return; }
       clearTimer();
       const old = player.decks[player.active];
       old.gain.gain.value = 0; delete old.audio.dataset.active;

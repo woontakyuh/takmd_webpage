@@ -21,12 +21,14 @@ Music continues while the visitor explores other objects. Pause returns the CD l
 
 ## Room-native controls
 
-A distant click approaches the player. During inspection, the actual CD groups and operation plate own input; the decorative clamper does not intercept clicks. Desktop controls coincide with the black operation plate. On a compact screen, an enlarged plate is attached beside the player with 44px targets. A small artist/track caption sits nearby. There is no separate album card or persistent global player. X/Escape returns to the preceding inspection pose without interrupting music.
+A distant click approaches the player. During inspection, the actual CD groups and operation plate own input; the decorative clamper does not intercept clicks. Desktop controls coincide with the black operation plate. On a compact screen, an enlarged plate is attached beside the player with 44px targets. A small artist/track caption sits nearby. A collapsible CD collection panel lives below the player; there is no persistent global player. X/Escape returns to the preceding inspection pose without interrupting music.
 
 ## Validation and limits
 
 The reducer/geometry tests cover slot selection, loading request identity, unavailable playback, volume, cover, mechanical travel, reduced motion and shelf clearances. Browser evidence in `.omo/evidence/calendar-audio-refinement-2026-09-11/` covers real audio amplitude, slot switching, label rest, pause/resume, volume/mute, continued room playback, all six supplied tracks, failures/retry, reduced motion and narrow touch controls. Physical iPhone/Safari listening has not been verified by desktop viewport emulation.
 
-One supplied track belongs to each assigned slot. A separate CD rack and replacement flow, full album track lists, seek UI and EQ are not implemented. The transport arrows change discs.
+Each album currently has one supplied track. Six jewel cases sit in a graphite rack alongside the player. Click a case or open CD collection, choose an album and target slot, then place it or return the loaded disc to its case. Replacing a disc pauses playback, opens the glass, moves the outgoing/incoming disc, and commits the slot mapping only after the transfer. Moving an already loaded disc leaves its previous slot empty. Starting playback still requires an explicit CD or play click; continuation skips empty slots. The collection closes first on Escape, then inspection closes on a second Escape. Full album track lists, seek UI and EQ remain outside this change.
 
 Current playback order (owner update, 11 September): Paper Bag → 하루종일 (Band Ver.) → High and Dry → Think About’ Chu → Raye → 비오는 압구정 → Paper Bag. Physical discs, their covers and the album readout share this ordering.
+
+14 September validation: state tests cover exchange transactions and empty-slot continuation. Browser evidence is `.omo/evidence/cd-rack-south-bank-2026-09-14/`, including native audio after replacement and native end-of-track continuation. This does not certify physical iPhone performance.
