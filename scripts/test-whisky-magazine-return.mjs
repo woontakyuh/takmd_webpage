@@ -67,13 +67,24 @@ try {
   await page.waitForFunction(() => document.querySelector('button[aria-label="Next page"]')?.disabled === false);
   await page.getByRole('button', { name: 'Next page', exact: true }).click();
   await page.waitForTimeout(1500);
+  await page.getByRole('button', { name: 'Next page', exact: true }).click();
+  await page.waitForTimeout(1500);
   const bottlePoint = await page.evaluate(() => {
     const state = window.magazineTestScene();
     const bottle = state.scene.getObjectByName('GlenDronach 18 Year Old 700 ml');
     const center = bottle.position.clone().set(0, .15, .008);
     bottle.localToWorld(center).project(state.camera);
-    return { x: (center.x + 1) * innerWidth / 2, y: (1 - center.y) * innerHeight / 2 };
+    const x = (center.x + 1) * innerWidth / 2, y = (1 - center.y) * innerHeight / 2;
+    state.raycaster.setFromCamera(state.pointer.clone().set(center.x, center.y), state.camera);
+    const nearest = state.raycaster.intersectObjects(state.scene.children, true).find(hit => {
+      for (let object = hit.object; object; object = object.parent) if (!object.visible) return false;
+      return true;
+    });
+    let hitsBottle = false;
+    for (let object = nearest?.object; object; object = object.parent) if (object === bottle) hitsBottle = true;
+    return { x, y, hitsBottle, canvas: document.elementFromPoint(x, y) === state.gl.domElement };
   });
+  assert.ok(bottlePoint.canvas && bottlePoint.hitsBottle, 'the bottle fixture must be visibly clickable beside the full spread');
   await page.mouse.click(bottlePoint.x, bottlePoint.y);
   const transfer = [];
   for (let sample = 0; sample < 45; sample++) {
