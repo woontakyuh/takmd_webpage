@@ -50,7 +50,7 @@ Spinoscopy Workshop Team의 교육 워크샵 이력을 takmd.com 하부 페이�
 | 5 | 2025-12-20-animal-pig | animal-pig | held | "1st Animal Lab Workshop for Beginners". n=8, pre/post 평가 |
 | 6 | 2026-06-13-dummy | dummy | held | 인천 HLB바이오스텝으로 이전. 초청강의 Jae-Koo Lee "Hurdles and Lessons, from Trainee to Trainer" |
 | 7 | 2026-08-08-animal-pig | animal-pig | held | 공식명 "The 7th ESS Animal Lab Workshop for Beginners". 수료식 |
-| 8 | 2026-12-19-cadaver | cadaver | planned | 팀 프로그램 첫 사람 카데바. 장소 CIBEC |
+| 8 | 2026-12-20-cadaver | cadaver | planned | 팀 프로그램 첫 사람 카데바. 장소 CIBEC |
 
 더미 1~4회는 한림대학교 동탄성심병원, 2026년 6회부터 인천 송도 HLB바이오스텝으로 이전했다.
 동물 회차의 실습실은 같은 건물 4층이다 — 사진 GPS 37.3731, 126.6358로 확인. 2026 동물 회차 주최에 (재)인천테크노파크, (주)하얀메디칼, endovision.
@@ -208,7 +208,7 @@ type FacultyAppearance = {
 2. **커리큘럼 스트립.** `curriculumStages` 5개를 가로로. 3·4·5단계는 상세 페이지로 링크.
 3. **타임라인.** `workshopSessions` 날짜순 9개. 카드에는 seriesNo, 날짜, 모달리티, 장소, 공식 제목, 대표 사진 1장(group → practice 순으로 첫 장). 사진 없는 회차는 텍스트 카드, `planned`는 점선 카드.
 4. **교육 효과.** `workshopOutcomes`의 6도메인 pre/post를 차트 하나로(레이더 또는 슬로프). n과 응답 구성만 표기. 아래에 `quotes` 3–4개.
-5. **앞으로.** 12-19 카데바(팀 프로그램 첫 카데바)와 WSC 2026 더미 워크샵. WSC 카드는 `relation: team-support` 문구("KOMISS 주최 행사에 팀 faculty가 지원")를 그대로 보여준다.
+5. **앞으로.** 12-20 카데바(팀 프로그램 첫 카데바)와 WSC 2026 더미 워크샵. WSC 카드는 `relation: team-support` 문구("KOMISS 주최 행사에 팀 faculty가 지원")를 그대로 보여준다.
 6. **Faculty.** `workshopTeam.members` 8명, 소속. 팀 소개 한 문단. "Also teaching at" 한 줄로 `/workshops/cadaver`의 외부 활동 층으로 연결.
 
 ### `/workshops/dummy`, `/workshops/animal-pig`
@@ -217,7 +217,7 @@ type FacultyAppearance = {
 
 ### `/workshops/cadaver`
 
-- 상단: 팀 프로그램의 카데바 단계. 왜 마지막 단계인가(설문 인용), 2026-12-19 예정 카드.
+- 상단: 팀 프로그램의 카데바 단계. 왜 마지막 단계인가(설문 인용), 2026-12-20 예정 카드.
 - 중단 **Team faculty exchange**: `relation: team-dispatch` 항목(대만). 요청자·상호 교류 합의 문구.
 - 하단 **Faculty at other cadaver workshops**: `relation: individual` 항목(Spine Summit, CG Bio). Spine Summit은 `links`로 기존 presentations 항목과 TV 갤러리 사진에 연결.
 

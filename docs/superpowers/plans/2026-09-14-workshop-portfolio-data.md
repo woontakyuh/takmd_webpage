@@ -362,7 +362,7 @@ assert.deepEqual(sessionsFor('animal-pig').length, 2);
 assert.deepEqual(sessionsFor('cadaver').map((s) => s.status), ['planned']);
 assert.equal(getSession('2026-08-08-animal-pig')?.certification, true);
 assert.equal(getSession('2025-12-20-animal-pig')?.trainees?.count, 8);
-assert.equal(getSession('2026-12-19-cadaver')?.venue, undefined);
+assert.equal(getSession('2026-12-20-cadaver')?.venue, undefined);
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -576,11 +576,11 @@ export const workshopSessions = [
     sources: ['Official program and invitation', 'GCal Conference'],
   },
   {
-    id: '2026-12-19-cadaver',
+    id: '2026-12-20-cadaver',
     workshop: 'cadaver',
     seriesNo: 8,
     modalityNo: 1,
-    date: '2026-12-19',
+    date: '2026-12-20',
     status: 'planned',
     title: 'Endoscopic Spine Surgery Cadaver Workshop for Beginners (1st)',
     titleKo: '척추 내시경 카데바 워크샵 1회',
