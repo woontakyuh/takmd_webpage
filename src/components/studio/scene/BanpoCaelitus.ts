@@ -1,3 +1,4 @@
+import { residentialLightUniform, RESIDENTIAL_LIGHT_GLSL } from './ResidentialLights';
 import * as THREE from 'three';
 import { BANPO_APPEARANCE, banpoGlslColor } from './BanpoAppearance';
 
@@ -42,7 +43,7 @@ const CURTAIN_WALL = `
   diffuseColor.rgb = mix(mix(frame, spandrel, step(0.82, local.y)), glass, pane);
   float occupied = step(room, 0.23) * step(0.13, caelitusHash(vec3(cell.y, vCaelitusSeed, 91.0)));
   vec3 lamp = mix(${banpoGlslColor(BANPO_APPEARANCE.caelitus.linear.lampWarm)}, ${banpoGlslColor(BANPO_APPEARANCE.caelitus.linear.lampCool)}, step(0.16, room));
-  totalEmissiveRadiance = lamp * pane * occupied * (0.22 + room * 1.8) * uCaelitusNight;
+  totalEmissiveRadiance = lamp * pane * occupied * (0.22 + room * 1.8) * uCaelitusNight * residentialLight(caelitusHash(vec3(cell, vCaelitusSeed + 719.0)));
 `;
 
 function curtainWallMaterial() {
@@ -50,16 +51,18 @@ function curtainWallMaterial() {
   const material = new THREE.MeshStandardMaterial(BANPO_APPEARANCE.caelitus.glass);
   material.onBeforeCompile = shader => {
     shader.uniforms.uCaelitusNight = night;
+    shader.uniforms.uResidentialOccupancy = residentialLightUniform;
     shader.vertexShader = shader.vertexShader.replace('#include <common>', `#include <common>
       attribute float caelitusSeed; varying float vCaelitusSeed; varying vec2 vCaelitusUv;`)
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvCaelitusSeed=caelitusSeed;vCaelitusUv=uv;');
     shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `#include <common>
+      ${RESIDENTIAL_LIGHT_GLSL}
       uniform float uCaelitusNight; varying float vCaelitusSeed; varying vec2 vCaelitusUv;
       float caelitusHash(vec3 p) { return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453); }`)
       .replace('#include <map_fragment>', CURTAIN_WALL)
       .replace('#include <emissivemap_fragment>', '');
   };
-  material.customProgramCacheKey = () => 'caelitus-curtain-wall-v1';
+  material.customProgramCacheKey = () => 'caelitus-curtain-wall-v2';
   return { material, night };
 }
 

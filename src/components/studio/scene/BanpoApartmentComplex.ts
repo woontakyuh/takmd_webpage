@@ -1,3 +1,4 @@
+import { residentialLightUniform, RESIDENTIAL_LIGHT_GLSL } from './ResidentialLights';
 import * as THREE from 'three';
 import { BANPO_APPEARANCE, banpoCssColor } from './BanpoAppearance';
 
@@ -29,6 +30,7 @@ interface SurfaceBuffer {
   readonly normals: number[];
   readonly colors: number[];
   readonly light: number[];
+  readonly occupancy: number[];
   readonly uv: number[];
 }
 
@@ -41,7 +43,7 @@ const BLACK = new THREE.Color(BANPO_APPEARANCE.neutral.unlit);
 const LIGHT_COLORS = BANPO_APPEARANCE.shindonga.lamps.map(color => new THREE.Color(color));
 
 function buffer(): SurfaceBuffer {
-  return { positions: [], normals: [], colors: [], light: [], uv: [] };
+  return { positions: [], normals: [], colors: [], light: [], occupancy: [], uv: [] };
 }
 
 function quad(
@@ -54,10 +56,12 @@ function quad(
 ): void {
   const reversed = points[1].clone().sub(points[0]).cross(points[2].clone().sub(points[0])).dot(normal) < 0;
   const indices = reversed ? [0, 2, 1, 0, 3, 2] : [0, 1, 2, 0, 2, 3];
+  const seed = Math.abs(Math.sin(points[0].x * 12.9898 + points[0].y * 78.233 + points[0].z * 37.719) * 43758.5453) % 1;
   for (const index of indices) {
     target.positions.push(...points[index].toArray());
     target.normals.push(...normal.toArray());
     target.colors.push(color.r, color.g, color.b);
+    target.occupancy.push(seed);
     target.light.push(emission.r, emission.g, emission.b);
     target.uv.push(uv[index][0], uv[index][1]);
   }
@@ -123,6 +127,7 @@ function geometry(data: SurfaceBuffer): THREE.BufferGeometry {
   result.setAttribute('position', new THREE.Float32BufferAttribute(data.positions, 3));
   result.setAttribute('normal', new THREE.Float32BufferAttribute(data.normals, 3));
   result.setAttribute('color', new THREE.Float32BufferAttribute(data.colors, 3));
+  result.setAttribute('apartmentOccupancy', new THREE.Float32BufferAttribute(data.occupancy, 1));
   result.setAttribute('apartmentLight', new THREE.Float32BufferAttribute(data.light, 3));
   result.setAttribute('uv', new THREE.Float32BufferAttribute(data.uv, 2));
   result.computeBoundingBox();
@@ -240,12 +245,13 @@ export function createBanpoApartmentComplex(buildings: readonly BanpoApartmentBu
   const glassMaterial = new THREE.MeshStandardMaterial({ color: BANPO_APPEARANCE.neutral.white, vertexColors: true, roughness: BANPO_APPEARANCE.shindonga.glassRoughness, metalness: BANPO_APPEARANCE.shindonga.glassMetalness });
   glassMaterial.onBeforeCompile = shader => {
     shader.uniforms.apartmentNightMix = night;
-    shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nattribute vec3 apartmentLight;\nvarying vec3 vApartmentLight;')
-      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvApartmentLight = apartmentLight;');
-    shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nuniform float apartmentNightMix;\nvarying vec3 vApartmentLight;')
-      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>\ntotalEmissiveRadiance += vApartmentLight * apartmentNightMix * ${BANPO_APPEARANCE.shindonga.lampIntensity};`);
+    shader.uniforms.uResidentialOccupancy = residentialLightUniform;
+    shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nattribute float apartmentOccupancy; varying float vApartmentOccupancy; attribute vec3 apartmentLight;\nvarying vec3 vApartmentLight;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvApartmentLight = apartmentLight; vApartmentOccupancy = apartmentOccupancy;');
+    shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `#include <common>\n${RESIDENTIAL_LIGHT_GLSL}\nuniform float apartmentNightMix;\nvarying vec3 vApartmentLight; varying float vApartmentOccupancy;`)
+      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>\ntotalEmissiveRadiance += vApartmentLight * apartmentNightMix * residentialLight(vApartmentOccupancy) * ${BANPO_APPEARANCE.shindonga.lampIntensity};`);
   };
-  glassMaterial.customProgramCacheKey = (): string => 'shindonga-window-occupancy-v1';
+  glassMaterial.customProgramCacheKey = (): string => 'shindonga-window-occupancy-v2';
   const meshes = [new THREE.Mesh(geometry(solid), structureMaterial), new THREE.Mesh(geometry(glazing), glassMaterial)];
   meshes[0].name = 'Mapped Shindonga walls roofs balcony slabs and lift heads';
   meshes[1].name = 'Shindonga thirteen-storey glazing and occupied windows';
@@ -261,9 +267,11 @@ export function createBanpoApartmentComplex(buildings: readonly BanpoApartmentBu
     roughness: BANPO_APPEARANCE.shindonga.structureRoughness });
   distantMaterial.onBeforeCompile = shader => {
     shader.uniforms.apartmentNightMix = night;
+    shader.uniforms.uResidentialOccupancy = residentialLightUniform;
     shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nattribute vec2 apartmentFace; varying vec2 vApartmentFace; varying vec2 vApartmentGrid;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvApartmentFace=apartmentFace;vApartmentGrid=uv;');
     shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `#include <common>
+      ${RESIDENTIAL_LIGHT_GLSL}
       uniform float apartmentNightMix; varying vec2 vApartmentFace; varying vec2 vApartmentGrid;
       float apartmentHash(vec3 p) { return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453); }
       float apartmentCoverage(float p, float halfWidth, float aa) {
@@ -285,10 +293,10 @@ export function createBanpoApartmentComplex(buildings: readonly BanpoApartmentBu
           float resolvedLight=1.0-smoothstep(0.35,0.85,max(aa.x,aa.y));
           vec3 lamp=mix(vec3(${LIGHT_COLORS[0].r},${LIGHT_COLORS[0].g},${LIGHT_COLORS[0].b}),
             vec3(${LIGHT_COLORS[2].r},${LIGHT_COLORS[2].g},${LIGHT_COLORS[2].b}),step(0.17,room));
-          totalEmissiveRadiance+=lamp*pane*occupied*resolvedLight*apartmentNightMix*${BANPO_APPEARANCE.shindonga.lampIntensity};
+          totalEmissiveRadiance+=lamp*pane*occupied*resolvedLight*apartmentNightMix*residentialLight(apartmentHash(vec3(cell,vApartmentFace.y+719.0)))*${BANPO_APPEARANCE.shindonga.lampIntensity};
         }`);
   };
-  distantMaterial.customProgramCacheKey = (): string => 'shindonga-filtered-distance-facade-v1';
+  distantMaterial.customProgramCacheKey = (): string => 'shindonga-filtered-distance-facade-v2';
   const distantGeometry = geometry(distant);
   distantGeometry.setAttribute('apartmentFace', new THREE.Float32BufferAttribute(distantFaces, 2));
   const distantMesh = new THREE.Mesh(distantGeometry, distantMaterial);

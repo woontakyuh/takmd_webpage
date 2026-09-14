@@ -1,3 +1,4 @@
+import { residentialLightUniform, RESIDENTIAL_LIGHT_GLSL } from './ResidentialLights';
 import * as THREE from 'three';
 import { BANPO_FACADE_SOURCES, type BanpoFacadeSpec } from './BanpoFacadeSources';
 
@@ -100,6 +101,14 @@ export function createBanpoFacadeDetails(excludedIds: ReadonlySet<number> = new 
   const darkMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.48, metalness: 0.08 });
   const structureMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8, metalness: 0.02 });
   const lightMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: true });
+  lightMaterial.onBeforeCompile = shader => {
+    shader.uniforms.uResidentialOccupancy = residentialLightUniform;
+    shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying float vResidenceSeed;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvResidenceSeed=fract(sin(dot(instanceMatrix[3].xyz,vec3(12.9898,78.233,37.719)))*43758.5453);');
+    shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `#include <common>\n${RESIDENTIAL_LIGHT_GLSL}\nvarying float vResidenceSeed;`)
+      .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb *= residentialLight(vResidenceSeed);');
+  };
+  lightMaterial.customProgramCacheKey = () => 'residential-detail-occupancy-v1';
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const batches = [
     { name: 'Recessed facade window bands', material: darkMaterial, entries: bands },

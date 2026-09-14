@@ -1,3 +1,4 @@
+import { updateResidentialLights, residentialLightUniform } from './ResidentialLights';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
@@ -53,6 +54,7 @@ function disposeModel(root: THREE.Object3D) {
 }
 
 export function createBanpoLandscape() {
+  updateResidentialLights();
   const fallback = createHanRiverLandscape();
   const scene = new THREE.Scene();
   scene.name = 'Banpo geographic pilot';
@@ -179,6 +181,10 @@ export function createBanpoLandscape() {
     get cameraOffset() { return loaded ? pilotCameraOffset : fallbackCameraOffset; },
     setNightMix,
     setTime: (seconds: number) => {
+      updateResidentialLights();
+      emissive.forEach((intensity, material) => {
+        if (material.name === 'Window lights') material.emissiveIntensity = intensity * currentNight * residentialLightUniform.value;
+      });
       if (!loaded) fallback.setTime(seconds);
       atmosphere.setTime(seconds);
       traffic.setTime(seconds);
