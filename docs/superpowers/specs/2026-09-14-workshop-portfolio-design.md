@@ -235,3 +235,21 @@ type FacultyAppearance = {
 **Astra(페이지).** `/workshops` 인덱스, `WorkshopPage.astro` 개편, 차트 컴포넌트, `/education` 링크.
 
 **구현 순서.** 데이터 파일과 테스트 → 임포터와 사진 선별(회차별 승인) → 스펙을 Astra에게 인계. 명단이 오면 `trainees`만 채우는 후속 커밋.
+
+## 7. Data ready (2026-09-14)
+
+Import from `src/data/`:
+
+- `workshops` (+ `stage`, `titleKo`, `defaultVenue`) — `workshops.ts`
+- `curriculumStages`, `competencyDomains`, `competencyKeys` — `workshop-curriculum.ts`
+- `workshopTeam`, `isTeamMember` — `workshop-team.ts`
+- `workshopSessions`, `getSession`, `sessionsFor` — `workshop-sessions.ts`
+- `workshopOutcomes`, `outcomeFor` — `workshop-outcomes.ts`
+- `facultyAppearances` — `workshop-faculty-appearances.ts`
+- `workshop-photos.json` — `{ sessionId, role, order, src, thumb, width, height }[]`, sorted; roles `group | lecture | practice | venue`
+
+Cover photo rule for the timeline: first `group` entry for the session, else first `practice`, else none.
+Tests: `bun run scripts/workshopData.test.ts`, `bun run scripts/workshopPhotos.test.ts`.
+Re-import photos: `bun run photos:workshops` (originals live in `content/workshops/`, not committed).
+
+Photo status: `2026-06-13-dummy` has 11 photos in the manifest. Six more held sessions are curated (49 photos chosen) and will be added to the manifest once full-resolution originals are pulled from the owner's library; `2026-02-21-dummy` has no photos in the owner's library and waits on the team. Pages must render a session with zero photos as a text card.
