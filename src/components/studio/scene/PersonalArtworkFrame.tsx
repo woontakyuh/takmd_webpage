@@ -39,7 +39,7 @@ export function PersonalArtworkFrame() {
       <planeGeometry args={[WIDTH - RIM * 2, WIDTH - RIM * 2]} />
       <meshStandardMaterial color="#F8F6F0" roughness={.96} />
     </mesh>
-    <mesh name="Original painting, uncropped" position={[0, 0, .013]}>
+    <mesh name="Original painting, uncropped" position={[0, 0, .013]} rotation={[0, 0, -Math.PI / 2]}>
       <planeGeometry args={[PRINT, PRINT]} />
       <meshStandardMaterial map={art} roughness={.96} />
     </mesh>
@@ -48,6 +48,6 @@ export function PersonalArtworkFrame() {
         onClick={event => { event.stopPropagation(); if (event.detail === 0) approach(); }} />
     </Html>}
     {active && <RoomArchiveCaption object={group} width={WIDTH} height={WIDTH} side
-      label="An original painting" title="On paper." description="Artwork by Woon Tak Yuh." onClose={close} />}
+      label="27 January 2018" title="On paper." description="Artwork by Woon Tak Yuh · SZQ Gallery, Seoul." onClose={close} />}
   </group>;
 }
