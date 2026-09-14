@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { workshops, workshopSlugs, getWorkshop } from '../src/data/workshops';
 import { curriculumStages, competencyDomains, competencyKeys } from '../src/data/workshop-curriculum';
+import { workshopTeam, isTeamMember } from '../src/data/workshop-team';
 
 // --- workshops.ts ---
 assert.deepEqual(workshopSlugs, ['dummy', 'cadaver', 'animal-pig'], 'slug contract used by WorkshopObjects.tsx');
@@ -25,5 +26,15 @@ for (const s of curriculumStages) {
 assert.deepEqual(competencyKeys, ['anatomy', 'instrumentation', 'access', 'boneWork', 'softTissue', 'safety']);
 assert.deepEqual(competencyDomains.map((d) => d.key), [...competencyKeys]);
 for (const d of competencyDomains) assert.ok(d.label && d.labelKo, `domain ${d.key} labels`);
+
+
+// --- workshop-team.ts ---
+assert.equal(workshopTeam.name, 'Spinoscopy Workshop Team');
+assert.equal(workshopTeam.members.length, 8);
+assert.equal(new Set(workshopTeam.members.map((m) => m.nameKo)).size, 8, 'unique members');
+for (const m of workshopTeam.members) assert.ok(m.name && m.nameKo && m.affiliation, `member ${m.nameKo}`);
+assert.equal(workshopTeam.members[0].name, 'Woon Tak Yuh');
+assert.ok(isTeamMember('최일'));
+assert.ok(!isTeamMember('김진성'));
 
 console.log('workshopData: all checks passed');
