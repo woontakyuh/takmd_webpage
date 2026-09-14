@@ -5,6 +5,7 @@ import { PERSONAL_LINKS } from '../personal';
 import { DoctorCoat, JiuJitsuGi } from './Garment';
 import { EPOCH_HANGER_POSITIONS, GarmentRack, RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 import { Interactive } from './Interactive';
+import { PersonalArtworkFrame } from './PersonalArtworkFrame';
 import { Surfboard } from './Surfboard';
 import { SurfboardStoryAnchor } from './SurfboardStoryAnchor';
 import { ROOM } from './config';
@@ -16,6 +17,7 @@ export function PersonalCorner({ selected, onSelect, reducedMotion }: PersonalCo
   const surfboard = useRef<Group>(null);
   return (
     <group>
+      <Suspense fallback={null}><PersonalArtworkFrame /></Suspense>
       <group position={[...wardrobe.position]} rotation={[0, wardrobe.rotation, 0]}>
         <GarmentRack />
         <Interactive id="spine" name="Exhibit hospital" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
