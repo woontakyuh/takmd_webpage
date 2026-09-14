@@ -64,7 +64,7 @@ assert.deepEqual(sessionsFor('animal-pig').length, 2);
 assert.deepEqual(sessionsFor('cadaver').map((s) => s.status), ['planned']);
 assert.equal(getSession('2026-08-08-animal-pig')?.certification, true);
 assert.equal(getSession('2025-12-20-animal-pig')?.trainees?.count, 8);
-assert.equal(getSession('2026-12-19-cadaver')?.venue, undefined);
+assert.equal(getSession('2026-12-19-cadaver')?.venue?.city, 'Seoul');
 
 
 // --- workshop-outcomes.ts ---

@@ -225,6 +225,11 @@ export const workshopSessions = [
     status: 'planned',
     title: 'Endoscopic Spine Surgery Cadaver Workshop for Beginners (1st)',
     titleKo: '척추 내시경 카데바 워크샵 1회',
+    venue: {
+      name: 'Catholic International Bioskills Education Center (CIBEC)',
+      nameKo: '가톨릭대학교 국제술기교육센터',
+      city: 'Seoul',
+    },
     host: ['Hallym University Dongtan Sacred Heart Hospital'],
     audience: 'Beginner spine surgeons who completed the dummy or animal stage',
     role: 'faculty',
