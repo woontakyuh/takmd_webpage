@@ -20,9 +20,9 @@ export function BeosoundMiniPlayer({ state, dispatch }: {
   if (!host) return null;
   return <Html portal={portal} wrapperClass="office-music-portal" calculatePosition={screenOrigin} onOcclude={() => undefined} zIndexRange={[2, 1]}>
     <div className="office-music" onPointerDown={event => event.stopPropagation()} onClick={event => event.stopPropagation()}>
-      <button className="office-music-toggle" type="button" title={canPause ? '음악 일시정지' : '음악 재생'} aria-label={canPause ? '음악 일시정지' : '음악 재생'}
+      <button className="office-music-toggle" type="button" title={canPause ? 'Pause music' : 'Play music'} aria-label={canPause ? 'Pause music' : 'Play music'}
         onClick={() => dispatch({ type: canPause ? 'pause' : 'play' })}><PlaybackGlyph playing={canPause} /></button>
-      {playing && title && <div className="office-music-title" role="status" aria-label={`재생 중: ${title}`}>
+      {playing && title && <div className="office-music-title" role="status" aria-label={`Now playing: ${title}`}>
         <div className="office-music-marquee" key={title} style={{ '--track-duration': `${Math.max(12, title.length * .28)}s` } as CSSProperties} aria-hidden="true">
           <span>{title}</span><span>{title}</span>
         </div>

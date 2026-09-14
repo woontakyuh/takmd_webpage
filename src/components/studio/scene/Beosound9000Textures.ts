@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { CanvasTexture, SRGBColorSpace } from 'three';
 import type { BeosoundState } from './Beosound9000State';
+import { BEOSOUND_PANEL_KEYS } from './BeosoundPanel';
 import { beosoundDisplay } from './Beosound9000State';
 
 function texture(canvas: HTMLCanvasElement): CanvasTexture {
@@ -23,10 +24,8 @@ export function useBeosoundPanelTexture(state: BeosoundState) {
       context.fillStyle = '#e66f4e'; context.font = '30px monospace';
       context.fillText(label, 32, 163);
       context.fillStyle = '#b7bcb7'; context.font = '24px Arial, sans-serif';
-      for (const [text, x, y] of [['CD', 780, 82], ['PAUSE', 930, 82], ['‹', 1110, 82], ['›', 1220, 82],
-        ['MUTE', 1400, 82], ['VOL −', 1580, 82], ['VOL +', 1780, 82],
-        ['1', 815, 188], ['2', 955, 188], ['3', 1095, 188], ['4', 1235, 188], ['5', 1375, 188], ['6', 1515, 188],
-        ['LOAD', 1680, 188], ['•', 1860, 188]] as const) context.fillText(text, x, y);
+      context.textAlign = 'center';
+      for (const key of BEOSOUND_PANEL_KEYS) context.fillText(key.label, key.x, key.y);
     }
     return texture(canvas);
   }, [label]);

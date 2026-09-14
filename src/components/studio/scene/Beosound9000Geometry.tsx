@@ -88,8 +88,8 @@ export function Beosound9000Bracket() {
   </group>;
 }
 
-export function Beosound9000Geometry({ state, active, disabled, reducedMotion, onSelect, onCarriageReady }: {
-  readonly state: BeosoundState; readonly active: boolean;
+export function Beosound9000Geometry({ state, disabled, reducedMotion, onSelect, onCarriageReady }: {
+  readonly state: BeosoundState;
   readonly disabled: boolean; readonly reducedMotion: boolean; readonly onSelect: (disc: CdSlot) => void;
   readonly onCarriageReady: (disc: CdSlot) => void;
 }) {
@@ -128,9 +128,9 @@ export function Beosound9000Geometry({ state, active, disabled, reducedMotion, o
     <Block size={[B.width, B.height, B.depth]} position={[0, B.height / 2, 0]} radius={.003} color="#373d39" roughness={.45} metalness={.6} />
     <Block size={[B.width, B.height, .005]} position={[0, B.height / 2, .034]} radius={.002} color={SILVER} metalness={.84} roughness={.32} />
     <Block size={[.842, .099, .012]} position={[0, .064, .042]} radius={.002} color={BLACK} metalness={.18} roughness={.21} />
-    {!active && <mesh position={[0, .064, .0485]} raycast={ignoreRaycast}>
+    <mesh name="Beosound original faceplate" position={[0, .064, .0485]} raycast={ignoreRaycast}>
       <planeGeometry args={[.818, .093]} /><meshBasicMaterial map={panelTexture} toneMapped={false} />
-    </mesh>}
+    </mesh>
     <Block size={[.817, .007, .009]} position={[0, .144, .045]} radius={.001} color="#323a35" metalness={.75} roughness={.3} />
     {CD_SLOTS.map(disc => <CompactDisc key={disc} disc={disc} cover={albumAtSlot(state, disc)?.cover} concealed={Boolean(state.exchange && (state.exchange.slot === disc || state.exchange.source === disc))} selected={state.disc === disc && state.display !== 'standby'}
       texture={discTexture} disabled={disabled} playing={state.disc === disc && state.carriageDisc === disc && arrivedDisc === disc && state.playback === 'playing'} reducedMotion={reducedMotion} onSelect={onSelect} />)}

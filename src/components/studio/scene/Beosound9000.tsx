@@ -5,7 +5,7 @@ import { Vector3 } from 'three';
 import type { Group } from 'three';
 import { focusFov } from './config';
 import { useArrangement } from '../arrangement';
-import { BeosoundRack, screenOrigin } from './BeosoundRack';
+import { BeosoundRack } from './BeosoundRack';
 import { BeosoundExchange } from './BeosoundExchange';
 import { BeosoundMiniPlayer } from './BeosoundMiniPlayer';
 import { Beosound9000Controls } from './Beosound9000Controls';
@@ -18,7 +18,7 @@ import { cancelSceneSingleAction } from './sceneGesture';
 import { useCabinetAction } from './WhiskyCabinetDoor';
 
 export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolean }) {
-  const [mode, setMode] = useState<'overview' | 'player' | 'rack'>('overview');
+  const [mode, setMode] = useState<'overview' | 'rack'>('overview');
   const libraryOpen = mode === 'rack';
   const [body, setBody] = useState<Group | null>(null);
   const { state, dispatch, onCarriageReady } = useBeosoundAudio();
@@ -44,7 +44,7 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
   }, [pose, setInspection]);
   const showPlayer = () => {
     if (!active) { open(); return; }
-    setMode('player');
+    setMode('overview');
   };
   const expandLibrary = useCallback((expanded: boolean) => setMode(expanded ? 'rack' : 'overview'), []);
   const close = useCallback(() => {
@@ -57,7 +57,6 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
   }, [close, mode]);
   const select = (disc: CdSlot) => {
     if (!active) { open(); return; }
-    if (mode !== 'player') { setMode('player'); return; }
     dispatch({ type: 'disc', disc });
   };
   const { handlers } = useCabinetAction({ disabled: editing, onActivate: showPlayer });
@@ -71,19 +70,12 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
   return <group name="Bang & Olufsen Beosound 9000" userData={{ sceneControl: true, active, selectedDisc: state.disc }}>
     <Beosound9000Bracket />
     <BeosoundMiniPlayer state={state} dispatch={dispatch} />
-    <BeosoundRack state={state} active={active} expanded={libraryOpen} showTrigger={mode === 'player'} disabled={editing} reducedMotion={reducedMotion} onOpen={open} onExpanded={expandLibrary} dispatch={dispatch} />
+    <BeosoundRack state={state} active={active} expanded={libraryOpen} showTrigger={false} disabled={editing} reducedMotion={reducedMotion} onOpen={open} onExpanded={expandLibrary} dispatch={dispatch} />
     {state.exchange && <BeosoundExchange key={state.transportRequest} onSettle={() => dispatch({ type: 'exchange-settle' })} exchange={state.exchange} reducedMotion={reducedMotion} onComplete={() => dispatch({ type: 'exchange-complete' })} />}
     <group ref={setBody} position={[0, B.bracketHeight, 0]} rotation={[B.tilt, 0, 0]} {...handlers}>
-      <Beosound9000Geometry state={state} active={active && mode === 'player'} disabled={editing || state.exchange !== null} reducedMotion={reducedMotion} onSelect={select} onCarriageReady={onCarriageReady} />
-      {active && <Beosound9000Controls state={state} compact={compact} hidden={mode !== 'player'} dispatch={dispatch} onClose={back} />}
-      {active && mode === 'overview' && <Html wrapperClass="cd-screen-ui" calculatePosition={screenOrigin} zIndexRange={[46, 44]} style={{ pointerEvents: 'none' }}>
-        <div className="beosound-system-choices" onPointerDown={event => event.stopPropagation()} onPointerUp={event => event.stopPropagation()}>
-          <button className="beosound-approach-choice" type="button"
-            onClick={event => { event.stopPropagation(); setMode('player'); }}>CD player</button>
-          <button className="beosound-approach-choice" type="button" aria-label="Explore CD collection"
-            onClick={event => { event.stopPropagation(); setMode('rack'); }}>CD collection</button>
-        </div>
-      </Html>}
+      <Beosound9000Geometry state={state} disabled={editing || state.exchange !== null} reducedMotion={reducedMotion} onSelect={select} onCarriageReady={onCarriageReady} />
+      <Beosound9000Controls active={active && !libraryOpen} disabled={editing || state.exchange !== null || libraryOpen}
+        dispatch={dispatch} onApproach={open} onClose={back} />
       {!active && !editing && <Html position={[-.416, .04, .079]} center occlude={body ? [{ current: body }] : undefined} zIndexRange={[30, 26]}>
         <button className="beosound-entry" type="button" aria-label="Inspect Beosound 9000 CD system"
           onPointerDown={event => event.stopPropagation()} onPointerUp={event => event.stopPropagation()}
