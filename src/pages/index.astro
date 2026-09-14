@@ -1,26 +1,33 @@
 ---
+import { StudioExperience } from '../components/studio/StudioExperience';
+import '../components/studio/studio.css';
 import Layout from '../layouts/Layout.astro';
-import DeskHero from '../components/DeskHero';
+import publicationsData from '../data/publications.json';
+import presentationsData from '../data/presentations.json';
+
+const publications = publicationsData.publications.map(p => ({
+  id: p.doiUrl || p.title, title: p.title, journal: p.journal, year: p.year, role: p.role, doiUrl: p.doiUrl,
+}));
+const presentations = presentationsData.presentations.map(p => ({
+  id: p.id, title: p.name, date: p.date, venue: p.place, topic: p.topics.map(topic => topic.replace(/(\S)“/g, '$1 “')).join(' · '),
+}));
+const updatedAt = publicationsData.generatedAt.slice(0, 10);
+const presentationsUpdatedAt = presentationsData.generatedAt.slice(0, 10);
 ---
 
-<Layout hideNav hideFooter>
-  <DeskHero client:load />
-
-  <!-- SSG content for SEO crawlers — visually hidden -->
-  <div class="sr-only">
-    <h1>Woon Tak Yuh, MD</h1>
-    <p>Spine Surgeon & AI Researcher | Director, Spine Endoscopy Center at Davos Hospital</p>
-    <p>Specializing in UBE (Unilateral Biportal Endoscopy), minimally invasive spine surgery, and spinal tumor surgery. 500+ cases, 700+ levels treated.</p>
-    <p>50+ publications, h-index 11. AI research in spinal imaging diagnostics.</p>
-    <p>International UBE Training Center: 80+ surgeons trained from 15+ countries.</p>
-    <nav>
-      <a href="/ube">UBE Surgery</a>
-      <a href="/education">Surgical Education</a>
-      <a href="/ai">AI in Clinical Practice</a>
-      <a href="/research">Research & Publications</a>
-      <a href="/media">Media</a>
-      <a href="/knowledge">Knowledge Base</a>
-      <a href="/contact">Contact</a>
-    </nav>
-  </div>
+<Layout
+  title="TakMD — The Office of Woon Tak Yuh, MD"
+  description="Step inside the office of Woon Tak Yuh, MD. Explore endoscopic spine surgery, published research, teaching and clinical AI."
+  hideNav
+  hideFooter
+>
+  <main id="main-content">
+    <StudioExperience client:load publications={publications} presentations={presentations} updatedAt={updatedAt} presentationsUpdatedAt={presentationsUpdatedAt} />
+    <noscript><div class="studio-noscript">Explore the studio collection: <a href="/ube">Clinical practice</a> · <a href="/research">Research</a> · <a href="/education">Education</a> · <a href="/ai">Clinical AI</a> · <a href="/jiu-jitsu">Jiu-jitsu</a> · <a href="/surfing">Surfing</a> · <a href="/cv">Living CV</a></div></noscript>
+  </main>
 </Layout>
+
+<style>
+  .studio-noscript { position: fixed; bottom: 0; inset-inline: 0; z-index: 10; padding: 16px; background: #f8f6f0; color: #202d2a; font-size: 14px; }
+  .studio-noscript a { text-decoration: underline; }
+</style>

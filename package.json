@@ -4,27 +4,60 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "bun run posters:ensure && astro build && bun run check:public",
+    "check": "astro check",
+    "check:public": "node scripts/check-public-build.mjs",
+    "test:public": "node scripts/test-public-build.mjs",
+    "check:react": "react-doctor --no-telemetry --no-supply-chain",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "bun run build && wrangler pages deploy dist"
+    "fetch:publications": "bun run scripts/fetch-publications.ts",
+    "fetch:presentations": "bun run scripts/fetch-schedule.ts",
+    "fetch:surgery": "bun run scripts/fetch-notion-data.ts",
+    "fetch:data": "bun run fetch:publications && bun run fetch:presentations && bun run fetch:surgery",
+    "deploy": "bun run build && npm exec --yes --package=wrangler@4.129.0 -- wrangler pages deploy dist --project-name takmdwebpage --branch main",
+    "photos:import": "node scripts/import-frame-photos.mjs",
+    "photos:workshops": "node scripts/import-workshop-photos.mjs",
+    "posters:capture": "bun run scripts/capture-office-posters.ts --force",
+    "posters:ensure": "bun run scripts/capture-office-posters.ts",
+    "posters:check": "bun run scripts/capture-office-posters.ts --check"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@fontsource-variable/manrope": "^5.2.8",
+    "@react-spring/three": "^10.1.2",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
     "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "astro": "^5.17.1",
     "framer-motion": "^12.30.0",
+    "hls.js": "^1.7.3",
+    "html-to-image": "1.11.13",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "recharts": "^3.7.0",
-    "tailwindcss": "^4.1.18"
+    "suncalc": "^2.0.1",
+    "tailwindcss": "^4.1.18",
+    "three": "^0.185.1"
+  },
+  "overrides": {
+    "vite": "6.4.3"
   },
   "devDependencies": {
-    "sharp": "^0.34.5"
+    "@astrojs/check": "^0.9.9",
+    "@types/suncalc": "^1.9.2",
+    "@types/three": "^0.185.1",
+    "playwright-core": "^1.63.0",
+    "react-doctor": "0.9.13",
+    "react-grab": "0.2.0",
+    "react-scan": "0.5.7",
+    "sharp": "^0.34.5",
+    "typescript": "~5.9",
+    "vite": "6.4.3"
   }
 }

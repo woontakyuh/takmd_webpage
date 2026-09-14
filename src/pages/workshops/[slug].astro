@@ -1,0 +1,21 @@
+---
+import WorkshopPage from '../../components/WorkshopPage.astro';
+import Layout from '../../layouts/Layout.astro';
+import { workshops } from '../../data/workshops';
+
+export function getStaticPaths() {
+  return workshops.map((workshop) => ({
+    params: { slug: workshop.slug },
+    props: { workshop },
+  }));
+}
+
+const { workshop } = Astro.props;
+---
+
+<Layout
+  title={`${workshop.title} - Woon Tak Yuh, MD`}
+  description={workshop.description}
+>
+  <WorkshopPage workshop={workshop} />
+</Layout>

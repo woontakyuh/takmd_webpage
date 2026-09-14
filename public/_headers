@@ -1,0 +1,10 @@
+/models/proposal-memory/hls/master.m3u8
+  Content-Type: application/vnd.apple.mpegurl
+/models/proposal-memory/hls/720/index.m3u8
+  Content-Type: application/vnd.apple.mpegurl
+/models/proposal-memory/hls/1080/index.m3u8
+  Content-Type: application/vnd.apple.mpegurl
+/models/proposal-memory/hls/720/segment-*
+  Content-Type: video/mp2t
+/models/proposal-memory/hls/1080/segment-*
+  Content-Type: video/mp2t

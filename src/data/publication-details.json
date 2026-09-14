@@ -1,0 +1,719 @@
+{
+  "10.21182/jmisst.2025.02747": {
+    "doi": "10.21182/jmisst.2025.02747",
+    "title": "UBE Removal of a Cervical Extradural Schwannoma at the C1-2 Level",
+    "authors": [
+      "Woon Tak Yuh",
+      "Il Choi",
+      "Don Y. Park",
+      "Chi Heon Kim",
+      "Chun Kee Chung"
+    ],
+    "citation": "Journal of Minimally Invasive Spine Surgery and Technique 11 (Suppl 1) S228-S234",
+    "publicationDate": "2026-01-01",
+    "pmid": null,
+    "abstract": "The C1–2 level is a relatively common location for extradural neurogenic tumors. However, surgical access to this region is anatomically demanding because of its close relationship to the vertebral artery and the spinal cord. To our knowledge, there have been no previous reports of using the unilateral biportal endoscopic (UBE) technique for such cases. We present the first successful removal of a C1–2 extradural tumor using UBE, demonstrating the feasibility, safety, and effectiveness of this approach.",
+    "abstractSource": "Crossref",
+    "metadataSource": "Crossref",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.jmisst.org/upload/pdf/jmisst-2025-02747.pdf"
+    }
+  },
+  "10.13004/kjnt.2025.21.e35": {
+    "doi": "10.13004/kjnt.2025.21.e35",
+    "title": "Potential Pharmacologic Treatments in Spinal Cord Injury: A Narrative Review",
+    "authors": [
+      "An KD",
+      "Noh CY",
+      "Jang J",
+      "Yuh WT",
+      "Choi I"
+    ],
+    "citation": "KJNT 237-254",
+    "publicationDate": "2025-10-01",
+    "pmid": "41220890",
+    "abstract": "Spinal cord injury (SCI) remains one of the most devastating neurological conditions with poor prognosis and limited therapeutic options. Early surgical decompression has been established as the cornerstone of acute management, yet multiple pharmacologic strategies have been extensively investigated to improve neurological outcomes. High-dose methylprednisolone sodium succinate, once widely adopted, ultimately failed to demonstrate consistent efficacy, underscoring the challenges of translating preclinical promise into clinical benefit. Advances in understanding the sequential pathophysiology of SCI, including excitotoxicity, oxidative stress, inflammation, apoptosis, glial scarring, and chronic inhibitory signaling, have broadened therapeutic targets across temporal phases of injury. In this narrative review, we revisit historical pharmacologic therapies such as corticosteroids, and highlight current and emerging candidates including riluzole, minocycline, granulocyte colony-stimulating factor, and biologics targeting the Rho/ROCK pathway (Cethrin, anti-Nogo-A, and anti-repulsive guidance molecule A antibodies). Although compelling preclinical evidence exists, most clinical trials have been limited by patient heterogeneity, narrow therapeutic time windows, and outcome assessment challenges, preventing any drug from achieving guideline-level endorsement. Future success will likely depend on tailored multimodal regimens according to patient stratification, optimized therapeutic timing and delivery, and integration with surgical decompression, hemodynamic management, rehabilitative interventions, and novel bioengineered strategies. Continued efforts in these directions remain essential to establish pharmacologic therapy as a critical component of multimodal SCI care.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://europepmc.org/articles/PMC12599439?pdf=render"
+    }
+  },
+  "10.21182/jmisst.2025.02726": {
+    "doi": "10.21182/jmisst.2025.02726",
+    "title": "Technical Note: Intraoperative Injection of Indigo Carmine for Differentiating Neural Tissue During UBE Surgery",
+    "authors": [
+      "Woon Tak Yuh",
+      "Chan Yang Noh",
+      "Il Choi",
+      "Junsoo Jang"
+    ],
+    "citation": "Journal of Minimally Invasive Spine Surgery and Technique 10 (2) 313-315",
+    "publicationDate": "2025-10-01",
+    "pmid": null,
+    "abstract": "Unilateral biportal endoscopy offers substantial advantages in spinal surgery but continues to carry a risk of neural injury due to the difficulty of distinguishing neural structures from surrounding tissues. This video article demonstrates the intraoperative use of indigo carmine to mitigate this risk. Indigo carmine selectively stains fibrous tissue and disc material while sparing nerve roots, owing to its impermeability to intact cellular membranes. This property enhances visual differentiation and promotes surgical safety. We present 2 cases involving 64-year-old female patients who underwent discectomy for ruptured L5–S1 discs. In both cases, intraoperative injection of indigo carmine into the working field or disc space effectively delineated neural elements from adhesive tissues and disc material. Postoperative imaging confirmed successful decompression. Indigo carmine represents a useful, surgeon-friendly, cost-effective, and time-efficient adjunct that improves visualization and helps prevent iatrogenic neural injury. Its use is particularly recommended for revision surgery, complex degenerative conditions, and for endoscopic spine surgeons in training.",
+    "abstractSource": "Crossref",
+    "metadataSource": "Crossref",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.jmisst.org/upload/pdf/jmisst-2025-02726.pdf"
+    }
+  },
+  "10.1038/s41598-024-82902-w": {
+    "doi": "10.1038/s41598-024-82902-w",
+    "title": "Augmented prediction of vertebral collapse after OVCF through parameter-efficient fine-tuning of biomedical foundation models",
+    "authors": [
+      "Kim S",
+      "Kim I",
+      "Yuh WT",
+      "Han S",
+      "Kim C",
+      "Ko YS",
+      "Cho W",
+      "Park SB"
+    ],
+    "citation": "Sci Rep 31820",
+    "publicationDate": "2024-12-30",
+    "pmid": "39738257",
+    "abstract": "Vertebral collapse (VC) following osteoporotic vertebral compression fracture (OVCF) often requires aggressive treatment, necessitating an accurate prediction for early intervention. This study aimed to develop a predictive model leveraging deep neural networks to predict VC progression after OVCF using magnetic resonance imaging (MRI) and clinical data. Among 245 enrolled patients with acute OVCF, data from 200 patients were used for the development dataset, and data from 45 patients were used for the test dataset. To construct an accurate prediction model, we explored two backbone architectures: convolutional neural networks and vision transformers (ViTs), along with various pre-trained weights and fine-tuning methods. Through extensive experiments, we built our model by performing parameter-efficient fine-tuning of a ViT model pre-trained on a large-scale biomedical dataset. Attention rollouts indicated that the contours and internal features of the compressed vertebral body were critical in predicting VC with this model. To further improve the prediction performance of our model, we applied the augmented prediction strategy, which uses multiple MRI frames and achieves a significantly higher area under the curve (AUC). Our findings suggest that employing a biomedical foundation model fine-tuned using a parameter-efficient method, along with augmented prediction, can significantly enhance medical decisions.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.nature.com/articles/s41598-024-82902-w.pdf"
+    }
+  },
+  "10.1038/s41598-024-79610-w": {
+    "doi": "10.1038/s41598-024-79610-w",
+    "title": "Comparative efficacy of AP and lateral X-ray based deep learning in detection of osteoporotic vertebral compression fracture",
+    "authors": [
+      "Kim C",
+      "Kang M",
+      "Yuh WT",
+      "Lee SL",
+      "Lee JJ",
+      "Hou JU",
+      "Kang SH"
+    ],
+    "citation": "Sci Rep 28388",
+    "publicationDate": "2024-11-18",
+    "pmid": "39551876",
+    "abstract": "Magnetic resonance imaging remains the gold standard for diagnosing osteoporotic vertebral compression fractures (OVCF), but the use of X-ray imaging, particularly anteroposterior (AP) and lateral views, is prevalent due to its accessibility and cost-effectiveness. We aim to assess whether the performance of AP images-based deep learning is comparable compared to those using lateral images. This retrospective study analyzed X-ray images from two tertiary teaching hospitals, involving 1,507 patients for the training and internal test, and 104 patients for the external test. The EfficientNet-B5-based algorithms were employed to classify OVCF and non-OVCF group. The model was trained with a 1:1 balanced dataset and validated through 5-fold cross validation. Performance outcomes were compared with the area under receiver operating characteristic (AUROC) curve. Out of a total of 1,507 patients, 799 were included in the training dataset and 708 were included in the internal test dataset. The training and internal test datasets were matched 1:1 as OVCF and non-OVCF patients. The DL model showed comparable classifying performance with internal test data (N = 708, AUROC for AP, 0.915; AUROC for lateral, 0.953) and external test data (N = 104, AUROC for AP, 0.982; AUROC for lateral, 0979), respectively. The other performances including F1 score and accuracy were also comparable. Especially, The AUROC of AP and lateral x-ray image-based DL was not significantly different (p for DeLong test = 0.604). The EfficientNet-B5 algorithms using AP X-ray images shows comparable efficacy for classifying OVCF and non-OVCF compared to lateral images.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.nature.com/articles/s41598-024-79610-w.pdf"
+    }
+  },
+  "10.14245/ns.2448468.234": {
+    "doi": "10.14245/ns.2448468.234",
+    "title": "Spinal Schwannoma Classification Based on the Presumed Origin With Preoperative MRI",
+    "authors": [
+      "Kim TS",
+      "Kuh JH",
+      "Kim J",
+      "Yuh WT",
+      "Han J",
+      "Lee CH",
+      "Kim CH",
+      "Chung CK"
+    ],
+    "citation": "Neurospine 890-902",
+    "publicationDate": "2024-09-01",
+    "pmid": "39363469",
+    "abstract": "Objective Classification guides the surgical approach and predicts prognosis. However, existing classifications of spinal schwannomas often result in a high 'unclassified' rate. Here, we aim to develop a new comprehensive classification for spinal schwannomas based on their presumed origin. We compared the new classification with the existing classifications regarding the rate of 'unclassified'. Finally, we assessed the surgical strategies, outcomes, and complications according to each type of the new classification. Methods A new classification with 9 types was created by analyzing the anatomy of spinal nerves and the origin of significant tumor portions and cystic components in preoperative magnetic resonance images. A total of 482 patients with spinal schwannomas were analyzed to compare our new classification with the existing classifications. We defined 'unclassified' as the inability to classify a patient with spinal schwannoma using the classification criteria. Surgical approaches and outcomes were also aligned with our new classification. Results Our classification uniquely reported no 'unclassified' cases, indicating full applicability. Also, the classification has demonstrated usefulness in predicting the surgical outcome with the approach planned. Gross total removal rates reached 88.0% overall, with type 1 and type 2 tumors at 95.3% and 96.0% respectively. The approach varied with tumor type, with laminectomy predominantly used for types 1, 2, and 9, and facetectomy with posterior fixation used for type 3 tumors. Conclusion The new classification for spinal schwannomas based on presumed origin is applicable to all spinal schwannomas. It could help plan a surgical approach and predict its outcome, compared with existing classifications.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.e-neurospine.org/upload/pdf/ns-2448468-234.pdf"
+    }
+  },
+  "10.1371/journal.pone.0305128": {
+    "doi": "10.1371/journal.pone.0305128",
+    "title": "Trends in degenerative lumbar spinal surgery during the early COVID-19 pandemic in Republic of Korea: A national study",
+    "authors": [
+      "Yuh WT",
+      "Kim J",
+      "Kim MS",
+      "Kim JH",
+      "Kim YR",
+      "Kim S",
+      "Chung CK",
+      "Lee CH",
+      "Park SB",
+      "Kim KT",
+      "Rhee JM",
+      "Ko YS",
+      "Kim CH"
+    ],
+    "citation": "PLOS One e0305128",
+    "publicationDate": "2024-06-01",
+    "pmid": "38861502",
+    "abstract": "During the first year of the COVID-19 pandemic, the Republic of Korea (ROK) experienced three epidemic waves in February, August, and November 2020. These waves, combined with the overarching pandemic, significantly influenced trends in spinal surgery. This study aimed to investigate the trends in degenerative lumbar spinal surgery in ROK during the early COVID-19 pandemic, especially in relation to specific epidemic waves. Using the National Health Information Database in ROK, we identified all patients who underwent surgery for degenerative lumbar spinal diseases between January 1, 2019 and December 31, 2020. A joinpoint regression was used to assess temporal trends in spinal surgeries over the first year of the COVID-19 pandemic. The number of surgeries decreased following the first and second epidemic waves (p<0.01 and p = 0.34, respectively), but these were offset by compensatory increases later on (p<0.01 and p = 0.05, respectively). However, the third epidemic wave did not lead to a decrease in surgical volume, and the total number of surgeries remained comparable to the period before the pandemic. When compared to the pre-COVID-19 period, average LOH was reduced by 1 day during the COVID-19 period (p<0.01), while mean hospital costs increased significantly from 3,511 to 4,061 USD (p<0.01). Additionally, the transfer rate and the 30-day readmission rate significantly decreased (both p<0.01), while the reoperation rate remained stable (p = 0.36). Despite the impact of epidemic waves on monthly surgery numbers, a subsequent compensatory increase was observed, indicating that surgical care has adapted to the challenges of the pandemic. This adaptability, along with the stable total number of operations, highlights the potential for healthcare systems to continue elective spine surgery during public health crises with strategic resource allocation and patient triage. Policies should ensure that surgeries for degenerative spinal diseases, particularly those not requiring urgent care but crucial for patient quality of life, are not unnecessarily halted.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0305128&type=printable"
+    }
+  },
+  "10.3390/bioengineering11050481": {
+    "doi": "10.3390/bioengineering11050481",
+    "title": "Deep Learning Method for Precise Landmark Identification and Structural Assessment of Whole-Spine Radiographs",
+    "authors": [
+      "Noh SH",
+      "Lee G",
+      "Bae HJ",
+      "Han JY",
+      "Son SJ",
+      "Kim D",
+      "Park JY",
+      "Choi SK",
+      "Cho PG",
+      "Kim SH",
+      "Yuh WT",
+      "Lee SH",
+      "Park B",
+      "Kim KR",
+      "Kim KT",
+      "Ha Y"
+    ],
+    "citation": "Engineering (MDPI) 481",
+    "publicationDate": "2024-05-11",
+    "pmid": "38790348",
+    "abstract": "This study measured parameters automatically by marking the point for measuring each parameter on whole-spine radiographs. Between January 2020 and December 2021, 1017 sequential lateral whole-spine radiographs were retrospectively obtained. Of these, 819 and 198 were used for training and testing the performance of the landmark detection model, respectively. To objectively evaluate the program's performance, 690 whole-spine radiographs from four other institutions were used for external validation. The combined dataset comprised radiographs from 857 female and 850 male patients (average age 42.2 ± 27.3 years; range 20-85 years). The landmark localizer showed the highest accuracy in identifying cervical landmarks (median error 1.5-2.4 mm), followed by lumbosacral landmarks (median error 2.1-3.0 mm). However, thoracic landmarks displayed larger localization errors (median 2.4-4.3 mm), indicating slightly reduced precision compared with the cervical and lumbosacral regions. The agreement between the deep learning model and two experts was good to excellent, with intraclass correlation coefficient values >0.88. The deep learning model also performed well on the external validation set. There were no statistical differences between datasets in all parameters, suggesting that the performance of the artificial intelligence model created was excellent. The proposed automatic alignment analysis system identified anatomical landmarks and positions of the spine with high precision and generated various radiograph imaging parameters that had a good correlation with manual measurements.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://mdpi-res.com/d_attachment/bioengineering/bioengineering-11-00481/article_deploy/bioengineering-11-00481-v2.pdf"
+    }
+  },
+  "10.14245/ns.2347366.683": {
+    "doi": "10.14245/ns.2347366.683",
+    "title": "Deep Learning-Assisted Quantitative Measurement of Thoracolumbar Fracture Features on Lateral Radiographs",
+    "authors": [
+      "Yuh WT",
+      "Khil EK",
+      "Yoon YS",
+      "Kim B",
+      "Yoon H",
+      "Lim J",
+      "Lee KY",
+      "Yoo YS",
+      "An KD"
+    ],
+    "citation": "Neurospine 30-43",
+    "publicationDate": "2024-03-01",
+    "pmid": "38569629",
+    "abstract": "Objective This study aimed to develop and validate a deep learning (DL) algorithm for the quantitative measurement of thoracolumbar (TL) fracture features, and to evaluate its efficacy across varying levels of clinical expertise. Methods Using the pretrained Mask Region-Based Convolutional Neural Networks model, originally developed for vertebral body segmentation and fracture detection, we fine-tuned the model and added a new module for measuring fracture metrics-compression rate (CR), Cobb angle (CA), Gardner angle (GA), and sagittal index (SI)-from lumbar spine lateral radiographs. These metrics were derived from six-point labeling by 3 radiologists, forming the ground truth (GT). Training utilized 1,000 nonfractured and 318 fractured radiographs, while validations employed 213 internal and 200 external fractured radiographs. The accuracy of the DL algorithm in quantifying fracture features was evaluated against GT using the intraclass correlation coefficient. Additionally, 4 readers with varying expertise levels, including trainees and an attending spine surgeon, performed measurements with and without DL assistance, and their results were compared to GT and the DL model. Results The DL algorithm demonstrated good to excellent agreement with GT for CR, CA, GA, and SI in both internal (0.860, 0.944, 0.932, and 0.779, respectively) and external (0.836, 0.940, 0.916, and 0.815, respectively) validations. DL-assisted measurements significantly improved most measurement values, particularly for trainees. Conclusion The DL algorithm was validated as an accurate tool for quantifying TL fracture features using radiographs. DL-assisted measurement is expected to expedite the diagnostic process and enhance reliability, particularly benefiting less experienced clinicians.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.e-neurospine.org/upload/pdf/ns-2347366-683.pdf"
+    }
+  },
+  "10.1038/s41598-023-50885-9": {
+    "doi": "10.1038/s41598-023-50885-9",
+    "title": "Multi-pose-based CNN model for diagnosis of patients with central lumbar spinal stenosis",
+    "authors": [
+      "Park S",
+      "Kim JH",
+      "Ahn Y",
+      "Lee CH",
+      "Kim YG",
+      "Yuh WT",
+      "Hyun SJ",
+      "Kim CH",
+      "Kim KJ",
+      "Chung CK"
+    ],
+    "citation": "Sci Rep 203",
+    "publicationDate": "2024-01-02",
+    "pmid": "38168665",
+    "abstract": "Although the role of plain radiographs in diagnosing lumbar spinal stenosis (LSS) has declined in importance since the advent of magnetic resonance imaging (MRI), diagnostic ability of plain radiographs has improved dramatically when combined with deep learning. Previously, we developed a convolutional neural network (CNN) model using a radiograph for diagnosing LSS. In this study, we aimed to improve and generalize the performance of CNN models and overcome the limitation of the single-pose-based CNN (SP-CNN) model using multi-pose radiographs. Individuals with severe or no LSS, confirmed using MRI, were enrolled. Lateral radiographs of patients in three postures were collected. We developed a multi-pose-based CNN (MP-CNN) model using the encoders of the three SP-CNN model (extension, flexion, and neutral postures). We compared the validation results of the MP-CNN model using four algorithms pretrained with ImageNet. The MP-CNN model underwent additional internal and external validations to measure generalization performance. The ResNet50-based MP-CNN model achieved the largest area under the receiver operating characteristic curve (AUROC) of 91.4% (95% confidence interval [CI] 90.9-91.8%) for internal validation. The AUROC of the MP-CNN model were 91.3% (95% CI 90.7-91.9%) and 79.5% (95% CI 78.2-80.8%) for the extra-internal and external validation, respectively. The MP-CNN based heatmap offered a logical decision-making direction through optimized visualization. This model holds potential as a screening tool for LSS diagnosis, offering an explainable rationale for its prediction.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.nature.com/articles/s41598-023-50885-9.pdf"
+    }
+  },
+  "10.3171/2023.10.spine23512": {
+    "doi": "10.3171/2023.10.spine23512",
+    "title": "The iterative implementation of a comprehensive ERAS protocol in all spinal surgery in Korea: primary spinal tumors vs degenerative spinal diseases",
+    "authors": [
+      "Yuh WT",
+      "Kim JH",
+      "Han J",
+      "Kim TS",
+      "Won YI",
+      "Choi Y",
+      "Noh HJ",
+      "Lee CH",
+      "Kim CH",
+      "Chung CK"
+    ],
+    "citation": "JNS spine 301-311",
+    "publicationDate": "2023-12-08",
+    "pmid": "38064696",
+    "abstract": "Objective Most studies on the enhanced recovery after surgery (ERAS) protocol in spine surgery have focused on patients with degenerative spinal diseases (DSDs), resulting in a lack of evidence for a comprehensive ERAS protocol applicable to patients with primary spine tumors (PSTs) and other spinal diseases. The authors had developed and gradually adopted components of the comprehensive ERAS protocol for all spine surgical procedures from 2003 to 2011, and then the current ERAS protocol was fully implemented in 2012. This study aimed to evaluate the impact and the applicability of the comprehensive ERAS protocol across all spine surgical procedures and to compare outcomes between the PST and DSD groups. Methods Adult spine surgical procedures were conducted from 2003 to 2021 at the Seoul National University Hospital Spine Center and data were retrospectively reviewed. The author divided the study periods into the developing ERAS (2003-2011) and post-current ERAS (2012-2021) periods, and outcomes were compared between the two periods. Surgical procedures for metastatic cancer, infection, and trauma were excluded. Interrupted time series analysis (ITSA) was used to assess the impact of the ERAS protocol on medical costs and clinical outcomes, including length of stay (LOS) and rates of 30-day readmission, reoperation, and surgical site infection (SSI). Subgroup analyses were conducted on the PST and DSD groups in terms of LOS and medical costs. Results The study included 7143 surgical procedures, comprising 1494 for PSTs, 5340 for DSDs, and 309 for other spinal diseases. After ERAS protocol implementation, spine surgical procedures showed significant reductions in LOS and medical costs by 22% (p = 0.008) and 22% (p < 0.001), respectively. The DSD group demonstrated a 16% (p < 0.001) reduction in LOS, whereas the PST group achieved a 28% (p < 0.001) reduction, noting a more pronounced LOS reduction in PST surgical procedures (p = 0.003). Medical costs decreased by 23% (p < 0.001) in the DSD group and 12% (p = 0.054) in the PST group, with a larger cost reduction for DSD surgical procedures (p = 0.021). No statistically significant differences were found in the rates of 30-day readmission, reoperation, and SSI between the developing and post-current ERAS implementation periods (p = 0.65, p = 0.59, and p = 0.52, respectively). Conclusions Comprehensive ERAS protocol implementation significantly reduced LOS and medical costs in all spine surgical procedures, while maintaining comparable 30-day readmission, reoperation, and SSI rates. These findings suggest that the ERAS protocol is equally applicable to all spine surgical procedures, with a more pronounced effect on reducing LOS in the PST group and on reducing medical costs in the DSD group.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "request-copy",
+      "oaStatus": "restricted-or-unknown"
+    }
+  },
+  "10.3390/bioengineering10121363": {
+    "doi": "10.3390/bioengineering10121363",
+    "title": "Future of Endoscopic Spine Surgery: Insights from Cutting-Edge Technology in the Industrial Field",
+    "authors": [
+      "Yuh WT",
+      "Lee YS",
+      "Jeon JH",
+      "Choi I"
+    ],
+    "citation": "Bioengineering 1363",
+    "publicationDate": "2023-12-01",
+    "pmid": "38135953",
+    "abstract": "In the evolving landscape of spinal surgery, technological advancements play a pivotal role in enhancing surgical outcomes and patient experiences. This paper delves into the cutting-edge technologies underpinning endoscopic spine surgery (ESS), specifically highlighting the innovations in scope cameras, RF equipment, and drills. The modern scope camera, with its capability for high-resolution imaging, offers surgeons unparalleled visualization, enabling precise interventions. Radiofrequency (RF) equipment has emerged as a crucial tool, providing efficient energy delivery for tissue modulation without significant collateral damage. Drills, with their enhanced torque and adaptability, allow for meticulous bone work, ensuring structural integrity. As minimally invasive spine surgery (MISS) becomes the standard, the integration and optimization of these technologies are paramount. This review captures the current state of these tools and anticipates their continued evolution, setting the stage for the next frontier in spinal surgery.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://mdpi-res.com/d_attachment/bioengineering/bioengineering-10-01363/article_deploy/bioengineering-10-01363.pdf"
+    }
+  },
+  "10.1371/journal.pone.0291114": {
+    "doi": "10.1371/journal.pone.0291114",
+    "title": "Surgical treatment of spondylolisthesis by OLIF and transpedicular screw fixation: conventional double vs navigation-assisted single lateral position",
+    "authors": [
+      "Han J",
+      "Ha CM",
+      "Yuh WT",
+      "Ko YS",
+      "Kim JH",
+      "Kim TS",
+      "Lee CH",
+      "Lee S",
+      "Lee SH",
+      "Khan A",
+      "Chung CK",
+      "Kim CH"
+    ],
+    "citation": "PLOS One e0291114",
+    "publicationDate": "2023-09-01",
+    "pmid": "37708151",
+    "abstract": "Background and objectives Oblique lumbar interbody fusion (OLIF) procedures involve anterior insertion of interbody cage in lateral position. Following OLIF, insertion of pedicle screws and rod system is performed in a prone position (OLIF-con). The location of the cage is important for restoration of lumbar lordosis and indirect decompression. However, inserting the cage at the desired location is difficult without reduction of spondylolisthesis, and reduction after insertion of interbody cage may limit the amount of reduction. Recent introduction of spinal navigation enabled both surgical procedures in one lateral position (OLIF-one). Therefore, reduction of spondylolisthesis can be performed prior to insertion of interbody cage. The objective of this study was to compare the reduction of spondylolisthesis and the placement of cage between OLIF-one and OLIF-con. Methods We retrospectively reviewed 72 consecutive patients with spondylolisthesis for this study; 30 patients underwent OLIF-one and 42 underwent OLIF-con. Spinal navigation system was used for OLIF-one. In OLIF-one, the interbody cage was inserted after reducing spondylolisthesis, whereas in OLIF-con, the cage was inserted before reduction. The following parameters were measured on X-rays: pre- and postoperative spondylolisthesis slippage, reduction degree, and the location of the cage in the disc space. Results Both groups showed significant improvement in back and leg pains (p < .05). Transient motor or sensory changes occurred in three patients after OLIF-con and in two patients after OLIF-one. Pre- and postoperative slips were 26.3±7.7% and 6.6±6.2% in OLIF-one, and 23.1±7.0% and 7.4±5.8% in OLIF-con. The reduction of slippage was 74.4±6.3% after OLIF-one and 65.4±5.7% after OLIF-con, with a significant difference between the two groups (p = .04). The cage was located at 34.2±8.9% after OLIF-one and at 42.8±10.3% after OLIF-con, with a significant difference between the two groups (p = .004). Conclusion Switching the sequence of surgical procedures with OLIF-one facilitated both the reduction of spondylolisthesis and the placement of the cage at the desired location.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0291114&type=printable"
+    }
+  },
+  "10.1016/j.spinee.2023.07.001": {
+    "doi": "10.1016/j.spinee.2023.07.001",
+    "title": "Impact of C3 laminectomy on cervical sagittal alignment in cervical laminoplasty: a prospective RCT",
+    "authors": [
+      "Kim JH",
+      "Yuh WT",
+      "Han J",
+      "Kim T",
+      "Lee CH",
+      "Kim CH",
+      "Choi Y",
+      "Chung CK"
+    ],
+    "citation": "TSJ 1674-1683",
+    "publicationDate": "2023-07-19",
+    "pmid": "37473811",
+    "abstract": "Background context C3 laminectomy in cervical laminoplasty is a modified laminoplasty technique that can preserve the semispinalis cervicis muscle attached to the C2 spinous process. Several previous studies have shown that this technique can lead to better outcomes of postoperative axial neck pain and C2-C3 range of motion (ROM) than conventional cervical laminoplasty. However, there is still a lack of understanding of total and proportional postoperative cervical sagittal alignment outcomes. Purpose To assess the effects of C3 laminectomy in cervical laminoplasty on postoperative cervical alignment and clinical outcomes. Design A single-center, patient-blinded, randomized controlled trial. Patient sample We included consecutive 126 patients diagnosed with cervical spondylotic myelopathy (CSM) or ossification of posterior longitudinal ligament (OPLL) who were scheduled for cervical laminoplasty from March 2017 to January 2020. Outcome measures The primary outcome measures were C2-C7 Cobb angle (CA) and neck disability index (NDI). Secondary outcomes measures included other clinical outcomes and radiographic parameters including segmental Cobb angle and presence of C2-C3 interlaminar fusion. Methods Patients were randomly allocated to either the C3 laminectomy with C4-C6 laminoplasty group (LN group) or the C3-C6 laminoplasty group (LP group) at a 1:1 ratio. Laminoplasty was performed using a unilateral open-door technique and stabilized with titanium mini plates. A linear mixed model analysis was employed to examine the longitudinal data from postoperative 1-year through 3-year. Additional analysis between three types of cervical sagittal alignment morphology was done. Results Among 122 patients who were randomly allocated to one of two groups (LN group, n=61; LP group, n=61), modified intent-to-treat analysis was done for 109 patients (LN group, n=51, LP group, n=58) who had available at least a year of postoperative data. Postoperative C2-C7 CA was not significantly different between the two groups. However, NDI was significantly different between the two groups (12.8±1.0 in the LN group vs 8.6±1.0 in LP group, p=.005), which exceeded the minimum clinically important difference (MCID). The postoperative C2-C3 CA was significantly greater in the LN group (7.1±0.5° in LN group vs 3.2±0.5° in LP group, p<.001) while C4-C7 CA was significantly smaller in the LN group (3.9±0.8° in LN group vs 7.7±0.7° in LP group, p<.001) with greater cSVA in the LN group (31.6±1.4 mm in LN group vs 25.5±1.3 mm in LP group at postoperative 3-year, p=.002). Postoperative Euro-Quality of Life-5 Dimension (EQ-5D), numerical rating scores for neck pain (NRS-N) were significantly better in the LP group than in the LN group (all p<.05) and only EQ-5D surpassed the MCID. The C2-C3 fusion rate was significantly different between the LN group (9.8%) and the LP group (44.8%) (p<.001). The LN group showed a higher prevalence of a specific cervical alignment morphology characterized by a sigmoid shape with proximal lordosis and distal kyphosis (S curve). This S curve demonstrated significantly unfavorable outcomes across multiple outcome variables. Conclusion The impact of C3 laminectomy in cervical laminoplasty on postoperative kyphosis among patients with CSM or OPLL did not significantly differ from that of C3-C6 laminoplasty. However, C3 laminectomy in cervical laminoplasty might result in an unfavorable clinical outcome with an unbalanced cervical sagittal alignment characterized by a sigmoid shape with proximal lordosis and distal kyphosis.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "request-copy",
+      "oaStatus": "restricted-or-unknown"
+    }
+  },
+  "10.1007/s00701-023-05707-2": {
+    "doi": "10.1007/s00701-023-05707-2",
+    "title": "Is laminectomy necessary for C1-C2 epidural schwannomas?",
+    "authors": [
+      "Kim TS",
+      "Yuh WT",
+      "Han J",
+      "Kim J",
+      "Lee CH",
+      "Kim CH",
+      "Chung CK"
+    ],
+    "citation": "Acta Neuro 3065-3076",
+    "publicationDate": "2023-07-04",
+    "pmid": "37400543",
+    "abstract": "Purpose Spinal schwannomas often require laminectomy for gross total resection. However, laminectomy may not be necessary due to the unique anatomy of epidural schwannomas at the C1-2 level, even with the intradural part. This study aimed to determine the need for laminectomy by comparing factors between patients who underwent laminectomy and those who did not and to identify the benefits of not performing laminectomy. Methods Fifty patients with spinal epidural schwannoma confined to C1-C2 level were retrospectively collected and divided into groups based on whether laminectomy was intended and performed. In all cases where laminectomy was conducted, patients underwent laminoplasty using microplate-and-screws, which deviates from the conventional laminectomy approach. Tumor characteristics were compared, and a cut-off value for laminectomy was determined. Outcomes were compared between groups, and factors influencing laminectomy were identified. Postoperative changes in cervical curves were measured. Results The diameter of the intradural part of the tumor was significantly longer in the laminectomy performed group, with a 14.86 mm cut-off diameter requiring laminectomy. Recurrence rates did not differ significantly between groups. Surgery time was substantially longer for the laminectomy performed group. No significant changes were observed in Cobb's angles of Oc-C2, C1-C2, and Oc-C1 before and after surgery. Conclusion The study showed that the diameter of the intradural part of the tumor influenced the decision to perform laminectomy for removing epidural schwannomas at C1-C2. The cut-off value of the diameter of the intradural part of the tumor for the laminectomy was 14.86 mm. Not performing laminectomy can be a viable option with no significant differences in removal and complication rates.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "request-copy",
+      "oaStatus": "restricted-or-unknown"
+    }
+  },
+  "10.3340/jkns.2022.0204": {
+    "doi": "10.3340/jkns.2022.0204",
+    "title": "The Optimal Time between Embolization and Surgery for Hypervascular Spinal Metastatic Tumors: A Systematic Review and Meta-Analysis",
+    "authors": [
+      "Yuh WT",
+      "Han J",
+      "Lee CH",
+      "Kim CH",
+      "Kang HS",
+      "Chung CK"
+    ],
+    "citation": "JKNS 438-445",
+    "publicationDate": "2023-06-15",
+    "pmid": "37315576",
+    "abstract": "Objective Preoperative transarterial embolization (TAE) of tumor feeders in hypervascular spine metastasis is known to reduce intraoperative estimated blood loss (EBL) during surgery. The effect of TAE varies for several reasons, and one controllable factor is the timing between embolization and surgery. However, the adequate timing remains unclear. This study aimed to evaluate the timing and other factors that reduce EBL in spinal metastasis surgery through a meta-analysis. Methods A comprehensive database search was performed to identify direct comparative studies of EBL stratified by the timing of surgery after TAE for spinal metastasis. EBL was analyzed according to the timing of surgery and other factors. Subgroup analyses were also performed. The difference in EBL was calculated as the mean difference (MD) and 95% confidence interval (CI). Results Among seven studies, 196 and 194 patients underwent early and late surgery after TAE, respectively. The early surgery was defined as within 1-2 days after TAE, while the late surgery group received surgery later. Overall, the MD in EBL was not different according to the timing of surgery (MD, 86.3 mL; 95% CI, -95.5 to 268.1 mL; p=0.35). A subgroup analysis of the complete embolization group demonstrated that patients who underwent early surgery within 24 hours after TAE had significantly less bleeding (MD, 233.3 mL; 95% CI, 76.0 to 390.5 mL; p=0.004). In cases of partial embolization, EBL was not significantly different regardless of the time interval. Conclusion Complete embolization followed by early spinal surgery within 24 hours may reduce intraoperative bleeding for the patients with hypervascular spinal metastasis.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.jkns.or.kr/upload/pdf/jkns-2022-0204.pdf"
+    }
+  },
+  "10.1038/s41598-023-33588-z": {
+    "doi": "10.1038/s41598-023-33588-z",
+    "title": "Nationwide sample data analysis of additional surgery rate after anterior or posterior cervical spinal surgery",
+    "authors": [
+      "Yuh WT",
+      "Kim M",
+      "Choi Y",
+      "Han J",
+      "Kim J",
+      "Kim T",
+      "Chung CK",
+      "Lee CH",
+      "Park SB",
+      "Kim KT",
+      "Rhee JM",
+      "Park MS",
+      "Kim CH"
+    ],
+    "citation": "Sci Rep 6317",
+    "publicationDate": "2023-04-18",
+    "pmid": "37072455",
+    "abstract": "Surgical outcomes of degenerative cervical spinal disease are dependent on the selection of surgical techniques. Although a standardized decision cannot be made in an actual clinical setting, continued education is provided to standardize the medical practice among surgeons. Therefore, it is necessary to supervise and regularly update overall surgical outcomes. This study aimed to compare the rate of additional surgery between anterior and posterior surgeries for degenerative cervical spinal disease using the National Health Insurance Service-National Sample Cohort (NHIS-NSC) nationwide patient database. The NHIS-NSC is a population-based cohort with about a million participants. This retrospective cohort study included 741 adult patients (> 18 years) who underwent their first cervical spinal surgery for degenerative cervical spinal disease. The median follow-up period was 7.3 years. An event was defined as the registration of any type of cervical spinal surgery during the follow-up period. Event-free survival analysis was used for outcome analysis, and the following factors were used as covariates for adjustment: location of disease, sex, age, type of insurance, disability, type of hospital, Charles comorbidity Index, and osteoporosis. Anterior cervical surgery was selected for 75.0% of the patients, and posterior cervical surgery for the remaining 25.0%. Cervical radiculopathy due to foraminal stenosis, hard disc, or soft disc was the primary diagnosis in 78.0% of the patients, and central spinal stenosis was the primary diagnosis in 22.0% of them. Additional surgery was performed for 5.0% of the patients after anterior cervical surgery and 6.5% of the patients after posterior cervical surgery (adjusted subhazard ratio, 0.83; 95% confidence interval, 0.40-1.74). The rates of additional surgery were not different between anterior and posterior cervical surgeries. The results would be helpful in evaluating current practice as a whole and adjusting the health insurance policy.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.nature.com/articles/s41598-023-33588-z.pdf"
+    }
+  },
+  "10.1038/s41598-022-24784-4": {
+    "doi": "10.1038/s41598-022-24784-4",
+    "title": "A cost-utility analysis between decompression only and fusion surgery for elderly patients with lumbar spinal stenosis and sagittal imbalance",
+    "authors": [
+      "Won YI",
+      "Kim CH",
+      "Park HP",
+      "Chung SG",
+      "Yuh WT",
+      "Kwon SW",
+      "Yang SH",
+      "Lee CH",
+      "Choi Y",
+      "Park SB",
+      "Rhee JM",
+      "Kim KT",
+      "Chung CK"
+    ],
+    "citation": "Sci Rep 20408",
+    "publicationDate": "2022-11-27",
+    "pmid": "36437360",
+    "abstract": "Lumbar spinal stenosis (LSS) and sagittal imbalance are relatively common in elderly patients. Although the goals of surgery include both functional and radiological improvements, the criteria of correction may be too strict for elderly patients. If the main symptom of patients is not forward-stooping but neurogenic claudication or pain, lumbar decompression without adding fusion procedure may be a surgical option. We performed cost-utility analysis between lumbar decompression and lumbar fusion surgery for those patients. Elderly patients (age > 60 years) who underwent 1-2 levels lumbar fusion surgery (F-group, n = 31) or decompression surgery (D-group, n = 40) for LSS with sagittal imbalance (C7 sagittal vertical axis, C7-SVA > 40 mm) with follow-up ≥ 2 years were included. Clinical outcomes (Euro-Quality of Life-5 Dimensions, EQ-5D; Oswestry Disability Index, ODI; numerical rating score of pain on the back and leg, NRS-B and NRS-L) and radiological parameters (C7-SVA; lumbar lordosis, LL; the difference between pelvic incidence and lumbar lordosis, PI-LL; pelvic tilt, PT) were assessed. The quality-adjusted life year (QALY) and incremental cost-effective ratio (ICER) were calculated from a utility score of EQ-5D. Postoperatively, both groups attained clinical and radiological improvement in all parameters, but NRS-L was more improved in the F-group (p = 0.048). ICER of F-group over D-group was 49,833 US dollars/QALY. Cost-effective lumbar decompression may be a recommendable surgical option for certain elderly patients, despite less improvement of leg pain than with fusion surgery.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.nature.com/articles/s41598-022-24784-4.pdf"
+    }
+  },
+  "10.1227/ons.0000000000000389": {
+    "doi": "10.1227/ons.0000000000000389",
+    "title": "Microsurgical Resection of a Spinal Cord Hemangioblastoma With Ventral Pial Attachment Through a Posterior Approach: 2-Dimensional Operative Video",
+    "authors": [
+      "Yuh WT",
+      "Chung CK"
+    ],
+    "citation": "ONS e375-e376",
+    "publicationDate": "2022-09-16",
+    "pmid": "36227243",
+    "abstract": null,
+    "abstractSource": null,
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "request-copy",
+      "oaStatus": "restricted-or-unknown"
+    }
+  },
+  "10.1097/ana.0000000000000867": {
+    "doi": "10.1097/ana.0000000000000867",
+    "title": "Factors Associated With Perioperative Hospital Acquired Pressure Injury in Spine Surgery in the Prone Position",
+    "authors": [
+      "Choi S",
+      "Kim YJ",
+      "Oh H",
+      "Yuh WT",
+      "Lee CH",
+      "Yang SH",
+      "Kim CH",
+      "Chung CK",
+      "Park HP"
+    ],
+    "citation": "JNA 45-52",
+    "publicationDate": "2022-08-25",
+    "pmid": "36006663",
+    "abstract": "Background Hospital acquired pressure injury (HAPI) is associated with poor clinical outcomes and high medical costs. Patients undergoing surgery in the prone position are particularly vulnerable to perioperative HAPI. This prospective observational study investigated the factors associated with HAPI in patients undergoing elective spine surgery in the prone position. Methods Two hundred eighty-seven patients undergoing elective spine surgery participated in this study. Demographics, perioperative vital signs, laboratory findings, surgical data, and intraoperative data were prospectively recorded. The sites and stages of HAPI were investigated on postoperative day 2. The stages of HAPI were evaluated using the pressure injury staging system of the National Pressure Ulcer Advisory Panel. Results Perioperative HAPI was observed in 71 (24.7%) patients (stage 1, 40; stage 2, 31). The most frequent site (number) of HAPI was the upper extremities (33), followed by the chest (32), lower extremities (20), face (18), pelvis (10), and abdomen (9). In multivariate analysis, the duration of prone positioning per hour (odds ratio [95% confidence interval], 1.48 [1.25-1.74]; P <0.001) and intraoperative pH ≤7.35 (1.98 [1.05-3.76]; P =0.036) were associated with perioperative HAPI. Conclusions The incidence of perioperative HAPI was 24.7% in patients undergoing elective spine surgery in the prone position. Long duration of prone positioning and intraoperative acidosis were associated with increased development of perioperative HAPI.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "request-copy",
+      "oaStatus": "restricted-or-unknown"
+    }
+  },
+  "10.1038/s41598-022-13881-z": {
+    "doi": "10.1038/s41598-022-13881-z",
+    "title": "Validity of MRI in the primary spinal cord tumors in routine clinical setting",
+    "authors": [
+      "Won YI",
+      "Choi Y",
+      "Yuh WT",
+      "Kwon SW",
+      "Kim CH",
+      "Yang SH",
+      "Chung CK"
+    ],
+    "citation": "Sci Rep 10151",
+    "publicationDate": "2022-06-16",
+    "pmid": "35710920",
+    "abstract": "MRI is the primary diagnostic modality for spinal cord tumors. However, its validity has never been vigorously scrutinized in daily routine clinical practice, where MRI tissue diagnosis is usually not a single one but multiple ones with several differential diagnoses. Here, we aimed to assess the validity of MRI in terms of predicting the pathology and location of the tumor in routine clinical settings. We analyzed 820 patients with primary spinal cord tumors, who have a pathological diagnosis and location in the operation record which were confirmed. We modified traditional measures for validity based upon a set of diagnoses instead of a single diagnosis. Sensitivity and specificity and positive and negative predictabilities were evaluated for the tumor location and pathology. For tumor location, 456 were intradural extramedullary; 165 were intramedullary, and 156 were extradural. The overall sensitivity and specificity were over 90.0%. However, the sensitivity became lower when the tumor resided simultaneously in two spaces such as in the intradural-and-extradural or intramedullary-and-extramedullary space (54.6% and 30.0%, respectively). Most common pathology was schwannoma (n = 416), followed by meningioma (114) and ependymoma (87). Sensitivities were 93.3%, 90.4%, and 89.7%, respectively. Specificities were 70.8%, 82.9%, and 76.0%. In rare tumors such as neurofibromas, and diffuse midline gliomas, the sensitivity was much lower (less than 30%). For common locations and pathologies, the validity of MRI is generally acceptable. However, for rare locations and pathologies, MRI diagnosis still needs some improvement.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.nature.com/articles/s41598-022-13881-z.pdf"
+    }
+  },
+  "10.14245/ns.2244038.019": {
+    "doi": "10.14245/ns.2244038.019",
+    "title": "Genetic Odyssey to Ossification of the Posterior Longitudinal Ligament in the Cervical Spine: A Systematic Review",
+    "authors": [
+      "Won YI",
+      "Lee CH",
+      "Yuh WT",
+      "Kwon SW",
+      "Kim CH",
+      "Chung CK"
+    ],
+    "citation": "Neurospine 299-306",
+    "publicationDate": "2022-06-01",
+    "pmid": "35793933",
+    "abstract": "Despite numerous studies, the pathogenesis of ossification of the posterior longitudinal ligament (OPLL) is still unclear. Previous genetic studies proposed variations in genes related to bone and collagen as a cause of OPLL. It is unclear whether the upregulations of those genes are the cause of OPLL or an intermediate result of endochondral ossification process. Causal variations may be in the inflammation-related genes supported by clinical and updated genomic studies. OPLL demonstrates features of genetic diseases but can also be induced by mechanical stress by itself. OPLL may be a combination of various diseases that share ossification as a common pathway and can be divided into genetic and idiopathic. The phenotype of OPLL can be divided into continuous (including mixed) and segmental (including localized) based on the histopathology, prognosis, and appearance. Continuous OPLL shows substantial overexpression of osteoblast-specific genes, frequent upper cervical involvement, common progression, and need for surgery, whereas segmental OPLL shows moderate-to-high expression of these genes and is often clinically silent. Genetic OPLL seems to share clinical features with the continuous type, while idiopathic OPLL shares features with the segmental type. Further genomic studies are needed to elucidate the relationship between genetic OPLL and phenotype of OPLL.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.e-neurospine.org/upload/pdf/ns-2244038-019.pdf"
+    }
+  },
+  "10.14245/ns.2244092.046": {
+    "doi": "10.14245/ns.2244092.046",
+    "title": "Mechanical Failure After Total En Bloc Spondylectomy and Salvage Surgery",
+    "authors": [
+      "Kwon SW",
+      "Chung CK",
+      "Won YI",
+      "Yuh WT",
+      "Park SB",
+      "Yang SH",
+      "Lee CH",
+      "Rhee JM",
+      "Kim KT",
+      "Kim CH"
+    ],
+    "citation": "Neurospine 146-154",
+    "publicationDate": "2022-03-01",
+    "pmid": "35378588",
+    "abstract": "Objective Total en bloc spondylectomy (TES) is a curative surgical method for spinal tumors. After resecting the 3 spinal columns, reconstruction is of paramount importance. We present cases of mechanical failure and suggest strategies for salvage surgery. Methods The medical records of 19 patients who underwent TES (9 for primary tumors and 10 for metastatic tumors) were retrospectively reviewed. Previously reported surgical techniques were used, and the surgical extent was 1 level in 16 patients and 2 levels in 3 patients. A titanium-based mesh-type interbody spacer filled with autologous and cadaveric bone was used for anterior support, and a pedicle screw/rod system was used for posterior support. Radiotherapy was performed in 11 patients (pre-TES, 5; post-TES, 6). They were followed up for 59 ± 38 months (range, 11-133 months). Results During follow-up, 8 of 9 primary tumor patients (89%) and 5 of 10 metastatic tumor patients (50%) survived (mean survival time, 124 ± 8 months vs. 51 ± 13 months; p = 0.11). Mechanical failure occurred in 3 patients (33%) with primary tumors and 2 patients (20%) with metastatic tumors (p = 0.63). The mechanical failure-free time was 94.4 ± 14 months (primary tumors, 95 ± 18 months; metastatic tumors, 68 ± 16 months; p = 0.90). Revision surgery was performed in 4 of 5 patients, and bilateral broken rods were replaced with dual cobalt-chromium alloy rods. Repeated rod fractures occurred in 1 of 4 patients 2 years later, and the third operation (with multiple cobalt-chromium alloy rods) was successful for over 6 years. Conclusion Considering the difficulty of reoperation and patients' suffering, preemptive use of a multiple-rod system may be advisable.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.e-neurospine.org/upload/pdf/ns-2244092-046.pdf"
+    }
+  },
+  "10.56718/ijp.22-003": {
+    "doi": "10.56718/ijp.22-003",
+    "title": "Narrative Review of Uniportal, Transforaminal Endoscopic Lumbar Discectomy",
+    "authors": [
+      "Woon Tak Yuh",
+      "Chang-Hyun Lee",
+      "Chun Kee Chung",
+      "Chi Heon Kim"
+    ],
+    "citation": "International journal of Pain 13 (1) 11-19",
+    "publicationDate": "2022-01-01",
+    "pmid": null,
+    "abstract": "Since the first use of arthroscopy for lumbar spinal surgery in 1990, endoscopic lumbar spinal surgery has evolved both technically and instrumentally. Transforaminal endoscopic lumbar discectomy (TELD) was the first and remains the most commonly used method. This study aimed to review evidence of TELD in systematic reviews and randomized controlled trials (RCTs). This narrative review included systematic reviews and RCTs that compared TELD with open discectomy (OD), microdiscectomy (MD), or tubular retractor-assisted microendoscopic discectomy (MED). PubMed was searched using the following keywords: for RCTs, ((((lumbar) AND (spine)) AND (endoscope)) AND (randomized[Title])) AND (trial[Title])); and for systematic reviews, ((((lumbar) AND (spine)) AND (endoscope)) AND (systematic[Title/Abstract]))). Two spine surgeons ultimately included 6 RCTs and 4 systematic reviews in the study. The current study reviewed the clinical outcomes, complications, recurrence, and length of hospital stay of the included studies. There were no significant differences in clinical outcomes, complications, or recurrence rates between TELD and OD, MD, or MED. However, the length of hospitalization was lower and intraoperative bleeding was lower after TELD than after MD. The quality of the evidence was moderate. The clinical outcomes of TELD and OD, MD, and MED seemed similar with a moderate quality of evidence.",
+    "abstractSource": "Original author PDF",
+    "metadataSource": "Crossref",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "free-public-pdf",
+      "url": "https://pdf.medrang.co.kr/IJP/2022/013/ijp-13-1-11.pdf"
+    }
+  },
+  "10.14444/8163": {
+    "doi": "10.14444/8163",
+    "title": "Interlaminar Endoscopic Lumbar Discectomy: A Narrative Review",
+    "authors": [
+      "Won YI",
+      "Yuh WT",
+      "Kwon SW",
+      "Kim CH",
+      "Yang SH",
+      "Kim KT",
+      "Chung CK"
+    ],
+    "citation": "IJSS S47-S53",
+    "publicationDate": "2021-12-01",
+    "pmid": "34974420",
+    "abstract": "Background When pain caused by lumbar disc herniation (LDH) is not relieved after 4 to 6 weeks of conservative treatment, surgery is recommended. Open microdiscectomy is a standard surgical technique, but surgical endoscopy enables endoscopic lumbar surgery with clinical outcomes similar to those of standard microdiscectomy. Endoscopic lumbar discectomy is largely divided into transforaminal endoscopic lumbar discectomy (TELD) and interlaminar endoscopic lumbar discectomy (IELD). TELD was introduced about 10 years earlier than IELD and seems to be more popular than IELD. Objective The present article reviews the surgical technique, indications, and outcomes of IELD. Although much is still unknown, potential future perspectives are reviewed. Summary Although improved surgical techniques enable TELD to be versatile, IELD is still specifically beneficial for patients with highly migrated LDH and a high iliac crest. There is a large body of literature indicating favorable outcomes with both TELD and IELD. Currently, the selection of TELD or IELD is at the discretion of the surgeon, but the IELD surgical technique is useful for further applying endoscopic lumbar surgery for lumbar decompression or lumbar interbody fusion. The techniques can be assisted by advanced technologies such as artificial intelligence, surgical robots, and artificial reality, and a precise and systematic approach to decision-making and surgical techniques is required to combine these technologies effectively.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "free-public-pdf",
+      "url": "https://www.ijssurgery.com/content/ijss/15/suppl_3/S47.full.pdf"
+    }
+  },
+  "10.2196/20992": {
+    "doi": "10.2196/20992",
+    "title": "Nationwide Results of COVID-19 Contact Tracing in South Korea: Individual Participant Data From an Epidemiological Survey",
+    "authors": [
+      "Lee SW",
+      "Yuh WT",
+      "Yang JM",
+      "Cho YS",
+      "Yoo IK",
+      "Koh HY",
+      "Marshall D",
+      "Oh D",
+      "Ha EK",
+      "Han MY",
+      "Yon DK"
+    ],
+    "citation": "JMIR Med Inform e20992",
+    "publicationDate": "2020-08-25",
+    "pmid": "32784189",
+    "abstract": "Background Evidence regarding the effectiveness of contact tracing of COVID-19 and the related social distancing is limited and inconclusive. Objective This study aims to investigate the epidemiological characteristics of SARS-CoV-2 transmission in South Korea and evaluate whether a social distancing campaign is effective in mitigating the spread of COVID-19. Methods We used contract tracing data to investigate the epidemic characteristics of SARS-CoV-2 transmission in South Korea and evaluate whether a social distancing campaign was effective in mitigating the spread of COVID-19. We calculated the mortality rate for COVID-19 by infection type (cluster vs noncluster) and tested whether new confirmed COVID-19 trends changed after a social distancing campaign. Results There were 2537 patients with confirmed COVID-19 who completed the epidemiologic survey: 1305 (51.4%) cluster cases and 1232 (48.6%) noncluster cases. The mortality rate was significantly higher in cluster cases linked to medical facilities (11/143, 7.70% vs 5/1232, 0.41%; adjusted percentage difference 7.99%; 95% CI 5.83 to 10.14) and long-term care facilities (19/221, 8.60% vs 5/1232, 0.41%; adjusted percentage difference 7.56%; 95% CI 5.66 to 9.47) than in noncluster cases. The change in trends of newly confirmed COVID-19 cases before and after the social distancing campaign was significantly negative in the entire cohort (adjusted trend difference -2.28; 95% CI -3.88 to -0.68) and the cluster infection group (adjusted trend difference -0.96; 95% CI -1.83 to -0.09). Conclusions In a nationwide contact tracing study in South Korea, COVID-19 linked to medical and long-term care facilities significantly increased the risk of mortality compared to noncluster COVID-19. A social distancing campaign decreased the spread of COVID-19 in South Korea and differentially affected cluster infections of SARS-CoV-2.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://europepmc.org/articles/PMC7470182?pdf=render"
+    }
+  },
+  "10.3340/jkns.2017.0405.001": {
+    "doi": "10.3340/jkns.2017.0405.001",
+    "title": "Spinal Cord Subependymoma Surgery: A Multi-Institutional Experience",
+    "authors": [
+      "Yuh WT",
+      "Chung CK",
+      "Park SH",
+      "Kim KJ",
+      "Lee SH",
+      "Kim KT"
+    ],
+    "citation": "JKNS 233-242",
+    "publicationDate": "2018-03-01",
+    "pmid": "29526067",
+    "abstract": "Objective A spinal cord subependymoma is an uncommon, indolent, benign spinal cord tumor. It is radiologically similar to a spinal cord ependymoma, but surgical findings and outcomes differ. Gross total resection of the tumor is not always feasible. The present study was done to determine the clinical, radiological and pathological characteristics of spinal cord subependymomas. Methods We retrospectively reviewed the medical records of ten spinal cord subependymoma patients (M : F=4 : 6; median 38 years; range, 21-77) from four institutions. Results The most common symptoms were sensory changes and/or pain in eight patients, followed by motor weakness in six. The median duration of symptoms was 9.5 months. Preoperative radiological diagnosis was ependymoma in seven and astrocytoma in three. The tumors were located eccentrically in six and were not enhanced in six. Gross total resection of the tumor was achieved in five patients, whereas subtotal or partial resection was inevitable in the other five patients due to a poor dissection plane. Adjuvant radiotherapy was performed in two patients. Neurological deterioration occurred in two patients; transient weakness in one after subtotal resection and permanent weakness after gross total resection in the other. Recurrence or regrowth of the tumor was not observed during the median 31.5 months follow-up period (range, 8-89). Conclusion Spinal cord subependymoma should be considered when the tumor is located eccentrically and is not dissected easily from the spinal cord. Considering the rather indolent nature of spinal cord subependymomas, subtotal removal without the risk of neurological deficit is another option.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.jkns.or.kr/upload/pdf/jkns-2017-0405-001.pdf"
+    }
+  },
+  "10.3340/jkns.2016.59.5.512": {
+    "doi": "10.3340/jkns.2016.59.5.512",
+    "title": "Surgical Outcome of Adult Idiopathic Chiari Malformation Type 1",
+    "authors": [
+      "Yuh WT",
+      "Kim CH",
+      "Chung CK",
+      "Kim HJ",
+      "Jahng TA",
+      "Park SB"
+    ],
+    "citation": "JKNS 512-517",
+    "publicationDate": "2016-09-01",
+    "pmid": "27651871",
+    "abstract": "Objective The pathophysiology of idiopathic Chiari malformation (CM) type 1 is disturbance of free cerebrospinal fluid (CSF) flow and restoration of normal CSF flow is the mainstay of treatment. Additional migration of the medulla oblongata in pediatric patients is referred to as CM type 1.5, but its significance in adult patients is unknown. This study is to compare surgical outcomes of adult idiopathic CM type 1.5 with that of type 1. Methods Thirty-eight consecutive adult patients (M : F=11 : 27; median, 33.5; range, 18-63) with syringomyelia due to idiopathic CM type 1 were reviewed. Migration of the medulla oblongata was noted in 13 patients. The modified McCormick scale (MMS) was used to evaluate functional status before and one year after surgery. All patients underwent foramen magnum decompression and duroplasty. Factors related to radiological success (≥50% decrease in the diameter of the syrinx) were investigated. The follow-up period was 72.7±55.6 months. Results Preoperative functional status were MMS I in 11 patients and MMS II in 14 of CM type 1 and MMS I in 8 and II in 5 of CM type 1.5. Of patients with MMS II, 5/14 patients in group A and 3/5 patients in group B showed improvement and there was no case of deterioration. Radiological success was achieved in 32 (84%) patients and restoration of the cisterna magna (p=0.01; OR, 46.5) was the only significant factor. Conclusion Migration of the medulla oblongata did not make a difference in the surgical outcome when the cisterna magna was restored.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.jkns.or.kr/upload/pdf/jkns-59-512.pdf"
+    }
+  },
+  "10.14245/kjs.2015.12.3.160": {
+    "doi": "10.14245/kjs.2015.12.3.160",
+    "title": "Primary Spinal Cord Oligodendroglioma with Postoperative Adjuvant Radiotherapy: A Case Report",
+    "authors": [
+      "Yuh WT",
+      "Chung CK",
+      "Park SH"
+    ],
+    "citation": "KJS 160-164",
+    "publicationDate": "2015-09-01",
+    "pmid": "26512274",
+    "abstract": "Primary spinal cord oligodendrogliomas are rare tumors comprising two percent of all spinal cord tumors. Although a treatment guideline has yet to be established, maximal surgical resection is primary in the treatment of spinal cord oligodendrogliomas. Adjuvant radiotherapy has remained controversial, and it is unclear whether chemotherapy adds any benefit. In this case report, the authors present a 24-year-old male who had a seven-year history of left leg weakness and a radiating pain in both legs. Magnetic resonance image (MRI) showed an intramedullary mass at the T4-T8 level. He underwent subtotal removal of the tumor and pathologic diagnosis revealed a WHO grade II oligodendroglioma. The patient was treated with radiotherapy postoperatively and followed up with MRI annually. Clinical and radiological status of the patient had been stationary for four years after the surgery. The five-year follow-up MRI showed an increase in the size and extent of the residual tumor. Despite radiological progression, considering that symptoms and the performance status of the patient had remained unchanged, further treatment has not been performed. Given the clinical outcome of this patient, close observation after subtotal removal with adjuvant radiotherapy is one of the acceptable treatment options for WHO grade II spinal cord oligodendrogliomas.",
+    "abstractSource": "Europe PMC",
+    "metadataSource": "Europe PMC",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://www.e-neurospine.org/upload/pdf/kjs-12-160.pdf"
+    }
+  }
+}
