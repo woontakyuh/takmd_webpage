@@ -1,4 +1,4 @@
-export const ALBUM_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
+export const ALBUM_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 export type AlbumId = typeof ALBUM_IDS[number];
 export type AlbumTrack = { readonly number: number; readonly title: string };
 export type BeosoundAlbum = {
@@ -132,8 +132,8 @@ export const BEOSOUND_ALBUMS: Record<AlbumId, BeosoundAlbum> = {
     ],
   },
   8: {
-    artist: "Maroon 5", album: "Songs About Jane", year: 2002,
-    cover: "/models/audio/maroon5-songs-about-jane-cover.webp", source: "https://music.apple.com/us/album/songs-about-jane/1440851650?uo=4",
+    artist: "Maroon 5", album: "Songs About Jane [Special Repackage]", year: 2004,
+    cover: "/models/audio/maroon5-special-repackage-cover.webp", source: "https://music.bugs.co.kr/album/35212",
     tracks: [
       {"number":1,"title":"Harder To Breathe"},
       {"number":2,"title":"This Love"},
@@ -145,8 +145,12 @@ export const BEOSOUND_ALBUMS: Record<AlbumId, BeosoundAlbum> = {
       {"number":8,"title":"Sunday Morning"},
       {"number":9,"title":"Secret"},
       {"number":10,"title":"Through With You"},
-      {"number":11,"title":"Not Coming Home"},
+      {"number":11,"title":"Not Coming Home (Live)"},
       {"number":12,"title":"Sweetest Goodbye"},
+      {"number":13,"title":"Rag Doll"},
+      {"number":14,"title":"Harder To Breathe (Live Acoustic)"},
+      {"number":15,"title":"This Love (Live Acoustic)"},
+      {"number":16,"title":"This Love (Kanye West Remix)"},
     ],
   },
   9: {
@@ -165,6 +169,23 @@ export const BEOSOUND_ALBUMS: Record<AlbumId, BeosoundAlbum> = {
       {"number":10,"title":"Dreaming with a Broken Heart"},
       {"number":11,"title":"In Repair"},
       {"number":12,"title":"I'm Gonna Find Another You"},
+    ],
+  },
+  10: {
+    artist: "브로콜리너마저", album: "졸업", year: 2010,
+    cover: "/models/audio/broccoli-graduation-cover.webp", source: "https://music.bugs.co.kr/album/243980",
+    tracks: [
+      {"number": 1, "title": "열두시 반"},
+      {"number": 2, "title": "사랑한다는 말로도 위로가 되지 않는"},
+      {"number": 3, "title": "변두리 소년, 소녀"},
+      {"number": 4, "title": "커뮤니케이션의 이해"},
+      {"number": 5, "title": "울지마"},
+      {"number": 6, "title": "마음의 문제"},
+      {"number": 7, "title": "이젠 안녕"},
+      {"number": 8, "title": "할머니"},
+      {"number": 9, "title": "환절기"},
+      {"number": 10, "title": "졸업"},
+      {"number": 11, "title": "다섯시 반"},
     ],
   },
 };

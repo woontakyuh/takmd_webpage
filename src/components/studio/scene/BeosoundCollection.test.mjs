@@ -5,14 +5,14 @@ import {TRACK_AUDIO,trackAudio} from './BeosoundTracks';
 import {parseCdPlacement} from './BeosoundStorage';
 const mount=(state,slot,album)=>beosoundReducer(beosoundReducer(state,{type:'exchange',slot,album}),{type:'exchange-complete'});
 describe('expanded album collection',()=>{
- it('has nine distinct releases with full ordered track lists and six supplied recordings',()=>{
-  expect(ALBUM_IDS).toHaveLength(9);expect(Object.keys(TRACK_AUDIO)).toHaveLength(6);
+ it('has ten distinct releases with ordered track lists and 27 supplied recordings',()=>{
+  expect(ALBUM_IDS).toHaveLength(10);expect(Object.keys(TRACK_AUDIO)).toHaveLength(27);
   for(const id of ALBUM_IDS){const a=BEOSOUND_ALBUMS[id];expect(a.tracks.length).toBeGreaterThan(1);expect(a.tracks.map(t=>t.number)).toEqual(a.tracks.map((_,i)=>i+1));}
-  expect(BEOSOUND_ALBUMS[7].album).toBe('Separation Anxiety');expect(BEOSOUND_ALBUMS[8].tracks).toHaveLength(12);expect(BEOSOUND_ALBUMS[9].tracks).toHaveLength(12);
+  expect(BEOSOUND_ALBUMS[7].album).toBe('Separation Anxiety');expect(BEOSOUND_ALBUMS[8].tracks).toHaveLength(16);expect(BEOSOUND_ALBUMS[9].tracks).toHaveLength(12);
  });
- it('can mount a seventh album without falsely enabling playback',()=>{
-  const state=mount(INITIAL_BEOSOUND,1,7);expect(state.slots).toEqual([7,2,3,4,5,6]);expect(selectedAudio(state)).toBeUndefined();
-  expect(beosoundReducer(state,{type:'play'}).playback).toBe('stopped');expect(nextPlayable(state).disc).toBe(2);
+ it('mounts a newly supplied album silently and plays its first available track on request',()=>{
+  const state=mount(INITIAL_BEOSOUND,1,7);expect(state.slots).toEqual([7,2,3,4,5,6]);expect(selectedAudio(state)).toBe(trackAudio(7,3));
+  expect(state.playback).toBe('stopped');expect(beosoundReducer(state,{type:'play'}).playback).toBe('loading');expect(nextPlayable(state)).toMatchObject({disc:1,track:5});
  });
  it('preserves music and closes the glass when placing in another slot',()=>{
   const playing={...INITIAL_BEOSOUND,playback:'playing'};
@@ -33,10 +33,10 @@ describe('expanded album collection',()=>{
   try {expect(nextPlayable(INITIAL_BEOSOUND)).toMatchObject({disc:1,track:4});expect(nextPlayable({...INITIAL_BEOSOUND,track:4})).toMatchObject({disc:2,track:2});}
   finally {delete TRACK_AUDIO['1:4'];}
  });
- it('skips unavailable albums and empty slots, wraps, and stops if none can play',()=>{
-  const state={...INITIAL_BEOSOUND,slots:[1,7,null,9,5,8]};expect(nextPlayable(state)).toMatchObject({disc:5,track:5});
-  expect(nextPlayable({...state,disc:5,track:5})).toMatchObject({disc:1,track:3});
-  expect(nextPlayable({...state,slots:[null,7,8,9,null,null]})).toBeNull();
+ it('skips empty slots, includes newly supplied albums, wraps and stops when empty',()=>{
+  const state={...INITIAL_BEOSOUND,slots:[1,7,null,9,5,8]};expect(nextPlayable(state)).toMatchObject({disc:2,track:3});
+  expect(nextPlayable({...state,disc:6,track:16})).toMatchObject({disc:1,track:3});
+  expect(nextPlayable({...state,slots:[null,null,null,null,null,null]})).toBeNull();
  });
  it('restores only valid unique six-slot placements and stays silent',()=>{
   const slots=[9,2,null,7,5,8];expect(parseCdPlacement(JSON.stringify({version:1,slots}))).toEqual(slots);
