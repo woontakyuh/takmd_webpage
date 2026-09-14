@@ -4,6 +4,7 @@ import type { RefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { PlaneGeometry, SRGBColorSpace } from 'three';
 import type { BookQuad, BookSurface } from '../personalBookSurfaces';
+import { bookPhotoMaterial } from './BookPhotoMaterial';
 import { pageArchAt } from './bookGeometry';
 
 export function bookUvAt(quad: BookQuad, u: number, v: number): readonly [number, number] {
@@ -39,9 +40,13 @@ export function BookSurfaceMesh({ surface, width, height, position, rotation = [
   const geometry = useMemo(() => {
     const result = new PlaneGeometry(width, height, 36, 12);
     const uv = result.getAttribute('uv');
+    result.setAttribute('pageUv', uv.clone());
     for (let index = 0; index < uv.count; index += 1) {
       const [x, y] = bookUvAt(surface.quad, uv.getX(index), 1 - uv.getY(index));
-      uv.setXY(index, x, 1 - y);
+      const u = uv.getX(index), v = 1 - uv.getY(index);
+      const bow = surface.photo?.bow;
+      const correction = bow ? Math.sin(Math.PI * u) * (bow[0] * (1 - v) + bow[1] * v) : 0;
+      uv.setXY(index, x, 1 - y - correction);
     }
     return result;
   }, [width, height, surface]);
@@ -61,7 +66,9 @@ export function BookSurfaceMesh({ surface, width, height, position, rotation = [
     geometry.computeVertexNormals();
     geometry.computeBoundingSphere();
   });
+  const photoMaterial = useMemo(() => bookPhotoMaterial(surface), [surface]);
   return <mesh name={name} geometry={geometry} position={[...position]} rotation={[...rotation]} castShadow receiveShadow>
-    <meshStandardMaterial map={texture} color={surface.albedo ?? '#ffffff'} roughness={bend ? .94 : .78} />
+    <meshStandardMaterial map={texture} color={surface.albedo ?? '#ffffff'} roughness={bend ? .94 : .78} onBeforeCompile={photoMaterial}
+      customProgramCacheKey={() => JSON.stringify(surface.photo ?? null)} />
   </mesh>;
 }

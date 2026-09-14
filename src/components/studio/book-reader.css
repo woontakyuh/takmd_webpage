@@ -42,3 +42,8 @@
 .office-bookshelf-exit .studio-icon-button { width: 44px; height: 44px; background: var(--studio-light); }
 
 .studio:is([data-selected='bookshelf'], [data-selected='books']) .studio-header { visibility: hidden; pointer-events: none; }
+
+.studio[data-night='true'] .office-book-reader .office-book-pages button,
+.studio[data-night='true'] .office-book-reader .office-book-catalog button { color: #f8f6f0; }
+.studio[data-night='true'] .office-book-reader .office-book-pages button[aria-pressed='true'],
+.studio[data-night='true'] .office-book-reader .office-book-catalog button[aria-pressed='true'] { color: #202d2a; }

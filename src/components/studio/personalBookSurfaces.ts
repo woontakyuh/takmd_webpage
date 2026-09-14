@@ -1,6 +1,6 @@
 export type BookUv = readonly [number, number];
 export type BookQuad = readonly [BookUv, BookUv, BookUv, BookUv];
-export type BookSurface = { readonly src: string; readonly quad: BookQuad; readonly albedo?: string };
+export type BookSurface = { readonly src: string; readonly quad: BookQuad; readonly albedo?: string; readonly photo?: { readonly paper: readonly [number, number]; readonly bow?: readonly [number, number]; readonly clearMargin?: readonly [number, number, number] } };
 
 export const BOOK_SURFACES = {
   'woodpecker-cover': {"src":"/models/books/woodpecker-cover.webp","quad":[[0.0016806722689075631,0.03896103896103896],[0.8470588235294118,0.0012987012987012987],[0.9966386554621849,0.9506493506493506],[0.005042016806722689,0.9974025974025974]]},

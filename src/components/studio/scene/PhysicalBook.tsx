@@ -61,7 +61,7 @@ export function PhysicalBook({ book, showDetails, page, openAmount, reducedMotio
     {showDetails && <Suspense fallback={null}>
       <BookSurfaceMesh surface={book.back} width={w} height={h} name={`book-back-${book.id}`}
         position={[w / 2, 0, -t / 2 - .00003]} rotation={[0, Math.PI, 0]} />
-      {page && <group name={`book-next-page-${book.id}`} {...pageTurn(1)}>
+      {page?.right && <group name={`book-next-page-${book.id}`} {...pageTurn(1)}>
         <BookSurfaceMesh surface={page.right} width={pageWidth} height={pageHeight} bend={bend}
           name={`book-right-page-${book.id}`} position={[w / 2, 0, splitZ + .00005]} />
       </group>}

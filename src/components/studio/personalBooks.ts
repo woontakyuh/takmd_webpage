@@ -1,10 +1,11 @@
+import { RHOTON_SURFACES } from './rhotonSurfaces';
 import { BOOK_SURFACES } from './personalBookSurfaces';
 import type { BookQuad, BookSurface, BookUv } from './personalBookSurfaces';
 
-export type PersonalBookId = 'benzel-1' | 'benzel-2' | 'emory' | 'csrs' | 'consciousness' | 'memoir' | 'woodpecker';
+export type PersonalBookId = 'benzel-1' | 'benzel-2' | 'emory' | 'csrs' | 'consciousness' | 'memoir' | 'woodpecker' | 'rhoton';
 export type BookPage = {
   readonly label: string;
-  readonly right: BookSurface;
+  readonly right?: BookSurface;
   readonly left?: BookSurface;
   readonly leftLeaves?: number;
 };
@@ -62,6 +63,16 @@ export const PERSONAL_BOOKS = [
     spine: spine([[853,279],[890,278],[879,811],[844,811]]),
     cover: BOOK_SURFACES['woodpecker-cover'], back: BOOK_SURFACES['woodpecker-back'],
     pages: [{ label: 'Signed by the author · 8 September 2026', right: BOOK_SURFACES['woodpecker-dedication'] }] },
+  { id: 'rhoton', title: 'Rhoton: Cranial Anatomy and Surgical Approaches', author: 'Albert L. Rhoton, Jr.',
+    width: .222, height: .286, thickness: .052, binding: '#aeb8bb',
+    spine: RHOTON_SURFACES.spine, cover: RHOTON_SURFACES.cover, back: RHOTON_SURFACES.back,
+    pages: [
+      { label: 'Chapter 9 · pp. 402–403', left: RHOTON_SURFACES['402'], right: RHOTON_SURFACES['403'], leftLeaves: 201 },
+      { label: 'Cavernous sinus · pp. 404–405', left: RHOTON_SURFACES['404'], right: RHOTON_SURFACES['405'], leftLeaves: 202 },
+      { label: 'Cavernous sinus · pp. 406–407', left: RHOTON_SURFACES['406'], right: RHOTON_SURFACES['407'], leftLeaves: 203 },
+      { label: 'Cranial base · pp. 408–409', left: RHOTON_SURFACES['408'], right: RHOTON_SURFACES['409'], leftLeaves: 204 },
+      { label: 'Cavernous sinus roof · p. 410', left: RHOTON_SURFACES['410'], leftLeaves: 205 },
+    ] },
 ] as const satisfies readonly PersonalBook[];
 
 export function personalBook(id: PersonalBookId): PersonalBook {
@@ -70,7 +81,7 @@ export function personalBook(id: PersonalBookId): PersonalBook {
 
 const BOOK_BY_ID = {
   'benzel-1': PERSONAL_BOOKS[0], 'benzel-2': PERSONAL_BOOKS[1], emory: PERSONAL_BOOKS[2],
-  csrs: PERSONAL_BOOKS[3], consciousness: PERSONAL_BOOKS[4], memoir: PERSONAL_BOOKS[5], woodpecker: PERSONAL_BOOKS[6],
+  csrs: PERSONAL_BOOKS[3], consciousness: PERSONAL_BOOKS[4], memoir: PERSONAL_BOOKS[5], woodpecker: PERSONAL_BOOKS[6], rhoton: PERSONAL_BOOKS[7],
 } as const satisfies Readonly<Record<PersonalBookId, PersonalBook>>;
 
 export const BOOK_READING_CENTER = [-1.8, 1.25, 2.15] as const;

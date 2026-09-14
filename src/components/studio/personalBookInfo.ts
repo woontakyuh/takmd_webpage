@@ -17,6 +17,11 @@ const BENZEL_INFO = {
 } as const;
 
 export const PERSONAL_BOOK_INFO: Readonly<Record<PersonalBookId, PersonalBookInfo>> = {
+  rhoton: {
+    publication: 'Lippincott Williams & Wilkins · Neurosurgery',
+    description: 'A favorite reference from my own bookshelf, with the notes and highlights I made while studying cranial anatomy.',
+    source: { label: 'Rhoton Collection', url: 'https://www.aans.org/education-publications/references/the-rhoton-collection/' },
+  },
   'benzel-1': {
     ...BENZEL_INFO,
     description: 'Volume 1 of a two-volume reference on the evaluation of spinal disorders, operative techniques and complication management.',
