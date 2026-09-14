@@ -3,6 +3,7 @@ import { workshops, workshopSlugs, getWorkshop } from '../src/data/workshops';
 import { curriculumStages, competencyDomains, competencyKeys } from '../src/data/workshop-curriculum';
 import { workshopTeam, isTeamMember } from '../src/data/workshop-team';
 import { workshopSessions, getSession, sessionsFor } from '../src/data/workshop-sessions';
+import { workshopOutcomes, outcomeFor } from '../src/data/workshop-outcomes';
 
 // --- workshops.ts ---
 assert.deepEqual(workshopSlugs, ['dummy', 'cadaver', 'animal-pig'], 'slug contract used by WorkshopObjects.tsx');
@@ -62,5 +63,22 @@ assert.deepEqual(sessionsFor('cadaver').map((s) => s.status), ['planned']);
 assert.equal(getSession('2026-08-08-animal-pig')?.certification, true);
 assert.equal(getSession('2025-12-20-animal-pig')?.trainees?.count, 8);
 assert.equal(getSession('2026-12-19-cadaver')?.venue, undefined);
+
+
+// --- workshop-outcomes.ts ---
+assert.equal(workshopOutcomes.length, 1);
+for (const o of workshopOutcomes) {
+  assert.ok(getSession(o.sessionId), `outcome session exists: ${o.sessionId}`);
+  assert.equal(getSession(o.sessionId)?.trainees?.count, o.n, 'n matches session trainees');
+  assert.deepEqual(o.domains.map((d) => d.key), [...competencyKeys], 'one entry per domain, in order');
+  for (const d of o.domains) {
+    assert.ok(d.pre >= o.scale.min * 3 && d.post <= o.scale.domainMax, `range ${d.key}`);
+    assert.ok(d.post > d.pre, `post > pre for ${d.key}`);
+  }
+  assert.ok(o.quotes.length >= 3 && o.quotes.every((q) => q.en && q.ko), 'bilingual quotes');
+  assert.ok(o.difficulties && o.difficulties.length >= 3);
+}
+assert.equal(outcomeFor('2025-12-20-animal-pig')?.domains[0].post, 9.25);
+assert.equal(outcomeFor('2026-08-08-animal-pig'), undefined);
 
 console.log('workshopData: all checks passed');
