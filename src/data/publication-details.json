@@ -715,5 +715,48 @@
       "oaStatus": "confirmed-oa",
       "url": "https://www.e-neurospine.org/upload/pdf/kjs-12-160.pdf"
     }
+  },
+  "10.21182/jmisst.2026.03300": {
+    "doi": "10.21182/jmisst.2026.03300",
+    "title": "Risk Factors for Persistent Neurological Deterioration After Biportal Endoscopic Posterior Decompression for Multilevel Cervical Myelopathy: The “Structural Mismatch” Concept",
+    "authors": [
+      "Ji Yeon Kim",
+      "Woon Tak Yuh",
+      "Su Yong Choi",
+      "Min Gyu Kang",
+      "Seok Won Lee"
+    ],
+    "citation": "J Minim Invasive Spine Surg Tech. 2026;11(Suppl 2):S302–S316.",
+    "publicationDate": "2026-07-31",
+    "pmid": null,
+    "abstract": "Objective: This study aimed to evaluate clinical outcomes and identify risk factors for persistent neurological deterioration (PND) following unilateral biportal endoscopic (UBE) posterior decompression for multilevel degenerative cervical myelopathy (DCM).Methods: We retrospectively analyzed 39 patients with multilevel DCM, including ossification of the posterior longitudinal ligament, who underwent selective UBE decompression involving 3 or fewer segments. All patients were followed for at least 1 year. Delayed neurological deterioration (DND) was defined as new or worsening myelopathic symptoms after initial postoperative improvement and was classified as transient neurological deterioration or PND. Clinical outcomes, including the Japanese Orthopaedic Association (JOA) score and visual analogue scale score; radiological outcomes, including cervical alignment, range of motion, and adjacent border stenosis; and surgical technique, categorized as lamina-preserving or laminectomy-based, were evaluated. Multivariable Firth penalized logistic regression was used to identify independent contributors to PND.Results: At 1 year, JOA scores improved significantly, from 12.8 to 15.4 (p&lt;0.001), and cervical alignment was maintained. DND occurred in 43.6% of patients, with 30.8% classified as PND. Multivariable analysis identified 3 factors independently associated with PND: residual stenosis at both the cranial and caudal borders (adjusted odds ratio [aOR], 21.4), use of lamina-preserving techniques (aOR, 7.44), and lower preoperative JOA score (aOR, 0.34).Conclusion: Although selective UBE decompression provides effective, motion-preserving cervical decompression, PND was strongly associated with insufficient decompression at border levels and the use of lamina-preserving techniques in patients with severe myelopathy. These findings support the “structural mismatch” concept as a potential mechanism underlying clinical failure. To reduce the risk of PND, surgeons should ensure extended decompression at border levels and consider laminectomy-based techniques rather than lamina-preserving approaches in high-risk patients.",
+    "abstractSource": "JMISST / Crossref",
+    "metadataSource": "JMISST / Crossref",
+    "access": {
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://jmisst.org/upload/pdf/jmisst-2026-03300.pdf"
+    }
+  },
+  "10.3340/jkns.2026.0029": {
+    "doi": "10.3340/jkns.2026.0029",
+    "title": "Large Language Model and Pediatric Neurosurgery - A Neurosurgeon’s Perspective on the Artificial Nervous System",
+    "authors": [
+      "Woon Tak Yuh",
+      "Seung-Jun Ryu",
+      "Tae-Shin Kim",
+      "Il Choi"
+    ],
+    "citation": "J Korean Neurosurg Soc. 2026;69(4):496–514.",
+    "publicationDate": "2026-07-01",
+    "pmid": null,
+    "abstract": "Large language models (LLMs) are rapidly transforming healthcare, yet their implications for pediatric neurosurgery remain underexplored. This narrative review interprets LLM evolution through a neuroscientific lens familiar to pediatric neurosurgeons. We trace the parallel development of LLMs and the human brain : architecture evolving from sequential processing to attention mechanisms mirrors prefrontal cortex maturation; training stages parallel synaptic exuberance, adolescent pruning, and socialization; reasoning capabilities emerge through chain-of-thought prompting and reinforcement learning, analogous to deliberate cognitive processing. We then examine capabilities current LLMs lack but would require for artificial general intelligence (AGI)—continual learning, multimodal perception, selfawareness, world models, and physical embodiment—mapping each to corresponding neural functions. Using a representative case of pediatric medulloblastoma, we illustrate how these technologies will reshape clinical practice, surgery, research, and education. Current frontier models deliver excellent medical performance with multimodal reasoning at low cost, yet pediatric neurosurgery presents a “long-tail” challenge where rare conditions and reliance on expert consensus demand domain-specific augmentation. The emergence of agentic artificial intelligence (AI), physical AI, and autonomous research systems signals a shift from AI as advisory tool to executing partner. LLMs externalize intellectual labor at unprecedented scale, redefining physicians as “responsible interpreters” who orchestrate AI while retaining judgment, accountability, and ethical authority. In pediatric neurosurgery, this role uniquely integrates metacognitive and emotional dimensions beyond AI’s reach within the child-caregiver-physician relationship, enabling human-centered care and empowering neurosurgeons to actively shape AI integration rather than merely adapt to it.",
+    "abstractSource": "Crossref",
+    "metadataSource": "Crossref",
+    "access": {
+      "kind": "publisher",
+      "oaStatus": "unknown",
+      "url": "https://jkns.or.kr/journal/view.php?doi=10.3340/jkns.2026.0029"
+    }
   }
 }

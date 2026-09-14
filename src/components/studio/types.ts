@@ -12,6 +12,7 @@ export type Publication = {
   readonly title: string;
   readonly journal: string;
   readonly year: number;
+  readonly date?: string;
   readonly role: string;
   readonly doiUrl: string;
 };
@@ -84,7 +85,7 @@ export type StudioSceneProps = {
   readonly reducedMotion: boolean;
   readonly compact: boolean;
   readonly collection: OfficeCollection;
-  readonly viewCommand: { readonly sequence: number; readonly view: 0 | 1 | 2 };
+  readonly viewCommand: { readonly sequence: number; readonly view: 0 | 1 | 2 | 3 };
   readonly presentations: readonly Presentation[];
   readonly onSelect: (id: ExhibitId) => void;
   readonly onClose: () => void;

@@ -6,7 +6,7 @@ import publicationsData from '../data/publications.json';
 import presentationsData from '../data/presentations.json';
 
 const publications = publicationsData.publications.map(p => ({
-  id: p.doiUrl || p.title, title: p.title, journal: p.journal, year: p.year, role: p.role, doiUrl: p.doiUrl,
+  id: p.doiUrl || p.title, title: p.title, journal: p.journal, year: p.year, date: p.date, role: p.role, doiUrl: p.doiUrl,
 }));
 const presentations = presentationsData.presentations.map(p => ({
   id: p.id, title: p.name, date: p.date, venue: p.place, topic: p.topics.map(topic => topic.replace(/(\S)“/g, '$1 “')).join(' · '),

@@ -16,7 +16,7 @@ export function mediaForPaper(publication: Publication | null): PaperMedia | nul
 }
 
 export function orderedPapers(publications: readonly Publication[]): readonly Publication[] {
-  return publications.toSorted((a, b) => Number(!!mediaForPaper(b)) - Number(!!mediaForPaper(a)) || b.year - a.year);
+  return publications.toSorted((a, b) => b.year - a.year || (b.date ?? '').localeCompare(a.date ?? '') || Number(!!mediaForPaper(b)) - Number(!!mediaForPaper(a)));
 }
 
 export function featuredPresentation(presentations: readonly Presentation[]): Presentation | null {
