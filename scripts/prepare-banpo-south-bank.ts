@@ -5,6 +5,7 @@ import sharp from 'sharp';
 import { z } from 'astro/zod';
 import geography from '../public/models/han-river/geography.json';
 import park from '../public/models/han-river/park.json';
+import { completedPlanBuildings } from './banpoPlanCompletion';
 import planTrace from './fixtures/banpo-clast-plan-trace.json';
 import { canopyElevation, insideRing, lineDistance } from '../src/components/studio/scene/BanpoCanopyPlacement';
 import type { SouthBankData, SouthBuilding } from '../src/components/studio/scene/BanpoSouthBankData';
@@ -158,7 +159,7 @@ export async function generateSouthBank(source: Source): Promise<SouthBankData> 
     }
     terrain.rows.push(heights); terrain.cover.push(cover);
   }
-  return { buildings, construction, trees, terrain };
+  return { buildings: [...buildings, ...completedPlanBuildings(elevation)], construction, trees, terrain };
 }
 
 if (import.meta.main) {

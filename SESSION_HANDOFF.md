@@ -292,3 +292,13 @@ Current source and browser evidence: `.omo/evidence/whisky-half-width-2026-09-09
 Final release receipt will be stored there as `release.json` after push/deployment verification. The local plan is `.omo/plans/whisky-cabinet-half-width-2026-09-09.md`.
 
 Unrelated pre-existing reference folders and unused Beolab experiments remain untouched. Continue with the owner's next visual feedback; broader Han River skyline realism remains a previously deferred topic.
+
+## 2026-09-14 — CD collection and south-bank completion
+
+User selected backlog items 2 and 3: a physical CD rack / replacement flow, and the missing Maple Xi / Raemian Trinione apartment blocks. Six original songs and click-only start are preserved. `BeosoundRack.tsx` owns jewel cases and a responsive collection picker; state commits slot changes after the glass/transfer sequence, moving a loaded disc leaves its old slot empty, outgoing albums return to the collection. Audio continuation skips empties, exchange cancels pending playback, and two native media elements remain the limit. Library IDs are separate from the six hardware slots. No new music was added.
+
+`banpo-completion-plans.json` and `banpoPlanCompletion.ts` add all 29 Maple / 17 Trinione labeled blocks, using official/municipal plan traces registered to mapped parcels. The 950 prior mapped objects remain, for 996 total; construction50 and trees215 unchanged. Trinione maxima use official floor diagram; Maple mostly uses the35-floor envelope estimate (114=20). Footprints, facade details, lower-wing stepping and metric heights remain approximations. See `public/models/han-river/SOUTH-BANK.md` for explicit primary sources and limits.
+
+Evidence: `.omo/evidence/cd-rack-south-bank-2026-09-14/`. 36 scoped tests passed, check0errors/0warnings/21hints. Browser audio checks: no media on entry; Radiohead placed intoCD1; native end skips emptyCD3; closing inspection mid-transfer finishes silently; two-stage Escape. Viewports1280×900/390×844 day,844×390/768×1024 night reduced-motion. A landscape panel clipping defect was fixed before two independent review passes concluded PASS. South layer:8draws,47912triangles, no added rendering batches or shadows. Desktop window diagnostics require viewport settling; final1440 captures are distinct and match requested poses.
+
+Physical iPhone/Safari long-duration heating/crash verification is still separate and not certified by these desktop browser checks. New album audio, arbitrary full-album track lists, and UI uploads were not requested or added in this pass. Local4336 dev; preserve user's4322 preview and4325 comparison. Release commands/evidence in build.txt and subsequent release-report.json; do not claim deployment until that evidence exists.

@@ -3,7 +3,7 @@ import type { UrbanBuilding } from './BanpoUrbanFabric';
 export interface SouthBuilding extends UrbanBuilding {
   readonly complex: string;
   readonly name: string;
-  readonly heightSource: 'osm-height' | 'osm-levels' | 'class-estimate' | 'photo-construction';
+  readonly heightSource: 'osm-height' | 'osm-levels' | 'class-estimate' | 'photo-construction' | 'official-plan-levels';
 }
 
 export interface SouthBankData {
