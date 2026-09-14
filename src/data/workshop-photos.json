@@ -1,5 +1,167 @@
 [
   {
+    "sessionId": "2025-05-04-dummy",
+    "role": "lecture",
+    "order": 1,
+    "src": "/images/workshops/2025-05-04-dummy/399dd90a9141a2b8.webp",
+    "thumb": "/images/workshops/2025-05-04-dummy/399dd90a9141a2b8-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-05-04-dummy",
+    "role": "lecture",
+    "order": 2,
+    "src": "/images/workshops/2025-05-04-dummy/f0808b942c3967ec.webp",
+    "thumb": "/images/workshops/2025-05-04-dummy/f0808b942c3967ec-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-05-04-dummy",
+    "role": "practice",
+    "order": 1,
+    "src": "/images/workshops/2025-05-04-dummy/3d5b37ca442f45a4.webp",
+    "thumb": "/images/workshops/2025-05-04-dummy/3d5b37ca442f45a4-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-05-04-dummy",
+    "role": "practice",
+    "order": 2,
+    "src": "/images/workshops/2025-05-04-dummy/cef3312566877ddf.webp",
+    "thumb": "/images/workshops/2025-05-04-dummy/cef3312566877ddf-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-05-04-dummy",
+    "role": "practice",
+    "order": 3,
+    "src": "/images/workshops/2025-05-04-dummy/e362c1a568062457.webp",
+    "thumb": "/images/workshops/2025-05-04-dummy/e362c1a568062457-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-05-04-dummy",
+    "role": "practice",
+    "order": 4,
+    "src": "/images/workshops/2025-05-04-dummy/b5a2a0a54f79cef3.webp",
+    "thumb": "/images/workshops/2025-05-04-dummy/b5a2a0a54f79cef3-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-05-04-dummy",
+    "role": "venue",
+    "order": 1,
+    "src": "/images/workshops/2025-05-04-dummy/b907011459f9029c.webp",
+    "thumb": "/images/workshops/2025-05-04-dummy/b907011459f9029c-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "group",
+    "order": 1,
+    "src": "/images/workshops/2025-06-15-dummy/924fcda55a85e449.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/924fcda55a85e449-thumb.webp",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "group",
+    "order": 2,
+    "src": "/images/workshops/2025-06-15-dummy/97c094cfe4282d11.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/97c094cfe4282d11-thumb.webp",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "lecture",
+    "order": 1,
+    "src": "/images/workshops/2025-06-15-dummy/bfcc7b16dcd53d1c.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/bfcc7b16dcd53d1c-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "lecture",
+    "order": 2,
+    "src": "/images/workshops/2025-06-15-dummy/6b06e59f418360eb.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/6b06e59f418360eb-thumb.webp",
+    "width": 901,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "lecture",
+    "order": 3,
+    "src": "/images/workshops/2025-06-15-dummy/d1a6bf32c7db680b.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/d1a6bf32c7db680b-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "practice",
+    "order": 1,
+    "src": "/images/workshops/2025-06-15-dummy/580834bb0fc36cca.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/580834bb0fc36cca-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "practice",
+    "order": 2,
+    "src": "/images/workshops/2025-06-15-dummy/60c8cbc23fa5f5c2.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/60c8cbc23fa5f5c2-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "practice",
+    "order": 3,
+    "src": "/images/workshops/2025-06-15-dummy/57de1d3cc44610e5.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/57de1d3cc44610e5-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "practice",
+    "order": 4,
+    "src": "/images/workshops/2025-06-15-dummy/17aa46537162cd0f.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/17aa46537162cd0f-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "practice",
+    "order": 5,
+    "src": "/images/workshops/2025-06-15-dummy/f24b788bc11da1cf.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/f24b788bc11da1cf-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-06-15-dummy",
+    "role": "venue",
+    "order": 1,
+    "src": "/images/workshops/2025-06-15-dummy/b2af885d4a94371d.webp",
+    "thumb": "/images/workshops/2025-06-15-dummy/b2af885d4a94371d-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
     "sessionId": "2025-08-24-dummy",
     "role": "group",
     "order": 1,
@@ -117,6 +279,96 @@
     "height": 900
   },
   {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "group",
+    "order": 1,
+    "src": "/images/workshops/2025-12-20-animal-pig/0f9b84b7cff388d7.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/0f9b84b7cff388d7-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "lecture",
+    "order": 1,
+    "src": "/images/workshops/2025-12-20-animal-pig/2638309c51656c92.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/2638309c51656c92-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "lecture",
+    "order": 2,
+    "src": "/images/workshops/2025-12-20-animal-pig/f0a2a4b3a8bc2ff8.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/f0a2a4b3a8bc2ff8-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "lecture",
+    "order": 3,
+    "src": "/images/workshops/2025-12-20-animal-pig/08546cd000f00260.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/08546cd000f00260-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "practice",
+    "order": 1,
+    "src": "/images/workshops/2025-12-20-animal-pig/1e36cfed23f2de62.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/1e36cfed23f2de62-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "practice",
+    "order": 2,
+    "src": "/images/workshops/2025-12-20-animal-pig/470753acd921a0fc.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/470753acd921a0fc-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "practice",
+    "order": 3,
+    "src": "/images/workshops/2025-12-20-animal-pig/deaa72faf389edae.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/deaa72faf389edae-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "practice",
+    "order": 4,
+    "src": "/images/workshops/2025-12-20-animal-pig/08bb1ece79295475.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/08bb1ece79295475-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "practice",
+    "order": 5,
+    "src": "/images/workshops/2025-12-20-animal-pig/1893622b4ec9f37c.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/1893622b4ec9f37c-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-12-20-animal-pig",
+    "role": "venue",
+    "order": 1,
+    "src": "/images/workshops/2025-12-20-animal-pig/e3c1b6f577c81438.webp",
+    "thumb": "/images/workshops/2025-12-20-animal-pig/e3c1b6f577c81438-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
     "sessionId": "2026-06-13-dummy",
     "role": "group",
     "order": 1,
@@ -212,6 +464,96 @@
     "order": 6,
     "src": "/images/workshops/2026-06-13-dummy/e0dd2b4dd39caad6.webp",
     "thumb": "/images/workshops/2026-06-13-dummy/e0dd2b4dd39caad6-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "group",
+    "order": 1,
+    "src": "/images/workshops/2026-08-08-animal-pig/47ef4069bfde6e1d.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/47ef4069bfde6e1d-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "group",
+    "order": 2,
+    "src": "/images/workshops/2026-08-08-animal-pig/2485ddcdbc704d88.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/2485ddcdbc704d88-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "lecture",
+    "order": 1,
+    "src": "/images/workshops/2026-08-08-animal-pig/beca3e957d772b99.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/beca3e957d772b99-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "lecture",
+    "order": 2,
+    "src": "/images/workshops/2026-08-08-animal-pig/bca6de30d61e8b3a.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/bca6de30d61e8b3a-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "lecture",
+    "order": 3,
+    "src": "/images/workshops/2026-08-08-animal-pig/70d388950d434232.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/70d388950d434232-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "practice",
+    "order": 1,
+    "src": "/images/workshops/2026-08-08-animal-pig/232fda186bc0298f.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/232fda186bc0298f-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "practice",
+    "order": 2,
+    "src": "/images/workshops/2026-08-08-animal-pig/b0fb28a6490e3df8.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/b0fb28a6490e3df8-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "practice",
+    "order": 3,
+    "src": "/images/workshops/2026-08-08-animal-pig/9fd6413f8f89a800.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/9fd6413f8f89a800-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "practice",
+    "order": 4,
+    "src": "/images/workshops/2026-08-08-animal-pig/52cb3b2d1ccdc3db.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/52cb3b2d1ccdc3db-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-08-08-animal-pig",
+    "role": "practice",
+    "order": 5,
+    "src": "/images/workshops/2026-08-08-animal-pig/5dac2e0556b5a226.webp",
+    "thumb": "/images/workshops/2026-08-08-animal-pig/5dac2e0556b5a226-thumb.webp",
     "width": 1600,
     "height": 1200
   }
