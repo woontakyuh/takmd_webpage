@@ -1,7 +1,7 @@
 import { Html } from '@react-three/drei';
 import { useEffect, useRef } from 'react';
 import type { Dispatch, SyntheticEvent } from 'react';
-import { CD_SLOTS, beosoundDisplay, albumAtSlot } from './Beosound9000State';
+import { CD_SLOTS, beosoundDisplay, albumAtSlot, selectedTrack } from './Beosound9000State';
 import type { BeosoundAction, BeosoundState } from './Beosound9000State';
 import './beosound-9000.css';
 
@@ -62,11 +62,11 @@ export function Beosound9000Controls({ state, compact, hidden, dispatch, onClose
           {!compact && loadingKeys}
         </div>
         {compact && <div className="beosound-level-keys">{levelKeys}</div>}
-        {compact && album && <p className="beosound-track-caption">{album.artist} · {album.track}</p>}
+        {compact && album && <p className="beosound-track-caption">{album.artist} · {selectedTrack(state)?.title ?? album.album}</p>}
       </div>
     </Html>}
     {!compact && album && <Html position={[0, -.017, .06]} center zIndexRange={[43, 39]}>
-      <p className="beosound-track-caption">{album.artist} · {album.track}</p>
+      <p className="beosound-track-caption">{album.artist} · {selectedTrack(state)?.title ?? album.album}</p>
     </Html>}
   </>;
 }

@@ -3,8 +3,11 @@ import { useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useState } from 'react';
 import { Vector3 } from 'three';
 import type { Group } from 'three';
+import { focusFov } from './config';
 import { useArrangement } from '../arrangement';
-import { BeosoundRack, BeosoundExchange } from './BeosoundRack';
+import { BeosoundRack } from './BeosoundRack';
+import { BeosoundExchange } from './BeosoundExchange';
+import { BeosoundMiniPlayer } from './BeosoundMiniPlayer';
 import { Beosound9000Controls } from './Beosound9000Controls';
 import { Beosound9000Bracket, Beosound9000Geometry } from './Beosound9000Geometry';
 import { BEOSOUND_9000 as B } from './Beosound9000State';
@@ -24,12 +27,16 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
   const active = inspection?.id === 'beosound-9000', compact = size.width < 760;
   const pose = useCallback(() => {
     if (!body) return null;
-    const fov = 'fov' in camera && typeof camera.fov === 'number' ? camera.fov : 42;
-    const distance = Math.max(.82, (compact ? 1.22 : 1.3) / (2 * Math.tan(fov * Math.PI / 360) * size.width / size.height));
-    const target = body.localToWorld(new Vector3(.10, compact ? .04 : .15, .02));
-    const position = body.localToWorld(new Vector3(.10, (compact ? .04 : .15) + .045, distance));
+    const fov = focusFov(null, compact, size.width, size.height);
+    const short = libraryOpen && size.height < 600 && size.width >= 600;
+    const frameWidth = short ? 3 : 1.4;
+    const distance = Math.max(.82, frameWidth / (2 * Math.tan(fov * Math.PI / 360) * size.width / size.height));
+    const eyeY = libraryOpen ? (short ? .15 : compact ? -.48 : -.065) : (compact ? .04 : .15);
+    const eyeX = short ? .88 : .14;
+    const target = body.localToWorld(new Vector3(eyeX, eyeY, .02));
+    const position = body.localToWorld(new Vector3(eyeX, eyeY + .09, distance));
     return { id: 'beosound-9000', position: position.toArray(), target: target.toArray() };
-  }, [body, camera, compact, size.height, size.width]);
+  }, [body, camera, compact, libraryOpen, size.height, size.width]);
   const open = useCallback(() => {
     const next = pose();
     if (next) setInspection(next);
@@ -51,8 +58,9 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
   useEffect(() => { if (editing && active) setInspection(null); }, [active, editing, setInspection]);
   return <group name="Bang & Olufsen Beosound 9000" userData={{ sceneControl: true, active, selectedDisc: state.disc }}>
     <Beosound9000Bracket />
-    <BeosoundRack state={state} active={active} disabled={editing} compact={compact} onOpen={open} onExpanded={setLibraryOpen} dispatch={dispatch} />
-    {state.exchange && <BeosoundExchange exchange={state.exchange} reducedMotion={reducedMotion} onComplete={() => dispatch({ type: 'exchange-complete' })} />}
+    {!active && <BeosoundMiniPlayer state={state} dispatch={dispatch} onOpen={open} />}
+    <BeosoundRack state={state} active={active} disabled={editing} reducedMotion={reducedMotion} onOpen={open} onExpanded={setLibraryOpen} dispatch={dispatch} />
+    {state.exchange && <BeosoundExchange key={state.transportRequest} onSettle={() => dispatch({ type: 'exchange-settle' })} exchange={state.exchange} reducedMotion={reducedMotion} onComplete={() => dispatch({ type: 'exchange-complete' })} />}
     <group ref={setBody} position={[0, B.bracketHeight, 0]} rotation={[B.tilt, 0, 0]} {...(!active ? handlers : {})}>
       <Beosound9000Geometry state={state} active={active} disabled={editing || state.exchange !== null} reducedMotion={reducedMotion} onSelect={select} onCarriageReady={onCarriageReady} />
       {active && <Beosound9000Controls state={state} compact={compact} hidden={(compact || size.height < 600) && libraryOpen} dispatch={dispatch} onClose={close} />}

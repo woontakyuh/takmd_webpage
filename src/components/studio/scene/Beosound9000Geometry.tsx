@@ -104,7 +104,7 @@ export function Beosound9000Geometry({ state, active, disabled, reducedMotion, o
     moving.current = true;
     const traveling = carriage.current?.position.x !== target;
     if (traveling) setArrivedDisc(null);
-    settleDelay.current = traveling && !reducedMotion ? .4 : 0;
+    settleDelay.current = traveling && !reducedMotion && !state.exchange ? .4 : 0;
     if (reducedMotion) {
       if (carriage.current) carriage.current.position.x = target;
       if (glass.current) glass.current.rotation.x = glassTarget;
@@ -117,8 +117,8 @@ export function Beosound9000Geometry({ state, active, disabled, reducedMotion, o
   useFrame((_, delta) => {
     if (!moving.current || !carriage.current || !glass.current) return;
     if (settleDelay.current > 0) { settleDelay.current -= Math.min(delta, .1); invalidate(); return; }
-    carriage.current.position.x = moveClamper(carriage.current.position.x, target, Math.min(delta, .1), reducedMotion);
-    const gap = glassTarget - glass.current.rotation.x, step = Math.min(delta, .1) * 1.55;
+    carriage.current.position.x = moveClamper(carriage.current.position.x, target, Math.min(delta, .1) * (state.exchange ? 5 : 1), reducedMotion);
+    const gap = glassTarget - glass.current.rotation.x, step = Math.min(delta, .1) * (state.exchange ? 4.8 : 1.55);
     glass.current.rotation.x = Math.abs(gap) <= step ? glassTarget : glass.current.rotation.x + Math.sign(gap) * step;
     moving.current = carriage.current.position.x !== target || glass.current.rotation.x !== glassTarget;
     if (moving.current) invalidate();

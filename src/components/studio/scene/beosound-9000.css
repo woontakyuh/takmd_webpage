@@ -39,31 +39,3 @@
 
 .beosound-operation-panel[data-compact="true"] .beosound-track-caption { grid-column: 1 / -1; width: auto; max-width: 100%; padding: 5px 0 2px; color: var(--beosound-letter); text-shadow: none; }
 
-.beosound-library { width: 320px; max-width: calc(100vw - 32px); color: var(--studio-ink, #25352f); font: 12px/1.5 var(--font-body, sans-serif); }
-.beosound-library button, .beosound-library select { font: inherit; color: inherit; min-height: 44px; cursor: pointer; touch-action: manipulation; }
-.beosound-library button:focus-visible, .beosound-library select:focus-visible { outline: 2px solid var(--studio-ink, #25352f); outline-offset: 2px; }
-.beosound-library-trigger { width: 100%; display: flex; justify-content: space-between; padding: 0 14px; align-items: center; border: 1px solid #a9b4ae; border-radius: 4px; background: var(--studio-paper, #f5f0e6); }
-.beosound-library-content { padding: 14px; background: var(--studio-paper, #f5f0e6); border-radius: 0 0 4px 4px; max-height: 45vh; overflow: auto; overscroll-behavior: contain; }
-.beosound-library-album { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
-.beosound-library-album img { width: 64px; height: 64px; object-fit: contain; }
-.beosound-library p { margin: 4px 0; }
-.beosound-library small { opacity: .7; }
-.beosound-library label { display: block; margin-top: 8px; }
-.beosound-library select { display: block; width: 100%; padding: 6px; border: 1px solid #a9b4ae; border-radius: 0; background: transparent; }
-.beosound-library-actions { display: flex; gap: 8px; margin-top: 12px; }
-.beosound-library-actions button { flex: 1; padding: 6px; border: 1px solid #a9b4ae; background: transparent; }
-.beosound-library button:disabled, .beosound-library select:disabled { opacity: .45; cursor: default; }
-.beosound-library-status { font-size: 11px; }
-.beosound-library { transform: translateX(-50%); }
-.beosound-library:not([data-compact="true"]) { width: 700px; }
-.beosound-library:not([data-compact="true"]) .beosound-library-content { display: grid; grid-template-columns: 180px minmax(0, 1fr) minmax(0, 1fr); gap: 0 12px; padding: 12px; max-height: min(210px, 18vh); box-sizing: border-box; }
-.beosound-library:not([data-compact="true"]) .beosound-library-album { grid-row: span 2; align-items: flex-start; }
-.beosound-library:not([data-compact="true"]) .beosound-library-album img { width: 72px; height: 72px; }
-.beosound-library:not([data-compact="true"]) label { grid-column: auto; margin-top: 0; }
-.beosound-library-actions, .beosound-library-status { grid-column: 1 / -1; }
-.beosound-library[data-compact="true"] .beosound-library-content { max-height: 42vh; box-sizing: border-box; }
-
-.beosound-library:not([data-compact="true"]) .beosound-library-actions { grid-column: 2 / -1; margin-top: 8px; }
-.beosound-library:not([data-compact="true"]) .beosound-library-status { margin: 4px 0 0; }
-
-.beosound-library[data-short="true"] .beosound-library-content { max-height: min(180px, calc(100dvh - 220px)); }

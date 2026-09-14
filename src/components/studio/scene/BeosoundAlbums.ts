@@ -1,19 +1,170 @@
-export const ALBUM_IDS = [1, 2, 3, 4, 5, 6] as const;
+export const ALBUM_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 export type AlbumId = typeof ALBUM_IDS[number];
-
+export type AlbumTrack = { readonly number: number; readonly title: string };
 export type BeosoundAlbum = {
-  readonly artist: string;
-  readonly album: string;
-  readonly track: string;
-  readonly audio: string;
-  readonly cover: string;
+ readonly artist: string; readonly album: string; readonly year: number;
+ readonly cover: string; readonly source: string; readonly tracks: readonly AlbumTrack[];
 };
 
+// Release-specific catalog metadata; audio availability is owned by BeosoundTracks.
 export const BEOSOUND_ALBUMS: Record<AlbumId, BeosoundAlbum> = {
-  1: { artist: 'Two Ton Shoe', album: 'Resoled', track: 'Paper Bag', audio: '/audio/two-ton-shoe-paper-bag.m4a', cover: '/models/audio/two-ton-shoe-resoled-cover.webp' },
-  2: { artist: 'GIRIBOY', album: '땡큐', track: '하루종일 (Band Ver.)', audio: '/audio/giriboy-all-day-band.m4a', cover: '/models/audio/giriboy-thank-you-cover.jpg' },
-  3: { artist: 'Radiohead', album: 'The Bends', track: 'High and Dry', audio: '/audio/radiohead-high-and-dry.m4a', cover: '/models/audio/radiohead-the-bends-cover.webp' },
-  4: { artist: 'Asoto Union', album: 'Sound Renovates A Structure', track: 'Think About’ Chu', audio: '/audio/asoto-union-think-about-chu.m4a', cover: '/models/audio/asoto-union-sound-renovates-cover.webp' },
-  5: { artist: 'John Splithoff', album: 'Make It Happen (Deluxe Edition)', track: 'Raye', audio: '/audio/john-splithoff-raye.m4a', cover: '/models/audio/john-splithoff-make-it-happen-cover.webp' },
-  6: { artist: 'Brown Eyes', album: 'Reason 4 Breathing?', track: '비오는 압구정', audio: '/audio/brown-eyes-rainy-apgujeong.m4a', cover: '/models/audio/brown-eyes-reason4breathing-cover.webp' },
+  1: {
+    artist: "Two Ton Shoe", album: "Resoled", year: 2002,
+    cover: "/models/audio/two-ton-shoe-resoled-cover.webp", source: "https://music.apple.com/us/album/resoled/30626614?uo=4",
+    tracks: [
+      {"number":1,"title":"Brothers"},
+      {"number":2,"title":"Medicine"},
+      {"number":3,"title":"Paper Bag"},
+      {"number":4,"title":"Troopy's Blues"},
+      {"number":5,"title":"Jack's Jam"},
+      {"number":6,"title":"Believe"},
+      {"number":7,"title":"Georgie"},
+      {"number":8,"title":"Zambia"},
+      {"number":9,"title":"Far from Blue"},
+      {"number":10,"title":"Swing Out West"},
+      {"number":11,"title":"Sorry (To Be Me)"},
+      {"number":12,"title":"One Glass Eye"},
+      {"number":13,"title":"Lowdown"},
+      {"number":14,"title":"Another Man"},
+      {"number":15,"title":"Sippin' Down and Slippin' Away"},
+      {"number":16,"title":"Troopy's (live)"},
+    ],
+  },
+  2: {
+    artist: "GIRIBOY", album: "땡큐", year: 2018,
+    cover: "/models/audio/giriboy-thank-you-cover.jpg", source: "https://music.bugs.co.kr/album/20218878",
+    tracks: [
+      {"number":1,"title":"미안 (Feat. OLNL)"},
+      {"number":2,"title":"하루종일 (Band Ver.)"},
+      {"number":3,"title":"2000/90 (Band Ver.)"},
+      {"number":4,"title":"술자리 (Jiwoo Cover)"},
+      {"number":5,"title":"vv 2 (Feat. Kid Milli, 최엘비, 김승민, Hayake)"},
+    ],
+  },
+  3: {
+    artist: "Radiohead", album: "The Bends", year: 1995,
+    cover: "/models/audio/radiohead-the-bends-cover.webp", source: "https://music.apple.com/us/album/the-bends/1097862703?uo=4",
+    tracks: [
+      {"number":1,"title":"Planet Telex"},
+      {"number":2,"title":"The Bends"},
+      {"number":3,"title":"High and Dry"},
+      {"number":4,"title":"Fake Plastic Trees"},
+      {"number":5,"title":"Bones"},
+      {"number":6,"title":"(Nice Dream)"},
+      {"number":7,"title":"Just"},
+      {"number":8,"title":"My Iron Lung"},
+      {"number":9,"title":"Bullet Proof ... I Wish I Was"},
+      {"number":10,"title":"Black Star"},
+      {"number":11,"title":"Sulk"},
+      {"number":12,"title":"Street Spirit (Fade Out)"},
+    ],
+  },
+  4: {
+    artist: "Asoto Union", album: "Sound Renovates A Structure", year: 2003,
+    cover: "/models/audio/asoto-union-sound-renovates-cover.webp", source: "https://music.apple.com/us/album/sound-renovates-a-structure/1593806196?uo=4",
+    tracks: [
+      {"number":1,"title":"...Sound Renovates A Structure (Intro)"},
+      {"number":2,"title":"We Don't Stop"},
+      {"number":3,"title":"Make It Boogie (We've Got Funky Jazz)"},
+      {"number":4,"title":"Liquid"},
+      {"number":5,"title":"Think About' Chu"},
+      {"number":6,"title":"Dynamite"},
+      {"number":7,"title":"Blow Ma Mind"},
+      {"number":8,"title":"Smood Feelin"},
+      {"number":9,"title":"Mad Funk Camp All Starz"},
+      {"number":10,"title":"A.U. Theme"},
+    ],
+  },
+  5: {
+    artist: "John Splithoff", album: "Make It Happen (Deluxe Edition)", year: 2018,
+    cover: "/models/audio/john-splithoff-make-it-happen-cover.webp", source: "https://music.apple.com/us/album/make-it-happen-deluxe-edition/1441035549?uo=4",
+    tracks: [
+      {"number":1,"title":"Sing to You"},
+      {"number":2,"title":"Make It Happen"},
+      {"number":3,"title":"Spotlight (Girl Next Door)"},
+      {"number":4,"title":"Show Me (feat. Madison Ryann Ward)"},
+      {"number":5,"title":"Raye"},
+      {"number":6,"title":"Leave It All Behind"},
+      {"number":7,"title":"Vices"},
+      {"number":8,"title":"Sing to You (Acoustic)"},
+      {"number":9,"title":"Make it Happen (Demo)"},
+      {"number":10,"title":"Show Me (Demo)"},
+    ],
+  },
+  6: {
+    artist: "Brown Eyes", album: "Reason 4 Breathing?", year: 2002,
+    cover: "/models/audio/brown-eyes-reason4breathing-cover.webp", source: "https://music.apple.com/us/album/reason-4-breathing/1652859567?uo=4",
+    tracks: [
+      {"number":1,"title":"Intro"},
+      {"number":2,"title":"점점"},
+      {"number":3,"title":"비오는 압구정"},
+      {"number":4,"title":"떠나지마"},
+      {"number":5,"title":"Brown CITY2"},
+      {"number":6,"title":"I Wanna Fall In Love With You"},
+      {"number":7,"title":"Piano Cavatina"},
+      {"number":8,"title":"True Luv"},
+      {"number":9,"title":"For You"},
+      {"number":10,"title":"환상"},
+      {"number":11,"title":"그래도 되겠니"},
+      {"number":12,"title":"Interlude"},
+      {"number":13,"title":"Miss You"},
+      {"number":14,"title":"...오후"},
+      {"number":15,"title":"이별송"},
+      {"number":16,"title":"점점 (Instrumental)"},
+      {"number":17,"title":"For You (Instrumental)"},
+    ],
+  },
+  7: {
+    artist: "NELL", album: "Separation Anxiety", year: 2008,
+    cover: "/models/audio/nell-separation-anxiety-cover.webp", source: "https://music.apple.com/us/album/separation-anxiety/1648914913?uo=4",
+    tracks: [
+      {"number":1,"title":"Separation Anxiety"},
+      {"number":2,"title":"Moonlight Punch Romance"},
+      {"number":3,"title":"기억을 걷는 시간"},
+      {"number":4,"title":"멀어지다"},
+      {"number":5,"title":"Promise Me"},
+      {"number":6,"title":"1:03"},
+      {"number":7,"title":"Fisheye Lens"},
+      {"number":8,"title":"Afterglow"},
+      {"number":9,"title":"Tokyo"},
+      {"number":10,"title":"12 Seconds"},
+      {"number":11,"title":"_"},
+    ],
+  },
+  8: {
+    artist: "Maroon 5", album: "Songs About Jane", year: 2002,
+    cover: "/models/audio/maroon5-songs-about-jane-cover.webp", source: "https://music.apple.com/us/album/songs-about-jane/1440851650?uo=4",
+    tracks: [
+      {"number":1,"title":"Harder To Breathe"},
+      {"number":2,"title":"This Love"},
+      {"number":3,"title":"Shiver"},
+      {"number":4,"title":"She Will Be Loved"},
+      {"number":5,"title":"Tangled"},
+      {"number":6,"title":"The Sun"},
+      {"number":7,"title":"Must Get Out"},
+      {"number":8,"title":"Sunday Morning"},
+      {"number":9,"title":"Secret"},
+      {"number":10,"title":"Through With You"},
+      {"number":11,"title":"Not Coming Home"},
+      {"number":12,"title":"Sweetest Goodbye"},
+    ],
+  },
+  9: {
+    artist: "John Mayer", album: "Continuum", year: 2006,
+    cover: "/models/audio/john-mayer-continuum-cover.webp", source: "https://music.apple.com/us/album/continuum/184335550?uo=4",
+    tracks: [
+      {"number":1,"title":"Waiting On the World to Change"},
+      {"number":2,"title":"I Don't Trust Myself (With Loving You)"},
+      {"number":3,"title":"Belief"},
+      {"number":4,"title":"Gravity"},
+      {"number":5,"title":"The Heart of Life"},
+      {"number":6,"title":"Vultures"},
+      {"number":7,"title":"Stop This Train"},
+      {"number":8,"title":"Slow Dancing in a Burning Room"},
+      {"number":9,"title":"Bold as Love"},
+      {"number":10,"title":"Dreaming with a Broken Heart"},
+      {"number":11,"title":"In Repair"},
+      {"number":12,"title":"I'm Gonna Find Another You"},
+    ],
+  },
 };
