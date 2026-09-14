@@ -13,7 +13,8 @@ export const workshopTeam = {
     { name: 'Woon Tak Yuh', nameKo: '여운탁', affiliation: 'Davos Hospital, Yongin' },
     { name: 'Il Choi', nameKo: '최일', affiliation: 'Hallym University Dongtan Sacred Heart Hospital' },
     { name: 'Yong-San Ko', nameKo: '고용산', affiliation: 'Kyungpook National University Hospital' },
-    { name: 'Subum Lee', nameKo: '이수범', affiliation: 'Kyungpook National University Hospital' },
+    // The 2026-08-08 programme docx lists Kyungpook here; that is an error in the document.
+    { name: 'Subum Lee', nameKo: '이수범', affiliation: 'Korea University Anam Hospital' },
     { name: 'Jae-Koo Lee', nameKo: '이재구', affiliation: 'Seoul National University Bundang Hospital' },
     { name: 'Jun-Su Jang', nameKo: '장준수', affiliation: 'Hallym University Dongtan Sacred Heart Hospital' },
     { name: 'Seung-Chan Yoo', nameKo: '유승찬', affiliation: "Incheon St. Mary's Hospital, The Catholic University of Korea" },
