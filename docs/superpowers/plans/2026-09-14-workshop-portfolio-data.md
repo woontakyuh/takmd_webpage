@@ -535,26 +535,10 @@ export const workshopSessions = [
     sources: ['Dec 2025 workshop poster', 'Pre-post evaluation summary', 'GCal Conference'],
   },
   {
-    id: '2026-02-21-dummy',
+    id: '2026-06-13-dummy',
     workshop: 'dummy',
     seriesNo: 6,
     modalityNo: 5,
-    date: '2026-02-21',
-    status: 'held',
-    title: 'Endoscopic Spine Surgery Dummy Workshop for Beginners (2026 · 1st)',
-    titleKo: '2026 더미 워크샵 1회',
-    venue: DONGTAN,
-    host: ['Hallym University Dongtan Sacred Heart Hospital'],
-    audience: 'Beginner spine surgeons and residents',
-    role: 'faculty',
-    handsOn: { format: 'Small-group dummy stations' },
-    sources: ['GCal Conference'],
-  },
-  {
-    id: '2026-06-13-dummy',
-    workshop: 'dummy',
-    seriesNo: 7,
-    modalityNo: 6,
     date: '2026-06-13',
     status: 'held',
     title: 'Endoscopic Spine Surgery Dummy Workshop for Beginners (2026 · 2nd)',
@@ -572,7 +556,7 @@ export const workshopSessions = [
   {
     id: '2026-08-08-animal-pig',
     workshop: 'animal-pig',
-    seriesNo: 8,
+    seriesNo: 7,
     modalityNo: 2,
     date: '2026-08-08',
     status: 'held',
@@ -594,7 +578,7 @@ export const workshopSessions = [
   {
     id: '2026-12-19-cadaver',
     workshop: 'cadaver',
-    seriesNo: 9,
+    seriesNo: 8,
     modalityNo: 1,
     date: '2026-12-19',
     status: 'planned',
@@ -1136,7 +1120,7 @@ git commit -m "content(workshops): add curated photos for the 2026-06-13 dummy w
 ### Task 9: Curate photos for the seven iCloud sessions
 
 **Files:**
-- Create (gitignored): `content/workshops/<sessionId>/*.jpg` for ids `2025-05-04-dummy`, `2025-06-15-dummy`, `2025-08-24-dummy`, `2025-10-12-dummy`, `2025-12-20-animal-pig`, `2026-02-21-dummy`, `2026-08-08-animal-pig`
+- Create (gitignored): `content/workshops/<sessionId>/*.jpg` for ids `2025-05-04-dummy`, `2025-06-15-dummy`, `2025-08-24-dummy`, `2025-10-12-dummy`, `2025-12-20-animal-pig`, `2026-08-08-animal-pig`
 - Generate: `public/images/workshops/<sessionId>/*.webp`, `src/data/workshop-photos.json`
 
 **Interfaces:**
