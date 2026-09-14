@@ -1,6 +1,7 @@
 import type { ExhibitId } from '../types';
+import { HoverAccent } from './HoverAccent';
 import { requestOfficePath } from '../officeNavigation';
-import { Html, useCursor } from '@react-three/drei';
+import { useCursor } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useRef, useState, type ReactNode } from 'react';
 import { workshops } from '../../../data/workshops';
@@ -19,13 +20,12 @@ const COLLECTION_X = ROOM.credenza.position[0];
 type WorkshopLinkProps = {
   readonly focused: ExhibitId | null;
   readonly onApproach: () => void;
-  readonly label: string;
   readonly position: Point;
   readonly route: `/workshops/${string}`;
   readonly children: ReactNode;
 };
 
-function WorkshopLink({ focused, onApproach, label, position, route, children }: WorkshopLinkProps) {
+function WorkshopLink({ focused, onApproach, position, route, children }: WorkshopLinkProps) {
   const canvas = useThree(state => state.gl.domElement);
   const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
@@ -37,10 +37,11 @@ function WorkshopLink({ focused, onApproach, label, position, route, children }:
       position={[...position]}
       onPointerOver={(event) => {
         event.stopPropagation();
-        setHovered(true);
+        if (event.pointerType !== 'touch' && !event.buttons) setHovered(true);
       }}
       onPointerOut={() => setHovered(false)}
       onPointerDown={(event) => {
+        setHovered(false);
         pointerStart.current = { x: event.clientX, y: event.clientY };
       }}
       onPointerCancel={() => {
@@ -55,25 +56,7 @@ function WorkshopLink({ focused, onApproach, label, position, route, children }:
         scheduleSceneSingleAction(canvas, () => focused === 'spine' ? requestOfficePath(route) : onApproach());
       }}
     >
-      {children}
-      {hovered && (
-        <Html center position={[0.32, 0.28, 0]} style={{ pointerEvents: 'none' }} zIndexRange={[20, 10]}>
-          <span style={{
-            display: 'block',
-            width: 'max-content',
-            maxWidth: '168px',
-            padding: '7px 10px',
-            border: `1px solid ${PALETTE.line}`,
-            borderRadius: '4px',
-            background: 'rgba(248, 246, 240, 0.96)',
-            boxShadow: '0 8px 24px rgba(32, 45, 42, 0.14)',
-            color: PALETTE.ink,
-            font: '600 11px Manrope, Arial, sans-serif',
-            letterSpacing: '0.02em',
-            textAlign: 'center',
-          }}>{label}</span>
-        </Html>
-      )}
+      <HoverAccent active={hovered}>{children}</HoverAccent>
     </group>
   );
 }
@@ -97,13 +80,13 @@ export function WorkshopObjects({ focused, onApproach }: { readonly focused: Exh
 
   return (
     <group rotation={[0, 0, 0]}>
-      <WorkshopLink focused={focused} onApproach={onApproach} label={dummy.title} route={`/workshops/${dummy.slug}`} position={[COLLECTION_X, CABINET_TOP + 0.014, 0.70]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${dummy.slug}`} position={[COLLECTION_X, CABINET_TOP + 0.014, 0.70]}>
         <EndoscopicLumbarBox />
       </WorkshopLink>
-      <WorkshopLink focused={focused} onApproach={onApproach} label={animal.title} route={`/workshops/${animal.slug}`} position={[COLLECTION_X, CABINET_TOP, 0.19]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${animal.slug}`} position={[COLLECTION_X, CABINET_TOP, 0.19]}>
         <PigPlush />
       </WorkshopLink>
-      <WorkshopLink focused={focused} onApproach={onApproach} label={cadaver.title} route={`/workshops/${cadaver.slug}`} position={[COLLECTION_X, CABINET_TOP, -0.31]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${cadaver.slug}`} position={[COLLECTION_X, CABINET_TOP, -0.31]}>
         <EndoscopeTray />
       </WorkshopLink>
     </group>
