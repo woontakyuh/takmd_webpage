@@ -333,7 +333,7 @@ git commit -m "feat(workshops): add Spinoscopy Workshop Team roster"
 - Modify: `scripts/workshopData.test.ts`
 
 **Interfaces:**
-- Produces: `WorkshopSession` type (spec §3 with `venue?` optional), `workshopSessions: readonly WorkshopSession[]` (9, date ascending), `getSession(id)`, `sessionsFor(slug)`, `SessionStatus = 'held' | 'planned'`, `WorkshopPhotoRole` is **not** here (Task 7).
+- Produces: `WorkshopSession` type (spec §3 with `venue?` optional), `workshopSessions: readonly WorkshopSession[]` (8, date ascending), `getSession(id)`, `sessionsFor(slug)`, `SessionStatus = 'held' | 'planned'`, `WorkshopPhotoRole` is **not** here (Task 7).
 
 - [ ] **Step 1: Append failing assertions**
 
