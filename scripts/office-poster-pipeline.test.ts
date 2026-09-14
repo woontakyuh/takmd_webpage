@@ -9,7 +9,7 @@ import {
 } from './office-poster-pipeline';
 
 describe('office poster projection', () => {
-  test('Given the seated opening camera, the complete monitor leaves room for the desk and background TV', () => {
+  test('Given the desktop opening camera, the complete monitor is large enough to read with room visible around it', () => {
     const geometry = projectMonitorGeometry({
       ...CAPTURE_VARIANTS.desktopLandscape,
       width: 1440,
@@ -17,9 +17,9 @@ describe('office poster projection', () => {
     });
 
     assert.ok(geometry.x > 32 && geometry.x + geometry.across[0] < 1408);
-    assert.ok(geometry.y > 180 && geometry.y + geometry.down[1] < 720);
-    assert.ok(geometry.across[0] > 1440 * 0.25 && geometry.across[0] < 1440 * 0.55);
-    assert.ok(CAPTURE_VARIANTS.desktopLandscape.camera.position[1] >= 1.2
+    assert.ok(geometry.y > 96 && geometry.y + geometry.down[1] < 804);
+    assert.ok(geometry.across[0] > 1440 * 0.65 && geometry.across[0] < 1440 * 0.85);
+    assert.ok(CAPTURE_VARIANTS.desktopLandscape.camera.position[1] >= 1.15
       && CAPTURE_VARIANTS.desktopLandscape.camera.position[1] <= 1.4);
   });
 

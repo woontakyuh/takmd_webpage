@@ -7,7 +7,7 @@ import { getSession } from '../src/data/workshop-sessions';
 type Entry = { sessionId: string; role: string; order: number; src: string; thumb: string; width: number; height: number };
 const roles = ['group', 'lecture', 'practice', 'venue'];
 const entries = manifest as Entry[];
-const root = resolve(import.meta.dir, '..');
+const root = resolve(new URL('.', import.meta.url).pathname, '..');
 
 const seen = new Set<string>();
 entries.forEach((e, i) => {

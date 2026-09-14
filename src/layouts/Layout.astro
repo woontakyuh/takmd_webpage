@@ -9,6 +9,7 @@ interface Props {
   hideNav?: boolean;
   hideFooter?: boolean;
   bodyClass?: string;
+  documentPage?: boolean;
 }
 
 const {
@@ -17,9 +18,10 @@ const {
   hideNav = false,
   hideFooter = false,
   bodyClass = '',
+  documentPage = false,
 } = Astro.props;
 
-const officeEntry = /^\/(cv|research|education|ube|ai|ai-workflow|contact|credits|dashboard|jiu-jitsu|surfing|knowledge|media|workshops)(\/|$)/.test(Astro.url.pathname);
+const officeEntry = !documentPage && /^\/(cv|research|education|ube|ai|ai-workflow|contact|credits|dashboard|jiu-jitsu|surfing|knowledge|media|workshops)(\/|$)/.test(Astro.url.pathname);
 const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
 ---
 

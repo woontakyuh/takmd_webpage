@@ -7,6 +7,10 @@ const INITIAL = { playing: false, time: 0, duration: 0, muted: false, volume: 0.
 
 export function useProposalPlayback({ src, hlsSrc }: { readonly src: string | null | undefined; readonly hlsSrc: string | null | undefined }, onPlay?: () => void) {
   const recording = useRef<Recording | null>(null);
+  const [systemVolume, setSystemVolume] = useState(false);
+  useEffect(() => {
+    setSystemVolume(/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+  }, []);
   const [resource, setResource] = useState<Recording | null>(null);
   const [texture, setTexture] = useState<VideoTexture | null>(null);
   const [state, setState] = useState<{ playing: boolean; time: number; duration: number; muted: boolean; volume: number; message: string }>(INITIAL);
@@ -117,7 +121,7 @@ export function useProposalPlayback({ src, hlsSrc }: { readonly src: string | nu
   const volume = useCallback((value: number) => {
     const video = recording.current?.video;
     if (video) {
-      video.volume = value; video.muted = false;
+      video.volume = Math.max(0, Math.min(1, value)); video.muted = false;
       setState(previous => ({ ...previous, volume: video.volume, muted: false }));
     }
   }, []);
@@ -132,5 +136,5 @@ export function useProposalPlayback({ src, hlsSrc }: { readonly src: string | nu
       video.webkitEnterFullscreen();
     }
   }, []);
-  return { state, texture, play, toggle, seek, mute, volume, fullscreen, reset };
+  return { state, systemVolume, texture, play, toggle, seek, mute, volume, fullscreen, reset };
 }

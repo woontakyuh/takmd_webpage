@@ -16,9 +16,11 @@ type Props = {
   readonly hovered?: boolean;
   readonly scrollState?: MonitorScrollState;
   readonly texture: CanvasTexture;
+  readonly entry?: boolean;
+  readonly onEngage?: () => void;
 };
 
-export function MonitorScreenReader({ publicationCount, presentationCount, onClose, texture, active = true, hovered = false, scrollState }: Props) {
+export function MonitorScreenReader({ publicationCount, presentationCount, onClose, texture, active = true, hovered = false, scrollState, entry = false, onEngage }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const snapshot = useRef<Promise<boolean> | null>(null);
   const queuedSnapshot = useRef<HTMLElement | null>(null);
@@ -59,6 +61,7 @@ export function MonitorScreenReader({ publicationCount, presentationCount, onClo
     style={{ pointerEvents: active ? 'auto' : 'none' }}>
     <MonitorCvSurface publicationCount={publicationCount} presentationCount={presentationCount}
       active={active} hovered={hovered} onClose={onClose} scrollState={scrollState}
+      autoFocus={!entry} onEngage={onEngage}
       onSnapshot={capture}
       controlScale={MONITOR_CV_WIDTH / monitorReadingSize(size.width, size.height)} />
   </Html>;

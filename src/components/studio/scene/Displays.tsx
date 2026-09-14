@@ -21,9 +21,10 @@ import { setWallTvHovered, useWallTvBacklight } from './hoverReactions';
 import { monitorReadingPose } from './monitorReading';
 import { isScreenFocusSettled } from './screenFocus';
 
-type DisplaysProps = Pick<StudioSceneProps, 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'>;
+type DisplaysProps = Pick<StudioSceneProps, 'entry' | 'compact' | 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'>;
 
-export function Displays({ ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll }: DisplaysProps) {
+export function Displays({ entry, compact, ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll }: DisplaysProps) {
+  const entryReader = ready && !compact && !selected && (entry === 'seated' || entry === 'capture');
   const camera = useThree(state => state.camera);
   const { layout } = useArrangement();
   const monitorMaterial = useRef<MeshStandardMaterial>(null);
@@ -68,8 +69,8 @@ export function Displays({ ready, selected, onSelect, reducedMotion, halo, prese
         <group position={MONITOR_SCREEN.mount} rotation={[MONITOR_SCREEN.tilt, 0, 0]}>
           <Block size={[MONITOR.width, MONITOR.height, 0.027]} radius={0.008} color={PALETTE.ink} roughness={0.3} metalness={0.25} />
           <Block size={[0.3, 0.26, 0.035]} position={[0, 0, -0.025]} color={PALETTE.ink} radius={0.028} />
-          <mesh visible={focusedScreen !== 'ai'} name="Desk monitor screen" position={MONITOR_SCREEN.surface}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshStandardMaterial ref={monitorMaterial} map={monitor} emissiveMap={monitor} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
-          {focusedScreen === 'ai' && ready && <MonitorScreenReader active hovered={monitorHovered} texture={monitor} scrollState={monitorScroll} publicationCount={collection.paperCount} presentationCount={presentations.length} onClose={onClose} />}
+          <mesh visible={focusedScreen !== 'ai' && !entryReader} name="Desk monitor screen" position={MONITOR_SCREEN.surface}><planeGeometry args={[MONITOR.screenWidth, MONITOR.screenHeight]} /><meshStandardMaterial ref={monitorMaterial} map={monitor} emissiveMap={monitor} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4} /></mesh>
+          {(focusedScreen === 'ai' || entryReader) && ready && <MonitorScreenReader active entry={entryReader} onEngage={entryReader ? () => onSelect('ai') : undefined} hovered={monitorHovered} texture={monitor} scrollState={monitorScroll} publicationCount={collection.paperCount} presentationCount={presentations.length} onClose={onClose} />}
           <mesh position={[0.332, -0.203, 0.015]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
           <ScreenBarHalo2 power={halo.power} temperature={halo.temperature} />
         </group>

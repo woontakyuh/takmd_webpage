@@ -18,3 +18,8 @@
   .proposal-playback input { accent-color: var(--proposal-on-amplifier); }
   .proposal-playback :is(button, input):focus-visible { outline-color: var(--proposal-on-amplifier); }
 }
+
+.proposal-system-volume { margin-left: auto; font-size: 11px; opacity: .8; }
+.proposal-screen-fullscreen { display: flex; align-items: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 8px 12px; border: 1px solid #ffffff60; border-radius: 5px; background: #101512da; color: #fff; font: 500 12px/1.4 var(--studio-sans); transform: translate(-100%, -100%); cursor: pointer; white-space: nowrap; }
+.proposal-screen-fullscreen:disabled { opacity: .45; cursor: default; }
+.proposal-screen-fullscreen:focus-visible { outline: 2px solid white; outline-offset: 3px; }

@@ -39,3 +39,37 @@
 
 .beosound-operation-panel[data-compact="true"] .beosound-track-caption { grid-column: 1 / -1; width: auto; max-width: 100%; padding: 5px 0 2px; color: var(--beosound-letter); text-shadow: none; }
 
+
+.beosound-approach-choice {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--studio-line);
+  border-radius: 4px;
+  background: var(--studio-paper);
+  color: var(--studio-ink);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.beosound-system-choices {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.beosound-operation-panel .beosound-primary-play { color: var(--studio-light, #f8f6f0); font-weight: 700; outline: 1px solid var(--beosound-display); outline-offset: -3px; }
+.beosound-mobile-controls { position: fixed; top: 60dvh; left: 50vw; transform: translateX(-50%); width: min(320px, calc(100vw - 32px)); color: var(--studio-ink); font: 14px/1.65 var(--font-body, sans-serif); text-shadow: 0 1px 3px var(--studio-light); }
+.beosound-mobile-transport { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.beosound-mobile-controls button { min-width: 44px; min-height: 44px; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.beosound-mobile-transport > button:first-child, .beosound-mobile-transport > button:nth-child(3) { font-size: 24px; }
+.beosound-mobile-controls .beosound-primary-play { padding: 0 20px; background: var(--studio-light); color: var(--studio-ink); border-radius: 999px; font-weight: 600; text-shadow: none; }
+.beosound-mobile-controls p { margin: 8px 0 0; text-align: center; font-size: 12px; }
+.beosound-mobile-volume { display: flex; align-items: center; gap: 12px; }
+.beosound-mobile-volume input { flex: 1; min-width: 0; accent-color: var(--studio-teal); }
+.beosound-mobile-controls button:focus-visible { outline: 2px solid var(--studio-teal); }
+.studio[data-night='true'] .beosound-mobile-controls { color: var(--studio-light); text-shadow: 0 1px 4px #111; }

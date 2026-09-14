@@ -2,6 +2,7 @@ import { useThree } from '@react-three/fiber';
 import { Html, useCursor } from '@react-three/drei';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Group } from 'three';
+import { OfficeIcon } from '../OfficeIcon';
 import { useArrangement } from '../arrangement';
 import { DigitalPhotoFrame } from './DigitalPhotoFrame';
 import { ProposalPlaybackControls } from './ProposalPlaybackControls';
@@ -92,7 +93,15 @@ export function ProposalMemoryFrame({ posterSrc, videoSrc, hlsSrc, title = 'Marr
     onClick={event => event.stopPropagation()} onDoubleClick={event => event.stopPropagation()}>
     <DigitalPhotoFrame src={posterSrc} width={FRAME.width} height={FRAME.height} screenInset={[FRAME.inset, FRAME.inset]}
       screenTexture={selected ? playback.texture : null} hovered={hovered} active={selected} reducedMotion={reducedMotion} />
-    <group ref={frame} position={[0, CENTER_Y, 0]} rotation={[FRAME.tilt, 0, 0]} />
+    <group ref={frame} position={[0, CENTER_Y, 0]} rotation={[FRAME.tilt, 0, 0]}>
+      {selected && videoSrc && <Html position={[FRAME.width / 2 - FRAME.inset, -FRAME.height / 2 + FRAME.inset, .015]} zIndexRange={[40, 36]}>
+        <button className="proposal-screen-fullscreen" type="button" aria-label="Watch recording fullscreen" title="전체화면"
+          disabled={!playback.state.duration} onPointerDown={event => event.stopPropagation()} onPointerUp={event => event.stopPropagation()}
+          onDoubleClick={event => event.stopPropagation()} onClick={event => { event.stopPropagation(); playback.fullscreen(); }}>
+          <OfficeIcon name="expand" /><span>전체화면</span>
+        </button>
+      </Html>}
+    </group>
     {!selected && !editing && <Html center position={[0, CENTER_Y, .014]} style={{ pointerEvents: 'none' }}>
       <button ref={trigger} type="button" className="whisky-lecture-trigger" aria-label="Play proposal recording"
         onClick={event => { event.stopPropagation(); if (event.detail === 0) activate(); }} />

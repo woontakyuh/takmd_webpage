@@ -13,6 +13,8 @@ export default defineConfig({
   },
 
   vite: {
+    cacheDir: '.astro/vite',
+    optimizeDeps: { include: ['suncalc'] },
     plugins: [tailwindcss()]
   }
 });

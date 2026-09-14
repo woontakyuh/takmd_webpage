@@ -21,19 +21,19 @@ export const CREDENTIAL_ITEMS = [
     id: 'credential-ksns', collection: 'credentials', label: 'Permanent membership',
     title: 'Korean Spinal Neurosurgery Society', date: 'March 12, 2022 · Certificate No. 580',
     description: 'The society certifies Woon Tak Yuh, M.D. as a permanent member.',
-    center: [2.225, 1.974, 3.12], copy: 'left',
+    center: [2.225, 2.154, 3.12], copy: 'left',
   },
   {
     id: 'credential-snu', collection: 'credentials', label: 'Master of Science in Medicine',
     title: 'Seoul National University', date: 'February 26, 2018',
     description: 'Seoul National University conferred the degree of Master of Science in Medicine in recognition of academic achievement and the ability to conduct research.',
-    center: [1.935, 1.974, 3.12], copy: 'upper-right', copyAvoid: 'credential-komiss',
+    center: [1.935, 2.154, 3.12], copy: 'upper-right', copyAvoid: 'credential-komiss',
   },
   {
     id: 'credential-komiss', collection: 'credentials', label: 'Life membership · No. 180',
     title: 'Korean Minimally Invasive Spine Surgery Society', date: 'April 14, 2023',
     description: 'This certificate records Woon Tak Yuh’s life membership No. 180 in KOMISS.',
-    center: [1.5925, 1.929, 3.12], copy: 'right',
+    center: [1.5925, 2.109, 3.12], copy: 'right',
   },
 ] as const satisfies readonly CollectionItem[];
 
@@ -42,26 +42,26 @@ export const AWARD_ITEMS = [
     id: 'award-hallym', collection: 'awards', label: 'Appreciation plaque',
     title: 'Hallym University Dongtan Sacred Heart Hospital', date: 'January 17, 2025',
     description: 'Presented in appreciation of outstanding medical care and dedication during service in the department of neurosurgery, and contributions to its development.',
-    center: [-1.54, 1.428, 3.095], copy: 'left',
+    center: [-1.54, 2.128, 3.095], copy: 'left',
   },
   {
     id: 'award-snuh', collection: 'awards', label: 'Neurosurgery merit award',
     title: 'Seoul National University Hospital', date: 'February 28, 2023',
     description: 'A merit award presented by the Department of Neurosurgery at Seoul National University Hospital.',
-    center: [-1.875, 1.45, 3.115], copy: 'bottom',
+    center: [-1.875, 2.15, 3.115], copy: 'bottom',
   },
   {
     id: 'award-komiss', collection: 'awards', label: 'Lifetime membership · No. 180',
     title: 'Korean Minimally Invasive Spine Surgery Society', date: 'April 14, 2023',
     description: 'This award marks Woon Tak Yuh’s lifetime membership No. 180 in KOMISS.',
-    center: [-2.21, 1.445, 3.115], copy: 'right',
+    center: [-2.21, 2.145, 3.115], copy: 'right',
   },
 ] as const satisfies readonly CollectionItem[];
 
 export function collectionInspection(collection: CollectionId, width: number, height: number): SceneInspection {
   const targets = {
-    credentials: [1.91, 1.965, 3.12], awards: [-1.875, 1.45, 3.11],
-    honors: [-1.875, 2.55, 3.12], certificates: [1.875, 2.38, 3.12],
+    credentials: [1.91, 2.145, 3.12], awards: [-1.875, 2.15, 3.11],
+    honors: [-1.875, 2.55, 3.12], certificates: [1.875, 2.52, 3.12],
   } as const;
   const target = targets[collection];
   const verticalFov = width < height ? 60 : 42;

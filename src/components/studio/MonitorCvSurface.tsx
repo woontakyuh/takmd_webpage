@@ -18,11 +18,13 @@ type Props = {
   readonly controlScale?: number;
   readonly hovered?: boolean;
   readonly onSnapshot?: (element: HTMLElement) => Promise<boolean>;
+  readonly autoFocus?: boolean;
+  readonly onEngage?: () => void;
 };
 
 type SurfaceStyle = CSSProperties & { readonly '--monitor-control-scale': number };
 
-export function MonitorCvSurface({ publicationCount, presentationCount, active, onClose, scrollState, controlScale = 1, hovered = false, onSnapshot }: Props) {
+export function MonitorCvSurface({ publicationCount, presentationCount, active, onClose, scrollState, controlScale = 1, hovered = false, onSnapshot, autoFocus = true, onEngage }: Props) {
   const content = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const restoring = useRef(true);
@@ -38,11 +40,11 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
       if (!active) element.scrollTop = 0;
       else if (scrollState) element.scrollTop = scrollState.scrollTop;
       restoring.current = false;
-      if (active) closeButton.current?.focus({ preventScroll: true });
+      if (active && autoFocus) closeButton.current?.focus({ preventScroll: true });
     };
     frame = requestAnimationFrame(restore);
     return () => cancelAnimationFrame(frame);
-  }, [active, scrollState]);
+  }, [active, autoFocus, scrollState]);
   useEffect(() => () => {
     window.clearTimeout(snapshotTimer.current);
     const element = content.current;
@@ -61,7 +63,7 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
     '--monitor-control-scale': controlScale,
   };
   return <section className="monitor-screen-reader" data-active={active} data-hovered={hovered} aria-label="Desk monitor CV reader" style={style}
-    onPointerDown={event => { if (active) event.stopPropagation(); }}
+    onPointerDown={event => { if (active) { event.stopPropagation(); onEngage?.(); } }}
     onWheel={event => { if (active) event.stopPropagation(); }}
     onDoubleClick={event => { if (active) event.stopPropagation(); }}>
     {active && <header className="monitor-screen-header">
@@ -72,6 +74,7 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
       role="region" aria-label="Curriculum Vitae · scroll to read"
       onScroll={event => {
         if (scrollState && active && !restoring.current) scrollState.scrollTop = event.currentTarget.scrollTop;
+        if (active && !restoring.current) onEngage?.();
         if (!active || restoring.current || !onSnapshot) return;
         const element = event.currentTarget;
         if (snapshotTimer.current === 0) onSnapshot(element);

@@ -1,4 +1,4 @@
-export const BOOK_SHELF_CENTER = [-1.875, 2.145, 3.004] as const;
+export const BOOK_SHELF_CENTER = [-1.875, 1.845, 3.004] as const;
 const SHELF_REACH = 1.2;
 const CLICK_DRAG_THRESHOLD = 5;
 

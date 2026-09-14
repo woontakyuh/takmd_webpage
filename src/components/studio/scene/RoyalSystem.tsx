@@ -27,7 +27,6 @@ const SIDE_BAY_WIDTH = 1.05;
 const SHELF_DEPTH = 0.3;
 const SHELF_THICKNESS = 0.019;
 const LOWER_SHELF_TOP = 0.82;
-const AWARD_SHELF_TOP = 1.3025;
 const CABINET_WIDTH = SIDE_BAY_WIDTH;
 const CABINET_DEPTH = 0.38;
 const CABINET_HEIGHT = 0.424;
@@ -35,7 +34,7 @@ const CABINET_HEIGHT = 0.424;
 const FULL_RAIL_X = [-2.40, -1.35, 1.35, 2.40] as const;
 const SHORT_RAIL_X = [0] as const;
 const LEFT_LEVELS = [1.3, 1.7, 2.0, 2.4] as const;
-const RIGHT_LEVELS = [AWARD_SHELF_TOP, 1.82, 2.26] as const;
+const RIGHT_LEVELS = LEFT_LEVELS;
 
 type RoyalSystemProps = { readonly wood: Texture; readonly onAwardPhoto: () => void } & Pick<StudioSceneProps, 'selected' | 'reducedMotion'>;
 type CabinetKind = 'push' | 'sliding' | 'drawers';
@@ -63,7 +62,7 @@ export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: Roy
         width={CENTER_SHELF_WIDTH} wood={wood} />)}
     </group>
 
-    <group name="asymmetric-open-side-shelving">
+    <group name="symmetric-open-side-shelving">
       {LEFT_LEVELS.map(top => <Shelf key={`left-${top}`} centerX={-1.875} top={top}
         width={SIDE_BAY_WIDTH} wood={wood} />)}
       {RIGHT_LEVELS.map(top => <Shelf key={`right-${top}`} centerX={1.875} top={top}
@@ -76,17 +75,17 @@ export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: Roy
       <Suspense fallback={null}><CertificateFrames /></Suspense>
       <Suspense fallback={null}><AwardCeremonyPhoto onOpen={onAwardPhoto} selected={selected} reducedMotion={reducedMotion} /></Suspense>
       <CollectionInspectionItem item={AWARD_ITEMS[0]}>
-        <group name="Hallym appreciation display" position={[-1.54, LEFT_LEVELS[0], 3.095]} rotation={[0, Math.PI, 0]}>
+        <group name="Hallym appreciation display" position={[-1.54, LEFT_LEVELS[2], 3.095]} rotation={[0, Math.PI, 0]}>
           <HallymPlaque />
         </group>
       </CollectionInspectionItem>
       <CollectionInspectionItem item={AWARD_ITEMS[1]}>
-        <group name="SNUH merit display" position={[-1.875, LEFT_LEVELS[0], 3.115]} rotation={[0, Math.PI, 0]}>
+        <group name="SNUH merit display" position={[-1.875, LEFT_LEVELS[2], 3.115]} rotation={[0, Math.PI, 0]}>
           <SnuhAward />
         </group>
       </CollectionInspectionItem>
       <CollectionInspectionItem item={AWARD_ITEMS[2]}>
-        <group name="KOMISS membership display" position={[-2.21, LEFT_LEVELS[0], 3.115]} rotation={[0, Math.PI, 0]}>
+        <group name="KOMISS membership display" position={[-2.21, LEFT_LEVELS[2], 3.115]} rotation={[0, Math.PI, 0]}>
           <KomissAward />
         </group>
       </CollectionInspectionItem>

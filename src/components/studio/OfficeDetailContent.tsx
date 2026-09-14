@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react';
 import surgerySummary from '../../data/public-surgery-summary.json';
 import { getWorkshop, workshops } from '../../data/workshops';
+import { sessionsFor, workshopSessions } from '../../data/workshop-sessions';
+import { curriculumStages } from '../../data/workshop-curriculum';
+import { sessionCover } from '../workshops/presentation';
 import { contactCards, models, principles } from './officeDetailData';
 import type { NoteBlock, OfficeNote } from './officeNotes';
 
@@ -19,16 +22,19 @@ export function ContactDetails() {
 
 export function WorkshopDetails({ slug }: { readonly slug: string }) {
   const workshop = getWorkshop(slug);
+  const sessions = workshop ? sessionsFor(workshop.slug) : workshopSessions;
+  const completed = sessions.filter(session => session.status === 'held');
+  const cover = [...completed].reverse().map(session => sessionCover(session.id)).find(Boolean);
+  const stage = curriculumStages.find(stage => 'slug' in stage && stage.slug === slug);
   return <>
-    {workshop && <>
-      <p className="studio-kicker">Workshop corner / {workshop.objectLabel}</p>
-      <h3 className="reader-detail-title">{workshop.title}</h3>
-      <p className="studio-panel-intro">{workshop.description}</p>
-      <section className="studio-editorial-note"><span>Current status</span><h3>자료 준비 중</h3><p>Workshop photos and teaching materials will be added here.</p></section>
-      <section className="studio-editorial-note"><span>Workshop focus</span><h3>Training topics.</h3><ul className="office-detail-list">{workshop.focus.map(item => <li key={item}>{item}</li>)}</ul></section>
-    </>}
-    <nav className="reader-list" aria-label="Workshop index">{workshops.filter(item => item.slug !== slug).map(item => <a className="reader-record-button" href={`/workshops/${item.slug}`} key={item.slug}><span className="studio-kicker">{item.objectLabel}</span><strong>{item.title}</strong><span>{item.description}</span></a>)}</nav>
-    <a className="studio-panel-footer" href="/education">Education and teaching<span aria-hidden="true">→</span></a>
+    <p className="studio-kicker">Spinoscopy Workshop Team{workshop ? ` / Stage ${workshop.stage}` : ''}</p>
+    <h3 className="reader-detail-title">{workshop?.title ?? 'From simulation to surgical practice.'}</h3>
+    <p className="studio-panel-intro">{stage?.summary ?? 'Textbook and video, OR observation, dummy simulation, live animal and cadaver labs — a continuous teaching program for endoscopic spine surgery.'}</p>
+    {cover && <img className="workshop-room-photo" src={cover.thumb} width={cover.width} height={cover.height} alt="Workshop faculty and participants" loading="lazy" />}
+    <p className="office-detail-source">{completed.length} completed {completed.length === 1 ? 'session' : 'sessions'}{completed.length > 0 ? ` · ${completed[0].date.slice(0, 4)}–${completed[completed.length - 1].date.slice(0, 4)}` : ''}{sessions.some(session => session.status === 'planned') ? ' · Next: 19 December 2026' : ''}</p>
+    {workshop && <ul className="office-detail-list">{workshop.focus.map(item => <li key={item}>{item}</li>)}</ul>}
+    <a className="studio-panel-footer" href={workshop ? `/workshops/${workshop.slug}` : '/workshops'} target="_blank" rel="noopener noreferrer">Explore the workshop portfolio<span aria-hidden="true">↗</span></a>
+    <nav className="office-detail-links" aria-label="Workshop themes">{workshops.filter(item => item.slug !== slug).map(item => <a href={`/workshops/${item.slug}`} key={item.slug}>{item.title} →</a>)}</nav>
   </>;
 }
 

@@ -3,10 +3,10 @@ import type { CameraPose } from './scene/config';
 export type OfficeEntryPhase = 'seated' | 'revealing' | 'complete' | 'capture';
 
 export const DESKTOP_ENTRY: CameraPose = {
-  position: [0.10, 1.28, -2.85], target: [-0.05, 1.10, -0.9], zoom: 1,
+  position: [-0.05, 1.187, -2.014], target: [-0.05, 1.155, -1.214], zoom: 1,
 };
 export const MOBILE_ENTRY: CameraPose = {
-  position: [0.10, 1.32, -3.10], target: [-0.05, 1.16, -0.9], zoom: 1,
+  position: [-0.05, 1.27, -2.93], target: [-0.05, 1.13, -0.9], zoom: 1,
 };
 
 export function officeEntryPhase(url: URL): OfficeEntryPhase {

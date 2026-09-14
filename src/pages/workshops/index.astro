@@ -1,0 +1,30 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { curriculumStages, type CurriculumStage } from '../../data/workshop-curriculum';
+import { workshopTeam } from '../../data/workshop-team';
+import { workshopSessions, type WorkshopSession } from '../../data/workshop-sessions';
+import { facultyAppearances, type FacultyAppearance } from '../../data/workshop-faculty-appearances';
+import { sessionCover, workshopDate } from '../../components/workshops/presentation';
+import Outcomes from '../../components/workshops/Outcomes.astro';
+import AppearanceCard from '../../components/workshops/AppearanceCard.astro';
+import '../../components/workshops/workshops.css';
+const sessions: readonly WorkshopSession[] = workshopSessions;
+const stages: readonly CurriculumStage[] = curriculumStages;
+const appearances: readonly FacultyAppearance[] = facultyAppearances;
+const hero = sessionCover('2026-06-13-dummy');
+---
+<Layout documentPage title="ESS Workshops - Woon Tak Yuh, MD" description="The Spinoscopy Workshop Team: a five-stage curriculum in endoscopic spine surgery, session records, and participant perspectives.">
+  <main id="main-content" class="workshop-portfolio page-shell">
+    <header class="wk-hero">
+      <a class="wk-back" href="/education">← Education</a>
+      <div class="wk-hero-grid"><div><p class="eyebrow">{workshopTeam.name}</p><h1>A place to begin.<br />A method to build on.</h1><p class="lede">ESS Workshop for Beginners</p><p class="wk-ko" lang="ko">척추 내시경 수술, 기초에서 실습까지.</p><p class="mt-6">{workshopTeam.summary}</p></div>
+      {hero && <figure><img src={hero.src} width={hero.width} height={hero.height} alt="Faculty and participants at the 13 June 2026 dummy workshop" fetchpriority="high" /><figcaption>13 June 2026 · Hallym University Dongtan Sacred Heart Hospital</figcaption></figure>}</div>
+    </header>
+    <section class="wk-section" aria-labelledby="curriculum-heading"><p class="eyebrow">The curriculum</p><h2 id="curriculum-heading">Five stages. One continuous practice.</h2><ol class="wk-curriculum">{stages.map(stage => <li><span class="wk-step">0{stage.n}</span><h3>{stage.slug ? <a href={`/workshops/${stage.slug}`}>{stage.title} ↗</a> : stage.title}</h3><p lang="ko">{stage.titleKo}</p><p>{stage.summary}</p></li>)}</ol></section>
+    <section class="wk-section" aria-labelledby="timeline-heading"><div class="wk-section-heading"><div><p class="eyebrow">The program, in sequence</p><h2 id="timeline-heading">Learning together, session by session.</h2></div><p>Eight completed sessions and a planned cadaver workshop. Explore each session for its teaching program and photographs.</p></div><ol class="wk-timeline">{sessions.map(session => { const cover = sessionCover(session.id); return <li data-planned={session.status === 'planned'}><a href={`/workshops/${session.workshop}#${session.id}`}><div><span class="eyebrow">Session {String(session.seriesNo).padStart(2, '0')}</span><time datetime={session.date}>{workshopDate(session.date)}</time></div><div><h3>{session.title}</h3>{session.titleKo && <p class="wk-ko" lang="ko">{session.titleKo}</p>}{session.venue && <p class="wk-location">{session.venue.name} · {session.venue.city}</p>}{session.trainees && <p class="wk-small">{session.trainees.count} trainees</p>}{session.status === 'planned' && <span class="tag">Planned</span>}</div>{cover && <img src={cover.thumb} width="140" height="105" alt={`${session.title} — group photograph`} loading="lazy" />}</a></li>; })}</ol></section>
+    <Outcomes />
+    <section class="wk-section" aria-labelledby="next-heading"><p class="eyebrow">Looking ahead</p><h2 id="next-heading">The next steps.</h2><div class="wk-upcoming">{sessions.filter(s => s.status === 'planned').map(s => <article class="wk-appearance"><p class="eyebrow">{workshopDate(s.date)} · Team program · Planned</p><h3>{s.title}</h3>{s.titleKo && <p lang="ko">{s.titleKo}</p>}<p>{s.audience}</p><a class="wk-link" href={`/workshops/${s.workshop}#${s.id}`}>Explore the cadaver stage ↗</a></article>)}{appearances.filter(a => a.status === 'planned' && a.relation === 'team-support').map(a => <div><p class="eyebrow">Faculty support · External congress</p><AppearanceCard appearance={a} /></div>)}</div></section>
+    <section class="wk-section" aria-labelledby="faculty-heading"><p class="eyebrow">Faculty</p><h2 id="faculty-heading">{workshopTeam.name}</h2><div class="wk-faculty">{workshopTeam.members.map(member => <article><h3>{member.name}</h3><p lang="ko">{member.nameKo}</p><p>{member.affiliation}</p></article>)}</div><p class="mt-6"><a class="wk-link" href="/workshops/cadaver">Also teaching at · Taiwan, Spine Summit & CGBIO ↗</a></p></section>
+    <nav class="wk-navigation" aria-label="Workshop modalities"><a href="/workshops/dummy">Dummy simulation ↗</a><a href="/workshops/animal-pig">Live animal lab ↗</a><a href="/workshops/cadaver">Cadaver lab ↗</a><a href="/#studio">Return to the office ↗</a></nav>
+  </main>
+</Layout>

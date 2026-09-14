@@ -1,3 +1,15 @@
+# Workshop pages and room music checkpoint — 14 September 2026
+
+Claude workshop data merged from origin/claude/work without editing content/workshops, public/images/workshops or workshop data. Standalone /workshops and three slug pages now render full session/program/photo/outcome content; room readers remain concise themes with portfolio links. Layout documentPage opts these routes into actual Astro page content.
+
+CD entry is two-stage: first approach shows player + rack, then choose player or collection. User rejected the boxed collection: current CoverFlow is transparent, with optional tracks on centered-cover tap and Escape back hierarchy. Portrait covers sit directly under the player (38dvh). Mobile controller is unboxed previous/play-pause/next with optional volume. Overview music toggle remains available before playback; no autoplay. Proposal labels are Korean, fullscreen sits at the video corner; iOS uses device volume buttons instead of an ineffective slider.
+
+Right shelf order: top certificates, awards immediately below, books below that, symmetric shelf levels. Desktop seated monitor entry is larger/front-facing, can scroll CV without an extra click. Rejected annual artwork calendar is not mounted; original painting asset and draft remain local, pending frame placement.
+
+Evidence: .omo/evidence/workshop-pages-2026-09-14/ and .omo/evidence/entry-front-proposal-labels-2026-09-14/. Root/export source fingerprint must match before release. Physical iPhone/Safari performance is not certified by desktop Chrome touch/viewport checks.
+
+Next requested work AFTER this checkpoint: verify latest JMISST endoscopic cervical decompression paper and Scientific Reports DOI failures; separate overall research metrics/archive from per-paper actions and content. Replace guided labels/destinations with Research & Teaching, UBE Training, Music & Stories; approach meaningful groups, do not auto-open readers. Consider original artwork in a small frame rather than the removed annual calendar; placement is not finalized.
+
 # Initial music sightline, Safari and steady rendering — 13 September 2026
 
 Five additional owner-photographed awards are now on the top shelves: SNU 2018 master's plaque, Neurospine 2025 reviewer award, KOSESS 2025 best-paper certificate, WCMISST 2026 speaker certificate and TSESS 2026 instructor certificate. IMG_0986 thank-you card was explicitly excluded. Source-only rectification/provenance and desktop/mobile inspection evidence: `.omo/evidence/new-awards-2026-09-13/`. Existing frames and two-stage group/item inspection are reused; SNU has a separate stepped wood/metal/rod model. Dimensions are photo-based estimates.
@@ -292,21 +304,3 @@ Current source and browser evidence: `.omo/evidence/whisky-half-width-2026-09-09
 Final release receipt will be stored there as `release.json` after push/deployment verification. The local plan is `.omo/plans/whisky-cabinet-half-width-2026-09-09.md`.
 
 Unrelated pre-existing reference folders and unused Beolab experiments remain untouched. Continue with the owner's next visual feedback; broader Han River skyline realism remains a previously deferred topic.
-
-## 2026-09-14 — CD collection and south-bank completion
-
-User selected backlog items 2 and 3: a physical CD rack / replacement flow, and the missing Maple Xi / Raemian Trinione apartment blocks. Six original songs and click-only start are preserved. `BeosoundRack.tsx` owns jewel cases and a responsive collection picker; state commits slot changes after the glass/transfer sequence, moving a loaded disc leaves its old slot empty, outgoing albums return to the collection. Audio continuation skips empties, exchange cancels pending playback, and two native media elements remain the limit. Library IDs are separate from the six hardware slots. No new music was added.
-
-`banpo-completion-plans.json` and `banpoPlanCompletion.ts` add all 29 Maple / 17 Trinione labeled blocks, using official/municipal plan traces registered to mapped parcels. The 950 prior mapped objects remain, for 996 total; construction50 and trees215 unchanged. Trinione maxima use official floor diagram; Maple mostly uses the35-floor envelope estimate (114=20). Footprints, facade details, lower-wing stepping and metric heights remain approximations. See `public/models/han-river/SOUTH-BANK.md` for explicit primary sources and limits.
-
-Evidence: `.omo/evidence/cd-rack-south-bank-2026-09-14/`. 36 scoped tests passed, check0errors/0warnings/21hints. Browser audio checks: no media on entry; Radiohead placed intoCD1; native end skips emptyCD3; closing inspection mid-transfer finishes silently; two-stage Escape. Viewports1280×900/390×844 day,844×390/768×1024 night reduced-motion. A landscape panel clipping defect was fixed before two independent review passes concluded PASS. South layer:8draws,47912triangles, no added rendering batches or shadows. Desktop window diagnostics require viewport settling; final1440 captures are distinct and match requested poses.
-
-Physical iPhone/Safari long-duration heating/crash verification is still separate and not certified by these desktop browser checks. New album audio, arbitrary full-album track lists, and UI uploads were not requested or added in this pass. Local4336 dev; preserve user's4322 preview and4325 comparison. Release commands/evidence in build.txt and subsequent release-report.json; do not claim deployment until that evidence exists.
-
-## 2026-09-14 — Nine-album CD collection
-
-The approved rack/booklet exchange experience supersedes the six-case picker above. Slanted walnut rack, nine browsable cases, selected case forward, actual covers and complete ordered album catalogs; six existing audio files remain separately mapped. Added NELL Separation Anxiety, Maroon 5 Songs About Jane, John Mayer Continuum without audio. Album placement uses unique six-slot transactions, 1.4s exchange, mount-only elsewhere preserves sound, explicit selected-track exchange starts after arrival, latest pending command wins. Versioned/validated localStorage restores placement silently. Album controls and a small room-wide title/pause control remain accessible; native ended advances available tracks/slots. Escape closes the slot picker, then booklet, then inspection.
-
-Evidence `.omo/evidence/cd-collection-2026-09-14/`: 36 unit tests, check0errors/0warnings, 40 all-album/scroll/transaction screenshots plus landscape/player/WebKit captures. Native Chrome validates playback, background placement, selected-track exchange, queued commands, ended wrap, mini-player pause and silent reload. Edge cases validate denied localStorage, real pointer drag, keyboard arrows/Escape, aborted media/retry and volume/mute. Desktop WebKit verifies touch viewport, reduced motion, first playback after unmounted-disc exchange, pause/resume. Physical iPhone and long-duration thermal performance are not certified. New audio files remain the only missing input for the three added albums.
-
-Public export builds at `/var/folders/s8/9t_k2tfx3rb66nkt0w1fwsy00000gn/T/takmd-reader-cabinet-naw34jo0`; it excludes unrelated local references and passes the public build boundary. Port4338 serves that built export,4322 serves rootdist,4336dev;4325 comparison untouched. Release details belong in this evidence directory's release-report.json only after verified push/provider/live checks.

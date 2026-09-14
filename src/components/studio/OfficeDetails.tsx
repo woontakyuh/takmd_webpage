@@ -23,6 +23,7 @@ export function officeDetailsTitle(path: string): string {
   const url = new URL(path, 'https://takmd.com');
   const pathname = url.pathname.replace(/\/$/, '');
   switch (pathname) {
+    case '/workshops': return 'ESS Workshops';
     case '/cv': return 'Curriculum Vitae';
     case '/contact': return 'Contact.';
     case '/credits': return 'Scene credits.';

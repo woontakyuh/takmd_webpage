@@ -17,6 +17,7 @@ const programs = [
   },
   {
     title: 'ESS Workshop for Beginners',
+    href: '/workshops',
     description: 'Government-funded national project with Incheon Technopark and Hayan Co., Ltd. for Korean surgeons.',
     tags: ['Beginner', 'Korea'],
   },
@@ -33,7 +34,7 @@ const programs = [
 ];
 ---
 
-<Layout title="Education - Woon Tak Yuh, MD" description="Global endoscopic spine surgery education programs, workshops, and teaching appearances.">
+<Layout documentPage title="Education - Woon Tak Yuh, MD" description="Global endoscopic spine surgery education programs, workshops, and teaching appearances.">
   <main id="main-content">
     <section class="page-shell page-section">
       <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
@@ -78,7 +79,7 @@ const programs = [
       />
       <div class="grid gap-4 md:grid-cols-2">
         {programs.map((program) => (
-          <Card title={program.title} description={program.description} tags={program.tags} />
+          <Card title={program.title} description={program.description} tags={program.tags} href={program.href} />
         ))}
       </div>
     </section>

@@ -1,4 +1,3 @@
-import { OfficeIcon } from '../OfficeIcon';
 import type { useProposalPlayback } from './useProposalPlayback';
 import './proposal-playback.css';
 
@@ -15,11 +14,10 @@ export function ProposalPlaybackControls({ playback }: { readonly playback: Retu
       <output>{clock(state.time)} / {clock(state.duration)}</output>
     </div>
     <div className="proposal-playback-actions">
-      <button type="button" onClick={playback.toggle} aria-label={state.playing ? 'Pause recording' : 'Play recording'}>{state.playing ? 'Pause' : 'Play'}</button>
+      <button type="button" onClick={playback.toggle} aria-label={state.playing ? '영상 정지' : '영상 재생'}>{state.playing ? '정지' : '재생'}</button>
       <button type="button" onClick={playback.mute} aria-label={state.muted ? 'Unmute recording' : 'Mute recording'}>{state.muted ? 'Sound off' : 'Sound on'}</button>
-      <input aria-label="Recording volume" type="range" min="0" max="1" step="0.05"
-        value={state.muted ? 0 : state.volume} onChange={event => playback.volume(event.currentTarget.valueAsNumber)} />
-      <button type="button" onClick={playback.fullscreen} disabled={!state.duration} aria-label="Watch recording fullscreen"><OfficeIcon name="expand" /></button>
+      {playback.systemVolume ? <span className="proposal-system-volume">기기 음량 버튼으로 조절</span> : <input aria-label="Recording volume" type="range" min="0" max="1" step="0.05"
+        value={state.muted ? 0 : state.volume} onChange={event => playback.volume(event.currentTarget.valueAsNumber)} />}
     </div>
     {(state.message || !state.duration) && <p className="proposal-playback-message" role="status">{state.message || 'Loading recording…'}</p>}
   </div>;

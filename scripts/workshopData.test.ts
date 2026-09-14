@@ -22,10 +22,10 @@ assert.equal(getWorkshop('cadaver')?.defaultVenue, undefined);
 
 // --- workshop-curriculum.ts ---
 assert.deepEqual(curriculumStages.map((s) => s.n), [1, 2, 3, 4, 5]);
-assert.deepEqual(curriculumStages.map((s) => s.slug), [undefined, undefined, 'dummy', 'animal-pig', 'cadaver']);
+assert.deepEqual(curriculumStages.map((s) => 'slug' in s ? s.slug : undefined), [undefined, undefined, 'dummy', 'animal-pig', 'cadaver']);
 for (const s of curriculumStages) assert.ok(s.title && s.titleKo, `stage ${s.n} titles`);
 for (const s of curriculumStages) {
-  if (s.slug) assert.equal(getWorkshop(s.slug)?.stage, s.n, `stage ${s.n} agrees with workshops.ts`);
+  if ('slug' in s && s.slug) assert.equal(getWorkshop(s.slug)?.stage, s.n, `stage ${s.n} agrees with workshops.ts`);
 }
 assert.deepEqual(competencyKeys, ['anatomy', 'instrumentation', 'access', 'boneWork', 'softTissue', 'safety']);
 assert.deepEqual(competencyDomains.map((d) => d.key), [...competencyKeys]);
@@ -52,7 +52,7 @@ workshopSessions.forEach((s, i) => {
   if (i > 0) assert.ok(s.date > workshopSessions[i - 1].date, `ascending dates at ${s.id}`);
   assert.ok(s.title && s.audience && s.role && s.sources.length > 0, `required text at ${s.id}`);
   if (s.status === 'held') assert.ok(s.venue, `held session has venue at ${s.id}`);
-  if (s.trainees) assert.ok(s.trainees.count > 0, `trainee count at ${s.id}`);
+  if ('trainees' in s && s.trainees) assert.ok(s.trainees.count > 0, `trainee count at ${s.id}`);
   for (const src of s.sources) assert.ok(!/[/\\]|notion\.|[0-9a-f]{32}/i.test(src), `sources are memos, not paths/ids at ${s.id}: ${src}`);
 });
 for (const slug of workshopSlugs) {
@@ -91,7 +91,7 @@ assert.deepEqual(facultyAppearances.map((a) => a.relation).sort(), ['individual'
 for (const a of facultyAppearances) {
   assert.ok(a.id && a.event && a.date && a.venue.country, `required at ${a.id}`);
   assert.ok(workshopSlugs.includes(a.modality), `modality at ${a.id}`);
-  if (a.links?.presentationId) assert.ok(presentationIds.has(a.links.presentationId), `presentation exists for ${a.id}`);
+  if ('links' in a && a.links?.presentationId) assert.ok(presentationIds.has(a.links.presentationId), `presentation exists for ${a.id}`);
   if (a.relation === 'team-dispatch') assert.ok(a.requestedBy, 'dispatch records who asked');
   for (const src of a.sources) assert.ok(!/[/\\]|notion\.|[0-9a-f]{32}/i.test(src), `sources are memos at ${a.id}`);
 }

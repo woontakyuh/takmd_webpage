@@ -19,3 +19,5 @@
 .office-details a:focus-visible, .personal-reader :is(button, select, summary):focus-visible { outline: 2px solid var(--studio-teal); outline-offset: 4px; }
 .office-details .studio-text-link { overflow-wrap: anywhere; }
 .office-details .reader-filter, .personal-reader .reader-filter { flex-wrap: wrap; }
+
+.workshop-room-photo { display: block; width: 100%; height: auto; margin: 20px 0 12px; }

@@ -1,0 +1,25 @@
+---
+import type { WorkshopSession } from '../../data/workshop-sessions';
+import { sessionPhotos, workshopDate } from './presentation';
+interface Props { session: WorkshopSession }
+const { session: s } = Astro.props;
+const images = sessionPhotos(s.id);
+---
+<article class="wk-session" id={s.id} data-session={s.id}>
+  <div class="wk-session-date"><span class="eyebrow">Session {String(s.seriesNo).padStart(2, '0')}</span><time datetime={s.date}>{workshopDate(s.date)}</time>{s.status === 'planned' && <span class="tag">Planned</span>}</div>
+  <div class="wk-session-body">
+    <h3>{s.title}</h3>{s.titleKo && <p class="wk-ko" lang="ko">{s.titleKo}</p>}
+    {s.venue && <p class="wk-location">{s.venue.name} · {s.venue.city}</p>}
+    <p>{s.audience}</p>
+    <dl class="wk-facts">
+      {s.host?.length && <div><dt>Host</dt><dd>{s.host.join(' · ')}</dd></div>}
+      {s.organizers?.length && <div><dt>Organizers</dt><dd>{s.organizers.join(' · ')}</dd></div>}
+      <div><dt>Role</dt><dd>{s.role}</dd></div>
+      {s.trainees && <div><dt>Trainees</dt><dd>{s.trainees.count}</dd></div>}
+      {s.certification && <div><dt>Closing</dt><dd>Completion ceremony & certificates</dd></div>}
+    </dl>
+    {s.lectures?.length && <div class="wk-program"><h4>Lectures</h4><ul>{s.lectures.map(lecture => <li><strong>{lecture.title}</strong>{lecture.titleKo && <span class="wk-ko" lang="ko">{lecture.titleKo}</span>}<span>{lecture.speaker} · {lecture.affiliation}</span></li>)}</ul></div>}
+    {s.handsOn && <div class="wk-program"><h4>Hands-on practice</h4><p>{s.handsOn.format}</p><p class="wk-small">{[s.handsOn.groups && `${s.handsOn.groups} groups`, s.handsOn.sessions && `${s.handsOn.sessions} sessions`, s.handsOn.durationMin && `${s.handsOn.durationMin} minutes`].filter(Boolean).join(' · ')}</p></div>}
+    {images.length > 0 && <div class="wk-photo-grid" aria-label={`Photos from ${workshopDate(s.date)}`}>{images.map(photo => <figure data-photo-role={photo.role}><a href={photo.src} target="_blank" rel="noopener" aria-label={`View ${photo.role} photograph ${photo.order} in full size`}><img src={photo.thumb} srcset={`${photo.thumb} 480w, ${photo.src} ${photo.width}w`} sizes="(max-width: 600px) 44vw, 300px" width={photo.width} height={photo.height} alt={`${s.titleKo ?? s.title} — ${photo.role}, photograph ${photo.order}`} loading="lazy" decoding="async" /></a><figcaption>{photo.role} / {String(photo.order).padStart(2, '0')}</figcaption></figure>)}</div>}
+  </div>
+</article>

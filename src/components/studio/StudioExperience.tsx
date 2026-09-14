@@ -110,7 +110,10 @@ function OfficeExperience(content: StudioContent) {
   const loadingProfileOpen = selected === 'ai' && (loadingProfileSession || !ready || sceneFailed);
   useLayoutEffect(() => { setLoadingProfileSession(loadingProfileOpen); }, [loadingProfileOpen]);
   useEffect(() => {
-    if (posterHidden && entry === 'seated' && !loadingProfileOpen) setEntry('revealing');
+    if (!posterHidden || entry !== 'seated' || loadingProfileOpen) return;
+    const delay = window.matchMedia('(min-width: 760px)').matches ? 4000 : 0;
+    const timer = window.setTimeout(() => setEntry('revealing'), delay);
+    return () => window.clearTimeout(timer);
   }, [entry, loadingProfileOpen, posterHidden]);
   const [zoomed, setZoomed] = useState(false);
   const [explored, setExplored] = useState(false);
@@ -162,7 +165,7 @@ function OfficeExperience(content: StudioContent) {
   const featuredTalk = featuredPresentation(content.presentations);
   const open = useCallback((id: ExhibitId) => {
     if (arrangement.editing) return;
-    if (id !== 'ai' || (ready && entry !== 'seated')) setEntry('complete');
+    if (id !== 'ai' || ready) setEntry('complete');
     const active = document.activeElement;
     returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id === 'bookshelf' ? 'books' : id}`);
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
