@@ -1,3 +1,7 @@
+## Current continuation · Mobile loading · 2026-09-14
+
+Loading status is plain text anchored above the poster monitor with clearance for its light bar with responsive projected geometry; no lower CV or Explore room actions. Mobile poster captures use 2x device pixels and the real HTML CV surface in capture mode, while live mobile DPR stays at 1. Overview moves 12% closer on mobile and 8% on desktop along the existing sight line. Seated opening/reveal, normal Living CV route and explicit audio behavior remain. Evidence: `.omo/evidence/mobile-loading-2026-09-14/`; release is verified only once its receipt exists.
+
 # Upper-right music toolbar correction — 14 September 2026
 
 Supersedes the lower mini-player below. User explicitly placed global play/pause as the FIRST button in the existing upper-right Overview/time/move row. A stable DOM host in that row receives the existing Beosound state through a Drei Html portal; the player remains mounted with the scene. No bottom player or clickable song-title control. Actual playing state shows a masked CSS marquee directly above the button; loading may be cancelled, while pause/error hide the title. SVG icon,44px target,12px corners and colors come from the existing toolbar. Reduced motion uses stationary ellipsis. No audio-engine changes.

@@ -65,7 +65,7 @@ export function StudioScene(props: StudioSceneProps) {
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
     <Canvas ref={canvas} frameloop="never" camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
-      dpr={[1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
+      dpr={props.entry === 'capture' ? 2 : [1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
       <SceneFrameLoop active={visible && (!props.paused || !props.ready)} />

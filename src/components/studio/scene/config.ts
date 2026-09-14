@@ -62,7 +62,7 @@ export const ROOM = {
 } as const;
 
 export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose] = [
-  { position: [5.92035127, 3.4, -5.08863898], target: [-0.15, 1.35, -0.4], zoom: 1 },
+  { position: [5.43472317, 3.236, -4.71354786], target: [-0.15, 1.35, -0.4], zoom: 1 },
   { position: [1.8, 2.3, -3.3], target: [0, 1.35, 2.1], zoom: 1 },
   { position: [0.6, 2.1, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   { position: [0.1, 1.55, -4.2], target: [2.4, 0.75, -1.85], zoom: 1 },
@@ -84,7 +84,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
 };
 
 export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose] = [
-  { position: [13.47100204, 4.2, -10.63075539], target: [0.14683647, 1.25, -0.07298044], zoom: 1 },
+  { position: [11.87210217, 3.846, -9.36382240], target: [0.14683647, 1.25, -0.07298044], zoom: 1 },
   { position: [1.0, 2.6, -7.6], target: [0, 1.5, 2.7], zoom: 1 },
   { position: [2.0, 2.77, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   { position: [-1.35, 2.1, -5.65], target: [2.4, 0.7, -1.85], zoom: 1 },

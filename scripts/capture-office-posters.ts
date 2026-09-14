@@ -78,7 +78,8 @@ async function manifestIsFresh(fingerprint: string): Promise<boolean> {
         throw error;
       }
       const metadata = await sharp(path).metadata();
-      if (metadata.width !== variant.width || metadata.height !== variant.height) return false;
+      const density = variant.id.startsWith('mobile-') ? 2 : 1;
+      if (metadata.width !== variant.width * density || metadata.height !== variant.height * density) return false;
       if (createHash('sha256').update(await readFile(path)).digest('hex') !== expectedHash) return false;
     }
   }
@@ -144,7 +145,7 @@ async function stopServer(child: ChildProcess): Promise<void> {
 async function captureVariant(browser: Browser, baseUrl: string, variant: CaptureVariant, referenceTime: number,
   time: 'day' | 'night', destination: string): Promise<void> {
   const context = await browser.newContext({ viewport: { width: variant.width, height: variant.height },
-      deviceScaleFactor: 1, reducedMotion: 'reduce', timezoneId: 'Asia/Seoul' });
+      deviceScaleFactor: variant.compact ? 2 : 1, reducedMotion: 'reduce', timezoneId: 'Asia/Seoul' });
   try {
     const page = await context.newPage();
     const pageErrors: string[] = [], responseErrors: string[] = [];
@@ -179,10 +180,10 @@ async function captureVariant(browser: Browser, baseUrl: string, variant: Captur
         image.addEventListener('error', () => reject(new Error(`Image failed: ${image.currentSrc}`)), { once: true });
       })));
     });
-    await page.addStyleTag({ content: '.office-poster,.studio-header,.studio-tools,.office-bottom{display:none!important}' });
+    await page.addStyleTag({ content: '.office-poster,.studio-header,.studio-tools,.office-bottom,.monitor-screen-header{display:none!important}' });
     await page.waitForTimeout(1_500);
     if (pageErrors.length || responseErrors.length) throw new PosterPipelineError(`Rendered page errors: ${[...pageErrors, ...responseErrors].join(' | ')}`);
-    await page.screenshot({ path: destination, type: 'png', animations: 'disabled', scale: 'css' });
+    await page.screenshot({ path: destination, type: 'png', animations: 'disabled', scale: 'device' });
   } finally {
     await context.close();
   }

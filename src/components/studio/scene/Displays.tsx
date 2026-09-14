@@ -24,7 +24,7 @@ import { isScreenFocusSettled } from './screenFocus';
 type DisplaysProps = Pick<StudioSceneProps, 'entry' | 'compact' | 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'>;
 
 export function Displays({ entry, compact, ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll }: DisplaysProps) {
-  const entryReader = ready && !compact && !selected && (entry === 'seated' || entry === 'capture');
+  const entryReader = ready && !selected && (entry === 'capture' || (!compact && entry === 'seated'));
   const camera = useThree(state => state.camera);
   const { layout } = useArrangement();
   const monitorMaterial = useRef<MeshStandardMaterial>(null);

@@ -12,13 +12,10 @@ export class SceneBoundary extends Component<{
   render() { return this.state.failed ? null : this.props.children; }
 }
 
-export function OfficePoster({ ready, failed, night, interactive, onProfile, onExplore, onHidden }: {
+export function OfficePoster({ ready, failed, night, onHidden }: {
   readonly ready: boolean;
   readonly failed: boolean;
   readonly night: boolean;
-  readonly interactive: boolean;
-  readonly onProfile: () => void;
-  readonly onExplore: () => void;
   readonly onHidden: () => void;
 }) {
   const poster = useRef<HTMLDivElement>(null);
@@ -41,10 +38,15 @@ export function OfficePoster({ ready, failed, night, interactive, onProfile, onE
       <img src={time === 'night' ? fallback.nightSrc : fallback.daySrc} alt="Seated at the desk, with the CV monitor, keyboard and office TV in view"
         width={fallback.width} height={fallback.height} fetchPriority="high" decoding="async" />
     </picture>
-    <div className="office-poster-status" role="status">
-      <span>{failed ? 'The interactive office is unavailable.' : 'Opening the office…'}</span>
-      <button type="button" disabled={!interactive} onClick={onProfile}>{failed ? 'Explore the profile' : 'Read the CV while the office opens'}</button>
-      {!failed && <button type="button" disabled={!interactive} onClick={onExplore}>Explore room</button>}
-    </div>
+    {OFFICE_POSTER_MANIFEST.variants.map(variant => {
+      const scale = `max(${100 / variant.width}cqw, ${100 / variant.height}cqh)`;
+      const center = variant.monitor.x + variant.monitor.across[0] / 2 - variant.width / 2;
+      const clearance = `max(16px, ${variant.monitor.across[0] * 0.07} * ${scale})`;
+      const top = variant.monitor.y + variant.monitor.across[1] / 2 - variant.height / 2;
+      return <span key={variant.id} className="office-poster-status" data-variant={variant.id} role="status"
+        style={{ left: `calc(50% + ${center} * ${scale})`, top: `calc(50% + ${top} * ${scale} - ${clearance})` }}>
+        {failed ? 'The office couldn’t open. Please reload.' : 'Opening the office…'}
+      </span>;
+    })}
   </div>;
 }
