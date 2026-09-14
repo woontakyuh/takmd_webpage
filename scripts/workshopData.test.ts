@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { workshops, workshopSlugs, getWorkshop } from '../src/data/workshops';
+import { curriculumStages, competencyDomains, competencyKeys } from '../src/data/workshop-curriculum';
 
 // --- workshops.ts ---
 assert.deepEqual(workshopSlugs, ['dummy', 'cadaver', 'animal-pig'], 'slug contract used by WorkshopObjects.tsx');
@@ -13,4 +14,16 @@ assert.equal(getWorkshop('dummy')?.defaultVenue?.city, 'Hwaseong');
 assert.equal(getWorkshop('animal-pig')?.defaultVenue?.city, 'Incheon');
 assert.equal(getWorkshop('cadaver')?.defaultVenue, undefined);
 
-console.log('workshopData: workshops.ts checks passed');
+
+// --- workshop-curriculum.ts ---
+assert.deepEqual(curriculumStages.map((s) => s.n), [1, 2, 3, 4, 5]);
+assert.deepEqual(curriculumStages.map((s) => s.slug), [undefined, undefined, 'dummy', 'animal-pig', 'cadaver']);
+for (const s of curriculumStages) assert.ok(s.title && s.titleKo, `stage ${s.n} titles`);
+for (const s of curriculumStages) {
+  if (s.slug) assert.equal(getWorkshop(s.slug)?.stage, s.n, `stage ${s.n} agrees with workshops.ts`);
+}
+assert.deepEqual(competencyKeys, ['anatomy', 'instrumentation', 'access', 'boneWork', 'softTissue', 'safety']);
+assert.deepEqual(competencyDomains.map((d) => d.key), [...competencyKeys]);
+for (const d of competencyDomains) assert.ok(d.label && d.labelKo, `domain ${d.key} labels`);
+
+console.log('workshopData: all checks passed');
