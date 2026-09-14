@@ -49,3 +49,12 @@
  .cd-booklet:has(.cd-open-case) .cd-cover-flow { display: none; }
  .cd-open-case { max-height: 34dvh; }
 }
+
+@media (min-width: 760px) {
+ .cd-booklet[data-tracks-open="true"] { width: min(1120px, calc(100vw - 48px)); display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); column-gap: 28px; }
+ .cd-booklet[data-tracks-open="true"] > .cd-cover-flow { grid-column: 1; grid-row: 1; }
+ .cd-booklet[data-tracks-open="true"] > .cd-selection-caption { grid-column: 1; grid-row: 2; }
+ .cd-booklet[data-tracks-open="true"] > .cd-open-case { grid-column: 2; grid-row: 1 / 3; width: 100%; align-self: stretch; max-height: min(350px, 42dvh); }
+ .cd-booklet[data-tracks-open="true"] > .cd-slot-picker, .cd-booklet[data-tracks-open="true"] > .cd-collection-status { grid-column: 1 / -1; }
+ .cd-booklet[data-tracks-open="true"] .cd-track-heading { flex-direction: column; gap: 0; }
+}

@@ -30,6 +30,7 @@ export type BeosoundAction =
   | { readonly type: 'exchange-complete' | 'exchange-settle' }
   | { readonly type: 'disc'; readonly disc: CdSlot }
   | { readonly type: 'prepare'; readonly disc: CdSlot }
+  | { readonly type: 'track-step'; readonly direction: -1 | 1 }
   | { readonly type: 'step'; readonly direction: -1 | 1 }
   | { readonly type: 'volume'; readonly delta: -1 | 1 }
   | { readonly type: 'volume'; readonly value: number }
@@ -65,6 +66,15 @@ export function beosoundReducer(state: BeosoundState, action: BeosoundAction): B
     }
     case 'prepare': return { ...state, carriageDisc: action.disc };
     case 'disc': return { ...state, track: firstPlayableTrack(state.slots[action.disc - 1]) ?? 1, transportRequest: state.transportRequest + 1, disc: action.disc, carriageDisc: action.disc, doorOpen: false, display: 'disc', playback: firstPlayableTrack(state.slots[action.disc - 1]) ? 'loading' : 'stopped' };
+    case 'track-step': {
+      const album = state.slots[state.disc - 1];
+      if (!album) return state;
+      const tracks = BEOSOUND_ALBUMS[album].tracks.filter(track => trackAudio(album, track.number));
+      if (tracks.length < 2) return state;
+      const index = tracks.findIndex(track => track.number === state.track);
+      const next = tracks[(index + action.direction + tracks.length) % tracks.length];
+      return next ? beosoundReducer(state, { type: 'track', disc: state.disc, track: next.number }) : state;
+    }
     case 'step': return beosoundReducer(state, { type: 'disc', disc: nextLoadedSlot(state, action.direction) ?? state.disc });
     case 'volume': return { ...state, volume: Math.max(0, Math.min(90, 'value' in action ? action.value : state.volume + action.delta)), muted: false, display: 'volume' };
     case 'mute': return { ...state, muted: !state.muted, display: 'volume' };

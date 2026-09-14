@@ -163,3 +163,14 @@ describe('Beosound 9000 physical CD controller', () => {
     expect(bounds.max.z).toBeLessThan(.15);
   });
 });
+
+it('steps through playable tracks without changing the mounted CD', () => {
+  const state = { ...INITIAL_BEOSOUND, slots: [8, 7, 3, 4, 5, 6], track: 16, playback: 'playing' };
+  const first = beosoundReducer(state, { type: 'track-step', direction: 1 });
+  expect(first).toMatchObject({ disc: 1, track: 1, playback: 'loading' });
+  expect(beosoundReducer(first, { type: 'track-step', direction: -1 })).toMatchObject({ disc: 1, track: 16 });
+  const nell = { ...state, disc: 2, track: 3 };
+  expect(beosoundReducer(nell, { type: 'track-step', direction: 1 })).toMatchObject({ disc: 2, track: 5 });
+  const single = { ...INITIAL_BEOSOUND, track: 3 };
+  expect(beosoundReducer(single, { type: 'track-step', direction: 1 })).toBe(single);
+});

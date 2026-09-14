@@ -5,8 +5,8 @@ import type { BeosoundAction, BeosoundState } from './Beosound9000State';
 export const BEOSOUND_PANEL_KEYS = [
   { label: 'PLAY', name: 'Play selected CD', x: 780, y: 82, action: { type: 'play' } },
   { label: 'PAUSE', name: 'Pause CD', x: 930, y: 82, action: { type: 'pause' } },
-  { label: '‹', name: 'Previous CD', x: 1110, y: 82, action: { type: 'step', direction: -1 } },
-  { label: '›', name: 'Next CD', x: 1220, y: 82, action: { type: 'step', direction: 1 } },
+  { label: '‹', name: 'Previous track', x: 1110, y: 82, action: { type: 'track-step', direction: -1 } },
+  { label: '›', name: 'Next track', x: 1220, y: 82, action: { type: 'track-step', direction: 1 } },
   { label: 'MUTE', name: 'Mute music', x: 1400, y: 82, action: { type: 'mute' } },
   { label: 'VOL −', name: 'Decrease volume', x: 1580, y: 82, action: { type: 'volume', delta: -1 } },
   { label: 'VOL +', name: 'Increase volume', x: 1780, y: 82, action: { type: 'volume', delta: 1 } },

@@ -113,7 +113,7 @@ export function useBeosoundAudio() {
     const next = current.current;
     if (next === previous) return;
     switch (action.type) {
-      case 'track': case 'disc': case 'step': case 'play': {
+      case 'track': case 'track-step': case 'disc': case 'step': case 'play': {
         const generation = ++request.current, url = selectedAudio(next);
         clearTimer(); prepared.current = null;
         const old = media.current?.decks[media.current.active];

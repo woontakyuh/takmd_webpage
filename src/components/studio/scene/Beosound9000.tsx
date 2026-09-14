@@ -74,7 +74,7 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
     {state.exchange && <BeosoundExchange key={state.transportRequest} onSettle={() => dispatch({ type: 'exchange-settle' })} exchange={state.exchange} reducedMotion={reducedMotion} onComplete={() => dispatch({ type: 'exchange-complete' })} />}
     <group ref={setBody} position={[0, B.bracketHeight, 0]} rotation={[B.tilt, 0, 0]} {...handlers}>
       <Beosound9000Geometry state={state} disabled={editing || state.exchange !== null} reducedMotion={reducedMotion} onSelect={select} onCarriageReady={onCarriageReady} />
-      <Beosound9000Controls active={active && !libraryOpen} disabled={editing || state.exchange !== null || libraryOpen}
+      <Beosound9000Controls active={active} disabled={editing || state.exchange !== null}
         dispatch={dispatch} onApproach={open} onClose={back} />
       {!active && !editing && <Html position={[-.416, .04, .079]} center occlude={body ? [{ current: body }] : undefined} zIndexRange={[30, 26]}>
         <button className="beosound-entry" type="button" aria-label="Inspect Beosound 9000 CD system"

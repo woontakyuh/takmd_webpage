@@ -34,7 +34,7 @@ export function BeosoundBooklet({ state, album, onAlbum, onClose, dispatch }: {
     if (mounted) dispatch({ type: 'track', disc: mounted, track: number });
     else { setPendingTrack(number); setPlacing(true); }
   };
-  return <section className="cd-booklet" role="region" aria-label="CD collection" onPointerDown={stop} onPointerUp={stop} onClick={stop} onDoubleClick={stop} onWheel={stop}>
+  return <section className="cd-booklet" data-tracks-open={details} role="region" aria-label="CD collection" onPointerDown={stop} onPointerUp={stop} onClick={stop} onDoubleClick={stop} onWheel={stop}>
     <button ref={close} className="cd-collection-close" type="button" aria-label="Close CD collection" onClick={onClose}>×</button>
     <BeosoundCoverFlow album={album} onAlbum={onAlbum} onOpen={() => setDetails(value => !value)} />
     <div className="cd-selection-caption">
