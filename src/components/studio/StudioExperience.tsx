@@ -73,7 +73,7 @@ function OfficeExperience(content: StudioContent) {
   const [familyPhoto] = useState(selectFamilyPhoto);
   const [memory, setMemory] = useState<PhotoMemory | null>(null);
   const openMemory = useCallback(() => { if (!arrangement.editing) setMemory(PHOTO_MEMORIES.ppomppu); }, [arrangement.editing]);
-  const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 }>({ sequence: 0, view: 0 });
+  const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 | 3 }>({ sequence: 0, view: 0 });
   const [lightMode, setLightMode] = useState<LightMode>('local');
   const localLighting = useOfficeLight(lightMode);
   const [manualLights, setManualLights] = useState<boolean | null>(null);
@@ -246,13 +246,13 @@ function OfficeExperience(content: StudioContent) {
   }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection]);
   useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
-  const goToView = (view: 0 | 1 | 2) => {
+  const goToView = (view: 0 | 1 | 2 | 3) => {
     setEntry('complete');
     setExplored(true);
     setInspection(null);
     setZoomed(false);
     navigation.go(OFFICE_HOME);
-    progress.current = view / 2;
+    progress.current = view / 3;
     setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
   };
 
@@ -302,7 +302,7 @@ function OfficeExperience(content: StudioContent) {
       <div className="office-bottom">
         <div className="office-summary">
           <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>The office.</h2></div>
-          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>The practice</button><button onClick={() => goToView(2)}>The desk</button><button id="studio-exhibit-family" onClick={() => open('family')}>Photo frame</button></div>
+          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>Research &amp; Teaching</button><button onClick={() => goToView(2)}>UBE Training</button><button onClick={() => goToView(3)}>Music &amp; Stories</button></div>
         </div>
         <footer className="studio-stage-footer">
         <OfficeHelp ready={ready} explored={explored} compact={compact} onControl={setRoomControl} />

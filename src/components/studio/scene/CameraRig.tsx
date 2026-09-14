@@ -105,7 +105,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     : selected === 'research' ? folioReadingPose(size.width, size.height)
     : selected === 'surfing' ? surfboardReadingPose(size.width, size.height)
     : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height]);
-  const activeView = useRef<0 | 1 | 2>(viewCommand.view);
+  const activeView = useRef<0 | 1 | 2 | 3>(viewCommand.view);
   const lastViewSequence = useRef(viewCommand.sequence);
   const previousSelected = useRef(selected);
   const userMoved = useRef(false);

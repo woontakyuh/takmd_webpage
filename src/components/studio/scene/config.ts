@@ -61,10 +61,11 @@ export const ROOM = {
   surfboard: { position: [-2.382, 0, -3.01], rotation: Math.PI / 2 + 0.18 },
 } as const;
 
-export const TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
+export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose] = [
   { position: [5.92035127, 3.4, -5.08863898], target: [-0.15, 1.35, -0.4], zoom: 1 },
-  { position: [1.65, 1.75, -3.25], target: [-0.45, 1.15, 1.55], zoom: 1 },
-  { position: [-1.75, 2.25, -3.6], target: [-0.05, 0.85, -1.4], zoom: 1 },
+  { position: [1.8, 2.3, -3.3], target: [0, 1.35, 2.1], zoom: 1 },
+  { position: [0.6, 2.1, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
+  { position: [0.1, 1.55, -4.2], target: [2.4, 0.75, -1.85], zoom: 1 },
 ];
 
 export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
@@ -82,10 +83,11 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   surfing: { position: [0.15, 1.85, -5.5], target: [-2.382, 1.46, -3.01], zoom: 1 },
 };
 
-export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose] = [
+export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose] = [
   { position: [13.47100204, 4.2, -10.63075539], target: [0.14683647, 1.25, -0.07298044], zoom: 1 },
-  { position: [3.0, 2.2, -4.3], target: [-0.35, 1.05, 1.1], zoom: 1 },
-  { position: [-2.5, 2.9, -4.35], target: [-0.05, 0.85, -1.4], zoom: 1 },
+  { position: [1.0, 2.6, -7.6], target: [0, 1.5, 2.7], zoom: 1 },
+  { position: [2.0, 2.77, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
+  { position: [-1.35, 2.1, -5.65], target: [2.4, 0.7, -1.85], zoom: 1 },
 ];
 
 export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
