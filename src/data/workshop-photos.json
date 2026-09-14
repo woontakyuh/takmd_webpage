@@ -1,1 +1,101 @@
-[]
+[
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "group",
+    "order": 1,
+    "src": "/images/workshops/2026-06-13-dummy/495a73d7eac279ab.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/495a73d7eac279ab-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "group",
+    "order": 2,
+    "src": "/images/workshops/2026-06-13-dummy/9ae283f6763f1d5f.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/9ae283f6763f1d5f-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "lecture",
+    "order": 1,
+    "src": "/images/workshops/2026-06-13-dummy/18be2e3e061f14b6.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/18be2e3e061f14b6-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "lecture",
+    "order": 2,
+    "src": "/images/workshops/2026-06-13-dummy/89e28097a3408838.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/89e28097a3408838-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "lecture",
+    "order": 3,
+    "src": "/images/workshops/2026-06-13-dummy/885f953115e5d906.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/885f953115e5d906-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "practice",
+    "order": 1,
+    "src": "/images/workshops/2026-06-13-dummy/ed6da4839a4db06d.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/ed6da4839a4db06d-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "practice",
+    "order": 2,
+    "src": "/images/workshops/2026-06-13-dummy/d8392e1b069159b0.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/d8392e1b069159b0-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "practice",
+    "order": 3,
+    "src": "/images/workshops/2026-06-13-dummy/e74ab6e6cc8ac710.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/e74ab6e6cc8ac710-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "practice",
+    "order": 4,
+    "src": "/images/workshops/2026-06-13-dummy/677b1b1986908374.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/677b1b1986908374-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "practice",
+    "order": 5,
+    "src": "/images/workshops/2026-06-13-dummy/4181615ca7568cb3.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/4181615ca7568cb3-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2026-06-13-dummy",
+    "role": "practice",
+    "order": 6,
+    "src": "/images/workshops/2026-06-13-dummy/e0dd2b4dd39caad6.webp",
+    "thumb": "/images/workshops/2026-06-13-dummy/e0dd2b4dd39caad6-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  }
+]
