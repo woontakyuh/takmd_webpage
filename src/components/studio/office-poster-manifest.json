@@ -1,15 +1,15 @@
 {
   "version": 1,
-  "fingerprint": "bc1004b34b4082f7b1fa787000744fbe7a40f1cc6682b000204423cf0200f67e",
-  "generatedAt": "2026-09-14T10:20:35.154Z",
+  "fingerprint": "cbc89b87b42730b3f8115c7088b087a33364ae5b6c214344f1593053ee7ee155",
+  "generatedAt": "2026-09-14T10:47:50.899Z",
   "variants": [
     {
       "id": "mobile-portrait",
       "media": "(max-width: 759px) and (aspect-ratio < 1/1)",
       "width": 759,
       "height": 760,
-      "daySrc": "/studio/office-preview-auto-day-mobile-portrait-bc1004b34b4082f7.webp?v=bc1004b34b4082f7",
-      "nightSrc": "/studio/office-preview-auto-night-mobile-portrait-bc1004b34b4082f7.webp?v=bc1004b34b4082f7",
+      "daySrc": "/studio/office-preview-auto-day-mobile-portrait-cbc89b87b42730b3.webp?v=cbc89b87b42730b3",
+      "nightSrc": "/studio/office-preview-auto-night-mobile-portrait-cbc89b87b42730b3.webp?v=cbc89b87b42730b3",
       "dayHash": "2b1aa4f66e41c729e7853b068a885f2efec06fffb26dd941205cdc1eabca429a",
       "nightHash": "60683b59b011c9c5d284d86bd3e3e88aaaa42852d0c9ed8c080413f119864404",
       "monitor": {
@@ -30,8 +30,8 @@
       "media": "(max-width: 759px) and (aspect-ratio >= 1/1)",
       "width": 759,
       "height": 320,
-      "daySrc": "/studio/office-preview-auto-day-mobile-landscape-bc1004b34b4082f7.webp?v=bc1004b34b4082f7",
-      "nightSrc": "/studio/office-preview-auto-night-mobile-landscape-bc1004b34b4082f7.webp?v=bc1004b34b4082f7",
+      "daySrc": "/studio/office-preview-auto-day-mobile-landscape-cbc89b87b42730b3.webp?v=cbc89b87b42730b3",
+      "nightSrc": "/studio/office-preview-auto-night-mobile-landscape-cbc89b87b42730b3.webp?v=cbc89b87b42730b3",
       "dayHash": "1fe082114576e96263d46f7d3eecf1cd3050471acc7f5e94fbe4f5729a056f6a",
       "nightHash": "c406c881759cf5c625c5bf61a03cd8c282d12d434c386f00c5ac649ec31996d7",
       "monitor": {
@@ -52,8 +52,8 @@
       "media": "(min-width: 760px) and (aspect-ratio < 1/1)",
       "width": 1024,
       "height": 1025,
-      "daySrc": "/studio/office-preview-auto-day-desktop-portrait-bc1004b34b4082f7.webp?v=bc1004b34b4082f7",
-      "nightSrc": "/studio/office-preview-auto-night-desktop-portrait-bc1004b34b4082f7.webp?v=bc1004b34b4082f7",
+      "daySrc": "/studio/office-preview-auto-day-desktop-portrait-cbc89b87b42730b3.webp?v=cbc89b87b42730b3",
+      "nightSrc": "/studio/office-preview-auto-night-desktop-portrait-cbc89b87b42730b3.webp?v=cbc89b87b42730b3",
       "dayHash": "3dec4ef00c5626538aff5e7fa66a96adc7d52146e50328a65e2c532159de40a7",
       "nightHash": "221545e99dd53801664239717f64ff09efee4f714464d67d334374569bbfdfc5",
       "monitor": {
@@ -74,8 +74,8 @@
       "media": null,
       "width": 3840,
       "height": 1080,
-      "daySrc": "/studio/office-preview-auto-day-desktop-landscape-bc1004b34b4082f7.webp?v=bc1004b34b4082f7",
-      "nightSrc": "/studio/office-preview-auto-night-desktop-landscape-bc1004b34b4082f7.webp?v=bc1004b34b4082f7",
+      "daySrc": "/studio/office-preview-auto-day-desktop-landscape-cbc89b87b42730b3.webp?v=cbc89b87b42730b3",
+      "nightSrc": "/studio/office-preview-auto-night-desktop-landscape-cbc89b87b42730b3.webp?v=cbc89b87b42730b3",
       "dayHash": "e30efd31f11c7c4e49f7b8f7e4414152fe5ed663d6418b0c362033edf0275898",
       "nightHash": "557cc359e54ad79a3077a89316c3d20456d988acd28a97432137bb82b6840d04",
       "monitor": {

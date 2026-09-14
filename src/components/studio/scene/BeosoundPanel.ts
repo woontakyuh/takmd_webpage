@@ -1,4 +1,5 @@
-import type { BeosoundAction } from './Beosound9000State';
+import { firstPlayableTrack } from './BeosoundTracks';
+import type { BeosoundAction, BeosoundState } from './Beosound9000State';
 
 // Printed coordinates and touch regions share the same 2048 × 256 faceplate.
 export const BEOSOUND_PANEL_KEYS = [
@@ -19,4 +20,18 @@ export const BEOSOUND_PANEL_KEYS = [
 
 export function panelKeyPosition(x: number, y: number): [number, number, number] {
   return [(x / 2048 - .5) * .818, .064 + (.5 - (y - 8) / 256) * .093, .049];
+}
+
+export function panelKeyAppearance(key: typeof BEOSOUND_PANEL_KEYS[number], state: BeosoundState) {
+  const hasAudio = Boolean(firstPlayableTrack(state.slots[state.disc - 1]));
+  const ready = state.exchange === null;
+  const awake = state.display !== 'standby';
+  switch (key.action.type) {
+    case 'play': return { primary: true, available: ready && hasAudio, selected: awake && state.playback === 'playing' };
+    case 'pause': return { primary: true, available: ready && hasAudio && ['playing', 'loading', 'paused'].includes(state.playback),
+      selected: awake && hasAudio && state.playback === 'paused' && !state.doorOpen };
+    case 'disc': return { primary: true, available: ready && Boolean(firstPlayableTrack(state.slots[key.action.disc - 1])),
+      selected: awake && state.disc === key.action.disc && Boolean(firstPlayableTrack(state.slots[key.action.disc - 1])) };
+    default: return { primary: false, available: true, selected: false };
+  }
 }

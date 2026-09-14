@@ -993,3 +993,6 @@ The physical faceplate remains visible and operable in every camera state. No du
 
 ### Mobile room reveal and book clearance · 2026-09-14
 Move the personal library from the1.70m shelf to the1.30m shelf, with its approach camera and reach center following it; retain extraction/reading positions and symmetric shelf architecture. Mobile overview follows the owner's19:09 screenshot: room fills the lower screen, allowing the outer edges to crop instead of shrinking the entire platform into a miniature. Keep the rear-quarter direction, reduce the mobile overview radius to52% of its previous value, and raise the look target by0.80m to keep the foreground guitar/cabinet in view. Desktop overview and seated entry remain unchanged. Confirm the actual ready-to-overview transition, free orbit, and shelf selection in browser.
+
+### Native Beosound active lettering · 2026-09-14
+Keep the original faceplate as the sole control surface. PLAY, PAUSE and slot numbers use30px semibold lettering in the2048px panel texture: available actions warm ivory#f5f0e6, unavailable#69716c, confirmed playing/paused action and selected playable slot amber#ffbf83 with a small underline. Other original keys retain their24px grey print. State indications remain correct while the readout temporarily shows volume or cover status. No overlay, bloom, animated glow or added render passes.

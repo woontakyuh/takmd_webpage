@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { CanvasTexture, SRGBColorSpace } from 'three';
 import type { BeosoundState } from './Beosound9000State';
-import { BEOSOUND_PANEL_KEYS } from './BeosoundPanel';
+import { BEOSOUND_PANEL_KEYS, panelKeyAppearance } from './BeosoundPanel';
 import { beosoundDisplay } from './Beosound9000State';
 
 function texture(canvas: HTMLCanvasElement): CanvasTexture {
@@ -23,12 +23,17 @@ export function useBeosoundPanelTexture(state: BeosoundState) {
       context.fillText('BANG & OLUFSEN', 32, 55);
       context.fillStyle = '#e66f4e'; context.font = '30px monospace';
       context.fillText(label, 32, 163);
-      context.fillStyle = '#b7bcb7'; context.font = '24px Arial, sans-serif';
       context.textAlign = 'center';
-      for (const key of BEOSOUND_PANEL_KEYS) context.fillText(key.label, key.x, key.y);
+      for (const key of BEOSOUND_PANEL_KEYS) {
+        const appearance = panelKeyAppearance(key, state);
+        context.fillStyle = appearance.selected ? '#ffbf83' : appearance.primary ? (appearance.available ? '#f5f0e6' : '#69716c') : '#b7bcb7';
+        context.font = appearance.primary ? '600 30px Arial, sans-serif' : '24px Arial, sans-serif';
+        context.fillText(key.label, key.x, key.y);
+        if (appearance.selected) context.fillRect(key.x - 13, key.y + 12, 26, 3);
+      }
     }
     return texture(canvas);
-  }, [label]);
+  }, [label, state]);
   useEffect(() => () => map.dispose(), [map]);
   return map;
 }
