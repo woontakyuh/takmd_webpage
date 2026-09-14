@@ -30,16 +30,16 @@ Spinoscopy Workshop Team의 교육 워크샵 이력을 takmd.com 하부 페이�
 | 산출물 경계 | 데이터·사진·테스트는 이 워크트리, Astro 페이지·컴포넌트·차트는 Astra |
 | 언어 | 영어 기본, 공식 한국어 명칭은 `titleKo` 병기 |
 | 접근 방식 | 손으로 쓴 타입드 데이터 + photo-frame 방식 임포터 (Notion 자동수집·콘텐츠 컬렉션 기각) |
-| 회차 번호 | 실제 개최 순서로 센다. 2025-10 더미 4차는 10-05 → 10-12 연기, 1회 개최 |
+| 회차 번호 | 실제 개최 순서 = 포스터 공식 번호. 2025-10 더미 4차는 10-05 → 10-12 연기, 1회 개최. GCal의 2026-02-21 "더미 1회"는 팀 회식이므로 회차가 아니다 |
 | 외부 카데바 이력 | 통합 타임라인에 섞지 않고 카데바 페이지 안에 별도 층 |
 | 수료자 수 | 최일 교수 쪽 명단이 올 때까지 비워 둔다. 페이지는 숫자 없이도 렌더 |
 
 ## 2. 사실 관계 (확인된 것만)
 
-### 팀 프로그램 회차 — 9건
+### 팀 프로그램 회차 — 8건
 
-통합 회차 `seriesNo`는 모달리티를 합쳐 실제 개최 순서로 센다. 2026-08-08의 공식명 "The 7th"는
-주최 측 번호이며 실제로는 8번째다. 공식명은 `title`에 그대로 두고 번호는 우리 계산을 쓴다.
+통합 회차 `seriesNo`는 모달리티를 합쳐 실제 개최 순서로 센다. 포스터·배너의 공식 번호와 일치한다
+(8/24 "제3회", 12/20 "제5회", 6/13 "제6회", 8/08 "The 7th"). 모달리티별 번호는 `modalityNo`.
 
 | seriesNo | id | 모달리티 | 상태 | 비고 |
 |---|---|---|---|---|
@@ -48,12 +48,12 @@ Spinoscopy Workshop Team의 교육 워크샵 이력을 takmd.com 하부 페이�
 | 3 | 2025-08-24-dummy | dummy | held | 프로그램 자료 없음 |
 | 4 | 2025-10-12-dummy | dummy | held | 10-05에서 연기 |
 | 5 | 2025-12-20-animal-pig | animal-pig | held | "1st Animal Lab Workshop for Beginners". n=8, pre/post 평가 |
-| 6 | 2026-02-21-dummy | dummy | held | 프로그램 자료 없음 |
-| 7 | 2026-06-13-dummy | dummy | held | 초청강의 Jae-Koo Lee "Hurdles and Lessons, from Trainee to Trainer" |
-| 8 | 2026-08-08-animal-pig | animal-pig | held | 공식명 "The 7th ESS Animal Lab Workshop for Beginners". 수료식 |
-| 9 | 2026-12-19-cadaver | cadaver | planned | 팀 프로그램 첫 사람 카데바 |
+| 6 | 2026-06-13-dummy | dummy | held | 인천 IMET 센터로 이전. 초청강의 Jae-Koo Lee "Hurdles and Lessons, from Trainee to Trainer" |
+| 7 | 2026-08-08-animal-pig | animal-pig | held | 공식명 "The 7th ESS Animal Lab Workshop for Beginners". 수료식 |
+| 8 | 2026-12-19-cadaver | cadaver | planned | 팀 프로그램 첫 사람 카데바. 장소 CIBEC |
 
-더미 회차는 한림대학교 동탄성심병원, 동물 회차는 인천 HLB바이오스텝 실습실. 2026 동물 회차 주최에 (재)인천테크노파크, (주)하얀메디칼, endovision.
+더미 1~4회는 한림대학교 동탄성심병원, 2026년 6회부터 인천 송도 IMET 센터(광역형 국산의료기기 교육훈련지원센터)로 이전했다.
+동물 회차의 실습실(HLB바이오스텝 4층)은 같은 송도 건물이다 — 사진 GPS 37.3731, 126.6358로 확인. 2026 동물 회차 주최에 (재)인천테크노파크, (주)하얀메디칼, endovision.
 
 ### 팀
 
@@ -86,7 +86,7 @@ KOMISS 정기 카데바(2025-05-23, 2025-11-28, 2026-05-30)는 관계가 미확�
 ### 아직 없는 것
 
 - 회차별 교육생 수 (동물 1회 8명만 확인). 명단이 오면 `trainees`를 채운다.
-- 2025-08-24, 2025-10-12, 2026-02-21 더미 회차의 프로그램 자료.
+- 2025-08-24, 2025-10-12 더미 회차의 프로그램 자료.
 - 팀원 6명의 영문 표기.
 
 ## 3. 데이터 스키마 (`src/data/`)
@@ -252,4 +252,4 @@ Cover photo rule for the timeline: first `group` entry for the session, else fir
 Tests: `bun run scripts/workshopData.test.ts`, `bun run scripts/workshopPhotos.test.ts`.
 Re-import photos: `bun run photos:workshops` (originals live in `content/workshops/`, not committed).
 
-Photo status: `2026-06-13-dummy` has 11 photos in the manifest. Six more held sessions are curated (49 photos chosen) and will be added to the manifest once full-resolution originals are pulled from the owner's library; `2026-02-21-dummy` has no photos in the owner's library and waits on the team. Pages must render a session with zero photos as a text card.
+Photo status: `2026-06-13-dummy` has 11 photos in the manifest. Five more held sessions are curated (49 photos chosen) and will be added to the manifest once full-resolution originals are pulled from the owner's library; The 2026-02-21 calendar entry turned out to be a team dinner, not a workshop, and is not a session. Pages must render a session with zero photos as a text card.

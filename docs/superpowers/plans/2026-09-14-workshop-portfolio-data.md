@@ -341,7 +341,7 @@ git commit -m "feat(workshops): add Spinoscopy Workshop Team roster"
 import { workshopSessions, getSession, sessionsFor } from '../src/data/workshop-sessions';
 
 // --- workshop-sessions.ts ---
-assert.equal(workshopSessions.length, 9);
+assert.equal(workshopSessions.length, 8);
 workshopSessions.forEach((s, i) => {
   assert.equal(s.seriesNo, i + 1, `seriesNo contiguous at ${s.id}`);
   assert.equal(s.id, `${s.date}-${s.workshop}`, `id = date-slug at ${s.id}`);
@@ -357,7 +357,7 @@ for (const slug of workshopSlugs) {
   const list = sessionsFor(slug);
   list.forEach((s, i) => assert.equal(s.modalityNo, i + 1, `modalityNo contiguous for ${slug}`));
 }
-assert.deepEqual(sessionsFor('dummy').length, 6);
+assert.deepEqual(sessionsFor('dummy').length, 5);
 assert.deepEqual(sessionsFor('animal-pig').length, 2);
 assert.deepEqual(sessionsFor('cadaver').map((s) => s.status), ['planned']);
 assert.equal(getSession('2026-08-08-animal-pig')?.certification, true);

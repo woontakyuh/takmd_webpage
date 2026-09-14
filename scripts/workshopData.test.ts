@@ -43,7 +43,7 @@ assert.ok(!isTeamMember('김진성'));
 
 
 // --- workshop-sessions.ts ---
-assert.equal(workshopSessions.length, 9);
+assert.equal(workshopSessions.length, 8);
 workshopSessions.forEach((s, i) => {
   assert.equal(s.seriesNo, i + 1, `seriesNo contiguous at ${s.id}`);
   assert.equal(s.id, `${s.date}-${s.workshop}`, `id = date-slug at ${s.id}`);
@@ -59,11 +59,14 @@ for (const slug of workshopSlugs) {
   const list = sessionsFor(slug);
   list.forEach((s, i) => assert.equal(s.modalityNo, i + 1, `modalityNo contiguous for ${slug}`));
 }
-assert.deepEqual(sessionsFor('dummy').length, 6);
+assert.deepEqual(sessionsFor('dummy').length, 5);
 assert.deepEqual(sessionsFor('animal-pig').length, 2);
 assert.deepEqual(sessionsFor('cadaver').map((s) => s.status), ['planned']);
 assert.equal(getSession('2026-08-08-animal-pig')?.certification, true);
 assert.equal(getSession('2025-12-20-animal-pig')?.trainees?.count, 8);
+assert.equal(getSession('2026-02-21-dummy'), undefined, 'the 2026-02-21 entry was a team dinner, not a workshop');
+assert.equal(getSession('2026-06-13-dummy')?.venue?.city, 'Incheon');
+assert.equal(getSession('2026-08-08-animal-pig')?.seriesNo, 7, 'matches the official "The 7th" title');
 assert.equal(getSession('2026-12-19-cadaver')?.venue?.city, 'Seoul');
 
 
