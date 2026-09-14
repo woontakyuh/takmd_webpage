@@ -284,6 +284,7 @@ function OfficeExperience(content: StudioContent) {
         <nav aria-label="Office navigation"><a href="/cv">Living CV</a><a href="/contact">Contact <span aria-hidden="true">↗</span></a></nav>
       </header>
       <div className="studio-tools">
+        <div id="office-music-control" className="office-music-host" />
         <button onClick={() => goToView(0)} aria-label="Return to the overview" style={showOverviewReturn ? { visibility: 'hidden' } : undefined}><OfficeIcon name="overview" /><span>Overview</span></button>
         <button onClick={() => setLightMode(value => value === 'local' ? 'day' : value === 'day' ? 'evening' : 'local')}
           aria-label={lightMode === 'local' ? 'Local light · Preview daylight' : lightMode === 'day' ? 'Daylight preview · Preview evening' : 'Evening preview · Return to local light'}

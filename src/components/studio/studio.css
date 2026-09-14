@@ -304,3 +304,19 @@ body:has(.studio[data-inspecting]) { position: fixed; inset: 0; width: 100%; ove
 .office-overview-return { position: fixed; top: max(16px, env(safe-area-inset-top)); left: max(16px, env(safe-area-inset-left)); z-index: 90; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--studio-line); border-radius: 12px; background: var(--studio-paper); color: var(--studio-ink); font-size: 12px; cursor: pointer; }
 .office-overview-return svg { width: 18px; height: 18px; }
 .office-overview-return:focus-visible { outline: 2px solid var(--studio-ink); outline-offset: 3px; }
+
+.office-music-host { position: relative; flex: 0 0 44px; width: 44px; height: 44px; }
+.studio-tools .office-music-toggle { width: 44px; height: 44px; padding: 0; }
+.office-music-toggle svg { display: block; }
+.office-music-title { --music-title-width: 200px; position: absolute; bottom: calc(100% + 6px); left: 0; width: var(--music-title-width); max-width: calc(100vw - 72px); height: 18px; overflow: hidden; color: var(--studio-ink); font: 11px/18px var(--studio-sans); pointer-events: auto; mask-image: linear-gradient(to right, transparent, black 5px, black calc(100% - 5px), transparent); }
+.office-music-marquee { display: flex; width: max-content; animation: office-music-scroll var(--track-duration, 12s) linear infinite; }
+.studio-tools .office-music-marquee span { display: block; flex-shrink: 0; white-space: nowrap; min-width: var(--music-title-width); padding-right: 32px; }
+.office-music-title:hover .office-music-marquee { animation-play-state: paused; }
+@keyframes office-music-scroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .office-music-marquee { animation: none; display: block; width: 100%; }
+  .studio-tools .office-music-marquee span:first-child { overflow: hidden; text-overflow: ellipsis; padding-right: 0; }
+  .studio-tools .office-music-marquee span:last-child { display: none; }
+}
+
+@media (max-width: 759px) { .office-music-title { --music-title-width: 188px; } }

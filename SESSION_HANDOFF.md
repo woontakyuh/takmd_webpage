@@ -1,3 +1,9 @@
+# Upper-right music toolbar correction — 14 September 2026
+
+Supersedes the lower mini-player below. User explicitly placed global play/pause as the FIRST button in the existing upper-right Overview/time/move row. A stable DOM host in that row receives the existing Beosound state through a Drei Html portal; the player remains mounted with the scene. No bottom player or clickable song-title control. Actual playing state shows a masked CSS marquee directly above the button; loading may be cancelled, while pause/error hide the title. SVG icon,44px target,12px corners and colors come from the existing toolbar. Reduced motion uses stationary ellipsis. No audio-engine changes.
+
+Current evidence: `.omo/evidence/topbar-music-2026-09-14/`;390/1440/844/320 viewport alignment, actual audio play/pause, marquee movement, hidden paused title, and reduced-motion checks pass. Physical iPhone Safari not directly tested. Production receipt will be release.json in that folder.
+
 # Research, guided views and music control refinement — 14 September 2026
 
 Current pass evidence: `.omo/evidence/research-guided-2026-09-14/`. Research profile/overall counts now live in Research index, separate from This paper. Per-paper View paper/Cite/PDF actions retain DOI, author list, abstract and dated source-linked metrics. Latest cervical JMISST 10.21182/jmisst.2026.03300 has actual licensed publisher first-page image and full metadata (published July31,2026). Missing JKNS2026.0029 detail also filled from Crossref. Records ordered by year/date; no preview-presence priority over newer dates. All six Scientific Reports publisher links returned HTTP200 with matching titles. DOI registrations themselves were correct; no DOI typo claim. Crossref counts available for21/31 papers; other counts omitted after rate limits. JMISST views/downloads are September14 snapshot, not live counters.

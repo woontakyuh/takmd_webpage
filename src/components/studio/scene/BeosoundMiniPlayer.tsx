@@ -1,18 +1,32 @@
-import { PlaybackGlyph } from './PlaybackGlyph';
 import { Html } from '@react-three/drei';
-import type { Dispatch } from 'react';
-import { selectedTrack } from './Beosound9000State';
+import { useEffect, useMemo, useState } from 'react';
+import type { CSSProperties, Dispatch } from 'react';
+import { PlaybackGlyph } from './PlaybackGlyph';
+import { albumAtSlot, selectedTrack } from './Beosound9000State';
 import type { BeosoundState, BeosoundAction } from './Beosound9000State';
 import { screenOrigin } from './BeosoundRack';
-export function BeosoundMiniPlayer({ state, dispatch, onOpen }: {
-  readonly state: BeosoundState; readonly dispatch: Dispatch<BeosoundAction>; readonly onOpen: () => void;
+
+export function BeosoundMiniPlayer({ state, dispatch }: {
+  readonly state: BeosoundState; readonly dispatch: Dispatch<BeosoundAction>;
 }) {
-  const playing = state.playback === 'playing' || state.playback === 'loading';
-  return <Html wrapperClass="cd-screen-ui" onOcclude={() => undefined} calculatePosition={screenOrigin} zIndexRange={[42, 40]}>
-    <div className="cd-mini-player" onPointerDown={event => event.stopPropagation()} onClick={event => event.stopPropagation()}>
-      <button className="cd-mini-toggle" type="button" title={playing ? '음악 정지' : '음악 재생'} aria-label={playing ? '음악 정지' : '음악 재생'}
-        onClick={() => dispatch({ type: playing ? 'pause' : 'play' })}><PlaybackGlyph playing={playing} /></button>
-      <button className="cd-mini-track" type="button" onClick={onOpen} aria-label={`${selectedTrack(state)?.title ?? 'Music'} · CD 컬렉션 열기`}><span>{selectedTrack(state)?.title}</span></button>
+  const [host, setHost] = useState<HTMLElement | null>(null);
+  useEffect(() => { setHost(document.getElementById('office-music-control')); }, []);
+  const portal = useMemo(() => ({ current: host! }), [host]);
+  const playing = state.playback === 'playing';
+  const canPause = playing || state.playback === 'loading';
+  const track = selectedTrack(state);
+  const album = albumAtSlot(state, state.disc);
+  const title = [track?.title, album?.artist].filter(Boolean).join(' · ');
+  if (!host) return null;
+  return <Html portal={portal} wrapperClass="office-music-portal" calculatePosition={screenOrigin} onOcclude={() => undefined} zIndexRange={[2, 1]}>
+    <div className="office-music" onPointerDown={event => event.stopPropagation()} onClick={event => event.stopPropagation()}>
+      <button className="office-music-toggle" type="button" title={canPause ? '음악 일시정지' : '음악 재생'} aria-label={canPause ? '음악 일시정지' : '음악 재생'}
+        onClick={() => dispatch({ type: canPause ? 'pause' : 'play' })}><PlaybackGlyph playing={canPause} /></button>
+      {playing && title && <div className="office-music-title" role="status" aria-label={`재생 중: ${title}`}>
+        <div className="office-music-marquee" key={title} style={{ '--track-duration': `${Math.max(12, title.length * .28)}s` } as CSSProperties} aria-hidden="true">
+          <span>{title}</span><span>{title}</span>
+        </div>
+      </div>}
     </div>
   </Html>;
 }
