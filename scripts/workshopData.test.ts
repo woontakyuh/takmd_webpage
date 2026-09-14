@@ -4,6 +4,8 @@ import { curriculumStages, competencyDomains, competencyKeys } from '../src/data
 import { workshopTeam, isTeamMember } from '../src/data/workshop-team';
 import { workshopSessions, getSession, sessionsFor } from '../src/data/workshop-sessions';
 import { workshopOutcomes, outcomeFor } from '../src/data/workshop-outcomes';
+import { facultyAppearances } from '../src/data/workshop-faculty-appearances';
+import presentationsJson from '../src/data/presentations.json';
 
 // --- workshops.ts ---
 assert.deepEqual(workshopSlugs, ['dummy', 'cadaver', 'animal-pig'], 'slug contract used by WorkshopObjects.tsx');
@@ -80,5 +82,19 @@ for (const o of workshopOutcomes) {
 }
 assert.equal(outcomeFor('2025-12-20-animal-pig')?.domains[0].post, 9.25);
 assert.equal(outcomeFor('2026-08-08-animal-pig'), undefined);
+
+
+// --- workshop-faculty-appearances.ts ---
+const presentationIds = new Set((presentationsJson as { presentations: { id: string }[] }).presentations.map((p) => p.id));
+assert.equal(facultyAppearances.length, 4);
+assert.deepEqual(facultyAppearances.map((a) => a.relation).sort(), ['individual', 'individual', 'team-dispatch', 'team-support']);
+for (const a of facultyAppearances) {
+  assert.ok(a.id && a.event && a.date && a.venue.country, `required at ${a.id}`);
+  assert.ok(workshopSlugs.includes(a.modality), `modality at ${a.id}`);
+  if (a.links?.presentationId) assert.ok(presentationIds.has(a.links.presentationId), `presentation exists for ${a.id}`);
+  if (a.relation === 'team-dispatch') assert.ok(a.requestedBy, 'dispatch records who asked');
+  for (const src of a.sources) assert.ok(!/[/\\]|notion\.|[0-9a-f]{32}/i.test(src), `sources are memos at ${a.id}`);
+}
+assert.equal(facultyAppearances.find((a) => a.event === 'Spine Summit')?.links?.presentationId, '2c7908af25b980edbfc6df234f22a8f1');
 
 console.log('workshopData: all checks passed');
