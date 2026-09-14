@@ -74,4 +74,4 @@ const BOOK_BY_ID = {
 } as const satisfies Readonly<Record<PersonalBookId, PersonalBook>>;
 
 export const BOOK_READING_CENTER = [-1.8, 1.25, 2.15] as const;
-export const BOOK_SHELF_TOP = 1.702;
+export const BOOK_SHELF_TOP = 1.302;

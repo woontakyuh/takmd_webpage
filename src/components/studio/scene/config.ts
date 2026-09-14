@@ -69,7 +69,7 @@ export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose] = [
 ];
 
 export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
-  bookshelf: { position: [-1.875, 1.82, 2.35], target: [-1.875, 1.845, 3.004], zoom: 1 },
+  bookshelf: { position: [-1.875, 1.42, 2.35], target: [-1.875, 1.445, 3.004], zoom: 1 },
   books: { position: [-1.80, 1.64, 1.87], target: [-1.80, 1.25, 2.15], zoom: 1 },
   spine: { position: [-0.45, 1.6, 0.17], target: [-2.38, 0.9, 1.22], zoom: 1 },
   research: { position: [0.33257091, 1.38670429, -2.00025145], target: [0.405, 0.7985, -1.696], zoom: 1 },
@@ -84,7 +84,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
 };
 
 export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose] = [
-  { position: [11.87210217, 3.846, -9.36382240], target: [0.14683647, 1.25, -0.07298044], zoom: 1 },
+  { position: [6.24397463, 3.39992, -4.90421826], target: [0.14683647, 2.05, -0.07298044], zoom: 1 },
   { position: [1.0, 2.6, -7.6], target: [0, 1.5, 2.7], zoom: 1 },
   { position: [2.0, 2.77, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   { position: [-1.35, 2.1, -5.65], target: [2.4, 0.7, -1.85], zoom: 1 },
