@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { workshops, workshopSlugs, getWorkshop } from '../src/data/workshops';
 import { curriculumStages, competencyDomains, competencyKeys } from '../src/data/workshop-curriculum';
 import { workshopTeam, isTeamMember } from '../src/data/workshop-team';
+import { workshopSessions, getSession, sessionsFor } from '../src/data/workshop-sessions';
 
 // --- workshops.ts ---
 assert.deepEqual(workshopSlugs, ['dummy', 'cadaver', 'animal-pig'], 'slug contract used by WorkshopObjects.tsx');
@@ -36,5 +37,30 @@ for (const m of workshopTeam.members) assert.ok(m.name && m.nameKo && m.affiliat
 assert.equal(workshopTeam.members[0].name, 'Woon Tak Yuh');
 assert.ok(isTeamMember('최일'));
 assert.ok(!isTeamMember('김진성'));
+
+
+// --- workshop-sessions.ts ---
+assert.equal(workshopSessions.length, 9);
+workshopSessions.forEach((s, i) => {
+  assert.equal(s.seriesNo, i + 1, `seriesNo contiguous at ${s.id}`);
+  assert.equal(s.id, `${s.date}-${s.workshop}`, `id = date-slug at ${s.id}`);
+  assert.ok(workshopSlugs.includes(s.workshop), `known slug at ${s.id}`);
+  assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(s.date), `ISO date at ${s.id}`);
+  if (i > 0) assert.ok(s.date > workshopSessions[i - 1].date, `ascending dates at ${s.id}`);
+  assert.ok(s.title && s.audience && s.role && s.sources.length > 0, `required text at ${s.id}`);
+  if (s.status === 'held') assert.ok(s.venue, `held session has venue at ${s.id}`);
+  if (s.trainees) assert.ok(s.trainees.count > 0, `trainee count at ${s.id}`);
+  for (const src of s.sources) assert.ok(!/[/\\]|notion\.|[0-9a-f]{32}/i.test(src), `sources are memos, not paths/ids at ${s.id}: ${src}`);
+});
+for (const slug of workshopSlugs) {
+  const list = sessionsFor(slug);
+  list.forEach((s, i) => assert.equal(s.modalityNo, i + 1, `modalityNo contiguous for ${slug}`));
+}
+assert.deepEqual(sessionsFor('dummy').length, 6);
+assert.deepEqual(sessionsFor('animal-pig').length, 2);
+assert.deepEqual(sessionsFor('cadaver').map((s) => s.status), ['planned']);
+assert.equal(getSession('2026-08-08-animal-pig')?.certification, true);
+assert.equal(getSession('2025-12-20-animal-pig')?.trainees?.count, 8);
+assert.equal(getSession('2026-12-19-cadaver')?.venue, undefined);
 
 console.log('workshopData: all checks passed');

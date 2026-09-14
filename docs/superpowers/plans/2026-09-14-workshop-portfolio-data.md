@@ -298,7 +298,7 @@ export const workshopTeam = {
   members: [
     { name: 'Woon Tak Yuh', nameKo: '여운탁', affiliation: 'Davos Hospital, Yongin' },
     { name: 'Il Choi', nameKo: '최일', affiliation: 'Hallym University Dongtan Sacred Heart Hospital' },
-    { name: 'Yong-San Ko', nameKo: '고용산', affiliation: 'Hallym University Dongtan Sacred Heart Hospital' },
+    { name: 'Yong-San Ko', nameKo: '고용산', affiliation: 'Kyungpook National University Hospital' },
     { name: 'Subum Lee', nameKo: '이수범', affiliation: 'Korea University Anam Hospital' },
     { name: 'Jae-Koo Lee', nameKo: '이재구', affiliation: 'Seoul National University Bundang Hospital' },
     { name: 'Jun-Su Jang', nameKo: '장준수', affiliation: 'Hallym University Dongtan Sacred Heart Hospital' },
@@ -532,7 +532,7 @@ export const workshopSessions = [
       count: 8,
       composition: ['Fellow ×3', 'Clinical assistant professor ×1', 'Resident ×1', 'Military hospital surgeon ×2', 'Regional hospital orthopaedic surgeon ×1'],
     },
-    sources: ['Dec 2025 workshop poster', 'Pre/post evaluation summary', 'GCal Conference'],
+    sources: ['Dec 2025 workshop poster', 'Pre-post evaluation summary', 'GCal Conference'],
   },
   {
     id: '2026-02-21-dummy',
