@@ -64,7 +64,7 @@ export function CalendarClock({ reducedMotion }: { readonly reducedMotion: boole
     if (next) setInspection({ id: 'conference-calendar', ...next });
   }, [pose, setInspection]);
   const close = useCallback(() => setInspection(null), [setInspection]);
-  const { handlers } = useCabinetAction({ disabled: editing || active, onActivate: open });
+  const { handlers } = useCabinetAction({ visualAccent: true, disabled: editing || active, onActivate: open });
 
   useEffect(() => {
     if (!active) return;

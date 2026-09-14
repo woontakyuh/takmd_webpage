@@ -61,11 +61,12 @@ export const ROOM = {
   surfboard: { position: [-2.382, 0, -3.01], rotation: Math.PI / 2 + 0.18 },
 } as const;
 
-export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose] = [
+export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
   { position: [5.43472317, 3.236, -4.71354786], target: [-0.15, 1.35, -0.4], zoom: 1 },
   { position: [1.8, 2.3, -3.3], target: [0, 1.35, 2.1], zoom: 1 },
   { position: [0.6, 2.1, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   { position: [0.1, 1.55, -4.2], target: [2.4, 0.75, -1.85], zoom: 1 },
+  { position: [3.5, 2.0, -3.8], target: [-2.48, 1.5, -2.35], zoom: 1 },
 ];
 
 export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
@@ -83,11 +84,12 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   surfing: { position: [0.15, 1.85, -5.5], target: [-2.382, 1.46, -3.01], zoom: 1 },
 };
 
-export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose] = [
+export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
   { position: [6.24397463, 3.39992, -4.90421826], target: [0.14683647, 2.05, -0.07298044], zoom: 1 },
   { position: [1.0, 2.6, -7.6], target: [0, 1.5, 2.7], zoom: 1 },
   { position: [2.0, 2.77, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   { position: [-1.35, 2.1, -5.65], target: [2.4, 0.7, -1.85], zoom: 1 },
+  { position: [4.5, 2.15, -4.0], target: [-2.48, 1.5, -2.35], zoom: 1 },
 ];
 
 export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
@@ -131,7 +133,7 @@ export function focusFov(id: ExhibitId | null, compact: boolean, width: number, 
     const pose = FOCUS[id];
     const distance = Math.hypot(...pose.position.map((value, index) => value - pose.target[index]));
     const availableWidth = Math.max(32, width - (compact ? 48 : 400));
-    const frameWidth = id === 'family' ? 0.286 : id === 'books' ? 0.44 : 0.334;
+    const frameWidth = id === 'family' ? 0.286 : id === 'books' ? (compact ? 0.48 : 0.54) : 0.334;
     return Math.max(base, 2 * Math.atan(frameWidth * height / (2 * distance * availableWidth)) * 180 / Math.PI);
   }
   if (id !== 'ai') return base;

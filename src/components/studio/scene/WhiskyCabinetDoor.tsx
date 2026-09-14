@@ -1,10 +1,11 @@
+import { useMaterialAccent } from './HoverAccent';
 import { useCursor } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { ReactNode, RefObject } from 'react';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { MathUtils } from 'three';
-import type { Group, Texture } from 'three';
+import type { Group, Object3D, Texture } from 'three';
 import { PALETTE } from './config';
 import { IsidoroOpeningHalf } from './IsidoroCabinetGeometry';
 import { Block, Rod } from './Primitives';
@@ -12,6 +13,7 @@ import { cancelSceneSingleAction, scheduleSceneSingleAction } from './sceneGestu
 import { ISIDORO_DIMENSIONS, ISIDORO_OPEN_ANGLE, ISIDORO_WORKTOP_TOP } from './WhiskyCabinetLayout';
 
 type ActionOptions = {
+  readonly visualAccent?: boolean;
   readonly disabled: boolean;
   readonly onActivate: () => void;
   readonly onHoverChange?: (hovered: boolean) => void;
@@ -29,7 +31,7 @@ function modified(event: Pick<MouseEvent, 'shiftKey' | 'ctrlKey' | 'metaKey' | '
   return event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
 }
 
-export function useCabinetAction({ disabled, onActivate, onHoverChange }: ActionOptions) {
+export function useCabinetAction({ disabled, onActivate, onHoverChange, visualAccent = false }: ActionOptions) {
   const canvas = useThree(state => state.gl.domElement);
   const gesture = useRef<Gesture | null>(null);
   const mounted = useRef(false);
@@ -38,6 +40,8 @@ export function useCabinetAction({ disabled, onActivate, onHoverChange }: Action
   const activate = useRef(onActivate);
   const [hovered, setHovered] = useState(false);
   useCursor(hovered && !disabled);
+  const hoverTarget = useRef<Object3D | null>(null);
+  useMaterialAccent(hoverTarget, hovered && !disabled && visualAccent);
   useLayoutEffect(() => {
     enabled.current = !disabled;
     activate.current = onActivate;
@@ -68,6 +72,7 @@ export function useCabinetAction({ disabled, onActivate, onHoverChange }: Action
   }, []);
   const hover = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
+    hoverTarget.current = event.eventObject;
     setHovered(!disabled && event.pointerType !== 'touch' && event.buttons === 0);
   };
   return {
@@ -77,6 +82,7 @@ export function useCabinetAction({ disabled, onActivate, onHoverChange }: Action
       onPointerMove: hover,
       onPointerOut: () => setHovered(false),
       onPointerDown: (event: ThreeEvent<PointerEvent>) => {
+        setHovered(false);
         event.stopPropagation();
         gesture.current = !disabled && event.button === 0 && event.isPrimary && !modified(event)
           ? { id: event.pointerId, x: event.clientX, y: event.clientY } : null;

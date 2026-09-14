@@ -105,7 +105,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     : selected === 'research' ? folioReadingPose(size.width, size.height)
     : selected === 'surfing' ? surfboardReadingPose(size.width, size.height)
     : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height]);
-  const activeView = useRef<0 | 1 | 2 | 3>(viewCommand.view);
+  const activeView = useRef<0 | 1 | 2 | 3 | 4>(viewCommand.view);
   const lastViewSequence = useRef(viewCommand.sequence);
   const previousSelected = useRef(selected);
   const userMoved = useRef(false);
@@ -417,7 +417,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     }
     const compactReader = selected === 'family' || selected === 'books' || selected === 'bookshelf';
     const xOffset = compact ? 0 : (compactReader ? 352 : SIDE_READER_SPACE) / 2;
-    const yOffset = compact ? size.height * 0.24 : 0;
+    const yOffset = compact ? size.height * (selected === 'books' ? .13 : .24) : 0;
     camera.setViewOffset(size.width, size.height, xOffset, yOffset, size.width, size.height);
     camera.updateProjectionMatrix();
     return () => {

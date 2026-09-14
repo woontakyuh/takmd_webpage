@@ -33,6 +33,7 @@ export function RoomArchiveCaption({ object, width, height, bounds, side = false
         void document.exitFullscreen();
         return;
       }
+      if (event.key === 'Escape' && event.target instanceof Element && event.target.closest('.proposal-volume')?.querySelector('.proposal-volume-popup')) return;
       if (event.key === 'Escape') { event.preventDefault(); onClose(); }
       if (onStep && (event.key === 'ArrowRight' || event.key === 'ArrowLeft')) {
         event.preventDefault(); onStep(event.key === 'ArrowRight' ? 1 : -1);

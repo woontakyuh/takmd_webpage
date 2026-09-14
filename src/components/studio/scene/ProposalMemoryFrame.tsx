@@ -95,10 +95,10 @@ export function ProposalMemoryFrame({ posterSrc, videoSrc, hlsSrc, title = 'Marr
       screenTexture={selected ? playback.texture : null} hovered={hovered} active={selected} reducedMotion={reducedMotion} />
     <group ref={frame} position={[0, CENTER_Y, 0]} rotation={[FRAME.tilt, 0, 0]}>
       {selected && videoSrc && <Html position={[FRAME.width / 2 - FRAME.inset, -FRAME.height / 2 + FRAME.inset, .015]} zIndexRange={[40, 36]}>
-        <button className="proposal-screen-fullscreen" type="button" aria-label="Watch recording fullscreen" title="전체화면"
+        <button className="proposal-screen-fullscreen" type="button" aria-label="Watch recording fullscreen" title="Fullscreen"
           disabled={!playback.state.duration} onPointerDown={event => event.stopPropagation()} onPointerUp={event => event.stopPropagation()}
           onDoubleClick={event => event.stopPropagation()} onClick={event => { event.stopPropagation(); playback.fullscreen(); }}>
-          <OfficeIcon name="expand" /><span>전체화면</span>
+          <OfficeIcon name="expand" />
         </button>
       </Html>}
     </group>

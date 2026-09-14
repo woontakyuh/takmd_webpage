@@ -23,3 +23,8 @@
 .proposal-screen-fullscreen { display: flex; align-items: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 8px 12px; border: 1px solid #ffffff60; border-radius: 5px; background: #101512da; color: #fff; font: 500 12px/1.4 var(--studio-sans); transform: translate(-100%, -100%); cursor: pointer; white-space: nowrap; }
 .proposal-screen-fullscreen:disabled { opacity: .45; cursor: default; }
 .proposal-screen-fullscreen:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+
+.proposal-volume { position: relative; }
+.proposal-volume-popup { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; padding: 10px 4px 0; background: #182822f5; color: #f8f6f0; border: 1px solid #ffffff35; border-radius: 8px; z-index: 2; box-shadow: 0 4px 16px #0003; }
+.proposal-volume-popup input[type='range'] { writing-mode: vertical-lr; direction: rtl; width: 44px; min-width: 44px; height: 108px; flex: none; accent-color: #f8f6f0; }
+.proposal-volume-popup .proposal-system-volume { width: 120px; margin: 0; padding: 4px 8px; text-align: center; }

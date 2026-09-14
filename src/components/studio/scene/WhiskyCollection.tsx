@@ -40,7 +40,7 @@ function InspectableBottle({ bottle, texture, selection, enabled, onSelect, moti
 }) {
   const group = useRef<Group>(null);
   const selected = selection?.bottle === bottle.image && !selection.returning;
-  const { handlers } = useCabinetAction({ disabled: !enabled, onActivate: () => onSelect(bottle.image) });
+  const { handlers } = useCabinetAction({ visualAccent: true, disabled: !enabled, onActivate: () => onSelect(bottle.image) });
   useLayoutEffect(() => {
     if (!group.current) return;
     const registry = motions.current;

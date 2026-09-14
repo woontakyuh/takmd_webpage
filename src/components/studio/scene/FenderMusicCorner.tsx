@@ -1,3 +1,4 @@
+import { HoverAccent } from './HoverAccent';
 import { Html } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useRef } from 'react';
@@ -51,14 +52,14 @@ export function FenderMusicCorner({ reducedMotion = false }: { readonly reducedM
   }, [selected, setInspection]);
   return <group ref={corner} name="Fender music corner" userData={{ front: '+Z', floorY: 0 }}>
     <group name="Approach Fender Stratocaster" position={[0, -0.006582, 0]} {...guitar.handlers}>
-      <FenderStrat />
+      <HoverAccent active={guitar.hovered && !selected}><FenderStrat /></HoverAccent>
       {!editing && <Html center position={[0, 0.65, 0.14]} style={{ pointerEvents: 'none' }}>
         <button type="button" className="whisky-lecture-trigger" aria-label="Approach Fender Stratocaster"
           onClick={event => { event.stopPropagation(); if (event.detail === 0) approach(); }} />
       </Html>}
     </group>
     <group name="Approach Fender amplifier" position={[0.65, 0, 0.005]} rotation={[0, -0.035, 0]} {...amplifier.handlers}>
-      <DeluxeReverb />
+      <HoverAccent active={amplifier.hovered && !selected}><DeluxeReverb /></HoverAccent>
       <ProposalMemoryFrame {...proposalMemory} reducedMotion={reducedMotion} />
       {!editing && <Html center position={[0, 0.23, 0.14]} style={{ pointerEvents: 'none' }}>
         <button type="button" className="whisky-lecture-trigger" aria-label="Approach Fender amplifier"

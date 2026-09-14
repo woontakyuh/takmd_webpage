@@ -60,7 +60,6 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
   const showFigure = figure && publication?.doiUrl.endsWith(FEATURED_DOI);
   const detail = publication ? detailsFor(publication) : undefined;
   const metrics = publication ? metricsIndex[normalizeDoi(publication.doiUrl)] : undefined;
-  const publisherUrl = metrics?.publisherUrl || publication?.doiUrl;
   const citation = publication ? `${detail?.authors.length ? detail.authors.join(', ') + '. ' : ''}${detail?.title || publication.title}. ${detail?.citation || `${publication.journal}. ${publication.year}.`} ${publication.doiUrl}` : '';
   const copyCitation = async () => {
     try { await navigator.clipboard.writeText(citation); setCopyStatus('Citation copied'); }
@@ -83,7 +82,6 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
       <article className="folio-spread" key={publication.id} data-direction={direction}>
         <div className="folio-context"><p className="studio-kicker">{publication.journal} / {publication.year}</p><h3>{publication.title}</h3>
           <div className="folio-paper-actions">
-            <a href={publisherUrl} target="_blank" rel="noreferrer">View paper <span aria-hidden="true">↗</span></a>
             <button aria-expanded={citing} onClick={() => setCiting(value => !value)}>Cite</button>
             {detail?.access.kind === 'public-pdf' && detail.access.url && <a href={detail.access.url} target="_blank" rel="noreferrer">PDF ↗</a>}
           </div>
@@ -101,7 +99,6 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
           <section className="folio-abstract" aria-labelledby={`abstract-${publication.id}`}><h4 id={`abstract-${publication.id}`}>Abstract</h4>{detail?.abstract ? <div className="folio-abstract-copy">{abstractSections(detail.abstract).map((section, sectionIndex) => <section key={`${section.label ?? 'abstract'}-${sectionIndex}`}>{section.label && <h5>{section.label}</h5>}<p>{section.text}</p></section>)}</div> : <p className="folio-abstract-missing">An abstract is not available in the source record. Open the publisher page for the article.</p>}{detail?.abstractSource && <small>Source: {detail.abstractSource}</small>}</section>
           <dl className="folio-identifiers">{detail?.pmid && <><dt>PMID</dt><dd><a href={`https://pubmed.ncbi.nlm.nih.gov/${detail.pmid}/`} target="_blank" rel="noreferrer">{detail.pmid} ↗</a></dd></>}<dt>Contribution</dt><dd>{authorRole(publication.role)}</dd></dl>
           <div className="folio-access">
-            {detail?.access.kind === 'public-pdf' && detail.access.url && <a className="studio-text-link" href={detail.access.url} target="_blank" rel="noreferrer">View public PDF ↗</a>}
             {detail?.access.oaStatus === 'free-public-pdf' && <small>Free publisher PDF; reuse license not confirmed.</small>}
             {detail?.access.oaStatus !== 'confirmed-oa' && <><a className="studio-text-link" href={requestCopyUrl(publication)}>Request a copy by email ↗</a><small>Opens your email app with the title and DOI filled in. Nothing is sent automatically.</small></>}
           </div>

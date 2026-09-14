@@ -67,7 +67,7 @@ export function WhiskyMagazine({ enabled, reducedMotion, onBusyChange, onReturn 
     pagesClosed.current = false;
     setPage(index);
   }, []);
-  const { handlers } = useCabinetAction({ disabled: !enabled || active || busy.current, onActivate: take });
+  const { handlers } = useCabinetAction({ visualAccent: true, disabled: !enabled || active || busy.current, onActivate: take });
   useEffect(() => {
     if (active && busy.current && !returning) frame();
   }, [active, frame, returning]);

@@ -1,3 +1,4 @@
+import { HoverAccent } from './HoverAccent';
 import { Html, useCursor } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
@@ -63,17 +64,18 @@ export function CollectionInspectionItem({ item, children }: {
   };
 
   return <group ref={group} name={`${item.id} inspection target`}
-    onPointerOver={event => { if (!editing && event.buttons === 0) { event.stopPropagation(); setHovered(true); } }}
+    onPointerOver={event => { if (!editing && event.pointerType !== 'touch' && event.buttons === 0) { event.stopPropagation(); setHovered(true); } }}
     onPointerOut={() => setHovered(false)}
     onPointerDown={event => {
       if (editing) return;
+      setHovered(false);
       event.stopPropagation();
       gesture.current = event.button === 0 && event.isPrimary && !modified(event)
         ? { pointerId: event.pointerId, x: event.clientX, y: event.clientY } : null;
     }}
     onPointerCancel={() => { gesture.current = null; }} onPointerUp={onPointerUp}
     onClick={event => event.stopPropagation()} onDoubleClick={event => event.stopPropagation()}>
-    {children}
+    <HoverAccent active={hovered && !editing && !focused}>{children}</HoverAccent>
     {focused && <CollectionDescription item={item} target={group} />}
   </group>;
 }

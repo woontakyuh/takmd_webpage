@@ -16,7 +16,6 @@ import { PERSONAL_BOOKS, personalBook, type PersonalBookId } from './personalBoo
 import { bookPageAfter } from './personalBookInteraction';
 import { PhotoFrameInfo } from './PhotoFrameInfo';
 import { SurfboardStory } from './SurfboardStory';
-import { VisitorCount } from './VisitorCount';
 import { OfficePoster, SceneBoundary } from './OfficePoster';
 import { PHOTO_MEMORIES, selectFamilyPhoto, type PhotoMemory } from './photoMemories';
 import type { ExhibitId, HaloSettings, StudioContent } from './types';
@@ -73,7 +72,7 @@ function OfficeExperience(content: StudioContent) {
   const [familyPhoto] = useState(selectFamilyPhoto);
   const [memory, setMemory] = useState<PhotoMemory | null>(null);
   const openMemory = useCallback(() => { if (!arrangement.editing) setMemory(PHOTO_MEMORIES.ppomppu); }, [arrangement.editing]);
-  const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 | 3 }>({ sequence: 0, view: 0 });
+  const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 | 3 | 4 }>({ sequence: 0, view: 0 });
   const [lightMode, setLightMode] = useState<LightMode>('local');
   const localLighting = useOfficeLight(lightMode);
   const [manualLights, setManualLights] = useState<boolean | null>(null);
@@ -246,13 +245,13 @@ function OfficeExperience(content: StudioContent) {
   }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection]);
   useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
-  const goToView = (view: 0 | 1 | 2 | 3) => {
+  const goToView = (view: 0 | 1 | 2 | 3 | 4) => {
     setEntry('complete');
     setExplored(true);
     setInspection(null);
     setZoomed(false);
     navigation.go(OFFICE_HOME);
-    progress.current = view / 3;
+    progress.current = view / 4;
     setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
   };
 
@@ -303,7 +302,7 @@ function OfficeExperience(content: StudioContent) {
       <div className="office-bottom">
         <div className="office-summary">
           <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>The office.</h2></div>
-          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => goToView(1)}>Research &amp; Teaching</button><button onClick={() => goToView(2)}>UBE Training</button><button onClick={() => goToView(3)}>Music &amp; Stories</button></div>
+          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => open('research')}>Research</button><button onClick={() => goToView(1)}>Talks &amp; Recognition</button><button onClick={() => goToView(2)}>UBE Training</button><button onClick={() => goToView(3)}>Music &amp; Stories</button><button onClick={() => goToView(4)}>Jiu-jitsu &amp; Surfing</button></div>
         </div>
         <footer className="studio-stage-footer">
         <OfficeHelp ready={ready} explored={explored} compact={compact} onControl={setRoomControl} />
@@ -320,15 +319,9 @@ function OfficeExperience(content: StudioContent) {
             {socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer"><span>{link.label}<small>{link.detail}</small></span><span aria-hidden="true">↗</span></a>)}
           </div>
         </div>}
-        <a className="office-index" href="#office-reading">Browse the work <span aria-hidden="true">↓</span></a>
         </footer>
       </div>
     </section>
-    <section id="office-reading" className="studio-notes" aria-labelledby="studio-notes-heading">
-      <div className="studio-notes-heading"><p className="studio-kicker">From the desk</p><h2 id="studio-notes-heading">Practice shapes<br /><em>the questions.</em></h2><a className="studio-text-link" href="/research">Research archive ↗</a></div>
-      <div className="studio-notes-list">{content.publications.slice(0, 3).map(p => <a key={`${p.doiUrl}-${p.title}`} href={p.doiUrl || '/research'} target={p.doiUrl ? '_blank' : undefined} rel={p.doiUrl ? 'noreferrer' : undefined}><span className="studio-meta">{p.journal} / {p.year}</span><h3>{p.title}</h3><span className="studio-notes-arrow" aria-hidden="true">↗</span></a>)}</div>
-    </section>
-    <footer className="studio-end"><div className="studio-end-identity"><span>Woon Tak Yuh, MD.</span><a href="/contact">Contact ↗</a><a href="/knowledge">Knowledge</a><a href="/media">Media</a><a href="/credits">Scene credits</a><VisitorCount /></div><nav aria-label="Browse all work"><a href="/cv">Profile</a><a href="/ube">Practice</a><a href="/research">Research</a><a href="/?exhibit=education">Talks</a><a href="/education#overview">Education<small>Workshops & training</small></a><a href="/ai">AI projects</a><div className="studio-end-social"><span>Connect</span><div>{socialLinks.map(link => <a key={link.label} href={link.href} target={link.label === 'Email' ? undefined : '_blank'} rel="noopener noreferrer">{link.label} ↗</a>)}</div></div></nav></footer>
     {showOverviewReturn && <button className="office-overview-return" onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>}
     <ReadingPanel {...content} detailsPath={details} selected={details ? null : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' || selected === 'surfing' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
     {zoomed && <div className="office-approach-actions"><button className="studio-icon-button" onClick={() => window.dispatchEvent(new Event('office:zoom-close'))} aria-label="Return from closer view"><OfficeIcon name="close" /></button></div>}

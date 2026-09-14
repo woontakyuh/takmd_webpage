@@ -1,3 +1,4 @@
+import { HoverAccent } from './HoverAccent';
 import { useCursor } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
@@ -36,9 +37,10 @@ export function Interactive({ id, selected, onSelect, position, rotation = 0, na
   }, [editing, onHoverChange]);
   return (
     <group name={name ?? `Exhibit ${id}`} position={[...position]} rotation={[0, rotation, 0]}
-      onPointerEnter={(event) => { if (editing) return; event.stopPropagation(); setHovered(true); onHoverChange?.(true); }}
+      onPointerEnter={(event) => { if (editing || event.pointerType === 'touch' || event.buttons) return; event.stopPropagation(); setHovered(true); onHoverChange?.(true); }}
       onPointerLeave={(event) => { event.stopPropagation(); setHovered(false); onHoverChange?.(false); }}
       onPointerDown={(event) => {
+        setHovered(false); onHoverChange?.(false);
         pointerStart.current = { x: event.clientX, y: event.clientY };
       }}
       onPointerCancel={() => { pointerStart.current = null; }}
@@ -51,7 +53,7 @@ export function Interactive({ id, selected, onSelect, position, rotation = 0, na
           || (selected === id && !onActivate)) return;
         scheduleSceneSingleAction(canvas, onActivate ?? (() => onSelect(id)));
       }}>
-      {children}
+      <HoverAccent active={hovered && !editing && selected !== id && !onHoverChange}>{children}</HoverAccent>
     </group>
   );
 }

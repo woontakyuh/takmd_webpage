@@ -320,3 +320,9 @@ body:has(.studio[data-inspecting]) { position: fixed; inset: 0; width: 100%; ove
 }
 
 @media (max-width: 759px) { .office-music-title { --music-title-width: 188px; } }
+
+/* The office is the home viewport; its readers own their internal scrolling. */
+body:has(.studio) { overflow: clip; }
+.studio-stage { height: 100dvh; min-height: 0; }
+.office-guided { flex-wrap: wrap; justify-content: flex-end; row-gap: 0; }
+@media (max-width: 759px) { .office-guided { max-width: 280px; column-gap: 12px; } }

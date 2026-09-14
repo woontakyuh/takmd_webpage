@@ -86,7 +86,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       approachCabinet(false);
     }
   }, [approachCabinet, editing, magazineBusy, open, selection, visitClosedCabinet]);
-  const { handlers } = useCabinetAction({ disabled: editing, onActivate: toggle });
+  const { handlers } = useCabinetAction({ visualAccent: true, disabled: editing, onActivate: toggle });
   const chooseBottle = useCallback((id: WhiskyBottleId) => {
     if (!ready || !cabinet.current) return;
     if (magazineBusy) {

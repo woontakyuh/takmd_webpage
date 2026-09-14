@@ -31,8 +31,8 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
     const fov = focusFov(null, compact, size.width, size.height);
     const short = libraryOpen && size.height < 600 && size.width >= 600;
     const frameWidth = short ? 3 : 1.4;
-    const distance = Math.max(.82, frameWidth / (2 * Math.tan(fov * Math.PI / 360) * size.width / size.height));
-    const eyeY = libraryOpen ? (short ? .15 : compact ? -.48 : -.065) : (compact ? .04 : .15);
+    const distance = Math.max(libraryOpen && !compact ? .9 : .82, frameWidth / (2 * Math.tan(fov * Math.PI / 360) * size.width / size.height));
+    const eyeY = libraryOpen ? (short ? .15 : compact ? -.48 : -.025) : (compact ? .04 : .15);
     const eyeX = short ? .88 : .14;
     const target = body.localToWorld(new Vector3(eyeX, eyeY, .02));
     const position = body.localToWorld(new Vector3(eyeX, eyeY + .09, distance));
