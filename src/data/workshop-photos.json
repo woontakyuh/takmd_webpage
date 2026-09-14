@@ -1,5 +1,122 @@
 [
   {
+    "sessionId": "2025-08-24-dummy",
+    "role": "group",
+    "order": 1,
+    "src": "/images/workshops/2025-08-24-dummy/0b4d2e5fa6e21538.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/0b4d2e5fa6e21538-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2025-08-24-dummy",
+    "role": "group",
+    "order": 2,
+    "src": "/images/workshops/2025-08-24-dummy/2b14a007ebb79a9c.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/2b14a007ebb79a9c-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2025-08-24-dummy",
+    "role": "lecture",
+    "order": 1,
+    "src": "/images/workshops/2025-08-24-dummy/fad14478b621bcf8.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/fad14478b621bcf8-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2025-08-24-dummy",
+    "role": "lecture",
+    "order": 2,
+    "src": "/images/workshops/2025-08-24-dummy/9c76af940b24fe6a.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/9c76af940b24fe6a-thumb.webp",
+    "width": 901,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-08-24-dummy",
+    "role": "practice",
+    "order": 1,
+    "src": "/images/workshops/2025-08-24-dummy/6dbbf93643c9a77c.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/6dbbf93643c9a77c-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-08-24-dummy",
+    "role": "practice",
+    "order": 2,
+    "src": "/images/workshops/2025-08-24-dummy/b3116621d1d85f74.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/b3116621d1d85f74-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-08-24-dummy",
+    "role": "practice",
+    "order": 3,
+    "src": "/images/workshops/2025-08-24-dummy/4574226db341f2f5.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/4574226db341f2f5-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-08-24-dummy",
+    "role": "practice",
+    "order": 4,
+    "src": "/images/workshops/2025-08-24-dummy/180b69aa6c4dfb49.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/180b69aa6c4dfb49-thumb.webp",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "sessionId": "2025-08-24-dummy",
+    "role": "practice",
+    "order": 5,
+    "src": "/images/workshops/2025-08-24-dummy/02bf896985071c5e.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/02bf896985071c5e-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-08-24-dummy",
+    "role": "venue",
+    "order": 1,
+    "src": "/images/workshops/2025-08-24-dummy/06129638d77af96e.webp",
+    "thumb": "/images/workshops/2025-08-24-dummy/06129638d77af96e-thumb.webp",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "sessionId": "2025-10-12-dummy",
+    "role": "group",
+    "order": 1,
+    "src": "/images/workshops/2025-10-12-dummy/38774ebe22e0d144.webp",
+    "thumb": "/images/workshops/2025-10-12-dummy/38774ebe22e0d144-thumb.webp",
+    "width": 1600,
+    "height": 900
+  },
+  {
+    "sessionId": "2025-10-12-dummy",
+    "role": "group",
+    "order": 2,
+    "src": "/images/workshops/2025-10-12-dummy/f33d9fc62e91c8da.webp",
+    "thumb": "/images/workshops/2025-10-12-dummy/f33d9fc62e91c8da-thumb.webp",
+    "width": 1600,
+    "height": 900
+  },
+  {
+    "sessionId": "2025-10-12-dummy",
+    "role": "venue",
+    "order": 1,
+    "src": "/images/workshops/2025-10-12-dummy/1eea9ac18fdddde6.webp",
+    "thumb": "/images/workshops/2025-10-12-dummy/1eea9ac18fdddde6-thumb.webp",
+    "width": 1600,
+    "height": 900
+  },
+  {
     "sessionId": "2026-06-13-dummy",
     "role": "group",
     "order": 1,
