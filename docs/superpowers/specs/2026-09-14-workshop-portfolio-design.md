@@ -48,12 +48,12 @@ Spinoscopy Workshop Team의 교육 워크샵 이력을 takmd.com 하부 페이�
 | 3 | 2025-08-24-dummy | dummy | held | 프로그램 자료 없음 |
 | 4 | 2025-10-12-dummy | dummy | held | 10-05에서 연기 |
 | 5 | 2025-12-20-animal-pig | animal-pig | held | "1st Animal Lab Workshop for Beginners". n=8, pre/post 평가 |
-| 6 | 2026-06-13-dummy | dummy | held | 인천 IMET 센터로 이전. 초청강의 Jae-Koo Lee "Hurdles and Lessons, from Trainee to Trainer" |
+| 6 | 2026-06-13-dummy | dummy | held | 인천 HLB바이오스텝으로 이전. 초청강의 Jae-Koo Lee "Hurdles and Lessons, from Trainee to Trainer" |
 | 7 | 2026-08-08-animal-pig | animal-pig | held | 공식명 "The 7th ESS Animal Lab Workshop for Beginners". 수료식 |
 | 8 | 2026-12-19-cadaver | cadaver | planned | 팀 프로그램 첫 사람 카데바. 장소 CIBEC |
 
-더미 1~4회는 한림대학교 동탄성심병원, 2026년 6회부터 인천 송도 IMET 센터(광역형 국산의료기기 교육훈련지원센터)로 이전했다.
-동물 회차의 실습실(HLB바이오스텝 4층)은 같은 송도 건물이다 — 사진 GPS 37.3731, 126.6358로 확인. 2026 동물 회차 주최에 (재)인천테크노파크, (주)하얀메디칼, endovision.
+더미 1~4회는 한림대학교 동탄성심병원, 2026년 6회부터 인천 송도 HLB바이오스텝으로 이전했다.
+동물 회차의 실습실은 같은 건물 4층이다 — 사진 GPS 37.3731, 126.6358로 확인. 2026 동물 회차 주최에 (재)인천테크노파크, (주)하얀메디칼, endovision.
 
 ### 팀
 

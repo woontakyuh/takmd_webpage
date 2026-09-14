@@ -65,7 +65,7 @@ assert.deepEqual(sessionsFor('cadaver').map((s) => s.status), ['planned']);
 assert.equal(getSession('2026-08-08-animal-pig')?.certification, true);
 assert.equal(getSession('2025-12-20-animal-pig')?.trainees?.count, 8);
 assert.equal(getSession('2026-02-21-dummy'), undefined, 'the 2026-02-21 entry was a team dinner, not a workshop');
-assert.equal(getSession('2026-06-13-dummy')?.venue?.city, 'Incheon');
+assert.equal(getSession('2026-06-13-dummy')?.venue?.nameKo, 'HLB바이오스텝');
 assert.equal(getSession('2026-08-08-animal-pig')?.seriesNo, 7, 'matches the official "The 7th" title');
 assert.equal(getSession('2026-12-19-cadaver')?.venue?.city, 'Seoul');
 

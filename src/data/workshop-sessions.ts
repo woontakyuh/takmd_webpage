@@ -52,17 +52,17 @@ const DONGTAN: SessionVenue = {
   city: 'Hwaseong',
 };
 
-/** Incheon Technopark's device training centre in Songdo; the dummy course moved here in 2026. */
-const IMET: SessionVenue = {
-  name: 'IMET Center, Songdo',
-  nameKo: '광역형 국산의료기기 교육훈련지원센터',
+/** Songdo venue for the lectures and hands-on sessions the team ran in Incheon. */
+const HLB: SessionVenue = {
+  name: 'HLB Biostep, Songdo',
+  nameKo: 'HLB바이오스텝',
   city: 'Incheon',
 };
 
-/** The animal lab inside the same Songdo building. */
-const IMET_LAB: SessionVenue = {
-  name: 'IMET Center — HLB Biostep training lab (4F)',
-  nameKo: '광역형 국산의료기기 교육훈련지원센터 · HLB바이오스텝 4층 실습실',
+/** The animal lab on the fourth floor of the same building. */
+const HLB_LAB: SessionVenue = {
+  name: 'HLB Biostep — training lab (4F)',
+  nameKo: 'HLB바이오스텝 4층 실습실',
   city: 'Incheon',
 };
 
@@ -155,7 +155,7 @@ export const workshopSessions = [
     status: 'held',
     title: 'The 5th Endoscopic Spine Surgery — 1st Animal Lab Workshop for Beginners',
     titleKo: '척추 내시경 동물 실습 워크샵 1회',
-    venue: IMET_LAB,
+    venue: HLB_LAB,
     host: ['Hallym University Dongtan Sacred Heart Hospital'],
     audience: 'Beginner spine surgeons (0–30 endoscopic cases)',
     role: 'faculty',
@@ -176,7 +176,7 @@ export const workshopSessions = [
     status: 'held',
     title: 'The 6th Endoscopic Spine Surgery Dummy Workshop for Beginners',
     titleKo: '제6회 척추 내시경 더미 워크샵',
-    venue: IMET,
+    venue: HLB,
     host: ['Hallym University Dongtan Sacred Heart Hospital'],
     audience: 'Beginner spine surgeons and residents',
     role: 'faculty',
@@ -195,7 +195,7 @@ export const workshopSessions = [
     status: 'held',
     title: 'The 7th Endoscopic Spine Surgery Animal Lab Workshop for Beginners',
     titleKo: '2026 동물 워크샵 1회',
-    venue: IMET_LAB,
+    venue: HLB_LAB,
     host: ['Hallym University Dongtan Sacred Heart Hospital'],
     organizers: ['endovision', 'Incheon Technopark', 'Hayan Medical'],
     audience: 'Beginner spine surgeons (0–30 endoscopic cases)',
