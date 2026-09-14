@@ -1,3 +1,11 @@
+# Research, guided views and music control refinement — 14 September 2026
+
+Current pass evidence: `.omo/evidence/research-guided-2026-09-14/`. Research profile/overall counts now live in Research index, separate from This paper. Per-paper View paper/Cite/PDF actions retain DOI, author list, abstract and dated source-linked metrics. Latest cervical JMISST 10.21182/jmisst.2026.03300 has actual licensed publisher first-page image and full metadata (published July31,2026). Missing JKNS2026.0029 detail also filled from Crossref. Records ordered by year/date; no preview-presence priority over newer dates. All six Scientific Reports publisher links returned HTTP200 with matching titles. DOI registrations themselves were correct; no DOI typo claim. Crossref counts available for21/31 papers; other counts omitted after rate limits. JMISST views/downloads are September14 snapshot, not live counters.
+
+Guided views now Research & Teaching, UBE Training, Music & Stories, with desktop/mobile poses; no automatic reader or audio. Camera orbit/zoom verified after arrival. The lower music controller is a transparent row:44px circular SVG play/pause control and unboxed song title. Replaces the large white rectangle and iOS emoji. All CDP play icons share SVG glyphs. No changes to autoplay or audio engine.
+
+Reviewers approved code and inspected responsive views. Initial SCI snapshots caught the prior texture during the page turn; recaptured after1400ms settled to verify matching pages. Tests/scripts and screenshots are in evidence. Physical iPhone Safari is not directly certified by desktop viewport tests. Existing workshop source restrictions and deferred artwork-frame placement remain unchanged.
+
 # Workshop pages and room music checkpoint — 14 September 2026
 
 Claude workshop data merged from origin/claude/work without editing content/workshops, public/images/workshops or workshop data. Standalone /workshops and three slug pages now render full session/program/photo/outcome content; room readers remain concise themes with portfolio links. Layout documentPage opts these routes into actual Astro page content.

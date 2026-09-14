@@ -1,3 +1,4 @@
+import { PlaybackGlyph } from './PlaybackGlyph';
 import { Html } from '@react-three/drei';
 import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SyntheticEvent } from 'react';
@@ -50,7 +51,7 @@ export function Beosound9000Controls({ state, compact, hidden, dispatch, onClose
         onPointerDown={stopEvent} onPointerUp={stopEvent} onClick={stopEvent} onDoubleClick={stopEvent} onWheel={stopEvent}>
         <div className="beosound-mobile-transport">
           <button type="button" onClick={() => dispatch({ type: 'step', direction: -1 })} aria-label="Previous CD">‹</button>
-          <button className="beosound-primary-play" type="button" onClick={() => dispatch({ type: playing ? 'pause' : 'play' })} aria-label={playing ? 'Pause CD' : 'Play selected CD'}><span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span> {playing ? '정지' : '재생'}</button>
+          <button className="beosound-primary-play" type="button" onClick={() => dispatch({ type: playing ? 'pause' : 'play' })} aria-label={playing ? 'Pause CD' : 'Play selected CD'}><PlaybackGlyph playing={playing} /> {playing ? '정지' : '재생'}</button>
           <button type="button" onClick={() => dispatch({ type: 'step', direction: 1 })} aria-label="Next CD">›</button>
           <button type="button" aria-expanded={volumeOpen} onClick={() => setVolumeOpen(value => !value)}>음량</button>
         </div>
@@ -66,8 +67,8 @@ export function Beosound9000Controls({ state, compact, hidden, dispatch, onClose
           <output aria-live="polite" aria-atomic="true">{beosoundDisplay(state)}</output>
         </div>
         <div className="beosound-keys">
-          <button className="beosound-transport-key beosound-primary-play" type="button" onClick={() => dispatch({ type: 'play' })} aria-label="Play selected CD">▶ 재생</button>
-          <button className="beosound-transport-key" type="button" onClick={() => dispatch({ type: 'pause' })} aria-label="Pause CD">Ⅱ 정지</button>
+          <button className="beosound-transport-key beosound-primary-play" type="button" onClick={() => dispatch({ type: 'play' })} aria-label="Play selected CD"><PlaybackGlyph /> 재생</button>
+          <button className="beosound-transport-key" type="button" onClick={() => dispatch({ type: 'pause' })} aria-label="Pause CD"><PlaybackGlyph playing /> 정지</button>
           <button className="beosound-transport-key" type="button" onClick={() => dispatch({ type: 'step', direction: -1 })} aria-label="Previous CD">‹</button>
           <button className="beosound-transport-key" type="button" onClick={() => dispatch({ type: 'step', direction: 1 })} aria-label="Next CD">›</button>
           {compact ? loadingKeys : levelKeys}

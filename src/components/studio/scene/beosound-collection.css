@@ -34,11 +34,14 @@
 .cd-collection-status { text-align: center; font-size: 12px; margin: 0; }
 .studio[data-night='true'] .cd-booklet { color: var(--studio-light, #f8f6f0); text-shadow: 0 1px 4px #111; }
 .cd-collection-trigger { position: fixed; bottom: 24px; left: 50vw; transform: translateX(-50%); background: #f8f6f0; border: 1px solid #cbcdc3; border-radius: 4px; padding: 4px 20px; white-space: nowrap; }
-.cd-mini-player { position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 20px; display: flex; align-items: center; gap: 8px; background: #f8f6f0; border: 1px solid #cbcdc3; border-radius: 4px; padding: 4px 8px; max-width: calc(100vw - 40px); }
-.cd-mini-player button:first-child { text-align: left; min-width: 0; max-width: 144px; font-size: 12px; }
-.cd-mini-player button:last-child { width: 80px; flex-shrink: 0; }
-.cd-mini-player span, .cd-mini-player small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cd-mini-player small { color: #5c655f; font-size: 11px; }
+.cd-mini-player { position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 20px; display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 40px); font-family: var(--studio-sans); }
+.cd-mini-player .cd-mini-toggle { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 1px solid color-mix(in srgb,var(--studio-line) 80%,transparent); border-radius: 50%; background: color-mix(in srgb,var(--studio-light) 70%,transparent); backdrop-filter: blur(5px); transition: background var(--studio-micro); }
+.cd-mini-player .cd-mini-toggle:hover { background: var(--studio-paper); }
+.cd-mini-toggle svg { display: block; }
+.cd-mini-player .cd-mini-track { min-width: 0; max-width: 160px; padding: 0; text-align: left; font-size: 12px; color: var(--studio-muted); }
+.cd-mini-track span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cd-mini-track:hover { text-decoration: underline; text-underline-offset: 4px; }
+
 
 @media (max-width: 759px) and (orientation: portrait) {
  .cd-booklet { top: 38dvh; bottom: auto; }

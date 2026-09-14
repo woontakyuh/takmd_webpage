@@ -73,3 +73,5 @@
 .beosound-mobile-volume input { flex: 1; min-width: 0; accent-color: var(--studio-teal); }
 .beosound-mobile-controls button:focus-visible { outline: 2px solid var(--studio-teal); }
 .studio[data-night='true'] .beosound-mobile-controls { color: var(--studio-light); text-shadow: 0 1px 4px #111; }
+
+.beosound-primary-play svg, .beosound-transport-key svg { display: inline-block; vertical-align: middle; flex-shrink: 0; }
