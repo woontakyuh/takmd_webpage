@@ -1,6 +1,24 @@
 [
   {
     "sessionId": "2025-05-04-dummy",
+    "role": "group",
+    "order": 1,
+    "src": "/images/workshops/2025-05-04-dummy/7e261c636c71e3e6.webp",
+    "thumb": "/images/workshops/2025-05-04-dummy/7e261c636c71e3e6-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2025-05-04-dummy",
+    "role": "group",
+    "order": 2,
+    "src": "/images/workshops/2025-05-04-dummy/b62009a9865a989d.webp",
+    "thumb": "/images/workshops/2025-05-04-dummy/b62009a9865a989d-thumb.webp",
+    "width": 1600,
+    "height": 901
+  },
+  {
+    "sessionId": "2025-05-04-dummy",
     "role": "lecture",
     "order": 1,
     "src": "/images/workshops/2025-05-04-dummy/399dd90a9141a2b8.webp",
