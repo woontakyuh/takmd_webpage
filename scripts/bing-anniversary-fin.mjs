@@ -38,21 +38,19 @@ export const ANNIVERSARY_FIN = { displayScale, height, rootThickness: .0092*disp
   fixingFromTail: boxCenterFromTail-rootChord/2-.0085*displayScale, imageWidth: 1080, imageHeight: 1440 };
 
 export function anniversaryFin(boardLength) {
-  const outline=referenceOutline,photo=outline;
-  const maxHeight=referenceHeight,photoHeight=maxHeight;
+  const outline=referenceOutline;
+  const maxHeight=referenceHeight;
   const positions=[],uv=[],indices=[],rows=72,columns=20,sideCount=(rows+1)*(columns+1);
   for(const side of [-1,1]) for(let row=0;row<=rows;row++) {
     const h=row/rows,scan=Math.max(.0001,Math.min(.99999,h));
-    const bounds=section(outline,scan*maxHeight),photoH=Math.min(.91,Math.max(.018,h))*photoHeight;
-    const pb=section(photo,photoH);
+    const bounds=section(outline,scan*maxHeight),photoH=h*maxHeight;
     for(let col=0;col<=columns;col++) {
       const u=col/columns,along=bounds[0]+u*(bounds[1]-bounds[0]);
       const sectionShape=5*(.2969*Math.sqrt(u)-.126*u-.3516*u*u+.2843*u**3-.1036*u**4);
       const foil=ANNIVERSARY_FIN.rootThickness*(1-.32*h)*(1-h**4)**.45*sectionShape;
       positions.push(side*foil,ANNIVERSARY_FIN.boxCenterFromTail-(along-rootCenter)/maxHeight*ANNIVERSARY_FIN.height-boardLength/2,h*ANNIVERSARY_FIN.height);
-      const sourceAlong=pb[0]+(.065+.87*(side < 0 ? 1-u : u))*(pb[1]-pb[0]);
-      const px=ORIGIN[0]+BASE[0]*sourceAlong+BASE[1]*photoH;
-      const py=ORIGIN[1]+BASE[1]*sourceAlong-BASE[0]*photoH;
+      const px=ORIGIN[0]+BASE[0]*along+BASE[1]*photoH;
+      const py=ORIGIN[1]+BASE[1]*along-BASE[0]*photoH;
       uv.push(px/ANNIVERSARY_FIN.imageWidth,py/ANNIVERSARY_FIN.imageHeight);
     }
   }

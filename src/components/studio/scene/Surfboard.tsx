@@ -1,6 +1,7 @@
 import { RoundedBox, useGLTF } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { Box3, Euler, Mesh, Vector3 } from 'three';
+import { applyFinArtwork } from './finArtwork';
 import { PALETTE } from './config';
 
 const SURFBOARD_LENGTH = 2.8956;
@@ -9,7 +10,7 @@ const FINISHED_FLOOR_TOP = 0.0185;
 const FIN_CLEARANCE = 0.065;
 
 export function Surfboard() {
-  const { scene } = useGLTF('/models/surfboard.glb?v=20260915-readable-fin');
+  const { scene } = useGLTF('/models/surfboard.glb?v=20260916-planar-fin');
   const fitted = useMemo(() => {
     const model = scene.clone(true);
     model.traverse((child) => {
@@ -18,6 +19,9 @@ export function Surfboard() {
       child.material = Array.isArray(child.material)
         ? child.material.map((material) => material.clone())
         : child.material.clone();
+      if (child.name.includes('fiberglass_fin') || child.name.includes('fiberglass fin')) {
+        for (const material of Array.isArray(child.material) ? child.material : [child.material]) applyFinArtwork(material);
+      }
       child.castShadow = true;
       child.receiveShadow = true;
     });
@@ -97,4 +101,4 @@ export function Surfboard() {
   );
 }
 
-useGLTF.preload('/models/surfboard.glb?v=20260915-readable-fin');
+useGLTF.preload('/models/surfboard.glb?v=20260916-planar-fin');

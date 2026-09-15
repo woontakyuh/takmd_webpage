@@ -106,3 +106,20 @@ describe('photograph-derived Bing surfboard',()=>{
     expect(json.bufferViews.every(v=>v.byteOffset+v.byteLength<=json.buffers[0].byteLength)).toBe(true);
   });
 });
+
+test('the same single-sided print shows through the reverse without row-dependent stretching',()=>{
+  const g=anniversaryFin(BING_BOARD.length),p=g.getAttribute('position'),uv=g.getAttribute('uv');
+  const faces=new Map();const samples=[];
+  for(let i=0;i<p.count;i++){
+    if(Math.abs(p.getX(i))<.0001 || Math.abs(p.getX(i))>=.0055)continue;
+    const key=`${p.getY(i).toFixed(6)}:${p.getZ(i).toFixed(6)}`;
+    const value=[uv.getX(i),uv.getY(i)];
+    if(faces.has(key)){expect(value[0]).toBeCloseTo(faces.get(key)[0],6);expect(value[1]).toBeCloseTo(faces.get(key)[1],6);}
+    else faces.set(key,value);
+    if(p.getX(i)<0&&samples.length<300)samples.push(i);
+  }
+  const ratio=(a,b)=>Math.hypot((uv.getX(a)-uv.getX(b))*1080,(uv.getY(a)-uv.getY(b))*1440)/Math.hypot(p.getY(a)-p.getY(b),p.getZ(a)-p.getZ(b));
+  const reference=ratio(samples[0],samples[20]);
+  for(let i=25;i<samples.length;i+=17)expect(ratio(samples[0],samples[i])/reference).toBeCloseTo(1,3);
+  g.dispose();
+});
