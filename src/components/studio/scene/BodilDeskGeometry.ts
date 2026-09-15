@@ -15,7 +15,7 @@ const DESK = {
   steelThickness: 0.018,
   steelFace: 0.05,
   frameHeight: 0.545,
-  frameHalfSpan: 0.475,
+  frameHalfSpan: 0.515,
   supportZ: 0.28,
   glideHeight: 0.002,
 } as const;

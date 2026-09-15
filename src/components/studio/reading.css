@@ -67,3 +67,9 @@
   .studio-paper h3 { font-size: 14px; }
   .studio-dialog[data-exhibit='spine'] .studio-panel-footer { margin-top: 12px; min-height: 44px; }
 }
+
+@media (max-width:759px) {
+  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) { top: 50dvh; bottom: 8px; height: auto; max-height: none; transition: top var(--studio-panel) var(--studio-ease); }
+  .studio-dialog[data-workshop-sheet="true"][data-sheet-raised="true"]:not([data-expanded="true"]) { top: max(8px, env(safe-area-inset-top)); }
+}
+@media (prefers-reduced-motion:reduce) { .studio-dialog[data-workshop-sheet="true"] { transition:none; } }

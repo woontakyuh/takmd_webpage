@@ -35,6 +35,8 @@ type Props = StudioContent & {
 export function ReadingPanel({ selected, detailsPath, publications, presentations, updatedAt, presentationsUpdatedAt, collection, onPaper, onTalk, talkSlideIndex, onTalkSlide, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [expanded, setExpanded] = useState(false);
+  const [sheetRaised, setSheetRaised] = useState(false);
+  const workshopSheet = selected === 'spine' || detailsPath === '/ube' || Boolean(detailsPath?.startsWith('/workshops'));
   const [folioLeft, setFolioLeft] = useState<number>();
   const active = detailsPath || selected;
   const researchFocused = !detailsPath && selected === 'research';
@@ -42,7 +44,7 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
   const modal = expanded || screenFocused;
   const resetScroll = () => dialogRef.current?.scrollTo({ top: 0 });
 
-  useEffect(() => { setExpanded(false); dialogRef.current?.scrollTo({ top: 0 }); }, [active]);
+  useEffect(() => { setExpanded(false); setSheetRaised(false); dialogRef.current?.scrollTo({ top: 0 }); }, [active]);
 
   useEffect(() => {
     if (selected !== 'research') return;
@@ -74,6 +76,34 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
     return () => { document.body.style.overflow = previousOverflow; window.removeEventListener('keydown', onKey); };
   }, [active, modal, onClose]);
 
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog || !active || !workshopSheet) return;
+    const mobile = window.matchMedia('(max-width: 759px)');
+    let touchY = 0;
+    let previousScroll = 0;
+    const move = (delta: number) => {
+      if (!mobile.matches || expanded) return;
+      if (delta > 18) setSheetRaised(true);
+      else if (delta < -24 && dialog.scrollTop <= 1) setSheetRaised(false);
+    };
+    const wheel = (event: WheelEvent) => move(event.deltaY);
+    const start = (event: TouchEvent) => { touchY = event.touches[0]?.clientY ?? 0; };
+    const touch = (event: TouchEvent) => move(touchY - (event.touches[0]?.clientY ?? touchY));
+    const scroll = () => {
+      if (mobile.matches) {
+        if (dialog.scrollTop > 24) setSheetRaised(true);
+        else if (dialog.scrollTop <= 1 && previousScroll > 1) setSheetRaised(false);
+      }
+      previousScroll = dialog.scrollTop;
+    };
+    dialog.addEventListener('wheel', wheel, { passive: true });
+    dialog.addEventListener('touchstart', start, { passive: true });
+    dialog.addEventListener('touchmove', touch, { passive: true });
+    dialog.addEventListener('scroll', scroll, { passive: true });
+    return () => { dialog.removeEventListener('wheel', wheel); dialog.removeEventListener('touchstart', start); dialog.removeEventListener('touchmove', touch); dialog.removeEventListener('scroll', scroll); };
+  }, [active, workshopSheet, expanded]);
+
   return (
     <dialog
       ref={dialogRef}
@@ -81,6 +111,8 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
       style={!detailsPath && selected === 'research' && !expanded && folioLeft !== undefined ? { left: folioLeft, right: 'auto' } : undefined}
       data-exhibit={detailsPath ? 'details' : selected}
       data-expanded={expanded}
+      data-workshop-sheet={workshopSheet}
+      data-sheet-raised={sheetRaised}
       data-screen-focus={screenFocused}
       aria-modal={modal}
       aria-labelledby="studio-panel-title"

@@ -416,15 +416,15 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
     }
     const compactReader = selected === 'family' || selected === 'books' || selected === 'bookshelf';
-    const xOffset = compact ? 0 : (compactReader ? 352 : SIDE_READER_SPACE) / 2;
-    const yOffset = compact ? size.height * (selected === 'books' ? .13 : .24) : 0;
+    const xOffset = selected === 'spine' && !reading ? 0 : compact ? 0 : (compactReader ? 352 : SIDE_READER_SPACE) / 2;
+    const yOffset = selected === 'spine' && !reading ? 0 : compact ? size.height * (selected === 'books' ? .13 : .24) : 0;
     camera.setViewOffset(size.width, size.height, xOffset, yOffset, size.width, size.height);
     camera.updateProjectionMatrix();
     return () => {
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
     };
-  }, [camera, compact, selected, size.height, size.width]);
+  }, [camera, compact, selected, reading, size.height, size.width]);
 
   useEffect(() => {
     const orbit = controls.current;

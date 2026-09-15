@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { ClinicalDetails } from './ClinicalDetails';
+import { WorkshopDetails } from './WorkshopRoomDetails';
 import { CadaverExperience } from './CadaverExperience';
 import type { ReactNode } from 'react';
 import { getWorkshop } from '../../data/workshops';
 import { CvReader } from './CvReader';
 import { AiReader } from './AiReader';
 import { EducationDetails, ResearchDetails } from './OfficeAcademicDetails';
-import { ContactDetails, CreditsDetails, NoteCollection, WorkshopDetails } from './OfficeDetailContent';
+import { ContactDetails, CreditsDetails, NoteCollection } from './OfficeDetailContent';
 import { PersonalReader } from './PersonalReader';
 import { ProjectReader } from './ProjectReader';
 import { knowledgeNotes, mediaNotes } from './officeNotes';

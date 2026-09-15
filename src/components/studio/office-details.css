@@ -21,3 +21,8 @@
 .office-details .reader-filter, .personal-reader .reader-filter { flex-wrap: wrap; }
 
 .workshop-room-photo { display: block; width: 100%; height: auto; margin: 20px 0 12px; }
+.workshop-room-gallery { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0; }
+.workshop-room-gallery figure { margin:0; min-width:0; }
+.workshop-room-gallery figure:first-child { grid-column:1 / -1; }
+.workshop-room-gallery img { display:block; width:100%; height:auto; }
+.workshop-room-gallery figcaption { margin-top:6px; color:var(--studio-muted); font-size:11px; line-height:1.6; }
