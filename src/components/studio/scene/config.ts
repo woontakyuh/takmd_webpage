@@ -85,7 +85,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
 };
 
 export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
-  { position: [6.24397463, 3.39992, -4.90421826], target: [0.14683647, 2.05, -0.07298044], zoom: 1 },
+  { position: [7.34146, 2.4429, -5.77384], target: [0.14683647, 0.85, -0.07298044], zoom: 1 },
   { position: [1.0, 2.6, -7.6], target: [0, 1.5, 2.7], zoom: 1 },
   { position: [2.0, 2.77, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   { position: [-1.35, 2.1, -5.65], target: [2.4, 0.7, -1.85], zoom: 1 },
