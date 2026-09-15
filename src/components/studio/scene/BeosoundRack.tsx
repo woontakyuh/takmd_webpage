@@ -35,7 +35,7 @@ export function BeosoundRack({ state, active, expanded, showTrigger, disabled, r
   const [album, setAlbum] = useState<AlbumId>(1);
   useEffect(() => { if (previouslyOpen.current && !expanded) trigger.current?.focus({ preventScroll: true }); previouslyOpen.current = expanded; }, [expanded]);
   const choose = (id: AlbumId) => { if (!active) { onOpen(); return; } setAlbum(id); onExpanded(true); };
-  const { handlers } = useCabinetAction({ disabled, onActivate: () => active ? onExpanded(true) : onOpen() });
+  const { handlers } = useCabinetAction({ visualAccent: true, disabled, onActivate: () => active ? onExpanded(true) : onOpen() });
   return <group ref={rack} name="Slanted walnut tabletop CD holder" {...handlers}>
     <Block size={[.28, .018, .16]} position={[.59, .009, -.02]} radius={.003} color="#876b52" texture={wood} roughness={.7} />
     <Block size={[.28, .06, .012]} position={[.59, .045, -.094]} rotation={[-.15, 0, 0]} radius={.002} color="#876b52" texture={wood} roughness={.7} />

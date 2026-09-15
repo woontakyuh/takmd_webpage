@@ -392,7 +392,9 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     targetFov.current = selected === 'ai' ? monitorReadingFov(size.width, size.height)
       : selected === 'research' ? folioReadingView(size.width, size.height).fov
       : selected === 'award-photo' ? awardPairReadingFov(size.width, size.height)
-      : focusFov(selected, compact, size.width, size.height);
+      : !selected && !compact && viewCommand?.view === 1
+        ? Math.max(42, 2 * Math.atan(5.6 * size.height / (8 * size.width)) * 180 / Math.PI)
+        : focusFov(selected, compact, size.width, size.height);
     if (!selected || screenFocused) {
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
@@ -424,7 +426,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
     };
-  }, [camera, compact, selected, reading, size.height, size.width]);
+  }, [camera, compact, selected, reading, size.height, size.width, viewCommand]);
 
   useEffect(() => {
     const orbit = controls.current;

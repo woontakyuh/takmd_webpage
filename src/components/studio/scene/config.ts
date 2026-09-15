@@ -64,7 +64,7 @@ export const ROOM = {
 
 export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
   { position: [5.43472317, 3.236, -4.71354786], target: [-0.15, 1.35, -0.4], zoom: 1 },
-  { position: [1.8, 2.3, -3.3], target: [0, 1.35, 2.1], zoom: 1 },
+  { position: [0, 1.6, -0.8], target: [0, 1.6, 3.2], zoom: 1 },
   { position: [0.6, 2.1, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   { position: [0.1, 1.55, -4.2], target: [2.4, 0.75, -1.85], zoom: 1 },
   { position: [3.5, 2.0, -3.8], target: [-2.48, 1.5, -2.35], zoom: 1 },

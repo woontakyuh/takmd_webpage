@@ -15,7 +15,7 @@ import { usePrintedTexture } from './Textures';
 import { MOTION, PALETTE, ROOM } from './config';
 import { scheduleSceneSingleAction } from './sceneGesture';
 
-type FolioProps = Pick<StudioSceneProps, 'selected' | 'focused' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'progress' | 'collection'>;
+type FolioProps = Pick<StudioSceneProps, 'selected' | 'focused' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'collection'>;
 
 type FolioPaper = {
   readonly id: string;
@@ -41,10 +41,12 @@ function paperFromCollection(collection: OfficeCollection): FolioPaper {
 
 const CLICK_DRAG_THRESHOLD = 5;
 
-export function Folio({ selected, focused, onSelect, onPaperStep, reducedMotion, progress, collection }: FolioProps) {
+export function Folio({ selected, focused, onSelect, onPaperStep, reducedMotion, collection }: FolioProps) {
   const canvas = useThree(state => state.gl.domElement);
   const cover = useRef<Group>(null);
   const placement = useRef<Group>(null);
+  const opening = useRef<{ from: number; elapsed: number } | null>(null);
+  const wasOpen = useRef(false);
   const invalidate = useThree(state => state.invalidate);
   const spine = useRef<Group>(null);
   const leaf = useRef<Group>(null);
@@ -133,10 +135,12 @@ export function Folio({ selected, focused, onSelect, onPaperStep, reducedMotion,
 
   useFrame((_, delta) => {
     if (!cover.current || !spine.current || !leaf.current) return;
-    const value = progress.current ?? 0;
-    const approach = reducedMotion ? Number(value >= 0.7) : MathUtils.smoothstep(value, 0.5, 0.95);
-    const tourAngle = approach * Math.PI;
-    const pose = selected === 'research' || focused === 'research' || approach > 0 ? ROOM.folio : ROOM.folio.stowed;
+    delta = Math.min(delta, .05);
+    const open = selected === 'research' || focused === 'research';
+    if (open && !wasOpen.current) opening.current = { from: cover.current.rotation.z, elapsed: 0 };
+    if (!open) opening.current = null;
+    wasOpen.current = open;
+    const pose = open ? ROOM.folio : ROOM.folio.stowed;
     if (placement.current) {
       const object = placement.current;
       const next = pose.position;
@@ -146,8 +150,15 @@ export function Folio({ selected, focused, onSelect, onPaperStep, reducedMotion,
       if (Math.hypot(object.position.x - next[0], object.position.y - next[1], object.position.z - next[2]) > .0001 || Math.abs(object.rotation.y - pose.rotation) > .0001) invalidate();
     }
     const hoverAngle = coverHovered ? Math.PI / 9 : 0;
-    const coverAngle = selected === 'research' || focused === 'research' ? Math.PI : Math.max(tourAngle, hoverAngle);
-    cover.current.rotation.z = reducedMotion ? coverAngle : MathUtils.damp(cover.current.rotation.z, coverAngle, MOTION.object, delta);
+    const coverAngle = open ? Math.PI : hoverAngle;
+    if (reducedMotion) cover.current.rotation.z = coverAngle;
+    else if (opening.current) {
+      opening.current.elapsed += delta;
+      const t = Math.min(1, opening.current.elapsed / .9);
+      cover.current.rotation.z = MathUtils.lerp(opening.current.from, Math.PI, MathUtils.smootherstep(t, 0, 1));
+      if (t === 1) opening.current = null;
+    } else cover.current.rotation.z = MathUtils.damp(cover.current.rotation.z, coverAngle, MOTION.object, delta);
+    if (Math.abs(cover.current.rotation.z - coverAngle) > .0001) invalidate();
     const binding = folioBindingPose(cover.current.rotation.z);
     cover.current.position.set(binding.coverX, binding.coverY, 0);
     spine.current.rotation.z = binding.spineAngle;

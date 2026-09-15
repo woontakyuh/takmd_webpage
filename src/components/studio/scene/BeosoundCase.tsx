@@ -28,7 +28,7 @@ export function BeosoundCase({ album, selected, browsing, disabled, reducedMotio
     const texture = new CanvasTexture(canvas); texture.colorSpace = SRGBColorSpace; return texture;
   }, [map, record]);
   useEffect(() => () => spine.dispose(), [spine]);
-  const { hovered, handlers } = useCabinetAction({ disabled, onActivate: () => onOpen(album) });
+  const { hovered, handlers } = useCabinetAction({ visualAccent: true, disabled, onActivate: () => onOpen(album) });
   useEffect(() => invalidate(), [browsing, selected, reducedMotion, invalidate]);
   useFrame((_, delta) => {
     const group = body.current; if (!group) return;

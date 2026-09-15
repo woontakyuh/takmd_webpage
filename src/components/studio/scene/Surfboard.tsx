@@ -9,7 +9,7 @@ const FINISHED_FLOOR_TOP = 0.0185;
 const FIN_CLEARANCE = 0.065;
 
 export function Surfboard() {
-  const { scene } = useGLTF('/models/surfboard.glb?v=20260912-centered-fin');
+  const { scene } = useGLTF('/models/surfboard.glb?v=20260915-readable-fin');
   const fitted = useMemo(() => {
     const model = scene.clone(true);
     model.traverse((child) => {
@@ -97,4 +97,4 @@ export function Surfboard() {
   );
 }
 
-useGLTF.preload('/models/surfboard.glb?v=20260912-centered-fin');
+useGLTF.preload('/models/surfboard.glb?v=20260915-readable-fin');

@@ -754,9 +754,9 @@
     "abstractSource": "Crossref",
     "metadataSource": "Crossref",
     "access": {
-      "kind": "publisher",
-      "oaStatus": "unknown",
-      "url": "https://jkns.or.kr/journal/view.php?doi=10.3340/jkns.2026.0029"
+      "kind": "public-pdf",
+      "oaStatus": "confirmed-oa",
+      "url": "https://jkns.or.kr/upload/pdf/jkns-2026-0029.pdf"
     }
   }
 }

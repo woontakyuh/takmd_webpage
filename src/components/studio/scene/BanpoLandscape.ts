@@ -124,6 +124,18 @@ export function createBanpoLandscape() {
       if (!(object instanceof THREE.Mesh)) return;
       object.castShadow = false;
       object.receiveShadow = false;
+      const towerPart = object.name.replaceAll('_', ' ');
+      if (towerPart.startsWith('N Seoul Tower')) {
+        const illuminate = (source: THREE.Material) => {
+          const material = source.clone();
+          if (material instanceof THREE.MeshStandardMaterial) {
+            material.emissive.set(towerPart.includes('shaft') ? '#527bff' : '#ffdc9a');
+            emissive.set(material, towerPart.includes('shaft') ? 1.15 : .85);
+          }
+          return material;
+        };
+        object.material = Array.isArray(object.material) ? object.material.map(illuminate) : illuminate(object.material);
+      }
       for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
         if (!(material instanceof THREE.MeshStandardMaterial)) continue;
         material.emissiveIntensity = 0;

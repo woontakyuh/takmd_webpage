@@ -50,7 +50,7 @@ export function anniversaryFin(boardLength) {
       const sectionShape=5*(.2969*Math.sqrt(u)-.126*u-.3516*u*u+.2843*u**3-.1036*u**4);
       const foil=ANNIVERSARY_FIN.rootThickness*(1-.32*h)*(1-h**4)**.45*sectionShape;
       positions.push(side*foil,ANNIVERSARY_FIN.boxCenterFromTail-(along-rootCenter)/maxHeight*ANNIVERSARY_FIN.height-boardLength/2,h*ANNIVERSARY_FIN.height);
-      const sourceAlong=pb[0]+(.065+.87*u)*(pb[1]-pb[0]);
+      const sourceAlong=pb[0]+(.065+.87*(side < 0 ? 1-u : u))*(pb[1]-pb[0]);
       const px=ORIGIN[0]+BASE[0]*sourceAlong+BASE[1]*photoH;
       const py=ORIGIN[1]+BASE[1]*sourceAlong-BASE[0]*photoH;
       uv.push(px/ANNIVERSARY_FIN.imageWidth,py/ANNIVERSARY_FIN.imageHeight);
