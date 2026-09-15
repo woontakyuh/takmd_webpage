@@ -1,3 +1,7 @@
+## Latest checkpoint · 2026-09-16
+
+Read [the final office handoff](docs/handoffs/2026-09-16-office.md) first. It supersedes older descriptions below for guided navigation, the fin, CD exchange, and Controls help. Release evidence is recorded separately; check the receipt before claiming deployment.
+
 ## Current continuation · Mobile loading · 2026-09-14
 
 Loading status is plain text anchored above the poster monitor with clearance for its light bar with responsive projected geometry; no lower CV or Explore room actions. Mobile poster captures use 2x device pixels and the real HTML CV surface in capture mode, while live mobile DPR stays at 1. Overview moves 12% closer on mobile and 8% on desktop along the existing sight line. Seated opening/reveal, normal Living CV route and explicit audio behavior remain. Evidence: `.omo/evidence/mobile-loading-2026-09-14/`; release is verified only once its receipt exists.
