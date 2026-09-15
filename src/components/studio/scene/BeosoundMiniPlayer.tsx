@@ -39,7 +39,7 @@ export function BeosoundMiniPlayer({ state, dispatch }: {
         onKeyDown={event => { if (event.key === 'Escape' && volumeOpen) { event.stopPropagation(); setVolumeOpen(false); volumeControl.current?.querySelector('button')?.focus(); } }}>
         <button className="office-music-toggle" type="button" aria-label="Music volume controls" title="Volume" aria-expanded={volumeOpen} aria-controls={volumeId} onClick={() => setVolumeOpen(value => !value)}><OfficeIcon name={state.muted || state.volume === 0 ? 'muted' : 'volume'} /></button>
         {volumeOpen && <div id={volumeId} className="office-music-volume-popup" role="group" aria-label="Music volume">
-          <input type="range" min="0" max="90" step="1" aria-label="Music volume" aria-orientation="vertical" aria-valuetext={`${Math.round((state.muted ? 0 : state.volume) / 90 * 100)}%`} value={state.muted ? 0 : state.volume} onChange={event => dispatch({ type: 'volume', value: event.currentTarget.valueAsNumber })}
+          <input style={{ '--volume-level': `${(state.muted ? 0 : state.volume) / 90 * 100}%` } as CSSProperties} type="range" min="0" max="90" step="1" aria-label="Music volume" aria-orientation="vertical" aria-valuetext={`${Math.round((state.muted ? 0 : state.volume) / 90 * 100)}%`} value={state.muted ? 0 : state.volume} onChange={event => dispatch({ type: 'volume', value: event.currentTarget.valueAsNumber })}
             onKeyDown={event => { if (event.key === 'ArrowUp' || event.key === 'ArrowDown') { event.preventDefault(); dispatch({ type: 'volume', delta: event.key === 'ArrowUp' ? 1 : -1 }); } }} />
         </div>}
       </div>
