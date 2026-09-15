@@ -1,6 +1,7 @@
 import { Html } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { talkMedia } from '../collection';
 import { publicHighResolutionSlide } from '../publicSlideSource';
 import { OfficeIcon } from '../OfficeIcon';
@@ -28,6 +29,9 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
   const size = useThree(state => state.size);
   const width = tvReadingSize(size.width, size.height);
   const small = width < 700;
+  const contentStyle: CSSProperties & { readonly '--tv-control-scale': number } = {
+    width: 1600, height: 900, transform: `scale(${width / 1600})`, transformOrigin: 'top left', '--tv-control-scale': 1600 / width,
+  };
   const [railOpen, setRailOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [loadedSource, setLoadedSource] = useState('');
@@ -51,7 +55,10 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
   const currentPage = gallery[current];
   const count = gallery.length || slides.length;
   const activeSlide = slides[sourceIndex];
-  const showPage = (index: number) => onSlide(gallery[index]?.sourceIndex ?? index);
+  const showPage = (index: number) => {
+    if (!slide && talk) onTalk(talk.id);
+    onSlide(gallery[index]?.sourceIndex ?? index);
+  };
   const source = activeSlide && (active && media?.kind === 'full' ? publicHighResolutionSlide(activeSlide) ?? activeSlide.src : activeSlide.src);
   const photos = media?.kind === 'photos';
   const close = onClose;
@@ -104,7 +111,7 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
         <span className="tv-screen-title">{talk?.title || 'Talks & teaching'}</span>
         <button aria-label="Show lecture information" aria-expanded={infoOpen} onClick={() => { setInfoOpen(value => !value); setRailOpen(false); }}>About</button>
       </header>}
-      <div className="tv-screen-content">
+      <div className="tv-screen-content" style={contentStyle}>
         <TvLectureTree presentations={presentations} selected={talk?.id} scrollOffset={treeScrollOffset} onScrollOffset={onTreeScrollOffset}
           onSelect={id => { onTalk(id); setRailOpen(false); setInfoOpen(false); }} />
         <div className="tv-screen-stage">

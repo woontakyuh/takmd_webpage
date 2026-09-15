@@ -1,15 +1,17 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Group } from 'three';
 import { BEOSOUND_ALBUMS } from './BeosoundAlbums';
 import { cdPosition, BEOSOUND_9000 as B } from './Beosound9000State';
 import type { BeosoundState, CdSlot } from './Beosound9000State';
 import { BeosoundDiscArt } from './BeosoundDiscArt';
 import { rackPosition } from './BeosoundCase';
+import { BeosoundScreenExchange } from './BeosoundScreenExchange';
 
 export function BeosoundExchange({ exchange, reducedMotion, onSettle, onComplete }: {
   readonly exchange: NonNullable<BeosoundState['exchange']>; readonly reducedMotion: boolean; readonly onSettle: () => void; readonly onComplete: () => void;
 }) {
+  const [screenTransfer] = useState(() => Boolean(document.querySelector('.cd-booklet:not([inert])')));
   const invalidate = useThree(state => state.invalidate);
   useEffect(() => invalidate(), [invalidate]);
   const settled = useRef(false);
@@ -35,7 +37,8 @@ export function BeosoundExchange({ exchange, reducedMotion, onSettle, onComplete
     else invalidate();
   });
   return <group name="Physical CD exchange">
-    {exchange.outgoing && <group ref={outgoing} position={slotPoint(exchange.slot)}><mesh><BeosoundDiscArt src={BEOSOUND_ALBUMS[exchange.outgoing]?.cover ?? ''} /></mesh></group>}
-    {exchange.album && <group ref={incoming} visible={false}><mesh><BeosoundDiscArt src={BEOSOUND_ALBUMS[exchange.album]?.cover ?? ''} /></mesh></group>}
+    {screenTransfer && !reducedMotion && <BeosoundScreenExchange exchange={exchange} elapsed={elapsed} />}
+    {!screenTransfer && exchange.outgoing && <group ref={outgoing} position={slotPoint(exchange.slot)}><mesh><BeosoundDiscArt src={BEOSOUND_ALBUMS[exchange.outgoing]?.cover ?? ''} /></mesh></group>}
+    {!screenTransfer && exchange.album && <group ref={incoming} visible={false}><mesh><BeosoundDiscArt src={BEOSOUND_ALBUMS[exchange.album]?.cover ?? ''} /></mesh></group>}
   </group>;
 }

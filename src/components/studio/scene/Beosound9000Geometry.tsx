@@ -22,23 +22,19 @@ function CompactDisc({ disc, cover, concealed, texture, disabled, selected, play
   const { hovered, handlers } = useCabinetAction({ disabled, onActivate: () => onSelect(disc) });
   const face = useRef<Mesh>(null), speed = useRef(0);
   const invalidate = useThree(current => current.invalidate);
+  useLayoutEffect(() => {
+    if (face.current) face.current.rotation.z = 0;
+    speed.current = 0;
+    invalidate();
+  }, [cover, invalidate]);
   useLayoutEffect(() => { invalidate(); }, [invalidate, playing, reducedMotion]);
   useFrame((_, delta) => {
     if (!face.current) return;
-    if (reducedMotion) { face.current.rotation.z = 0; speed.current = 0; return; }
+    if (reducedMotion || !playing) { speed.current = 0; return; }
     const dt = Math.min(delta, .05);
-    if (playing) {
-      speed.current += (3.6 - speed.current) * Math.min(1, dt * 6);
-      face.current.rotation.z = (face.current.rotation.z - speed.current * dt) % (Math.PI * 2);
-      invalidate();
-    } else if (Math.abs(face.current.rotation.z) > .001) {
-      const angle = face.current.rotation.z;
-      const target = Math.round(angle / (Math.PI * 2)) * Math.PI * 2;
-      face.current.rotation.z += (target - angle) * Math.min(1, dt * 18);
-      if (Math.abs(target - face.current.rotation.z) < .001) face.current.rotation.z = 0;
-      speed.current = 0;
-      invalidate();
-    }
+    speed.current += (3.6 - speed.current) * Math.min(1, dt * 6);
+    face.current.rotation.z = (face.current.rotation.z - speed.current * dt) % (Math.PI * 2);
+    invalidate();
   });
   return <group name={`Beosound CD ${disc} selector`} position={[cdPosition(disc), B.discY, .042]} {...handlers}>
     <mesh position={[0, 0, -.003]}><circleGeometry args={[.063, 64]} />

@@ -35,7 +35,6 @@ type Props = StudioContent & {
 export function ReadingPanel({ selected, detailsPath, publications, presentations, updatedAt, presentationsUpdatedAt, collection, onPaper, onTalk, talkSlideIndex, onTalkSlide, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [expanded, setExpanded] = useState(false);
-  const [sheetRaised, setSheetRaised] = useState(false);
   const workshopSheet = selected === 'spine' || detailsPath === '/ube' || Boolean(detailsPath?.startsWith('/workshops'));
   const [folioLeft, setFolioLeft] = useState<number>();
   const active = detailsPath || selected;
@@ -44,7 +43,7 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
   const modal = expanded || screenFocused;
   const resetScroll = () => dialogRef.current?.scrollTo({ top: 0 });
 
-  useEffect(() => { setExpanded(false); setSheetRaised(false); dialogRef.current?.scrollTo({ top: 0 }); }, [active]);
+  useEffect(() => { setExpanded(false); dialogRef.current?.scrollTo({ top: 0 }); }, [active]);
 
   useEffect(() => {
     if (selected !== 'research') return;
@@ -76,33 +75,6 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
     return () => { document.body.style.overflow = previousOverflow; window.removeEventListener('keydown', onKey); };
   }, [active, modal, onClose]);
 
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog || !active || !workshopSheet) return;
-    const mobile = window.matchMedia('(max-width: 759px)');
-    let touchY = 0;
-    let previousScroll = 0;
-    const move = (delta: number) => {
-      if (!mobile.matches || expanded) return;
-      if (delta > 18) setSheetRaised(true);
-      else if (delta < -24 && dialog.scrollTop <= 1) setSheetRaised(false);
-    };
-    const wheel = (event: WheelEvent) => move(event.deltaY);
-    const start = (event: TouchEvent) => { touchY = event.touches[0]?.clientY ?? 0; };
-    const touch = (event: TouchEvent) => move(touchY - (event.touches[0]?.clientY ?? touchY));
-    const scroll = () => {
-      if (mobile.matches) {
-        if (dialog.scrollTop > 24) setSheetRaised(true);
-        else if (dialog.scrollTop <= 1 && previousScroll > 1) setSheetRaised(false);
-      }
-      previousScroll = dialog.scrollTop;
-    };
-    dialog.addEventListener('wheel', wheel, { passive: true });
-    dialog.addEventListener('touchstart', start, { passive: true });
-    dialog.addEventListener('touchmove', touch, { passive: true });
-    dialog.addEventListener('scroll', scroll, { passive: true });
-    return () => { dialog.removeEventListener('wheel', wheel); dialog.removeEventListener('touchstart', start); dialog.removeEventListener('touchmove', touch); dialog.removeEventListener('scroll', scroll); };
-  }, [active, workshopSheet, expanded]);
 
   return (
     <dialog
@@ -112,7 +84,6 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
       data-exhibit={detailsPath ? 'details' : selected}
       data-expanded={expanded}
       data-workshop-sheet={workshopSheet}
-      data-sheet-raised={sheetRaised}
       data-screen-focus={screenFocused}
       aria-modal={modal}
       aria-labelledby="studio-panel-title"
@@ -124,6 +95,8 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
       }}
     >
       {active && <>
+        {workshopSheet && <div className="studio-reader-reveal" aria-hidden="true" />}
+        <div className="studio-reader-body">
         <div className="studio-panel-top">
           {researchFocused ? <h2 id="studio-panel-title">Research folio</h2> : <span className="studio-kicker">TakMD / {detailsPath ? 'Office collection' : selected === 'spine' ? 'Cadaver teaching' : selected === 'ai' ? 'CV' : selected}</span>}
           <div className="studio-panel-actions">
@@ -134,11 +107,12 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
         {!researchFocused && <h2 id="studio-panel-title">{detailsPath ? officeDetailsTitle(detailsPath) : selected ? titles[selected] : ''}</h2>}
         {detailsPath && <OfficeDetails path={detailsPath} publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}
         {selected === 'research' && <ResearchFolio publications={publications} updatedAt={updatedAt} publication={collection.publication} media={collection.paperMedia} direction={collection.paperDirection} onPaper={id => { onPaper(id); resetScroll(); }} />}
-        {selected === 'spine' && <OfficeDetails path="/workshops/cadaver" publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}
+        {!detailsPath && selected === 'spine' && <OfficeDetails path="/workshops/cadaver" publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}
         {selected === 'education' && <TeachingReader presentations={presentations} selected={collection.presentation} onSelect={id => { onTalk(id); resetScroll(); }} slideIndex={talkSlideIndex} onSlide={onTalkSlide} updatedAt={presentationsUpdatedAt} />}
         {selected === 'projects' && <AiReader publications={publications} presentations={presentations} onPaper={id => { onPaper(id); resetScroll(); }} onTalk={id => { onTalk(id); resetScroll(); }} />}
         {selected === 'ai' && <CvReader publicationCount={publications.length} presentationCount={presentations.length} />}
         {(selected === 'bjj' || selected === 'surfing') && <PersonalReader interest={selected} />}
+        </div>
       </>}
     </dialog>
   );

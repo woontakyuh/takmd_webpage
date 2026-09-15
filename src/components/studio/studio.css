@@ -326,3 +326,12 @@ body:has(.studio) { overflow: clip; }
 .studio-stage { height: 100dvh; min-height: 0; }
 .office-guided { flex-wrap: wrap; justify-content: flex-end; row-gap: 0; }
 @media (max-width: 759px) { .office-guided { max-width: 280px; column-gap: 12px; } }
+.office-music-host { flex-basis:96px; width:96px; }
+.office-music { display:flex; gap:8px; }
+.studio-tools:has(.office-music-volume > button[aria-expanded="true"]) { z-index:6; }
+.office-music-volume { position:relative; }
+.office-music-volume-popup { position:absolute; top:calc(100% + 8px); left:0; z-index:5; display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px 4px 4px; border:1px solid var(--studio-line); border-radius:12px; background:var(--studio-light); box-shadow:0 8px 24px #1828241a; }
+.office-music-volume-popup input { writing-mode:vertical-lr; direction:rtl; width:44px; height:120px; accent-color:var(--studio-teal); cursor:pointer; }
+.studio-tools .office-music-volume-popup button { width:44px; padding:0; border:0; }
+@media(max-width:759px) { .office-music-host { flex-basis:94px; width:94px; } .office-music { gap:6px; } }
+@media(max-width:359px) { .office-help { top:146px; } }

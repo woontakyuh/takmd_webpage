@@ -7,15 +7,18 @@ import type { BeosoundAction, BeosoundState } from './Beosound9000State';
 import { trackAudio } from './BeosoundTracks';
 import './beosound-collection.css';
 import { BeosoundCoverFlow } from './BeosoundCoverFlow';
+import { useBeosoundUnfold } from './useBeosoundUnfold';
 
 const stop = (event: SyntheticEvent) => event.stopPropagation();
-export function BeosoundBooklet({ state, album, onAlbum, onClose, dispatch }: {
+export function BeosoundBooklet({ state, album, onAlbum, onClose, dispatch, expanded, reducedMotion, origin, onClosed }: {
+  readonly expanded: boolean; readonly reducedMotion: boolean; readonly origin: () => { readonly x: number; readonly y: number }; readonly onClosed: () => void;
   readonly state: BeosoundState; readonly album: AlbumId; readonly onAlbum: (album: AlbumId) => void;
   readonly onClose: () => void; readonly dispatch: Dispatch<BeosoundAction>;
 }) {
   const [details, setDetails] = useState(false);
   const [placing, setPlacing] = useState(false), [pendingTrack, setPendingTrack] = useState<number | undefined>();
   const close = useRef<HTMLButtonElement>(null);
+  const booklet = useBeosoundUnfold({ expanded, reducedMotion, origin, onClosed });
   const record = BEOSOUND_ALBUMS[album];
   const slots = placementAfterExchange(state);
   const mounted = CD_SLOTS.find(slot => slots[slot - 1] === album);
@@ -34,9 +37,9 @@ export function BeosoundBooklet({ state, album, onAlbum, onClose, dispatch }: {
     if (mounted) dispatch({ type: 'track', disc: mounted, track: number });
     else { setPendingTrack(number); setPlacing(true); }
   };
-  return <section className="cd-booklet" data-tracks-open={details} role="region" aria-label="CD collection" onPointerDown={stop} onPointerUp={stop} onClick={stop} onDoubleClick={stop} onWheel={stop}>
+  return <section ref={booklet} className="cd-booklet" inert={!expanded} data-tracks-open={details} role="region" aria-label="CD collection" onPointerDown={stop} onPointerUp={stop} onClick={stop} onDoubleClick={stop} onWheel={stop}>
     <button ref={close} className="cd-collection-close" type="button" aria-label="Close CD collection" onClick={onClose}>×</button>
-    <BeosoundCoverFlow album={album} onAlbum={onAlbum} onOpen={() => setDetails(value => !value)} />
+    <BeosoundCoverFlow returning={state.exchange?.outgoing ?? null} disabled={state.exchange !== null} album={album} onAlbum={onAlbum} onOpen={() => setDetails(value => !value)} />
     <div className="cd-selection-caption">
       <h2>{record.album}</h2><p>{record.artist} · {record.year}{mounted ? ` · CD ${mounted}` : ''}</p>
       <div className="cd-selection-actions">

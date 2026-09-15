@@ -17,7 +17,7 @@
 }
 .studio-dialog[data-screen-focus='true']::backdrop { background: #16231d70; backdrop-filter: blur(2px); }
 .studio-dialog[data-screen-focus='true'] .studio-panel-top { top: calc(clamp(18px,2vw,30px) * -1); }
-.studio-dialog[data-screen-focus='true'] > h2 { margin-bottom: 14px; font-size: clamp(28px,3vw,42px); }
+.studio-dialog[data-screen-focus='true'] .studio-reader-body > h2 { margin-bottom: 14px; font-size: clamp(28px,3vw,42px); }
 .studio-panel-top { position: sticky; top: -24px; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 16px; padding: 8px 0 12px; background: var(--studio-light); }
 .studio-panel-actions { display: flex; gap: 6px; }
 .studio-icon-button { display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; border-radius: 4px; border: 1px solid var(--studio-line); color: var(--studio-ink); background: transparent; }
@@ -68,8 +68,19 @@
   .studio-dialog[data-exhibit='spine'] .studio-panel-footer { margin-top: 12px; min-height: 44px; }
 }
 
+.studio-reader-body { display: contents; }
+.studio-reader-reveal { display: none; }
 @media (max-width:759px) {
-  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) { top: 50dvh; bottom: 8px; height: auto; max-height: none; transition: top var(--studio-panel) var(--studio-ease); }
-  .studio-dialog[data-workshop-sheet="true"][data-sheet-raised="true"]:not([data-expanded="true"]) { top: max(8px, env(safe-area-inset-top)); }
+  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) {
+    top: max(8px, env(safe-area-inset-top)); bottom: 8px; height: auto; max-height: none;
+    padding: 0; border: 0; background: transparent; box-shadow: none;
+    pointer-events: none; overflow-anchor: none; scrollbar-width: none; z-index: 100;
+  }
+  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) .studio-reader-reveal { display: block; height: calc(50dvh - max(8px, env(safe-area-inset-top))); }
+  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) .studio-reader-body {
+    display: block; position: relative; min-height: calc(100dvh - 16px); padding: 18px;
+    background: var(--studio-light); border: 1px solid var(--studio-line); border-radius: 4px;
+    pointer-events: auto;
+  }
+  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) .studio-panel-top { top: 0; }
 }
-@media (prefers-reduced-motion:reduce) { .studio-dialog[data-workshop-sheet="true"] { transition:none; } }

@@ -1011,3 +1011,11 @@ The original painting replaces the calendar treatment. Hang a 62 cm square oak f
 
 ### Rhoton personal reference — 2026-09-15
 Add the owner-photographed Rhoton volume to the existing personal library. Covers, spine and nine photographed interior pages use the original source print, never regenerated anatomy or lettering. Registration removes perspective and compensates page contour curvature; material correction reduces photographed illumination gradients. Only the verified blank outer-margin areas covered by fingers are replaced with paper. Retain every annotation and highlighter mark. Pages 402–409 form four original spreads; page 410 appears on the left with an unprinted opposite leaf. Keep the existing extraction, cover hinge, paper packets and page navigation. Fit the wider spread in desktop space and center mobile books above their compact information panel. Night page navigation must use ivory text.
+
+## Reader and CD interaction refinement · 2026-09-15
+
+Mobile workshop readers use one native scroll surface: an initial half-viewport reveal area scrolls away at the same rate as content, with no threshold switching or automatic snapping. Photos open in a modal viewer using existing paper, ink and line tokens, with fit/zoom and previous/next controls. Session dates form the timeline headings; programme metadata is secondary.
+
+CD player and rack share the mobile rack overview framing. Cover Flow unfolds from the projected rack position over approximately 560ms and returns along the same path on close. Existing transparent covers and physical controls remain; reduced-motion preference uses an immediate transition.
+
+TV archive, slide and footer share a 1600×900 logical composition in the physical texture and live reader: 304px archive, 80px footer, 17px title, 14px metadata and 23px title line height. Activation changes resolution and controls, not typography or wrapping. External header and page-arrow touch targets retain viewport sizing. The global music controls use a matching speaker icon with a vertical volume popover; each disc preserves its stopped angle.

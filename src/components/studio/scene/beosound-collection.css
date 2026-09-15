@@ -58,3 +58,6 @@
  .cd-booklet[data-tracks-open="true"] > .cd-slot-picker, .cd-booklet[data-tracks-open="true"] > .cd-collection-status { grid-column: 1 / -1; }
  .cd-booklet[data-tracks-open="true"] .cd-track-heading { flex-direction: column; gap: 0; }
 }
+
+.cd-transfer { position: fixed; inset: 0; pointer-events: none; }
+.cd-transfer-disc { position: absolute; left: 0; top: 0; width: 120px; height: 120px; opacity: 0; border-radius: 50%; background-size: cover; background-position: center; mask-image: radial-gradient(circle, transparent 0 9px, #000 9.5px); pointer-events: none; will-change: transform, opacity; }

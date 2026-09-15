@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { PERSONAL_LINKS } from './personal';
 import './clinical-details.css';
 
-const topics = ['Concept', 'Tumor', 'Trauma', 'Infection', 'Congenital & CSF'] as const;
+const topics = ['Concept', 'Degenerative disease', 'Tumor', 'Trauma', 'Infection', 'Congenital & CSF'] as const;
 type Topic = typeof topics[number];
 const review = 'https://doi.org/10.3390/bioengineering10121363';
 const schwannoma = 'https://doi.org/10.21182/jmisst.2025.02747';
@@ -16,8 +16,8 @@ export function ClinicalDetails({ onTalk }: { readonly onTalk: (id: string) => v
   const [topic, setTopic] = useState<Topic>('Concept');
   return <div className="clinical-story">
     <p className="studio-kicker">Unilateral biportal endoscopy</p>
-    <h3 className="reader-detail-title">State of the art.<br />Expanding indications.</h3>
-    <p className="studio-panel-intro">From degenerative spine disease to selected tumors, trauma, infection and craniovertebral or CSF disorders: the technology, the published evidence, and the work I am developing.</p>
+    <h3 className="reader-detail-title">Endoscopic spine surgery.<br />From foundations to new applications.</h3>
+    <p className="studio-panel-intro">Start with the UBE concept and its foundation in degenerative spine disease, then explore selected applications in tumors, trauma, infection and craniovertebral or CSF disorders. Published evidence and work in progress are identified throughout.</p>
     <div className="clinical-topics" role="group" aria-label="Endoscopic surgery topics">{topics.map(item => <button type="button" key={item} aria-pressed={topic === item} onClick={() => setTopic(item)}>{item}</button>)}</div>
     <section className="clinical-topic" aria-label={topic}>
       {topic === 'Concept' && <>
@@ -26,8 +26,25 @@ export function ClinicalDetails({ onTalk }: { readonly onTalk: (id: string) => v
         <figure><img src="/studio/clinical/ess-portals.webp" width="2158" height="1619" alt="Published comparison: full-endoscopic instruments through one scope on the left, separate UBE viewing and working portals on the right" /><figcaption>FESS (left) and UBE (right). Yuh et al., Bioengineering 2023, Figure 1. <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a> · Layout preserved; WebP encoding.</figcaption></figure>
         <h4>The technological foundation</h4>
         <p>My review examines three enabling technologies: camera and lighting systems for anatomical visibility, radiofrequency equipment for tissue work and bleeding control, and drills for bone work in an irrigated field.</p>
-        <p>Degenerative disease remains the main clinical setting. The following chapters explore how this platform is being applied beyond it, with the evidence and maturity of each application made explicit.</p>
+        <p>The next chapter begins with degenerative disease: the established role of lumbar decompression and the different evidence needs of fusion, cervical and thoracic procedures. Later chapters explore applications beyond this foundation.</p>
         <Paper href={review} title="Future of Endoscopic Spine Surgery: Insights from Cutting-Edge Technology in the Industrial Field" credit="My published review · Bioengineering · 2023" />
+      </>}
+      {topic === 'Degenerative disease' && <>
+        <h4>The clinical foundation</h4>
+        <p className="studio-kicker">Source synthesis · Manuscript in preparation</p>
+        <p>A synthesis from our review, Unilateral Biportal Endoscopic Spine Surgery: The State of the Art, currently in preparation for JKNS.</p>
+        <h4>Lumbar decompression · Established</h4>
+        <p>Our review identifies interlaminar and foraminal decompression for lumbar stenosis and disc herniation as the most established UBE indication. Here, a reproducible technique is supported by randomized, comparative and review evidence. The synthesis supports UBE as a minimally invasive alternative without claiming consistent superiority over other approaches.</p>
+        <h4>Lumbar interbody fusion · Expanding</h4>
+        <p>An established fusion concept and the maturity of UBE-specific evidence are separate questions. Cage design, navigation and robotics continue to evolve; long-term independently assessed fusion, endplate safety and comparative value remain research priorities.</p>
+        <h4>Posterior cervical foraminotomy · Expanding</h4>
+        <p>For cervical foraminal disease, regional safety and prospective multicenter validation remain priorities. Foraminotomy is distinct from cervical myelopathy decompression, which remains exploratory in this framework.</p>
+        <h4>Thoracic decompression · Expanding</h4>
+        <p>For thoracic stenosis and ossification of the ligamentum flavum, the evidence gap is narrowing, although studies remain largely retrospective and concentrated in experienced centers. Lesion morphology, dural ossification and spinal cord safety require specific appraisal.</p>
+        <h4>Technical readiness and evidence maturity</h4>
+        <p>The draft asks two separate questions: can an experienced surgeon apply the platform reproducibly, and how well do clinical studies validate the application? Readiness considers platform suitability, disease-specific anatomy and safety, and enabling technology. Evidence maturity considers study design, replication and follow-up.</p>
+        <p>These are qualitative judgments, not numerical scores or patient-selection rules. An expanding indication can be technically advanced while still needing stronger clinical validation.</p>
+        <p className="office-detail-source">Source: JKNS working draft, degenerative indications and Tables 1–3 · Unpublished manuscript in preparation.</p>
       </>}
       {topic === 'Tumor' && <>
         <h4>Beyond degenerative disease</h4>
