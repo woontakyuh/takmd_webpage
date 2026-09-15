@@ -5,6 +5,7 @@ import { Box3, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import type { Material } from 'three';
 import type { StudioSceneProps } from '../types';
 import { Interactive } from './Interactive';
+import { requestOfficePath } from '../officeNavigation';
 import { Block } from './Primitives';
 import { PALETTE, ROOM } from './config';
 
@@ -59,7 +60,7 @@ type SpineProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotio
 
 export function SpineExhibit({ selected, onSelect, reducedMotion }: SpineProps) {
   return (
-    <Interactive id="spine" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.spine.position}>
+    <Interactive id="spine" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.spine.position} onActivate={() => selected === 'spine' ? requestOfficePath('/workshops/cadaver') : onSelect('spine')}>
       <Block size={[0.26, 0.035, 0.22]} position={[0, 0.0175, 0]} radius={0.006} color={PALETTE.ink} roughness={0.78} />
       <group position={[0, 0.055, 0]} rotation={[0, ROOM.spine.rotation, 0]}>
         <AnatomyBoundary><Suspense fallback={<ModelStatus text="Loading specimen" />}><AnatomyModel /></Suspense></AnatomyBoundary>

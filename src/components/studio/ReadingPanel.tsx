@@ -10,7 +10,7 @@ import { PersonalReader } from './PersonalReader';
 import { folioReadingPanelLeft } from './scene/folioFocus';
 
 const titles = {
-  spine: 'Precision, in practice.',
+  spine: 'Cadaver workshops.',
   research: 'The research folio.',
   education: 'Knowledge, shared.',
   ai: 'Curriculum Vitae',
@@ -93,7 +93,7 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
     >
       {active && <>
         <div className="studio-panel-top">
-          {researchFocused ? <h2 id="studio-panel-title">Research folio</h2> : <span className="studio-kicker">TakMD / {detailsPath ? 'Office collection' : selected === 'spine' ? 'Clinical practice' : selected === 'ai' ? 'CV' : selected}</span>}
+          {researchFocused ? <h2 id="studio-panel-title">Research folio</h2> : <span className="studio-kicker">TakMD / {detailsPath ? 'Office collection' : selected === 'spine' ? 'Cadaver teaching' : selected === 'ai' ? 'CV' : selected}</span>}
           <div className="studio-panel-actions">
             {!screenFocused && <button className="studio-icon-button" onClick={() => setExpanded(value => !value)} aria-label={expanded ? 'Return to side reader' : 'Expand reading view'}><OfficeIcon name={expanded ? 'collapse' : 'expand'} /></button>}
             <button className="studio-icon-button" onClick={onClose} aria-label="Close and return to office" data-reader-close><OfficeIcon name="close" /></button>
@@ -102,7 +102,7 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
         {!researchFocused && <h2 id="studio-panel-title">{detailsPath ? officeDetailsTitle(detailsPath) : selected ? titles[selected] : ''}</h2>}
         {detailsPath && <OfficeDetails path={detailsPath} publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}
         {selected === 'research' && <ResearchFolio publications={publications} updatedAt={updatedAt} publication={collection.publication} media={collection.paperMedia} direction={collection.paperDirection} onPaper={id => { onPaper(id); resetScroll(); }} />}
-        {selected === 'spine' && <OfficeDetails path="/ube" publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}
+        {selected === 'spine' && <OfficeDetails path="/workshops/cadaver" publications={publications} presentations={presentations} onPaper={onPaper} onTalk={id => onTalk(id)} />}
         {selected === 'education' && <TeachingReader presentations={presentations} selected={collection.presentation} onSelect={id => { onTalk(id); resetScroll(); }} slideIndex={talkSlideIndex} onSlide={onTalkSlide} updatedAt={presentationsUpdatedAt} />}
         {selected === 'projects' && <AiReader publications={publications} presentations={presentations} onPaper={id => { onPaper(id); resetScroll(); }} onTalk={id => { onTalk(id); resetScroll(); }} />}
         {selected === 'ai' && <CvReader publicationCount={publications.length} presentationCount={presentations.length} />}

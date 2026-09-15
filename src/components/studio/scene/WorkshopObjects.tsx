@@ -21,7 +21,7 @@ type WorkshopLinkProps = {
   readonly focused: ExhibitId | null;
   readonly onApproach: () => void;
   readonly position: Point;
-  readonly route: `/workshops/${string}`;
+  readonly route: `/workshops/${string}` | '/ube';
   readonly children: ReactNode;
 };
 
@@ -75,7 +75,6 @@ function EndoscopeTray() {
 
 export function WorkshopObjects({ focused, onApproach }: { readonly focused: ExhibitId | null; readonly onApproach: () => void }) {
   const dummy = workshops[0];
-  const cadaver = workshops[1];
   const animal = workshops[2];
 
   return (
@@ -86,8 +85,8 @@ export function WorkshopObjects({ focused, onApproach }: { readonly focused: Exh
       <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${animal.slug}`} position={[COLLECTION_X, CABINET_TOP, 0.19]}>
         <PigPlush />
       </WorkshopLink>
-      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${cadaver.slug}`} position={[COLLECTION_X, CABINET_TOP, -0.31]}>
-        <EndoscopeTray />
+      <WorkshopLink focused={focused} onApproach={onApproach} route="/ube" position={[COLLECTION_X, CABINET_TOP, 1.65]}>
+        <group rotation={[0, -Math.PI / 2, 0]}><EndoscopeTray /></group>
       </WorkshopLink>
     </group>
   );

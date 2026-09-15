@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { ClinicalDetails } from './ClinicalDetails';
+import { CadaverExperience } from './CadaverExperience';
 import type { ReactNode } from 'react';
 import { getWorkshop } from '../../data/workshops';
 import { CvReader } from './CvReader';
 import { AiReader } from './AiReader';
 import { EducationDetails, ResearchDetails } from './OfficeAcademicDetails';
-import { ClinicalDetails, ContactDetails, CreditsDetails, NoteCollection, WorkshopDetails } from './OfficeDetailContent';
+import { ContactDetails, CreditsDetails, NoteCollection, WorkshopDetails } from './OfficeDetailContent';
 import { PersonalReader } from './PersonalReader';
 import { ProjectReader } from './ProjectReader';
 import { knowledgeNotes, mediaNotes } from './officeNotes';
@@ -27,7 +29,8 @@ export function officeDetailsTitle(path: string): string {
     case '/cv': return 'Curriculum Vitae';
     case '/contact': return 'Contact.';
     case '/credits': return 'Scene credits.';
-    case '/ube': return 'Clinical practice.';
+    case '/ube': return 'UBE surgery.';
+    case '/workshops/cadaver': return 'Cadaver workshops.';
     case '/education': return 'Education and training.';
     case '/research': return 'Research overview.';
     case '/ai-workflow': return 'AI workflow study.';
@@ -56,7 +59,8 @@ export function OfficeDetails({ path, publications, presentations, onPaper, onTa
     case '/cv': content = <div className="monitor-cv-readable"><CvReader publicationCount={publications.length} presentationCount={presentations.length} /></div>; break;
     case '/contact': content = <ContactDetails />; break;
     case '/credits': content = <CreditsDetails />; break;
-    case '/ube': content = <ClinicalDetails />; break;
+    case '/ube': content = <ClinicalDetails onTalk={onTalk} />; break;
+    case '/workshops/cadaver': content = <CadaverExperience onTalk={onTalk} />; break;
     case '/education': content = <EducationDetails onTalk={onTalk} />; break;
     case '/research': content = <ResearchDetails publications={publications} onPaper={onPaper} />; break;
     case '/jiu-jitsu': content = <PersonalReader interest="bjj" />; break;

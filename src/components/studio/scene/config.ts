@@ -95,7 +95,7 @@ export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPo
 export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   bookshelf: FOCUS.bookshelf,
   books: FOCUS.books,
-  spine: { position: [1.9, 2.77, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
+  spine: { position: [1.9, 2.77, 0.95], target: [-2.42, 0.867, 0.95], zoom: 1 },
   research: { position: [0.34403977, 1.59559296, -1.88147424], target: [0.392, 0.7985, -1.658], zoom: 1 },
   education: FOCUS.education,
   ai: FOCUS.ai,

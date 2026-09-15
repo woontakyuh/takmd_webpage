@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react';
-import surgerySummary from '../../data/public-surgery-summary.json';
 import { getWorkshop, workshops } from '../../data/workshops';
 import { sessionsFor, workshopSessions } from '../../data/workshop-sessions';
 import { curriculumStages } from '../../data/workshop-curriculum';
 import { sessionCover } from '../workshops/presentation';
-import { contactCards, models, principles } from './officeDetailData';
+import { contactCards, models } from './officeDetailData';
 import type { NoteBlock, OfficeNote } from './officeNotes';
 
 function SourceLink({ href, children }: { readonly href: string; readonly children: ReactNode }) {
@@ -35,31 +34,6 @@ export function WorkshopDetails({ slug }: { readonly slug: string }) {
     {workshop && <ul className="office-detail-list">{workshop.focus.map(item => <li key={item}>{item}</li>)}</ul>}
     <a className="studio-panel-footer" href={workshop ? `/workshops/${workshop.slug}` : '/workshops'} target="_blank" rel="noopener noreferrer">Explore the workshop portfolio<span aria-hidden="true">↗</span></a>
     <nav className="office-detail-links" aria-label="Workshop themes">{workshops.filter(item => item.slug !== slug).map(item => <a href={`/workshops/${item.slug}`} key={item.slug}>{item.title} →</a>)}</nav>
-  </>;
-}
-
-export function ClinicalDetails() {
-  const metrics = [
-    ['Registry cases', surgerySummary.totalCases],
-    ['UBE-coded cases', surgerySummary.categoryCounts.UBE],
-    ['Full-endoscopic cases', surgerySummary.categoryCounts['Full-endo']],
-    ['ULBD cases', surgerySummary.categoryCounts.ULBD],
-  ] as const;
-  return <>
-    <p className="studio-panel-intro">UBE is presented here as a technical philosophy: minimal tissue disruption, clear visualization, stable landmarks, and outcomes that can be tracked.</p>
-    <h3 className="reader-detail-title">Endoscopic spine surgery as disciplined visibility.</h3>
-    <div className="office-detail-metrics">{metrics.map(([label, value]) => <div key={label}><strong>{value.toLocaleString()}</strong><span>{label}</span></div>)}</div>
-    <p className="office-detail-source">Published registry summary · Aggregated counts</p>
-    <section className="studio-editorial-note"><span>Principles</span><h3>How I frame UBE.</h3>
-      <div className="workflow-steps">{principles.map(principle => <details key={principle.title} open><summary>{principle.title}</summary><p>{principle.description}</p></details>)}</div>
-    </section>
-    <section className="studio-editorial-note"><span>Learning frame</span><h3>Common pitfalls.</h3><ul className="office-detail-list">
-      <li>Portal misalignment and unstable instrument trajectory</li>
-      <li>Contralateral decompression that appears adequate from the ipsilateral view but remains insufficient</li>
-      <li>Bleeding strategy that is delayed until visualization is already poor</li>
-      <li>Escalating from focal decompression to broader bilateral goals without resetting landmarks</li>
-    </ul></section>
-    <div className="office-detail-links"><a href="/education">Training and lectures →</a><a href="/knowledge/what-is-ube">What is UBE? →</a><a href="/research">Research archive →</a></div>
   </>;
 }
 

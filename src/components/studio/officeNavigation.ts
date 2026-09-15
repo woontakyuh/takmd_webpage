@@ -28,7 +28,7 @@ export function officePathView(path: string, current: OfficeView): OfficeView | 
     case '/cv': if (url.hash === '#details') return { ...current, details: path }; selected = 'ai'; break;
     case '/research': if (url.hash === '#overview') return { ...current, details: path }; selected = 'research'; break;
     case '/education': if (url.hash === '#overview') return { ...current, details: path }; selected = 'education'; break;
-    case '/ube': selected = 'spine'; break;
+    case '/ube': return { focused: 'spine', selected: 'spine', details: '/ube' };
     case '/ai': if (url.hash) return { ...current, details: path }; selected = 'projects'; break;
     case '/jiu-jitsu': selected = 'bjj'; break;
     case '/surfing': selected = 'surfing'; break;
