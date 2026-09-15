@@ -45,7 +45,7 @@ export const ROOM = {
   architecture: { height: 3.2, farZ: 3.36, leftX: -2.76,
     window: { centerZ: 0.55, width: 3.4, bottom: 0.75, top: 2.6 } },
   desk: { position: [-0.05, 0, -1.5], rotation: Math.PI, width: 1.8, depth: 0.9, height: 0.755 },
-  spine: { position: [-2.42, 0.5695, 0.19], height: 0.54, rotation: Math.PI / 2 - 0.12 },
+  spine: { position: [-2.42, 0.5695, -0.16], height: 0.54, rotation: Math.PI / 2 - 0.12 },
   folio: { position: [0.38, 0.7805, -1.66], rotation: Math.PI - 0.17,
     stowed: { position: [0.66, 0.7805, -1.55], rotation: Math.PI } },
   monitor: { position: [-0.05, 0.781, -1.2], rotation: Math.PI },

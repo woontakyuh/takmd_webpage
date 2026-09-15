@@ -15,7 +15,7 @@ import { usePrintedTexture } from './Textures';
 import { MOTION, PALETTE, ROOM } from './config';
 import { scheduleSceneSingleAction } from './sceneGesture';
 
-type FolioProps = Pick<StudioSceneProps, 'selected' | 'focused' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'collection'>;
+type FolioProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'collection'>;
 
 type FolioPaper = {
   readonly id: string;
@@ -41,7 +41,7 @@ function paperFromCollection(collection: OfficeCollection): FolioPaper {
 
 const CLICK_DRAG_THRESHOLD = 5;
 
-export function Folio({ selected, focused, onSelect, onPaperStep, reducedMotion, collection }: FolioProps) {
+export function Folio({ selected, onSelect, onPaperStep, reducedMotion, collection }: FolioProps) {
   const canvas = useThree(state => state.gl.domElement);
   const cover = useRef<Group>(null);
   const placement = useRef<Group>(null);
@@ -136,7 +136,7 @@ export function Folio({ selected, focused, onSelect, onPaperStep, reducedMotion,
   useFrame((_, delta) => {
     if (!cover.current || !spine.current || !leaf.current) return;
     delta = Math.min(delta, .05);
-    const open = selected === 'research' || focused === 'research';
+    const open = selected === 'research';
     if (open && !wasOpen.current) opening.current = { from: cover.current.rotation.z, elapsed: 0 };
     if (!open) opening.current = null;
     wasOpen.current = open;

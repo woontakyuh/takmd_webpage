@@ -72,6 +72,7 @@ function OfficeExperience(content: StudioContent) {
   const [familyPhoto] = useState(selectFamilyPhoto);
   const [memory, setMemory] = useState<PhotoMemory | null>(null);
   const openMemory = useCallback(() => { if (!arrangement.editing) setMemory(PHOTO_MEMORIES.ppomppu); }, [arrangement.editing]);
+  const [guidedSection, setGuidedSection] = useState<'research' | 1 | 2 | 3 | 4 | null>(null);
   const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 | 3 | 4 }>({ sequence: 0, view: 0 });
   const [lightMode, setLightMode] = useState<LightMode>('local');
   const localLighting = useOfficeLight(lightMode);
@@ -234,6 +235,7 @@ function OfficeExperience(content: StudioContent) {
     const onNavigate = (event: Event) => { if (event instanceof CustomEvent && typeof event.detail === 'string') navigate(event.detail); };
     const onEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || event.defaultPrevented || document.querySelector('dialog[open]')) return;
+      if (guidedSection !== null && !navigation.current.current.selected && !navigation.current.current.details && !inspection) { event.preventDefault(); goToView(0); return; }
       if (navigation.current.current.focused || navigation.current.current.details) { event.preventDefault(); close(); }
     };
     document.addEventListener('click', onLink, true);
@@ -242,10 +244,11 @@ function OfficeExperience(content: StudioContent) {
     window.addEventListener('office:navigate', onNavigate);
     window.addEventListener('keydown', onEscape);
     return () => { window.removeEventListener('office:zoomed', onZoomed); document.removeEventListener('click', onLink, true); window.removeEventListener('office:navigate', onNavigate); window.removeEventListener('keydown', onEscape); };
-  }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection]);
+  }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection, guidedSection, inspection]);
   useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
   const goToView = (view: 0 | 1 | 2 | 3 | 4) => {
+    setGuidedSection(view === 0 ? null : view);
     setEntry('complete');
     setExplored(true);
     setInspection(null);
@@ -255,9 +258,10 @@ function OfficeExperience(content: StudioContent) {
     setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
   };
 
+  const guidedTitle = guidedSection === 'research' ? 'Research.' : guidedSection === 1 ? 'Talks & Recognition.' : guidedSection === 2 ? 'UBE & Teaching.' : guidedSection === 3 ? 'Whisky & Music.' : guidedSection === 4 ? 'Jiu-jitsu & Surfing.' : 'The office.';
   const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed);
 
-  return <div className="studio" data-entry={entry} data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
+  return <div className="studio" data-entry={entry} data-guided={guidedSection ?? undefined} data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
     <section className="studio-stage" aria-label="TakMD's office">
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
@@ -301,8 +305,8 @@ function OfficeExperience(content: StudioContent) {
       </div>
       <div className="office-bottom">
         <div className="office-summary">
-          <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>The office.</h2></div>
-          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => open('research')}>Research</button><button onClick={() => goToView(1)}>Talks &amp; Recognition</button><button onClick={() => goToView(2)}>UBE &amp; Teaching</button><button onClick={() => goToView(3)}>Whisky &amp; Music</button><button onClick={() => goToView(4)}>Jiu-jitsu &amp; Surfing</button></div>
+          <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>{guidedTitle}</h2>{guidedSection !== null && <button className="office-guided-close" aria-label="Close guided view" onClick={() => goToView(0)}><OfficeIcon name="close" /></button>}</div>
+          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => { setGuidedSection('research'); setEntry('complete'); setExplored(true); navigation.go({ focused: 'research', selected: null, details: null }); }}>Research</button><button onClick={() => goToView(1)}>Talks &amp; Recognition</button><button onClick={() => goToView(2)}>UBE &amp; Teaching</button><button onClick={() => goToView(3)}>Whisky &amp; Music</button><button onClick={() => goToView(4)}>Jiu-jitsu &amp; Surfing</button></div>
         </div>
         <footer className="studio-stage-footer">
         <OfficeHelp ready={ready} explored={explored} compact={compact} onControl={setRoomControl} />

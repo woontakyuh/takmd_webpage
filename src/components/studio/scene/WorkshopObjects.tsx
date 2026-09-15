@@ -79,13 +79,13 @@ export function WorkshopObjects({ focused, onApproach }: { readonly focused: Exh
 
   return (
     <group rotation={[0, 0, 0]}>
-      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${dummy.slug}`} position={[COLLECTION_X, CABINET_TOP + 0.014, 1.16]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${dummy.slug}`} position={[COLLECTION_X, CABINET_TOP + 0.014, 0.81]}>
         <EndoscopicLumbarBox />
       </WorkshopLink>
-      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${animal.slug}`} position={[COLLECTION_X, CABINET_TOP, 0.67]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${animal.slug}`} position={[COLLECTION_X, CABINET_TOP, 0.32]}>
         <PigPlush />
       </WorkshopLink>
-      <WorkshopLink focused={focused} onApproach={onApproach} route="/ube" position={[COLLECTION_X, CABINET_TOP, 1.65]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} route="/ube" position={[COLLECTION_X, CABINET_TOP, 1.30]}>
         <group rotation={[0, -Math.PI / 2, 0]}><EndoscopeTray /></group>
       </WorkshopLink>
     </group>

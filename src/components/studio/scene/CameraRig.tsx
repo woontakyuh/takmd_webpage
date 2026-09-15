@@ -102,12 +102,13 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   const objectReturnPose = useRef<SavedPose | null>(null);
   const previousObject = useRef(inspection);
   const focusPose = useCallback(() => moveFocus(selected === 'ai' ? monitorReadingPose()
-    : selected === 'research' ? folioReadingPose(size.width, size.height)
+    : selected === 'research' ? reading ? folioReadingPose(size.width, size.height) : { position: [0.66, 1.65, -2.05], target: [0.66, 0.8, -1.55], zoom: 1 }
     : selected === 'surfing' ? surfboardReadingPose(size.width, size.height)
-    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height]);
+    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height, reading]);
   const activeView = useRef<0 | 1 | 2 | 3 | 4>(viewCommand.view);
   const lastViewSequence = useRef(viewCommand.sequence);
   const previousSelected = useRef(selected);
+  const previousReading = useRef(reading);
   const userMoved = useRef(false);
   const ready = useRef(false);
   const targetFov = useRef(42);
@@ -308,7 +309,8 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   useEffect(() => {
     const orbit = controls.current;
-    if (!orbit || previousSelected.current === selected) return;
+    if (!orbit || (previousSelected.current === selected && (selected !== 'research' || previousReading.current === reading))) return;
+    previousReading.current = reading;
     inspectionReturnPose.current = null;
     window.dispatchEvent(new CustomEvent('office:zoomed', { detail: false }));
     if (!selected && inspection) {
@@ -339,7 +341,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
         : toTransition('return', fallback);
     }
     previousSelected.current = selected;
-  }, [camera, compact, inspection, selected, size.width, size.height]);
+  }, [camera, compact, inspection, selected, size.width, size.height, reading]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -390,12 +392,12 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
     targetFov.current = selected === 'ai' ? monitorReadingFov(size.width, size.height)
-      : selected === 'research' ? folioReadingView(size.width, size.height).fov
+      : selected === 'research' && reading ? folioReadingView(size.width, size.height).fov
       : selected === 'award-photo' ? awardPairReadingFov(size.width, size.height)
       : !selected && !compact && viewCommand?.view === 1
         ? Math.max(42, 2 * Math.atan(5.6 * size.height / (8 * size.width)) * 180 / Math.PI)
         : focusFov(selected, compact, size.width, size.height);
-    if (!selected || screenFocused) {
+    if (!selected || screenFocused || (selected === 'research' && !reading)) {
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
       return;

@@ -12,9 +12,9 @@ export function OfficeHelp({ ready, explored, compact, onControl }: Props) {
     if (ready && !explored) timer.current = setTimeout(() => setOpen(false), 7000);
     return () => { if (timer.current) clearTimeout(timer.current); };
   }, [ready, explored]);
-  const gestureSummary = compact
-    ? 'One finger: orbit · Two fingers: pan or pinch to zoom · Tap: approach, then open · Double-tap: zoom · X: return.'
-    : 'Drag: orbit · Arrow keys / Right / Shift-drag: pan · Scroll / pinch / + / −: zoom · Click: approach, then open · Double-click: zoom · X: return.';
+  const gestures = compact
+    ? [['Orbit', 'One-finger drag'], ['Pan', 'Two-finger drag'], ['Zoom', 'Pinch / double-tap'], ['Open', 'Tap to approach, then tap again'], ['Back', 'X — previous view']]
+    : [['Orbit', 'Drag'], ['Pan', 'Arrow keys / right-drag / Shift-drag'], ['Zoom', 'Scroll / pinch / + / − / double-click'], ['Open', 'Click to approach, then click again'], ['Back', 'X / Esc — previous view']];
 
   return <div className="office-help" id="office-help">
     <button className="office-help-toggle" aria-expanded={open} aria-controls="office-gesture-hint"
@@ -22,7 +22,7 @@ export function OfficeHelp({ ready, explored, compact, onControl }: Props) {
       <span aria-hidden="true">?</span> Controls
     </button>
     <div id="office-gesture-hint" className="office-gesture-hint" hidden={!open}>
-      <p className="office-gesture-actions">{gestureSummary}</p>
+      <dl className="office-gesture-actions">{gestures.map(([action, methods]) => <div key={action}><dt>{action}:</dt><dd>{methods}</dd></div>)}</dl>
       {manual && <div className="office-device-shortcuts" aria-label="Device controls">
         <button onClick={() => { setOpen(false); onControl('room'); }}>Room lights</button>
         <button onClick={() => { setOpen(false); onControl('shades'); }}>Blinds</button>
