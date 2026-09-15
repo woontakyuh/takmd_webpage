@@ -14,7 +14,8 @@ import { Block } from './Primitives';
 import { useCabinetAction } from './WhiskyCabinetDoor';
 
 export const screenOrigin = () => [0, 0];
-export function BeosoundRack({ state, active, expanded, showTrigger, disabled, reducedMotion, onOpen, onExpanded, dispatch }: {
+export function BeosoundRack({ state, active, expanded, showTrigger, disabled, reducedMotion, onOpen, onExpanded, dispatch, focusAlbum, placement, onPlace }: {
+  readonly focusAlbum: AlbumId | null; readonly placement: { readonly album: AlbumId; readonly playTrack?: number } | null; readonly onPlace: (request: { readonly album: AlbumId; readonly playTrack?: number } | null) => void;
   readonly state: BeosoundState; readonly active: boolean; readonly expanded: boolean; readonly showTrigger: boolean; readonly disabled: boolean; readonly reducedMotion: boolean;
   readonly onOpen: () => void; readonly onExpanded: (expanded: boolean) => void; readonly dispatch: Dispatch<BeosoundAction>;
 }) {
@@ -44,7 +45,7 @@ export function BeosoundRack({ state, active, expanded, showTrigger, disabled, r
     {ALBUM_IDS.map(id => <Suspense key={id} fallback={null}><BeosoundCase album={id} disabled={disabled}
       selected={album === id} browsing={active && expanded} reducedMotion={reducedMotion} onOpen={choose} /></Suspense>)}
     {active && (expanded || present || showTrigger) && <Html wrapperClass="cd-screen-ui" calculatePosition={screenOrigin} zIndexRange={[46, 44]} style={{ pointerEvents: 'none' }}>
-      {(expanded || present) ? <BeosoundBooklet expanded={expanded} reducedMotion={reducedMotion} origin={origin} onClosed={finishClose} state={state} album={album} onAlbum={setAlbum} onClose={() => onExpanded(false)} dispatch={dispatch} />
+      {(expanded || present) ? <BeosoundBooklet focusAlbum={focusAlbum ?? album} placement={placement} onPlace={onPlace} expanded={expanded} reducedMotion={reducedMotion} origin={origin} onClosed={finishClose} state={state} album={album} onAlbum={setAlbum} onClose={() => onExpanded(false)} dispatch={dispatch} />
         : <button ref={trigger} className="cd-collection-trigger" type="button" aria-expanded={false}
           onPointerDown={event => event.stopPropagation()} onClick={event => { event.stopPropagation(); onExpanded(true); }}>Explore CD collection · {ALBUM_IDS.length}</button>}
     </Html>}

@@ -1,6 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { Suspense, useLayoutEffect, useRef, useState } from 'react';
 import type { Group, Mesh, Texture } from 'three';
+import { useMaterialAccent } from './HoverAccent';
 import { BeosoundDiscArt } from './BeosoundDiscArt';
 import { Block, Rod } from './Primitives';
 import { BEOSOUND_9000 as B, CD_SLOTS, albumAtSlot, cdPosition, moveClamper } from './Beosound9000State';
@@ -13,13 +14,16 @@ const BLACK = '#141716';
 const GLASS_OPEN_ANGLE = 1.18;
 const ignoreRaycast = () => undefined;
 
-function CompactDisc({ disc, cover, concealed, texture, disabled, selected, playing, reducedMotion, onSelect }: {
+function CompactDisc({ disc, cover, concealed, texture, disabled, selected, playing, reducedMotion, onSelect, highlighted }: {
+  readonly highlighted: boolean;
   readonly cover: string | undefined; readonly concealed: boolean;
   readonly disc: CdSlot; readonly texture: Texture; readonly disabled: boolean;
   readonly selected: boolean; readonly playing: boolean; readonly reducedMotion: boolean;
   readonly onSelect: (disc: CdSlot) => void;
 }) {
   const { hovered, handlers } = useCabinetAction({ disabled, onActivate: () => onSelect(disc) });
+  const surface = useRef<Group>(null);
+  useMaterialAccent(surface, hovered || highlighted);
   const face = useRef<Mesh>(null), speed = useRef(0);
   const invalidate = useThree(current => current.invalidate);
   useLayoutEffect(() => {
@@ -36,7 +40,7 @@ function CompactDisc({ disc, cover, concealed, texture, disabled, selected, play
     face.current.rotation.z = (face.current.rotation.z - speed.current * dt) % (Math.PI * 2);
     invalidate();
   });
-  return <group name={`Beosound CD ${disc} selector`} position={[cdPosition(disc), B.discY, .042]} {...handlers}>
+  return <group ref={surface} name={`Beosound CD ${disc} selector`} position={[cdPosition(disc), B.discY, .042]} {...handlers}>
     <mesh position={[0, 0, -.003]}><circleGeometry args={[.063, 64]} />
       <meshStandardMaterial color="#171b1a" roughness={.48} metalness={.24} /></mesh>
     <mesh visible={Boolean(cover) && !concealed} ref={face} name={`120 mm compact disc ${disc}`}>
@@ -84,7 +88,8 @@ export function Beosound9000Bracket() {
   </group>;
 }
 
-export function Beosound9000Geometry({ state, disabled, reducedMotion, onSelect, onCarriageReady }: {
+export function Beosound9000Geometry({ state, disabled, reducedMotion, onSelect, onCarriageReady, highlightedSlot }: {
+  readonly highlightedSlot: CdSlot | null;
   readonly state: BeosoundState;
   readonly disabled: boolean; readonly reducedMotion: boolean; readonly onSelect: (disc: CdSlot) => void;
   readonly onCarriageReady: (disc: CdSlot) => void;
@@ -128,7 +133,7 @@ export function Beosound9000Geometry({ state, disabled, reducedMotion, onSelect,
       <planeGeometry args={[.818, .093]} /><meshBasicMaterial map={panelTexture} toneMapped={false} />
     </mesh>
     <Block size={[.817, .007, .009]} position={[0, .144, .045]} radius={.001} color="#323a35" metalness={.75} roughness={.3} />
-    {CD_SLOTS.map(disc => <CompactDisc key={disc} disc={disc} cover={albumAtSlot(state, disc)?.cover} concealed={Boolean(state.exchange && (state.exchange.slot === disc || state.exchange.source === disc))} selected={state.disc === disc && state.display !== 'standby'}
+    {CD_SLOTS.map(disc => <CompactDisc highlighted={highlightedSlot === disc} key={disc} disc={disc} cover={albumAtSlot(state, disc)?.cover} concealed={Boolean(state.exchange && (state.exchange.slot === disc || state.exchange.source === disc))} selected={state.disc === disc && state.display !== 'standby'}
       texture={discTexture} disabled={disabled} playing={state.disc === disc && state.carriageDisc === disc && arrivedDisc === disc && state.playback === 'playing'} reducedMotion={reducedMotion} onSelect={onSelect} />)}
     <group ref={carriage} name="Beosound 9000 moving CD clamper" position={[cdPosition(1), B.discY, .057]}>
       <Clamper texture={discTexture} />

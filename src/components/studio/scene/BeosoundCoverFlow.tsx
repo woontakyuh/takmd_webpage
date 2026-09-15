@@ -4,10 +4,11 @@ import { ALBUM_IDS, BEOSOUND_ALBUMS } from './BeosoundAlbums';
 import type { AlbumId } from './BeosoundAlbums';
 import './beosound-cover-flow.css';
 
-type Props = { readonly returning: AlbumId | null; readonly disabled: boolean; readonly album: AlbumId; readonly onAlbum: (album: AlbumId) => void; readonly onOpen: () => void };
+type Props = { readonly focusAlbum: AlbumId; readonly disabled: boolean; readonly album: AlbumId; readonly onAlbum: (album: AlbumId) => void; readonly onOpen: () => void };
 
-export function BeosoundCoverFlow({ album, onAlbum, onOpen, returning, disabled }: Props) {
+export function BeosoundCoverFlow({ album, onAlbum, onOpen, focusAlbum, disabled }: Props) {
   const index = ALBUM_IDS.indexOf(album);
+  const focusIndex = ALBUM_IDS.indexOf(focusAlbum);
   const [dragOffset, setDragOffset] = useState(0);
   const gesture = useRef<{ id: number; x: number } | null>(null);
   const swiped = useRef(false);
@@ -37,8 +38,7 @@ export function BeosoundCoverFlow({ album, onAlbum, onOpen, returning, disabled 
       onClickCapture={event => { if (swiped.current) { event.preventDefault(); event.stopPropagation(); swiped.current = false; } }}
       onKeyDown={event => { if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); step(event.key === 'ArrowLeft' ? -1 : 1); } }}>
       {ALBUM_IDS.map((id, slot) => {
-        const rawOffset = slot - index;
-        const offset = id === returning ? Math.max(-1, Math.min(1, rawOffset)) : rawOffset;
+        const offset = slot - focusIndex;
         const distance = Math.abs(offset), record = BEOSOUND_ALBUMS[id];
         const style = {
           '--cover-offset': offset === 0 ? 0 : Math.sign(offset) * (.83 + (distance - 1) * .36),
@@ -46,11 +46,11 @@ export function BeosoundCoverFlow({ album, onAlbum, onOpen, returning, disabled 
           '--cover-depth': `${offset === 0 ? 28 : -35 - distance * 12}px`,
           '--drag-offset': `${dragOffset}px`,
           '--cover-image': `url("${record.cover}")`,
-          zIndex: id === returning ? ALBUM_IDS.length + 1 : ALBUM_IDS.length - distance,
+          zIndex: ALBUM_IDS.length - distance,
           visibility: distance > 3 ? 'hidden' : 'visible',
         } as CSSProperties;
         return <button type="button" key={id} data-cd-album={id} disabled={disabled} style={style} aria-label={`Browse ${record.artist} — ${record.album}`}
-          aria-pressed={id === album} onClick={() => id === album ? onOpen() : onAlbum(id)}>
+          aria-pressed={id === focusAlbum} onClick={() => id === album ? onOpen() : onAlbum(id)}>
           <img draggable={false} src={record.cover} width="240" height="240" alt="" />
         </button>;
       })}

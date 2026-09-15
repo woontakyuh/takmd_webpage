@@ -8,13 +8,14 @@ import { BeosoundDiscArt } from './BeosoundDiscArt';
 import { rackPosition } from './BeosoundCase';
 import { BeosoundScreenExchange } from './BeosoundScreenExchange';
 
-export function BeosoundExchange({ exchange, reducedMotion, onSettle, onComplete }: {
+export function BeosoundExchange({ exchange, reducedMotion, onSettle, onComplete, onInsert }: {
+  readonly onInsert: () => void;
   readonly exchange: NonNullable<BeosoundState['exchange']>; readonly reducedMotion: boolean; readonly onSettle: () => void; readonly onComplete: () => void;
 }) {
   const [screenTransfer] = useState(() => Boolean(document.querySelector('.cd-booklet:not([inert])')));
   const invalidate = useThree(state => state.invalidate);
   useEffect(() => invalidate(), [invalidate]);
-  const settled = useRef(false);
+  const settled = useRef(false), inserting = useRef(false);
   const elapsed = useRef(0), outgoing = useRef<Group>(null), incoming = useRef<Group>(null), finished = useRef(false);
   const slotPoint = (slot: CdSlot): [number, number, number] => [cdPosition(slot), B.discY * Math.cos(B.tilt) - .045 * Math.sin(B.tilt) + B.bracketHeight, B.discY * Math.sin(B.tilt) + .045 * Math.cos(B.tilt)];
   const travel = (object: Group | null, from: readonly number[], to: readonly number[], progress: number) => {
@@ -27,13 +28,14 @@ export function BeosoundExchange({ exchange, reducedMotion, onSettle, onComplete
   useFrame((_, delta) => {
     if (finished.current) return;
     elapsed.current += Math.min(delta, .1);
-    const t = reducedMotion ? 2 : elapsed.current;
-    if (exchange.outgoing) travel(outgoing.current, slotPoint(exchange.slot), rackPosition(exchange.outgoing), (t - .25) / .4);
-    if (exchange.album) travel(incoming.current, exchange.source ? slotPoint(exchange.source) : rackPosition(exchange.album), slotPoint(exchange.slot), (t - .7) / .4);
-    if (outgoing.current) outgoing.current.visible = t < .65;
-    if (incoming.current) incoming.current.visible = Boolean(exchange.source) || t >= .7;
-    if (t >= 1.1 && !settled.current) { settled.current = true; onSettle(); }
-    if (t >= 1.4) { finished.current = true; onComplete(); }
+    const t = reducedMotion ? 3 : elapsed.current;
+    if (exchange.outgoing) travel(outgoing.current, slotPoint(exchange.slot), rackPosition(exchange.outgoing), (t - .45) / .65);
+    if (exchange.album) travel(incoming.current, exchange.source ? slotPoint(exchange.source) : rackPosition(exchange.album), slotPoint(exchange.slot), (t - 1.65) / .7);
+    if (outgoing.current) outgoing.current.visible = t < 1.1;
+    if (incoming.current) incoming.current.visible = Boolean(exchange.source) || t >= 1.65;
+    if (t >= 1.15 && !inserting.current) { inserting.current = true; onInsert(); }
+    if (t >= 2.35 && !settled.current) { settled.current = true; onSettle(); }
+    if (t >= 2.7) { finished.current = true; onComplete(); }
     else invalidate();
   });
   return <group name="Physical CD exchange">

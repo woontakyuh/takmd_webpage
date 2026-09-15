@@ -49,13 +49,13 @@ export function BeosoundScreenExchange({ exchange, elapsed }: {
     const t = elapsed.current;
     if (exchange.outgoing) {
       const cover = coverPoint(exchange.outgoing);
-      if (cover) move(outgoing.current, slotPoint(exchange.slot), cover, (t - .25) / .4, true);
+      if (cover) move(outgoing.current, slotPoint(exchange.slot), cover, (t - .45) / .65, true);
     }
     if (exchange.album) {
       const cover = coverPoint(exchange.album);
       if (cover) {
-        if (exchange.source && t < .7) move(incoming.current, slotPoint(exchange.source), cover, (t - .25) / .4, true);
-        else move(incoming.current, cover, slotPoint(exchange.slot), (t - .7) / .4, false);
+        move(incoming.current, exchange.source ? slotPoint(exchange.source) : cover, slotPoint(exchange.slot), (t - 1.65) / .7, false);
+        if (exchange.source && incoming.current) incoming.current.style.opacity = '1';
       }
     }
   });

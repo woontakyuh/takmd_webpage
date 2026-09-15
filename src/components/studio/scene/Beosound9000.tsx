@@ -5,6 +5,8 @@ import { Vector3 } from 'three';
 import type { Group } from 'three';
 import { focusFov } from './config';
 import { useArrangement } from '../arrangement';
+import { BeosoundSlotPicker } from './BeosoundSlotPicker';
+import type { AlbumId } from './BeosoundAlbums';
 import { BeosoundRack } from './BeosoundRack';
 import { BeosoundExchange } from './BeosoundExchange';
 import { BeosoundMiniPlayer } from './BeosoundMiniPlayer';
@@ -18,6 +20,9 @@ import { cancelSceneSingleAction } from './sceneGesture';
 import { useCabinetAction } from './WhiskyCabinetDoor';
 
 export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolean }) {
+  const [placement, setPlacement] = useState<{ readonly album: AlbumId; readonly playTrack?: number } | null>(null);
+  const [highlightedSlot, setHighlightedSlot] = useState<CdSlot | null>(null);
+  const [insertRequest, setInsertRequest] = useState(-1);
   const [mode, setMode] = useState<'overview' | 'rack'>('overview');
   const libraryOpen = mode === 'rack';
   const [body, setBody] = useState<Group | null>(null);
@@ -61,7 +66,7 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
     dispatch({ type: 'disc', disc });
   };
   const { handlers } = useCabinetAction({ disabled: editing, onActivate: showPlayer });
-  useEffect(() => { if (!active) setMode('overview'); }, [active]);
+  useEffect(() => { if (!active) setMode('overview'); if (!active || !libraryOpen) { setPlacement(null); setHighlightedSlot(null); } }, [active, libraryOpen]);
   useEffect(() => {
     if (!active) return;
     const next = pose();
@@ -71,10 +76,11 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
   return <group name="Bang & Olufsen Beosound 9000" userData={{ sceneControl: true, active, selectedDisc: state.disc }}>
     <Beosound9000Bracket />
     <BeosoundMiniPlayer state={state} dispatch={dispatch} />
-    <BeosoundRack state={state} active={active} expanded={libraryOpen} showTrigger={false} disabled={editing} reducedMotion={reducedMotion} onOpen={open} onExpanded={expandLibrary} dispatch={dispatch} />
-    {state.exchange && <BeosoundExchange key={state.transportRequest} onSettle={() => dispatch({ type: 'exchange-settle' })} exchange={state.exchange} reducedMotion={reducedMotion} onComplete={() => dispatch({ type: 'exchange-complete' })} />}
+    <BeosoundRack placement={placement} onPlace={setPlacement} focusAlbum={state.exchange ? insertRequest === state.transportRequest ? state.exchange.album : state.exchange.outgoing ?? state.exchange.album : null} state={state} active={active} expanded={libraryOpen} showTrigger={false} disabled={editing} reducedMotion={reducedMotion} onOpen={open} onExpanded={expandLibrary} dispatch={dispatch} />
+    {state.exchange && <BeosoundExchange onInsert={() => setInsertRequest(state.transportRequest)} key={state.transportRequest} onSettle={() => dispatch({ type: 'exchange-settle' })} exchange={state.exchange} reducedMotion={reducedMotion} onComplete={() => dispatch({ type: 'exchange-complete' })} />}
     <group ref={setBody} position={[0, B.bracketHeight, 0]} rotation={[B.tilt, 0, 0]} {...handlers}>
-      <Beosound9000Geometry state={state} disabled={editing || state.exchange !== null} reducedMotion={reducedMotion} onSelect={select} onCarriageReady={onCarriageReady} />
+      <Beosound9000Geometry highlightedSlot={highlightedSlot} state={state} disabled={editing || state.exchange !== null} reducedMotion={reducedMotion} onSelect={select} onCarriageReady={onCarriageReady} />
+      {placement && active && libraryOpen && !state.exchange && <BeosoundSlotPicker state={state} album={placement.album} highlighted={highlightedSlot} onHighlight={setHighlightedSlot} onChoose={slot => { dispatch({ type: 'exchange', slot, album: placement.album, playTrack: placement.playTrack }); setPlacement(null); setHighlightedSlot(null); }} />}
       <Beosound9000Controls active={active} disabled={editing || state.exchange !== null}
         dispatch={dispatch} onApproach={open} onClose={back} />
       {!active && !editing && <Html position={[-.416, .04, .079]} center occlude={body ? [{ current: body }] : undefined} zIndexRange={[30, 26]}>

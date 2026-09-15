@@ -10,13 +10,14 @@ import { BeosoundCoverFlow } from './BeosoundCoverFlow';
 import { useBeosoundUnfold } from './useBeosoundUnfold';
 
 const stop = (event: SyntheticEvent) => event.stopPropagation();
-export function BeosoundBooklet({ state, album, onAlbum, onClose, dispatch, expanded, reducedMotion, origin, onClosed }: {
+export function BeosoundBooklet({ state, album, onAlbum, onClose, dispatch, expanded, reducedMotion, origin, onClosed, focusAlbum, placement, onPlace }: {
+  readonly focusAlbum: AlbumId; readonly placement: { readonly album: AlbumId; readonly playTrack?: number } | null; readonly onPlace: (request: { readonly album: AlbumId; readonly playTrack?: number } | null) => void;
   readonly expanded: boolean; readonly reducedMotion: boolean; readonly origin: () => { readonly x: number; readonly y: number }; readonly onClosed: () => void;
   readonly state: BeosoundState; readonly album: AlbumId; readonly onAlbum: (album: AlbumId) => void;
   readonly onClose: () => void; readonly dispatch: Dispatch<BeosoundAction>;
 }) {
   const [details, setDetails] = useState(false);
-  const [placing, setPlacing] = useState(false), [pendingTrack, setPendingTrack] = useState<number | undefined>();
+  const placing = placement !== null;
   const close = useRef<HTMLButtonElement>(null);
   const booklet = useBeosoundUnfold({ expanded, reducedMotion, origin, onClosed });
   const record = BEOSOUND_ALBUMS[album];
@@ -27,25 +28,25 @@ export function BeosoundBooklet({ state, album, onAlbum, onClose, dispatch, expa
     const escape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || document.querySelector('dialog:modal')) return;
       event.preventDefault(); event.stopImmediatePropagation();
-      if (placing) setPlacing(false); else if (details) setDetails(false); else onClose();
+      if (placing) onPlace(null); else if (details) setDetails(false); else onClose();
     };
     window.addEventListener('keydown', escape, true);
     return () => window.removeEventListener('keydown', escape, true);
-  }, [placing, details, onClose]);
-  useEffect(() => { setPlacing(false); setPendingTrack(undefined); }, [album]);
+  }, [placing, details, onClose, onPlace]);
+  useEffect(() => { onPlace(null); }, [album, onPlace]);
   const play = (number: number) => {
     if (mounted) dispatch({ type: 'track', disc: mounted, track: number });
-    else { setPendingTrack(number); setPlacing(true); }
+    else { setDetails(false); onPlace({ album, playTrack: number }); }
   };
   return <section ref={booklet} className="cd-booklet" inert={!expanded} data-tracks-open={details} role="region" aria-label="CD collection" onPointerDown={stop} onPointerUp={stop} onClick={stop} onDoubleClick={stop} onWheel={stop}>
     <button ref={close} className="cd-collection-close" type="button" aria-label="Close CD collection" onClick={onClose}>×</button>
-    <BeosoundCoverFlow returning={state.exchange?.outgoing ?? null} disabled={state.exchange !== null} album={album} onAlbum={onAlbum} onOpen={() => setDetails(value => !value)} />
+    <BeosoundCoverFlow focusAlbum={focusAlbum} disabled={state.exchange !== null} album={album} onAlbum={onAlbum} onOpen={() => setDetails(value => !value)} />
     <div className="cd-selection-caption">
       <h2>{record.album}</h2><p>{record.artist} · {record.year}{mounted ? ` · CD ${mounted}` : ''}</p>
       <div className="cd-selection-actions">
         <button type="button" aria-expanded={details} onClick={() => setDetails(value => !value)}>{details ? 'Close tracks' : 'Tracks'}</button>
-        <button type="button" onClick={() => { setPendingTrack(undefined); setPlacing(!placing); }}>{mounted ? 'Move disc' : 'Place in player'}</button>
-        {mounted && <button type="button" onClick={() => dispatch({ type: 'exchange', slot: mounted, album: null })}>Return disc</button>}
+        <button type="button" disabled={state.exchange !== null} onClick={() => { setDetails(false); onPlace(placing ? null : { album }); }}>{mounted ? 'Move disc' : 'Place in player'}</button>
+        {mounted && <button type="button" disabled={state.exchange !== null} onClick={() => dispatch({ type: 'exchange', slot: mounted, album: null })}>Return disc</button>}
       </div>
     </div>
     {details && <div className="cd-open-case">
@@ -63,15 +64,7 @@ export function BeosoundBooklet({ state, album, onAlbum, onClose, dispatch, expa
         </ol>
       </div>
     </div>}
-    {placing && <div className="cd-slot-picker" role="group" aria-label="Choose replacement slot">
-      <div><strong>{pendingTrack ? 'Choose a slot · play after placing' : 'Choose a slot · place without playing'}</strong><button type="button" onClick={() => setPlacing(false)} aria-label="Cancel slot selection">×</button></div>
-      <div className="cd-slot-grid">{CD_SLOTS.map(slot => {
-        const id = slots[slot - 1];
-        return <button type="button" key={slot} disabled={id === album} aria-label={`Place ${record.album} in CD ${slot}`}
-          onClick={() => { dispatch({ type: 'exchange', slot, album, playTrack: pendingTrack }); setPlacing(false); }}>
-          <b>CD {slot}</b><span>{id ? BEOSOUND_ALBUMS[id].artist : 'Empty'}</span></button>;
-      })}</div>
-    </div>}
+    {placing && <p className="cd-placement-hint" role="status">Choose a disc on the player above <button type="button" onClick={() => onPlace(null)}>Cancel</button></p>}
     {(state.exchange || state.playback === 'error') && <p className="cd-collection-status" role="status">{state.exchange ? 'Changing disc…' : 'Playback could not start. Select an available track to retry.'}</p>}
   </section>;
 }
