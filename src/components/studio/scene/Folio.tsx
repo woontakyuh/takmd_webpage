@@ -15,7 +15,7 @@ import { usePrintedTexture } from './Textures';
 import { MOTION, PALETTE, ROOM } from './config';
 import { scheduleSceneSingleAction } from './sceneGesture';
 
-type FolioProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'progress' | 'collection'>;
+type FolioProps = Pick<StudioSceneProps, 'selected' | 'focused' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'progress' | 'collection'>;
 
 type FolioPaper = {
   readonly id: string;
@@ -41,9 +41,11 @@ function paperFromCollection(collection: OfficeCollection): FolioPaper {
 
 const CLICK_DRAG_THRESHOLD = 5;
 
-export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress, collection }: FolioProps) {
+export function Folio({ selected, focused, onSelect, onPaperStep, reducedMotion, progress, collection }: FolioProps) {
   const canvas = useThree(state => state.gl.domElement);
   const cover = useRef<Group>(null);
+  const placement = useRef<Group>(null);
+  const invalidate = useThree(state => state.invalidate);
   const spine = useRef<Group>(null);
   const leaf = useRef<Group>(null);
   const leafSequence = useRef<number | null>(null);
@@ -134,8 +136,17 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress
     const value = progress.current ?? 0;
     const approach = reducedMotion ? Number(value >= 0.7) : MathUtils.smoothstep(value, 0.5, 0.95);
     const tourAngle = approach * Math.PI;
+    const pose = selected === 'research' || focused === 'research' || approach > 0 ? ROOM.folio : ROOM.folio.stowed;
+    if (placement.current) {
+      const object = placement.current;
+      const next = pose.position;
+      const speed = 5;
+      object.position.set(...next.map((value, axis) => reducedMotion ? value : MathUtils.damp(object.position.getComponent(axis), value, speed, delta)) as [number, number, number]);
+      object.rotation.y = reducedMotion ? pose.rotation : MathUtils.damp(object.rotation.y, pose.rotation, speed, delta);
+      if (Math.hypot(object.position.x - next[0], object.position.y - next[1], object.position.z - next[2]) > .0001 || Math.abs(object.rotation.y - pose.rotation) > .0001) invalidate();
+    }
     const hoverAngle = coverHovered ? Math.PI / 9 : 0;
-    const coverAngle = selected === 'research' ? Math.PI : Math.max(tourAngle, hoverAngle);
+    const coverAngle = selected === 'research' || focused === 'research' ? Math.PI : Math.max(tourAngle, hoverAngle);
     cover.current.rotation.z = reducedMotion ? coverAngle : MathUtils.damp(cover.current.rotation.z, coverAngle, MOTION.object, delta);
     const binding = folioBindingPose(cover.current.rotation.z);
     cover.current.position.set(binding.coverX, binding.coverY, 0);
@@ -154,7 +165,7 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress
       setFolio(current => current.kind === 'turn' && current.sequence === activeTurn.sequence ? settleFolioTurn(current) : current);
     }
   });
-  return <Interactive id="research" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.folio.position} rotation={ROOM.folio.rotation} onHoverChange={setCoverHovered}>
+  return <group ref={placement} name="Research folio placement" position={[...ROOM.folio.stowed.position]} rotation={[0, ROOM.folio.stowed.rotation, 0]}><Interactive id="research" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={[0, 0, 0]} onHoverChange={setCoverHovered}>
     <group scale={0.3}>
     <Block size={[1.03, 0.024, 1.36]} color={PALETTE.linen} texture={linen} radius={0.006} roughness={0.96} />
     <group name="Folio connected spine" ref={spine} position={[FOLIO.hingeX, 0, 0]}>
@@ -186,5 +197,5 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, progress
       </mesh>
     </group>
     </group>
-  </Interactive>;
+  </Interactive></group>;
 }

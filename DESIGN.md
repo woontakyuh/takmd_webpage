@@ -1027,3 +1027,5 @@ The unboxed global volume range uses the existing toolbar palette: 2px studio-li
 On compact screens, the temporary gesture hint moves below the open global volume range with a 12px gap (toolbar 92px + button 44px + range gap 8px + range 64px). Preserve its seven-second auto-dismiss.
 
 The global volume range is 64px high, with a 44px-wide invisible touch area; keep it compact beside the existing toolbar.
+
+The closed research folio rests parallel to the desk edge on its left side. Opening moves the same object to its established reading pose as its cover unfolds; closing restores the tidy position. Mobile seated entry moves nearer the monitor while retaining desk context; desktop entry remains unchanged.
