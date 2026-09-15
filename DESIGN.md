@@ -1019,3 +1019,5 @@ Mobile workshop readers use one native scroll surface: an initial half-viewport 
 CD player and rack share the mobile rack overview framing. Cover Flow unfolds from the projected rack position over approximately 560ms and returns along the same path on close. Existing transparent covers and physical controls remain; reduced-motion preference uses an immediate transition.
 
 TV archive, slide and footer share a 1600×900 logical composition in the physical texture and live reader: 304px archive, 80px footer, 17px title, 14px metadata and 23px title line height. Activation changes resolution and controls, not typography or wrapping. External header and page-arrow touch targets retain viewport sizing. The global music controls use a matching speaker icon with a vertical volume popover; each disc preserves its stopped angle.
+
+The global music volume control reveals only a thin vertical track and thumb on the room, without a popup surface, border, or secondary button. Keep its invisible touch target at least 44px wide.

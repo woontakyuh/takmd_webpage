@@ -330,8 +330,14 @@ body:has(.studio) { overflow: clip; }
 .office-music { display:flex; gap:8px; }
 .studio-tools:has(.office-music-volume > button[aria-expanded="true"]) { z-index:6; }
 .office-music-volume { position:relative; }
-.office-music-volume-popup { position:absolute; top:calc(100% + 8px); left:0; z-index:5; display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px 4px 4px; border:1px solid var(--studio-line); border-radius:12px; background:var(--studio-light); box-shadow:0 8px 24px #1828241a; }
-.office-music-volume-popup input { writing-mode:vertical-lr; direction:rtl; width:44px; height:120px; accent-color:var(--studio-teal); cursor:pointer; }
-.studio-tools .office-music-volume-popup button { width:44px; padding:0; border:0; }
+.office-music-volume-popup { position:absolute; top:calc(100% + 8px); left:0; z-index:5; width:44px; display:flex; justify-content:center; }
+.office-music-volume-popup input { appearance:none; writing-mode:vertical-lr; direction:rtl; width:44px; height:112px; margin:0; padding:0; border:0; border-radius:0; outline:none; background:transparent; cursor:pointer; }
+.office-music-volume-popup input:focus-visible { outline:none; }
+.office-music-volume-popup input::-webkit-slider-runnable-track { width:3px; border-radius:2px; background:var(--studio-ink); }
+.office-music-volume-popup input::-webkit-slider-thumb { appearance:none; width:11px; height:11px; margin-left:-4px; border:0; border-radius:50%; background:var(--studio-ink); }
+.office-music-volume-popup input::-moz-range-track { width:3px; border-radius:2px; background:var(--studio-ink); }
+.office-music-volume-popup input::-moz-range-thumb { width:11px; height:11px; border:0; border-radius:50%; background:var(--studio-ink); }
+.office-music-volume-popup input:focus-visible::-webkit-slider-thumb { outline:2px solid var(--studio-ink); outline-offset:3px; }
+.office-music-volume-popup input:focus-visible::-moz-range-thumb { outline:2px solid var(--studio-ink); outline-offset:3px; }
 @media(max-width:759px) { .office-music-host { flex-basis:94px; width:94px; } .office-music { gap:6px; } }
 @media(max-width:359px) { .office-help { top:146px; } }

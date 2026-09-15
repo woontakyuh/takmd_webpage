@@ -41,7 +41,6 @@ export function BeosoundMiniPlayer({ state, dispatch }: {
         {volumeOpen && <div id={volumeId} className="office-music-volume-popup" role="group" aria-label="Music volume">
           <input type="range" min="0" max="90" step="1" aria-label="Music volume" aria-orientation="vertical" aria-valuetext={`${Math.round((state.muted ? 0 : state.volume) / 90 * 100)}%`} value={state.muted ? 0 : state.volume} onChange={event => dispatch({ type: 'volume', value: event.currentTarget.valueAsNumber })}
             onKeyDown={event => { if (event.key === 'ArrowUp' || event.key === 'ArrowDown') { event.preventDefault(); dispatch({ type: 'volume', delta: event.key === 'ArrowUp' ? 1 : -1 }); } }} />
-          <button type="button" aria-label={state.muted ? 'Unmute music' : 'Mute music'} onClick={() => dispatch({ type: 'mute' })}><OfficeIcon name={state.muted ? 'muted' : 'volume'} /></button>
         </div>}
       </div>
       {playing && title && <div className="office-music-title" role="status" aria-label={`Now playing: ${title}`}>
