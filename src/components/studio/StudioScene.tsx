@@ -67,6 +67,9 @@ export function StudioScene(props: StudioSceneProps) {
     <Canvas ref={canvas} frameloop="never" camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
       dpr={props.entry === 'capture' ? 2 : [1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
+      // A phone's web process is killed near 1.5 GB and the room held 858 MB of textures alone, fifteen of them 2048².
+      // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
+      onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
       <SceneFrameLoop active={visible && (!props.paused || !props.ready)} />
       {ROOM_ENVIRONMENT}
