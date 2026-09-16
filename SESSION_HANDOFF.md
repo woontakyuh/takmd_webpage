@@ -1,3 +1,7 @@
+## Latest checkpoint · 2026-09-16 · Claude Code
+
+Read [the Claude handoff](docs/handoffs/2026-09-16-claude.md) first. Development moved from Astra to Claude Code on 2026-09-16. It records the Safari blank-reader root cause and fix (the "TV opens the old page" report), the header/title merge, the WebKit paint QA and the release receipts. The Astra handoff below remains valid for design rules and the release procedure.
+
 ## Latest checkpoint · 2026-09-16
 
 Read [the final office handoff](docs/handoffs/2026-09-16-office.md) first. It supersedes older descriptions below for guided navigation, the fin, CD exchange, and Controls help. Release evidence is recorded separately; check the receipt before claiming deployment.
