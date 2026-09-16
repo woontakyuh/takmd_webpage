@@ -1,5 +1,5 @@
 import { Html } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import { useCallback, useRef } from 'react';
 import { MONITOR_CV_WIDTH, MonitorCvSurface } from '../MonitorCvSurface';
 import type { MonitorScrollState } from '../MonitorCvSurface';
@@ -47,16 +47,9 @@ export function MonitorScreenReader({ publicationCount, presentationCount, onClo
     snapshot.current = pending;
     return pending;
   }, [texture]);
-  useFrame(({ camera, size: viewport }) => {
-    const portal = surface.current?.closest<HTMLElement>('.monitor-screen-portal');
-    if (!portal) return;
-    // Drei's CSS camera omits the off-axis projection used to leave room for exhibit details.
-    const projection = camera.projectionMatrix.elements;
-    portal.style.translate = `${-projection[8] * viewport.width / 2}px ${projection[9] * viewport.height / 2}px`;
-    // The stage clips the viewport; translating another clipping rectangle would cut off the screen.
-    portal.style.overflow = 'visible';
-  });
-  return <Html ref={surface} wrapperClass="monitor-screen-portal" transform distanceFactor={400 * MONITOR.screenWidth / MONITOR_CV_WIDTH}
+  // Reading and seated entry poses face the screen head-on, so a screen-aligned overlay matches the bezel exactly.
+  // Drei's CSS 3D transform mode is avoided: WebKit rasterises its metre-scaled layer at that tiny scale, leaving Safari a blank screen.
+  return <Html ref={surface} wrapperClass="monitor-screen-portal" center distanceFactor={MONITOR.screenWidth * size.height / MONITOR_CV_WIDTH}
     position={MONITOR_SCREEN.reader} zIndexRange={[20, 16]} occlude pointerEvents={active ? 'auto' : 'none'}
     style={{ pointerEvents: active ? 'auto' : 'none' }}>
     <MonitorCvSurface publicationCount={publicationCount} presentationCount={presentationCount}

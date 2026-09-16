@@ -1,5 +1,5 @@
 import { Html } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { talkMedia } from '../collection';
@@ -93,16 +93,10 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
     reader.current?.querySelector('.tv-screen-thumbnails [aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }, [active, current, railOpen, talk?.id]);
 
-  useFrame(({ camera, size: viewport }) => {
-    const portal = reader.current?.closest<HTMLElement>('.tv-screen-portal');
-    if (!portal) return;
-    const projection = camera.projectionMatrix.elements;
-    portal.style.translate = `${-projection[8] * viewport.width / 2}px ${projection[9] * viewport.height / 2}px`;
-    portal.style.overflow = 'visible';
-  });
-
-  return <Html wrapperClass="tv-screen-portal" pointerEvents={active ? 'auto' : 'none'} style={{ pointerEvents: active ? 'auto' : 'none' }} transform distanceFactor={400 * WALL_TV.screenWidth / width}
-    position={[0, .003, WALL_TV.depth / 2 + .0012]} zIndexRange={[20, 16]} occlude>
+  // The reader mounts only once the camera faces the screen head-on, so a screen-aligned overlay is exact.
+  // Drei's CSS 3D transform mode is avoided: WebKit rasterises its metre-scaled layer at that tiny scale, leaving Safari a blank screen.
+  return <Html wrapperClass="tv-screen-portal" center pointerEvents={active ? 'auto' : 'none'} style={{ pointerEvents: active ? 'auto' : 'none' }}
+    distanceFactor={WALL_TV.screenWidth * size.height / width} position={[0, .003, WALL_TV.depth / 2 + .0012]} zIndexRange={[20, 16]} occlude>
     <section ref={reader} className="tv-screen-reader" aria-label="Wall TV reader" data-small={small} data-rail={railOpen} data-active={active} data-hovered={hovered} inert={!active} data-info={infoOpen} data-short-wide={size.width > size.height && size.height < 560}
       data-talk={talk?.id} style={{ width, height: width * WALL_TV.screenHeight / WALL_TV.screenWidth }}
       onPointerDown={event => event.stopPropagation()} onWheel={event => event.stopPropagation()}>
