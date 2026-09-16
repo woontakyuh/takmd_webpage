@@ -9,13 +9,18 @@ export const OFFICE_HOME: OfficeView = { focused: null, selected: null, details:
 const EXHIBITS: readonly string[] = ['spine', 'research', 'education', 'ai', 'bjj', 'surfing', 'projects', 'family', 'award', 'award-photo', 'bookshelf', 'books'];
 const isExhibit = (value: string | null): value is ExhibitId => value !== null && EXHIBITS.includes(value);
 
+// Teaching lives in the wall television. A stored address that asks for the old education panel — a history
+// entry, a bookmark, a shared link — must land on the television, not resurrect the page the room replaced.
+const RETIRED_DETAIL = /^\/education(\/|#|\?|$)/;
+
 export function officeViewFromUrl(url: URL): OfficeView {
   const requested = url.searchParams.get('exhibit');
   const exhibit = requested === 'award' ? 'award-photo' : requested;
+  const detail = url.searchParams.get('detail');
   return {
     focused: isExhibit(exhibit) ? exhibit : null,
     selected: isExhibit(exhibit) && (exhibit === 'award-photo' || exhibit === 'family' || url.searchParams.get('stage') !== 'approach') ? exhibit : null,
-    details: url.searchParams.get('detail'),
+    details: detail && RETIRED_DETAIL.test(detail) ? null : detail,
   };
 }
 
@@ -27,7 +32,7 @@ export function officePathView(path: string, current: OfficeView): OfficeView | 
     case '/': return url.searchParams.has('exhibit') ? officeViewFromUrl(url) : OFFICE_HOME;
     case '/cv': if (url.hash === '#details') return { ...current, details: path }; selected = 'ai'; break;
     case '/research': if (url.hash === '#overview') return { ...current, details: path }; selected = 'research'; break;
-    case '/education': if (url.hash === '#overview') return { ...current, details: path }; selected = 'education'; break;
+    case '/education': selected = 'education'; break;
     case '/ube': return { focused: 'spine', selected: 'spine', details: '/ube' };
     case '/ai': if (url.hash) return { ...current, details: path }; selected = 'projects'; break;
     case '/jiu-jitsu': selected = 'bjj'; break;

@@ -95,6 +95,12 @@ for (const engine of enginesArg.split(',')) {
   check(docs.length === 1, `${tag}document navigated: ${docs.join(' ')}`);
   check(!(await page.evaluate(() => document.body.innerText.includes('Surgeons trained'))), `${tag}legacy education content is on screen`);
   check(errors.length === 0, `${tag}page errors: ${errors.join(' | ')}`);
+  // A stored address from before the education page was retired — a history entry, a bookmark — must land on the TV.
+  await page.goto(`${new URL('?exhibit=education&detail=%2Feducation%23overview', base).href}`, { waitUntil: 'load' });
+  await page.waitForTimeout(6000);
+  const stored = await page.evaluate(() => ({ legacy: document.body.innerText.includes('Surgeons trained') || document.body.innerText.includes('Education and training.'), selected: document.querySelector('.studio')?.dataset.selected ?? null }));
+  check(!stored.legacy, `${tag}a stored education address still shows the retired page`);
+  check(stored.selected === 'education', `${tag}a stored education address selected "${stored.selected}" instead of the television`);
   await page.screenshot({ path: `${evidence}/${engine}-tv.png` });
   await ctx.close(); await browser.close();
 }
