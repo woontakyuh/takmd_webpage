@@ -8,9 +8,9 @@ export function surfboardReadingLayout(width: number, height: number) {
   const gap = stacked ? 16 : 24;
   return {
     placement: stacked ? 'bottom' : 'right', copyWidth, copyHeight, gap,
-    objectHeight: height - 144 - (stacked ? copyHeight + gap : 0),
+    objectHeight: width < 760 ? height * .61 : height - 144 - (stacked ? copyHeight + gap : 0),
     offsetX: stacked ? 0 : (copyWidth + gap) / 2,
-    offsetY: stacked ? (copyHeight + gap) / 2 : 0,
+    offsetY: width < 760 ? height * .15 : stacked ? (copyHeight + gap) / 2 : 0,
   } as const;
 }
 
