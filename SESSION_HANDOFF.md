@@ -1,6 +1,6 @@
 ## Latest checkpoint · 2026-09-16 · Claude Code
 
-Read [the Claude handoff](docs/handoffs/2026-09-16-claude.md) first. Development moved from Astra to Claude Code on 2026-09-16. It records the Safari blank-reader root cause and fix (the "TV opens the old page" report), the header/title merge, the WebKit paint QA and the release receipts. The Astra handoff below remains valid for design rules and the release procedure.
+Read [the Claude handoff](docs/handoffs/2026-09-16-claude.md) first, including its evening addendum: the television keeps its archive (a simplification was released and reverted), and `scripts/qa-tv-mobile.mjs` is the phone release gate for it. Development moved from Astra to Claude Code on 2026-09-16. It records the Safari blank-reader root cause and fix (the "TV opens the old page" report), the header/title merge, the WebKit paint QA and the release receipts. The Astra handoff below remains valid for design rules and the release procedure.
 
 ## Latest checkpoint · 2026-09-16
 
