@@ -34,14 +34,17 @@ export function coordinatesForZone(timeZone: string, offsetMinutes: number): rea
   return [35, Math.max(-180, Math.min(180, -offsetMinutes / 4))];
 }
 
+// Fixed three-letter months: locale data abbreviates September as "Sept" in newer en-GB ICU builds and "Sep" in older ones.
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'] as const;
+
 export function formatLocalDate(date: Date, timeZone: string): LocalDate {
   const parts = new Intl.DateTimeFormat('en-GB', {
-    timeZone, day: '2-digit', month: 'short', year: 'numeric', weekday: 'short',
+    timeZone, day: '2-digit', month: 'numeric', year: 'numeric', weekday: 'short',
     hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
   }).formatToParts(date);
   const part = (type: Intl.DateTimeFormatPartTypes) => parts.find(value => value.type === type)?.value ?? '';
   return {
-    iso: date.toISOString(), day: part('day'), month: part('month').toUpperCase(),
+    iso: date.toISOString(), day: part('day'), month: MONTHS[Number(part('month')) - 1] ?? '',
     year: part('year'), weekday: part('weekday').toUpperCase(), hours: part('hour'),
     minutes: part('minute'), seconds: part('second'), zone: timeZone.replaceAll('_', ' '),
   };

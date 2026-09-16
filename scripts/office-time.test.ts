@@ -10,6 +10,11 @@ describe('visitor calendar clock', () => {
     assert.deepEqual([after.day, after.year, after.hours, after.minutes, after.seconds], ['01', '2027', '00', '00', '00']);
     assert.equal(formatLocalDate(new Date('2026-12-31T15:00:00Z'), 'America/New_York').day, '31');
   });
+  test('abbreviates every month to three letters regardless of locale data', () => {
+    assert.equal(formatLocalDate(new Date('2026-09-16T05:49:55Z'), 'Asia/Seoul').month, 'SEP');
+    const months = Array.from({ length: 12 }, (_, index) => formatLocalDate(new Date(Date.UTC(2026, index, 15, 12)), 'UTC').month);
+    assert.deepEqual(months, ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']);
+  });
   test('follows daylight saving transitions without a manual offset', () => {
     assert.equal(formatLocalDate(new Date('2026-03-08T06:59:59Z'), 'America/New_York').hours, '01');
     assert.equal(formatLocalDate(new Date('2026-03-08T07:00:00Z'), 'America/New_York').hours, '03');
