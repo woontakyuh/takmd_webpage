@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { MathUtils, PCFSoftShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { SceneFrameLoop } from './scene/SceneFrameLoop';
+import { PhoneLightBudget } from './scene/PhoneLightBudget';
 import { GoldAward } from './scene/GoldAward';
 import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
@@ -71,7 +72,8 @@ export function StudioScene(props: StudioSceneProps) {
       // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
       onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
-      <SceneFrameLoop active={visible && (!props.paused || !props.ready)} />
+      <SceneFrameLoop active={visible && (!props.paused || !props.ready)} mobile={mobile} />
+      <PhoneLightBudget mobile={mobile} />
       {ROOM_ENVIRONMENT}
       <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
       <hemisphereLight args={[sun.skyColor, PALETTE.walnut, 0.10 + skyFill * 0.48]} />

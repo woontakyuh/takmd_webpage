@@ -89,7 +89,7 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
   useEffect(() => { exterior?.setNightMix(nightMix); }, [exterior, nightMix]);
   useEffect(() => () => output.dispose(), [output]);
 
-  useFrame(({ camera, gl, clock }) => {
+  useFrame(({ camera, gl, clock, size }) => {
     if (!exterior || !(camera instanceof PerspectiveCamera)) return;
     camera.updateMatrixWorld();
     visibility.matrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
@@ -100,7 +100,11 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
     const region = regionFor(camera, width, height);
     uniforms.uResolution.value.set(region.width, region.height);
     uniforms.uOrigin.value.set(region.x, height - region.y - region.height);
-    if (output.width !== region.width || output.height !== region.height) output.setSize(region.width, region.height);
+    // The exterior is a second full render every frame. A phone draws it at half resolution: seen through a window it
+    // reads the same, at a quarter of the fragments. The material maps it by normalised coordinates, so only the target shrinks.
+    const scale = size.width < 760 ? 0.5 : 1;
+    const targetWidth = Math.max(1, Math.round(region.width * scale)), targetHeight = Math.max(1, Math.round(region.height * scale));
+    if (output.width !== targetWidth || output.height !== targetHeight) output.setSize(targetWidth, targetHeight);
     exteriorCamera.copy(camera);
     exteriorCamera.position.add(exterior.cameraOffset);
     // The kilometre-scale exterior needs its own depth range to keep balcony layers distinct.
