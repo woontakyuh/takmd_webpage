@@ -25,12 +25,7 @@
 .studio-scene canvas { touch-action: none; }
 .studio[data-reading='ai'] .studio-scene { touch-action: pan-y pinch-zoom; }
 .studio-scene:focus-visible { outline-offset: -5px; }
-.studio-header { position: absolute; z-index: 5; top: 28px; left: 32px; right: 32px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
-.studio-brand { display: inline-flex; align-items: center; gap: 12px; line-height: 1.3; padding: 6px; margin: -6px; border: 1px solid color-mix(in srgb,var(--studio-line) 80%,transparent); border-radius: 12px; background: color-mix(in srgb,var(--studio-paper) 70%,transparent); backdrop-filter: blur(5px); }
-.studio-brand-mark { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid currentColor; border-radius: 50%; font: italic 30px Georgia, serif; padding: 0 0 4px 3px; }
-.studio-brand h1 { margin: 0; font-size: 17px; letter-spacing: -.04em; font-weight: 650; }
-.studio-brand h1 span { font-weight: 400; }
-.studio-brand-caption { display: block; margin-top: 5px; font-size: 9px; font-weight: 500; letter-spacing: .045em; color: var(--studio-muted); }
+.studio-header { position: absolute; z-index: 5; top: 28px; left: 32px; right: 32px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
 .studio-header nav { display: flex; align-items: center; gap: 28px; font-size: 12px; padding: 0 10px; margin-right: -10px; border: 1px solid color-mix(in srgb,var(--studio-line) 80%,transparent); border-radius: 12px; background: color-mix(in srgb,var(--studio-paper) 70%,transparent); backdrop-filter: blur(5px); }
 .studio-header nav a { padding: 12px 0; border-bottom: 1px solid transparent; transition: border-color var(--studio-micro); }
 .studio-header nav a:hover { border-color: currentColor; }
@@ -42,11 +37,11 @@
 .office-local-time { position: absolute; top: 54px; right: 0; padding: 6px 8px; border: 1px solid color-mix(in srgb,var(--studio-line) 80%,transparent); border-radius: 8px; background: color-mix(in srgb,var(--studio-light) 70%,transparent); backdrop-filter: blur(5px); text-align: right; color: var(--studio-muted); font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .office-local-time small { display: block; margin-top: 3px; font-size: 10px; }
 .office-bottom { position: absolute; z-index: 4; bottom: 28px; left: 32px; right: 32px; display: grid; grid-template-columns: minmax(0,1fr); gap: 12px; pointer-events: none; }
-.office-summary { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px 20px; }
+.office-summary { display: flex; justify-content: flex-end; align-items: flex-end; flex-wrap: wrap; gap: 12px 20px; }
 .office-title { pointer-events: none; }
 .office-title .studio-kicker { margin: 0; }
 .office-title .studio-kicker { font-size: 9px; color: var(--studio-muted); }
-.office-title h2 { margin: 6px 0 0; font: italic 38px/1.1 Georgia,serif; letter-spacing: -.05em; }
+.office-title h1 { margin: 6px 0 0; font: italic 38px/1.1 Georgia,serif; letter-spacing: -.05em; }
 .office-guided { display: flex; align-items: center; gap: 14px; font-size: 11px; pointer-events: auto; }
 .office-guided > span { color: var(--studio-muted); }
 .office-guided button { min-height: 44px; background: none; border: 0; border-bottom: 1px solid var(--studio-line); color: var(--studio-ink); padding: 8px 0; }
@@ -113,11 +108,6 @@
 @media (max-width: 759px) {
   .studio-stage { min-height: min(540px, 100svh); }
   .studio-header { top: 20px; left: 18px; right: 18px; gap: 12px; }
-  .studio-brand { min-width: 0; gap: 8px; }
-  .studio-brand > div { min-width: 0; }
-  .studio-brand h1 { font-size: 15px; }
-  .studio-brand-caption { display: none; }
-  .studio-brand-mark { width: 36px; height: 36px; font-size: 27px; }
   .studio-header nav { font-size: 10px; gap: 0; }
   .studio-header nav a:last-child { display: none; }
   .studio-tools { top: 92px; right: 18px; gap: 6px; }
@@ -125,7 +115,7 @@
   .studio-tools button span { display: none; }
   .office-bottom { bottom: 18px; left: 12px; right: 12px; gap: 14px; }
   .office-summary { padding: 0 6px; gap: 8px 12px; }
-  .office-title h2 { font-size: 28px; }
+  .office-title h1 { font-size: 28px; }
   .office-title .studio-kicker { font-size: 8px; }
   .office-guided { gap: 12px; font-size: 10px; }
   .studio-stage-footer { min-height: 64px; }

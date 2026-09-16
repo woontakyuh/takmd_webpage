@@ -283,7 +283,7 @@ function OfficeExperience(content: StudioContent) {
         {!showCollectionTabs && <button className="office-secret-trigger" id="studio-exhibit-projects" onClick={() => open('projects')}>AI projects</button>}
       </div>
       <header className="studio-header">
-        <a className="studio-brand" href="/" aria-label="TakMD home"><span className="studio-brand-mark" aria-hidden="true">t.</span><div><h1>Woon Tak Yuh<span>, MD.</span></h1><span className="studio-brand-caption">Endoscopic spine surgery · Research · Teaching</span></div></a>
+        <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h1>{guidedTitle}</h1>{guidedSection !== null && <button className="office-guided-close" aria-label="Close guided view" onClick={() => goToView(0)}><OfficeIcon name="close" /></button>}</div>
         <nav aria-label="Office navigation"><a href="/cv">Living CV</a><a href="/contact">Contact <span aria-hidden="true">↗</span></a></nav>
       </header>
       <div className="studio-tools">
@@ -305,7 +305,6 @@ function OfficeExperience(content: StudioContent) {
       </div>
       <div className="office-bottom">
         <div className="office-summary">
-          <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h2>{guidedTitle}</h2>{guidedSection !== null && <button className="office-guided-close" aria-label="Close guided view" onClick={() => goToView(0)}><OfficeIcon name="close" /></button>}</div>
           <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => { setGuidedSection('research'); setEntry('complete'); setExplored(true); navigation.go({ focused: 'research', selected: null, details: null }); }}>Research</button><button onClick={() => goToView(1)}>Talks &amp; Recognition</button><button onClick={() => goToView(2)}>UBE &amp; Teaching</button><button onClick={() => goToView(3)}>Whisky &amp; Music</button><button onClick={() => goToView(4)}>Jiu-jitsu &amp; Surfing</button></div>
         </div>
         <footer className="studio-stage-footer">
