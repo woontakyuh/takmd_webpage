@@ -34,6 +34,8 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
   };
   const [railOpen, setRailOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
+  // A phone screen is too narrow to keep the archive beside the slide, so it opens over the slide instead.
+  const [treeOpen, setTreeOpen] = useState(false);
   const [loadedSource, setLoadedSource] = useState('');
   const [failedSource, setFailedSource] = useState('');
   const reader = useRef<HTMLElement>(null);
@@ -59,7 +61,7 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
     if (!slide && talk) onTalk(talk.id);
     onSlide(gallery[index]?.sourceIndex ?? index);
   };
-  const source = activeSlide && (active && media?.kind === 'full' ? publicHighResolutionSlide(activeSlide) ?? activeSlide.src : activeSlide.src);
+  const source = activeSlide && (active && !small && media?.kind === 'full' ? publicHighResolutionSlide(activeSlide) ?? activeSlide.src : activeSlide.src);
   const photos = media?.kind === 'photos';
   const close = onClose;
 
@@ -98,16 +100,22 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
   return <Html wrapperClass="tv-screen-portal" center pointerEvents={active ? 'auto' : 'none'} style={{ pointerEvents: active ? 'auto' : 'none' }}
     distanceFactor={WALL_TV.screenWidth * size.height / width} position={[0, .003, WALL_TV.depth / 2 + .0012]} zIndexRange={[20, 16]} occlude>
     <section ref={reader} className="tv-screen-reader" aria-label="Wall TV reader" data-small={small} data-rail={railOpen} data-active={active} data-hovered={hovered} inert={!active} data-info={infoOpen} data-short-wide={size.width > size.height && size.height < 560}
-      data-talk={talk?.id} style={{ width, height: width * WALL_TV.screenHeight / WALL_TV.screenWidth }}
+      data-talk={talk?.id} data-tree={treeOpen} style={{ width, height: width * WALL_TV.screenHeight / WALL_TV.screenWidth }}
       onPointerDown={event => event.stopPropagation()} onWheel={event => event.stopPropagation()}>
       {active && <header className="tv-screen-header">
         <button ref={focusClose} onClick={close} aria-label="Close and return to office"><OfficeIcon name="close" /></button>
-        <span className="tv-screen-title">{talk?.title || 'Talks & teaching'}</span>
-        <button aria-label="Show lecture information" aria-expanded={infoOpen} onClick={() => { setInfoOpen(value => !value); setRailOpen(false); }}>About</button>
+        {small
+          ? <button className="tv-screen-title tv-screen-archive-toggle" aria-controls="tv-lecture-archive" aria-expanded={treeOpen}
+            onClick={() => { setTreeOpen(value => !value); setRailOpen(false); setInfoOpen(false); }}>
+            {talk?.title || 'Talks & teaching'}<span aria-hidden="true">{treeOpen ? ' ▴' : ' ▾'}</span>
+          </button>
+          : <span className="tv-screen-title">{talk?.title || 'Talks & teaching'}</span>}
+        {small && count > 1 && <button aria-label="Toggle slide thumbnails" aria-expanded={railOpen} onClick={() => { setRailOpen(value => !value); setInfoOpen(false); setTreeOpen(false); }}>Slides</button>}
+        <button aria-label="Show lecture information" aria-expanded={infoOpen} onClick={() => { setInfoOpen(value => !value); setRailOpen(false); setTreeOpen(false); }}>About</button>
       </header>}
       <div className="tv-screen-content" style={contentStyle}>
-        <TvLectureTree presentations={presentations} selected={talk?.id} scrollOffset={treeScrollOffset} onScrollOffset={onTreeScrollOffset}
-          onSelect={id => { onTalk(id); setRailOpen(false); setInfoOpen(false); }} />
+        <TvLectureTree id="tv-lecture-archive" presentations={presentations} selected={talk?.id} scrollOffset={treeScrollOffset} onScrollOffset={onTreeScrollOffset}
+          onSelect={id => { onTalk(id); setRailOpen(false); setInfoOpen(false); setTreeOpen(false); }} />
         <div className="tv-screen-stage">
         <div className="tv-screen-image" data-photos={photos}>
           {currentPage ? <TvPhotoGallery key={`${talk?.id}-${current}`} page={currentPage} /> : activeSlide && source ? <>
@@ -140,7 +148,7 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
         <footer className="tv-screen-context">
           <div><strong>{talk?.topic || talk?.title}</strong><span>{[talk?.date, talk?.venue].filter(Boolean).join(' · ')}</span></div>
           <button disabled={count < 2} aria-label="Toggle slide thumbnails" aria-expanded={railOpen}
-            onClick={() => { setRailOpen(value => !value); setInfoOpen(false); }}>
+            onClick={() => { setRailOpen(value => !value); setInfoOpen(false); setTreeOpen(false); }}>
             <span role="status">{count ? `${current + 1} / ${count}` : 'Record'}</span><small>{currentPage ? `${slides.length} photos` : photos ? 'Photos' : 'Slides'}</small>
           </button>
         </footer>

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { Presentation } from '../types';
 
-export function TvLectureTree({ presentations, selected, onSelect, scrollOffset = 0, onScrollOffset }: {
+export function TvLectureTree({ id, presentations, selected, onSelect, scrollOffset = 0, onScrollOffset }: {
+  readonly id?: string;
   readonly presentations: readonly Presentation[];
   readonly selected: string | undefined;
   readonly onSelect: (id: string) => void;
@@ -54,7 +55,7 @@ export function TvLectureTree({ presentations, selected, onSelect, scrollOffset 
     return () => cancelAnimationFrame(frame);
   }, [expanded, onScrollOffset, selected]);
 
-  return <nav ref={attachTree} className="tv-lecture-tree" aria-label="Lectures by year and date"
+  return <nav id={id} ref={attachTree} className="tv-lecture-tree" aria-label="Lectures by year and date"
     onScroll={event => onScrollOffset?.(event.currentTarget.scrollTop / Math.max(1, event.currentTarget.clientHeight))}>
     <p className="tv-lecture-index-label">LECTURE ARCHIVE</p>
     {years.map(({ year, dates }) => <div key={year} className="tv-lecture-year">

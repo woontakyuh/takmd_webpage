@@ -90,3 +90,24 @@
 .tv-screen-reader[data-small='true'] .tv-screen-details { padding: calc(8px * var(--tv-control-scale)); }
 .tv-screen-reader[data-small='true'] .tv-screen-details h2 { font-size: calc(18px * var(--tv-control-scale)); }
 .tv-screen-reader .tv-screen-thumbnails span { font-size: calc(12px * var(--tv-control-scale)); line-height: 1.4; }
+
+/* A phone gives the reader about 355px; the archive column would eat a fifth of it, so the slide takes the
+   whole board and the archive opens over it from the footer. */
+.tv-screen-reader[data-small='true'] .tv-screen-content { grid-template-columns: minmax(0, 1fr); }
+.tv-screen-reader[data-small='true'] .tv-lecture-tree { position: absolute; inset: 0 0 80px; z-index: 2; }
+.tv-screen-reader[data-small='true']:not([data-tree='true']) .tv-lecture-tree { display: none; }
+button.tv-screen-title { flex: 1; min-width: 0; min-height: 44px; text-align: left; border-radius: 4px; }
+button.tv-screen-title[aria-expanded='true'] { background: var(--studio-night-surface, #34463D); }
+/* On a phone every archive row and thumbnail must be a finger target: 44px on screen is 44px × the control scale on the board. */
+.tv-screen-reader[data-small='true'] .tv-lecture-tree { padding: calc(10px * var(--tv-control-scale)) calc(8px * var(--tv-control-scale)); }
+.tv-screen-reader[data-small='true'] .tv-lecture-index-label { margin: 0 calc(8px * var(--tv-control-scale)) calc(8px * var(--tv-control-scale)); font-size: calc(10px * var(--tv-control-scale)); line-height: 1.2; }
+.tv-screen-reader[data-small='true'] .tv-lecture-year-toggle { height: auto; min-height: calc(44px * var(--tv-control-scale)); padding: 0 calc(8px * var(--tv-control-scale)); align-items: center; font-size: calc(15px * var(--tv-control-scale)); line-height: 1.2; }
+.tv-screen-reader[data-small='true'] .tv-lecture-year-toggle small { font-size: calc(12px * var(--tv-control-scale)); line-height: 1.2; }
+.tv-screen-reader[data-small='true'] .tv-lecture-date { margin: calc(4px * var(--tv-control-scale)) 0 calc(8px * var(--tv-control-scale)) calc(8px * var(--tv-control-scale)); padding: 0; }
+.tv-screen-reader[data-small='true'] .tv-lecture-date > time { margin: calc(8px * var(--tv-control-scale)) 0 calc(2px * var(--tv-control-scale)) calc(4px * var(--tv-control-scale)); font-size: calc(11px * var(--tv-control-scale)); line-height: 1.2; }
+.tv-screen-reader[data-small='true'] .tv-lecture-entry { min-height: calc(44px * var(--tv-control-scale)); padding: calc(6px * var(--tv-control-scale)) calc(10px * var(--tv-control-scale)); display: flex; align-items: center; }
+.tv-screen-reader[data-small='true'] .tv-lecture-entry strong { max-width: none; -webkit-line-clamp: 2; font-size: calc(14px * var(--tv-control-scale)); line-height: 1.25; letter-spacing: 0; }
+.tv-screen-reader[data-small='true'] .tv-screen-thumbnails { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(8px * var(--tv-control-scale)); padding: calc(8px * var(--tv-control-scale)); }
+.tv-screen-reader[data-small='true'] .tv-screen-thumbnails button { min-height: calc(44px * var(--tv-control-scale)); padding: calc(4px * var(--tv-control-scale)); }
+.tv-screen-reader[data-small='true'] .tv-screen-context button { pointer-events: none; }
+

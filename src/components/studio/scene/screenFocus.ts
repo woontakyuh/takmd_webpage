@@ -6,8 +6,9 @@ type VectorLike = {
   readonly z: number;
 };
 
-const POSITION_TOLERANCE = 0.002;
-const DIRECTION_ALIGNMENT = 0.999999;
+// Two centimetres and half a degree are invisible at the reading distance, and the overlay tracks the last of the damping.
+const POSITION_TOLERANCE = 0.02;
+const DIRECTION_ALIGNMENT = 0.99995;
 
 export function isScreenFocusSettled(
   selected: boolean,

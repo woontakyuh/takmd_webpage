@@ -11,7 +11,7 @@ describe('isScreenFocusSettled', () => {
   it('keeps the interactive layer hidden while the camera is approaching the screen', () => {
     const visible = isScreenFocusSettled(
       true,
-      { x: 0, y: 1.943, z: 1.0241 },
+      { x: 0, y: 1.943, z: 1.08 },
       { x: 0, y: 0, z: 1 },
       pose,
     );
@@ -22,7 +22,7 @@ describe('isScreenFocusSettled', () => {
   it('shows the interactive layer at the settled screen pose', () => {
     const visible = isScreenFocusSettled(
       true,
-      { x: 0.001, y: 1.943, z: 1.019 },
+      { x: 0.005, y: 1.943, z: 1.012 },
       { x: 0, y: 0, z: 1 },
       pose,
     );
