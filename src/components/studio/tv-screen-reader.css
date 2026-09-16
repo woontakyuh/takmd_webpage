@@ -53,8 +53,6 @@
 .tv-screen-reader[data-small='true'] .tv-screen-record h2 { font-size: 14px; margin: 4px 0; }
 .studio[data-selected='education'] .studio-header { visibility: hidden; pointer-events: none; }
 .studio[data-selected='education'] .studio-stage { min-height: 0; height: 100dvh; }
-.tv-screen-teaching-link { position: absolute; top: 100%; left: 0; margin-top: 8px; min-height: 44px; display: flex; align-items: center; font-size: 12px; color: var(--studio-light); text-shadow: 0 1px 3px #000; }
-
 .studio .tv-screen-content { filter: brightness(.86); transition: filter 180ms ease; }
 .studio[data-night='true'] .tv-screen-content { filter: brightness(.46); }
 .studio .tv-screen-reader:is([data-active='true'], [data-hovered='true']) .tv-screen-content { filter: brightness(1); }

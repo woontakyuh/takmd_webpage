@@ -52,7 +52,7 @@
 .office-help-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 6px 10px; border: 1px solid color-mix(in srgb,var(--studio-line) 80%,transparent); border-radius: 12px; background: color-mix(in srgb,var(--studio-light) 70%,transparent); backdrop-filter: blur(5px); color: inherit; font-size: 11px; }
 .office-help-toggle > span { display: grid; place-items: center; width: 18px; height: 18px; border: 1px solid var(--studio-line); border-radius: 50%; }
 .office-help-toggle:hover { color: var(--studio-ink); }
-.office-gesture-hint { position: absolute; top: calc(100% + 8px); left: 0; width: min(260px,calc(100vw - 48px)); padding: 10px 12px; border: 1px solid color-mix(in srgb,var(--studio-line) 80%,transparent); border-radius: 12px; background: color-mix(in srgb,var(--studio-light) 70%,transparent); backdrop-filter: blur(5px); color: var(--studio-ink); box-shadow: 0 4px 18px #202d2a0c; }
+.office-gesture-hint { pointer-events: none; position: absolute; top: calc(100% + 8px); left: 0; width: min(260px,calc(100vw - 48px)); padding: 10px 12px; border: 1px solid color-mix(in srgb,var(--studio-line) 80%,transparent); border-radius: 12px; background: color-mix(in srgb,var(--studio-light) 70%,transparent); backdrop-filter: blur(5px); color: var(--studio-ink); box-shadow: 0 4px 18px #202d2a0c; }
 .office-gesture-hint p { margin: 0; font-size: 10px; line-height: 1.45; color: var(--studio-muted); }
 .office-gesture-hint .office-gesture-actions { margin: 0; color: var(--studio-ink); font-size: 11px; line-height: 1.5; font-weight: 400; }
 .office-index { position: absolute; right: 0; bottom: 0; display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 11px; }
@@ -341,6 +341,7 @@ body:has(.studio) { overflow: clip; }
 .studio[data-guided="research"]:not([data-reading]):not([data-inspecting]) .office-title { visibility: visible; }
 .studio[data-guided="research"]:not([data-reading]) .office-approach-actions { display: none; }
 
+.office-device-shortcuts { pointer-events: auto; }
 .office-gesture-actions > div { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 8px; margin-bottom: 5px; }
 .office-gesture-actions > div:last-child { margin-bottom: 0; }
 .office-gesture-actions dt { font-weight: 600; }

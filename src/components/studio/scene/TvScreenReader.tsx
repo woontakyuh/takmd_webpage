@@ -146,7 +146,6 @@ export function TvScreenReader({ active, hovered, talk, slide, presentations, on
         </footer>
         </div>
       </div>
-      {active && <a className="tv-screen-teaching-link" href="/education#overview">Teaching & training</a>}
     </section>
   </Html>;
 }
