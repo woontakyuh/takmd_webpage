@@ -14,6 +14,7 @@ import '../tv-screen-reader.css';
 
 type Props = {
   readonly active: boolean;
+  readonly compact: boolean;
   readonly hovered: boolean;
   readonly talk: Presentation | null;
   readonly slide: TalkSlide | null;
@@ -25,10 +26,10 @@ type Props = {
   readonly onTreeScrollOffset?: (offset: number) => void;
 };
 
-export function TvScreenReader({ active, hovered, talk, slide, presentations, onTalk, onSlide, onClose, treeScrollOffset, onTreeScrollOffset }: Props) {
+export function TvScreenReader({ active, compact, hovered, talk, slide, presentations, onTalk, onSlide, onClose, treeScrollOffset, onTreeScrollOffset }: Props) {
   const size = useThree(state => state.size);
   const width = tvReadingSize(size.width, size.height);
-  const small = width < 700;
+  const small = compact;
   const contentStyle: CSSProperties & { readonly '--tv-control-scale': number } = {
     width: 1600, height: 900, transform: `scale(${width / 1600})`, transformOrigin: 'top left', '--tv-control-scale': 1600 / width,
   };

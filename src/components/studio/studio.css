@@ -346,3 +346,15 @@ body:has(.studio) { overflow: clip; }
 .office-gesture-actions > div:last-child { margin-bottom: 0; }
 .office-gesture-actions dt { font-weight: 600; }
 .office-gesture-actions dd { margin: 0; }
+
+/* Phones: the frosted pills lose their blur. Over a WebGL canvas each backdrop-filter forces a full recomposite, and iOS
+   sometimes paints the blurred backdrop while dropping the pill's own text and icons. A firmer tint reads the same. */
+@media (max-width: 759px) {
+  .studio-header nav, .studio-tools button, .office-local-time, .office-help-toggle, .office-gesture-hint, .office-room-panel, .office-device-panel .office-device-header { backdrop-filter: none; -webkit-backdrop-filter: none; background: color-mix(in srgb, var(--studio-light) 92%, transparent); }
+  .studio-header nav { background: color-mix(in srgb, var(--studio-paper) 92%, transparent); }
+}
+
+/* WebKit still composites a backdrop-filter while its element is visibility:hidden, leaving frosted ghosts. Hidden chrome drops the blur. */
+.studio[data-selected] :is(.studio-tools button, .studio-header nav, .office-help-toggle, .office-local-time, .office-gesture-hint),
+.studio[data-entry="seated"] :is(.studio-tools button, .office-local-time, .office-help-toggle, .office-gesture-hint) { backdrop-filter: none; -webkit-backdrop-filter: none; }
+

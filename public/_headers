@@ -8,3 +8,5 @@
   Content-Type: video/mp2t
 /models/proposal-memory/hls/1080/segment-*
   Content-Type: video/mp2t
+/build.json
+  Cache-Control: no-store

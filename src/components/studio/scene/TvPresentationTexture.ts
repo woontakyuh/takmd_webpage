@@ -4,11 +4,11 @@ import { CanvasTexture, SRGBColorSpace } from 'three';
 import type { Presentation } from '../types';
 import { talkMedia } from '../collection';
 import { containPhoto, photoPageIndex, TV_PHOTO_BOARD, tvPhotoPages } from '../tvPhotoGallery';
-import { tvReadingSize } from './config';
 import { setWallTvContentEdges } from './hoverReactions';
 import { sampleTvImageEdges, TV_DARK_EDGES } from './tvBacklightColor';
 
 type Props = {
+  readonly compact: boolean;
   readonly cover: string | null;
   readonly talk: Presentation | null;
   readonly presentations: readonly Presentation[];
@@ -121,11 +121,11 @@ function drawLectureTree(context: CanvasRenderingContext2D, talk: Presentation |
   context.restore();
 }
 
-export function useTvPresentationTexture({ cover, talk, presentations, treeScrollOffset = 0 }: Props) {
+export function useTvPresentationTexture({ compact, cover, talk, presentations, treeScrollOffset = 0 }: Props) {
   const anisotropy = useThree(state => Math.min(4, state.gl.capabilities.getMaxAnisotropy()));
   // A phone opens the archive over the slide, so the unopened screen must not show a column the reader will drop.
-  const viewport = useThree(state => state.size);
-  const treeWidth = tvReadingSize(viewport.width, viewport.height) < 700 ? 0 : TREE_WIDTH;
+  // The same compact breakpoint drives the loading poster, so the poster agrees with the live screen.
+  const treeWidth = compact ? 0 : TREE_WIDTH;
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 1600; canvas.height = 900;

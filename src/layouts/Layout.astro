@@ -23,10 +23,11 @@ const {
 
 const officeEntry = !documentPage && /^\/(cv|research|education|ube|ai|ai-workflow|contact|credits|dashboard|jiu-jitsu|surfing|knowledge|media|workshops)(\/|$)/.test(Astro.url.pathname);
 const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
+const buildId = process.env.BUILD_ID ?? 'dev';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-build={buildId}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -59,6 +60,26 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
         void import('react-grab');
         void import('react-scan').then(({ scan }) => scan({ enabled: true }));
       }
+    </script>
+
+    <script>
+      // A home-screen web app keeps the copy it first launched. When this page is shown again, compare its build id
+      // with the one on the server and reload once if the site has moved on.
+      const current = document.documentElement.dataset.build ?? '';
+      const check = async () => {
+        if (!current || current === 'dev') return; // the dev server and the poster capture are unmarked and publish no build.json
+        try {
+          const response = await fetch('/build.json', { cache: 'no-store' });
+          if (!response.ok) return;
+          const { id } = await response.json();
+          if (typeof id !== 'string' || id === current || sessionStorage.getItem('office-build-reload') === id) return;
+          sessionStorage.setItem('office-build-reload', id);
+          location.reload();
+        } catch { /* offline or blocked: keep the page */ }
+      };
+      void check();
+      addEventListener('pageshow', event => { if (event.persisted) void check(); });
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') void check(); });
     </script>
 
     <script is:inline>

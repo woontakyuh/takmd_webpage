@@ -110,6 +110,12 @@ function OfficeExperience(content: StudioContent) {
   const loadingProfileOpen = selected === 'ai' && (loadingProfileSession || !ready || sceneFailed);
   useLayoutEffect(() => { setLoadingProfileSession(loadingProfileOpen); }, [loadingProfileOpen]);
   useEffect(() => {
+    // The poster reports when its fade has finished; if a browser never delivers that report, do not leave the visitor seated forever.
+    if (!ready || posterHidden || entry !== 'seated') return;
+    const timer = window.setTimeout(() => setPosterHidden(true), 3000);
+    return () => window.clearTimeout(timer);
+  }, [ready, posterHidden, entry]);
+  useEffect(() => {
     if (!posterHidden || entry !== 'seated' || loadingProfileOpen) return;
     const delay = window.matchMedia('(min-width: 760px)').matches ? 4000 : 0;
     const timer = window.setTimeout(() => setEntry('revealing'), delay);

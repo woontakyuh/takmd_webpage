@@ -32,6 +32,9 @@ for (const engine of enginesArg.split(',')) {
   const links = await page.evaluate(() => [...document.querySelectorAll('.studio a[href]')].map(a => ({ href: a.getAttribute('href'), target: a.getAttribute('target') })));
   const officeRoutes = /^\/(cv|research|education|ube|ai|jiu-jitsu|surfing|contact|credits|ai-workflow|dashboard|media|knowledge|workshops)(\/|$|#|\?)|^\/$|^\/\?/;
   for (const link of links) check(officeRoutes.test(link.href) || (/^(https?:|mailto:)/.test(link.href) && (link.target === '_blank' || link.href.startsWith('mailto:'))), `${tag}link leaves the room without a new tab: ${link.href}`);
+  // The page carries its build id and the server publishes the same id, so a stale home-screen copy can tell it must reload.
+  const build = await page.evaluate(async () => { const r = await fetch('/build.json', { cache: 'no-store' }).catch(() => null); const server = r?.ok ? (await r.json()).id : null; return { page: document.documentElement.dataset.build ?? null, server }; });
+  if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(base)) check(build.page && build.server && build.page === build.server, `${tag}build id mismatch: page ${build.page}, server ${build.server}`);
   // Every guided view presents the same way: kicker, italic title, close control, and all five names.
   for (const name of ['Research', 'Talks & Recognition', 'UBE & Teaching', 'Whisky & Music', 'Jiu-jitsu & Surfing']) {
     await page.getByRole('button', { name, exact: true }).evaluate(el => el.click());

@@ -60,7 +60,7 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
   const featured = featuredPresentation(presentations);
   const talk = collection.presentation ?? featured;
   const cover = collection.talkSlide?.src ?? talkMedia.find(media => media.id === talk?.id)?.slides[0]?.src;
-  const board = useTvPresentationTexture({ cover: cover ?? null, talk, presentations, treeScrollOffset: tvTreeScrollOffset });
+  const board = useTvPresentationTexture({ compact, cover: cover ?? null, talk, presentations, treeScrollOffset: tvTreeScrollOffset });
   return (
     <group>
       <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
@@ -85,7 +85,7 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
             <meshStandardMaterial ref={tvMaterial} map={board} emissiveMap={board} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4}
               polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
           </mesh>
-          {focusedScreen === 'education' && <TvScreenReader active hovered={tvHovered} talk={talk} slide={collection.talkSlide} presentations={presentations}
+          {focusedScreen === 'education' && <TvScreenReader active compact={compact} hovered={tvHovered} talk={talk} slide={collection.talkSlide} presentations={presentations}
             onTalk={onTalk} onSlide={onTalkSlide} onClose={onClose} treeScrollOffset={tvTreeScrollOffset} onTreeScrollOffset={setTvTreeScrollOffset} />}
           <mesh position={[WALL_TV.width / 2 - 0.034, -WALL_TV.height / 2 + 0.008, 0.017]}><sphereGeometry args={[0.0015, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         </group>
