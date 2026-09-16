@@ -25,6 +25,13 @@ export function featuredPresentation(presentations: readonly Presentation[]): Pr
     .toSorted((a, b) => b.date.localeCompare(a.date))[0] ?? presentations[0] ?? null;
 }
 
+export function talkNavigation(presentations: readonly Presentation[], id: string | undefined) {
+  const ordered = presentations.filter(talk => talkMedia.some(media => media.id === talk.id))
+    .toSorted((a, b) => b.date.localeCompare(a.date));
+  const index = ordered.findIndex(talk => talk.id === id);
+  return { index, total: ordered.length, previous: ordered[index - 1], next: index >= 0 ? ordered[index + 1] : undefined };
+}
+
 export function presentationNavigation(presentations: readonly Presentation[], id: string | undefined) {
   const ordered = presentations.toSorted((a, b) => b.date.localeCompare(a.date));
   const index = ordered.findIndex(talk => talk.id === id);
