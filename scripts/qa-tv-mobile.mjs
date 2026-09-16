@@ -32,6 +32,30 @@ for (const engine of enginesArg.split(',')) {
   const links = await page.evaluate(() => [...document.querySelectorAll('.studio a[href]')].map(a => ({ href: a.getAttribute('href'), target: a.getAttribute('target') })));
   const officeRoutes = /^\/(cv|research|education|ube|ai|jiu-jitsu|surfing|contact|credits|ai-workflow|dashboard|media|knowledge|workshops)(\/|$|#|\?)|^\/$|^\/\?/;
   for (const link of links) check(officeRoutes.test(link.href) || (/^(https?:|mailto:)/.test(link.href) && (link.target === '_blank' || link.href.startsWith('mailto:'))), `${tag}link leaves the room without a new tab: ${link.href}`);
+  // Every guided view presents the same way: kicker, italic title, close control, and all five names.
+  for (const name of ['Research', 'Talks & Recognition', 'UBE & Teaching', 'Whisky & Music', 'Jiu-jitsu & Surfing']) {
+    await page.getByRole('button', { name, exact: true }).evaluate(el => el.click());
+    await page.waitForTimeout(3000);
+    const view = await page.evaluate(() => {
+      const title = document.querySelector('.office-title h1');
+      const box = title?.getBoundingClientRect();
+      const overlaps = [...document.querySelectorAll('.office-overview-return, .office-approach-actions, .studio-tools > *, .office-help')]
+        .filter(el => getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none')
+        .filter(el => { const r = el.getBoundingClientRect(); return box && r.width > 0 && r.left < box.right && r.right > box.left && r.top < box.bottom && r.bottom > box.top; })
+        .map(el => el.className.toString().split(' ')[0] || el.tagName);
+      return { title: title?.textContent ?? null, visible: !!box && box.width > 0 && getComputedStyle(title).visibility === 'visible',
+        overlaps, tabs: document.querySelectorAll('.office-guided button').length,
+        close: document.querySelectorAll('.office-guided-close').length };
+    });
+    check(view.title?.startsWith(name.split(' ')[0]), `${tag}${name}: title reads "${view.title}"`);
+    check(view.visible, `${tag}${name}: the title is not visible`);
+    check(view.overlaps.length === 0, `${tag}${name}: controls sit over the title: ${view.overlaps.join(', ')}`);
+    check(view.tabs === 5, `${tag}${name}: ${view.tabs} guided tabs visible, expected 5`);
+    check(view.close === 1, `${tag}${name}: no close control beside the title`);
+  }
+  await page.getByRole('button', { name: 'Talks & Recognition', exact: true }).evaluate(el => el.click());
+  await page.waitForTimeout(3000);
+
   // First tap opens the TV.
   const tv = await page.evaluate(() => { const s = window.__qaScene(); const m = s.scene.getObjectByName('Wall TV screen'); const v = m.getWorldPosition(s.camera.position.clone()); v.project(s.camera); return { x: (v.x + 1) * innerWidth / 2, y: (1 - v.y) * innerHeight / 2 }; });
   await page.touchscreen.tap(tv.x, tv.y);

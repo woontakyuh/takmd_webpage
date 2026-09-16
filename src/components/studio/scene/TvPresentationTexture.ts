@@ -4,6 +4,7 @@ import { CanvasTexture, SRGBColorSpace } from 'three';
 import type { Presentation } from '../types';
 import { talkMedia } from '../collection';
 import { containPhoto, photoPageIndex, TV_PHOTO_BOARD, tvPhotoPages } from '../tvPhotoGallery';
+import { tvReadingSize } from './config';
 import { setWallTvContentEdges } from './hoverReactions';
 import { sampleTvImageEdges, TV_DARK_EDGES } from './tvBacklightColor';
 
@@ -122,6 +123,9 @@ function drawLectureTree(context: CanvasRenderingContext2D, talk: Presentation |
 
 export function useTvPresentationTexture({ cover, talk, presentations, treeScrollOffset = 0 }: Props) {
   const anisotropy = useThree(state => Math.min(4, state.gl.capabilities.getMaxAnisotropy()));
+  // A phone opens the archive over the slide, so the unopened screen must not show a column the reader will drop.
+  const viewport = useThree(state => state.size);
+  const treeWidth = tvReadingSize(viewport.width, viewport.height) < 700 ? 0 : TREE_WIDTH;
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 1600; canvas.height = 900;
@@ -143,17 +147,19 @@ export function useTvPresentationTexture({ cover, talk, presentations, treeScrol
     const photoBounds = { left: Infinity, top: Infinity, right: 0, bottom: 0 };
     const count = gallery.length || media?.slides.length || 0;
     const photos = media?.kind === 'photos';
-    drawLectureTree(context, talk, presentations, treeScrollOffset);
     let cancelled = false;
-    void document.fonts.ready.then(() => {
-      if (cancelled) return;
+    if (treeWidth) {
       drawLectureTree(context, talk, presentations, treeScrollOffset);
-      texture.needsUpdate = true;
-    });
+      void document.fonts.ready.then(() => {
+        if (cancelled) return;
+        drawLectureTree(context, talk, presentations, treeScrollOffset);
+        texture.needsUpdate = true;
+      });
+    }
     context.fillStyle = page ? TV_PHOTO_BOARD.paper : photos ? '#17241F' : '#F6F3EA';
-    context.fillRect(TREE_WIDTH, 0, 1600 - TREE_WIDTH, 900 - FOOTER_HEIGHT);
+    context.fillRect(treeWidth, 0, 1600 - treeWidth, 900 - FOOTER_HEIGHT);
     context.fillStyle = '#22312B';
-    context.fillRect(TREE_WIDTH, 900 - FOOTER_HEIGHT, 1600 - TREE_WIDTH, FOOTER_HEIGHT);
+    context.fillRect(treeWidth, 900 - FOOTER_HEIGHT, 1600 - treeWidth, FOOTER_HEIGHT);
     const images: HTMLImageElement[] = [];
     const load = (src: string, draw: (image: HTMLImageElement) => void) => {
       const image = new Image(); images.push(image);
@@ -162,7 +168,7 @@ export function useTvPresentationTexture({ cover, talk, presentations, treeScrol
     };
     if (page) {
       const board = containPhoto(TV_PHOTO_BOARD.width, TV_PHOTO_BOARD.height,
-        { x: TREE_WIDTH, y: 0, width: 1600 - TREE_WIDTH, height: 900 - FOOTER_HEIGHT });
+        { x: treeWidth, y: 0, width: 1600 - treeWidth, height: 900 - FOOTER_HEIGHT });
       for (const photo of page.photos) load(photo.slide.src, image => {
         const frame = photo.frame;
         const fitted = containPhoto(image.naturalWidth, image.naturalHeight, {
@@ -178,21 +184,21 @@ export function useTvPresentationTexture({ cover, talk, presentations, treeScrol
         }));
       });
     } else if (cover) load(cover, image => {
-      const areaWidth = 1600 - TREE_WIDTH - (photos ? 48 : 0);
+      const areaWidth = 1600 - treeWidth - (photos ? 48 : 0);
       const areaHeight = 900 - FOOTER_HEIGHT - (photos ? 48 : 0);
       const scale = Math.min(areaWidth / image.naturalWidth, areaHeight / image.naturalHeight);
       const width = image.naturalWidth * scale, height = image.naturalHeight * scale;
-      context.drawImage(image, TREE_WIDTH + (1600 - TREE_WIDTH - width) / 2, (900 - FOOTER_HEIGHT - height) / 2, width, height);
+      context.drawImage(image, treeWidth + (1600 - treeWidth - width) / 2, (900 - FOOTER_HEIGHT - height) / 2, width, height);
       setWallTvContentEdges(sampleTvImageEdges(image, cover));
     });
     else setWallTvContentEdges(TV_DARK_EDGES);
     context.textBaseline = 'top';
     context.fillStyle = '#F6F3EA';
     context.font = '500 17px "Manrope Variable", "Avenir Next", sans-serif';
-    context.fillText(fittedText(context, talk?.topic || talk?.title || 'Talks & teaching', 980), TREE_WIDTH + 17, 827);
+    context.fillText(fittedText(context, talk?.topic || talk?.title || 'Talks & teaching', 980), treeWidth + 17, 827);
     context.fillStyle = '#C3D0C7';
     context.font = '14px "Manrope Variable", "Avenir Next", sans-serif';
-    context.fillText(fittedText(context, [talk?.date, talk?.venue].filter(Boolean).join(' · '), 980), TREE_WIDTH + 17, 855);
+    context.fillText(fittedText(context, [talk?.date, talk?.venue].filter(Boolean).join(' · '), 980), treeWidth + 17, 855);
     context.fillStyle = '#D3DED4';
     context.font = '17px "Manrope Variable", "Avenir Next", sans-serif';
     context.fillText(count ? `${current + 1} / ${count}` : 'Record', 1510, 836);
@@ -203,7 +209,7 @@ export function useTvPresentationTexture({ cover, talk, presentations, treeScrol
       cancelled = true;
       images.forEach(image => { image.onload = null; });
     };
-  }, [texture, cover, talk, presentations, treeScrollOffset]);
+  }, [texture, cover, talk, presentations, treeScrollOffset, treeWidth]);
   useEffect(() => () => texture.dispose(), [texture]);
   return texture;
 }

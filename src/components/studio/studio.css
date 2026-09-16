@@ -338,8 +338,8 @@ body:has(.studio) { overflow: clip; }
 .office-title { position: relative; width: fit-content; max-width: min(540px, 85vw); }
 .office-guided-close { position: absolute; left: 100%; bottom: 0; margin-left: 12px; width: 44px; height: 44px; display: grid; place-items: center; pointer-events: auto; border: 0; background: none; color: var(--studio-ink); cursor: pointer; }
 .office-guided-close svg { width: 20px; height: 20px; }
-.studio[data-guided="research"]:not([data-reading]):not([data-inspecting]) :is(.office-title, .office-guided) { visibility: visible; pointer-events: auto; }
-.studio[data-guided="research"]:not([data-reading]) .office-approach-actions { display: none; }
+.studio[data-guided="research"]:not([data-reading]):not([data-inspecting]) :is(.office-title, .office-guided) { visibility: visible; }
+.studio[data-guided="research"]:not([data-reading]) :is(.office-approach-actions, .office-overview-return) { display: none; }
 
 .office-device-shortcuts { pointer-events: auto; }
 .office-gesture-actions > div { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 8px; margin-bottom: 5px; }
