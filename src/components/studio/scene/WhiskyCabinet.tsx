@@ -1,4 +1,4 @@
-import { Html } from '@react-three/drei';
+import { Html, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
@@ -15,6 +15,7 @@ import { finishWhiskyReturn, returnWhiskyBottle, selectWhiskyBottle } from './Wh
 import type { WhiskyBottleId, WhiskyInspectionState } from './WhiskyInspectionState';
 import { whiskyCabinetPose, whiskyClosedCabinetPose, whiskyInspectionPose } from './WhiskyInspectionMotion';
 import { useSceneInspection } from './SceneInspection';
+import { EDBM_MAGAZINE } from '../edbmArchive';
 import { IsidoroInteriorLighting } from './IsidoroInteriorLighting';
 import { WhiskyLectureCard } from './WhiskyLectureCard';
 import { WhiskyMagazine } from './WhiskyMagazine';
@@ -43,6 +44,16 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const doorPivot = useRef<Group>(null);
   const worktopPivot = useRef<Group>(null);
   const ready = useIsidoroMotion(doorPivot, worktopPivot, open, reducedMotion, editing);
+  // The lecture card's cover is a 1500 x 2000 photograph. Left to load on the click that opens the cabinet, a phone
+  // spent the opening downloading it and then resizing it on the main thread, so the door appeared to freeze. It is
+  // fetched once the room is idle instead: the first load is untouched and opening finds it already there.
+  useEffect(() => {
+    const source = EDBM_MAGAZINE.cover.src;
+    const idle = window.requestIdleCallback?.bind(window) ?? ((run: () => void) => window.setTimeout(run, 2000));
+    const cancel = window.cancelIdleCallback?.bind(window);
+    const handle = idle(() => useTexture.preload(source));
+    return () => { if (cancel && typeof handle === 'number') cancel(handle); };
+  }, []);
   const barware = useRef<Group>(null);
   const bottles = useRef<Group>(null);
   const fixedInterior = useRef<Group>(null);
