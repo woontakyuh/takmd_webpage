@@ -184,7 +184,9 @@ function OfficeExperience(content: StudioContent) {
     if (arrangement.editing) return;
     if (id === 'award') openAwardPhoto();
     else if (id === 'ai' || id === 'education' || id === 'family' || id === 'award-photo' || id === 'surfing' || navigation.current.current.focused === id) open(id);
-    else { setExplored(true); navigation.go({ focused: id, selected: null, details: null }); }
+    // Research is one book, so reaching it by tab or by touching the folio must give the same screen, not the same
+    // camera under different titling.
+    else { setExplored(true); if (id === 'research') setGuidedSection('research'); navigation.go({ focused: id, selected: null, details: null }); }
   };
   const selectBook = (id: PersonalBookId) => { setSelectedBook(id); setBookPageIndex(-1); open('books'); };
   const approachBookshelf = () => { setBookshelfReady(false); setBookshelfVisit(visit => visit + 1); open('bookshelf'); };
@@ -264,7 +266,14 @@ function OfficeExperience(content: StudioContent) {
     setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
   };
 
-  const guidedTitle = guidedSection === 'research' ? 'Research.' : guidedSection === 1 ? 'Talks & Recognition.' : guidedSection === 2 ? 'UBE & Teaching.' : guidedSection === 3 ? 'Whisky & Music.' : guidedSection === 4 ? 'Jiu-jitsu & Surfing.' : 'The office.';
+  // Each view names what is in front of the visitor and what to do with it, instead of repeating one house line.
+  const guided = guidedSection === 'research' ? { title: 'Research.', kicker: 'PEER-REVIEWED WORK · OPEN THE FOLIO' }
+    : guidedSection === 1 ? { title: 'Talks & Recognition.', kicker: 'LECTURES ON THE TELEVISION · AWARDS ON THE SHELF' }
+    : guidedSection === 2 ? { title: 'UBE & Teaching.', kicker: 'ENDOSCOPIC SPINE SURGERY · HOW IT IS TAUGHT' }
+    : guidedSection === 3 ? { title: 'Whisky & Music.', kicker: 'THE CABINET, THE RECORDS AND THE GUITAR' }
+    : guidedSection === 4 ? { title: 'Jiu-jitsu & Surfing.', kicker: 'THE GI AND THE BOARD · WHAT KEEPS HIM STEADY' }
+    : { title: 'The office.', kicker: 'WOON TAK YUH, MD · TOUCH ANYTHING' };
+  const guidedTitle = guided.title;
   const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed);
 
   return <div className="studio" data-entry={entry} data-guided={guidedSection ?? undefined} data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
@@ -289,7 +298,7 @@ function OfficeExperience(content: StudioContent) {
         {!showCollectionTabs && <button className="office-secret-trigger" id="studio-exhibit-projects" onClick={() => open('projects')}>AI projects</button>}
       </div>
       <header className="studio-header">
-        <div className="office-title"><p className="studio-kicker">TAKMD / A PLACE TO THINK</p><h1>{guidedTitle}</h1>{guidedSection !== null && <button className="office-guided-close" aria-label="Close guided view" onClick={() => goToView(0)}><OfficeIcon name="close" /></button>}</div>
+        <div className="office-title"><p className="studio-kicker">{guided.kicker}</p><h1>{guidedTitle}</h1>{guidedSection !== null && <button className="office-guided-close" aria-label="Close guided view" onClick={() => goToView(0)}><OfficeIcon name="close" /></button>}</div>
         <nav aria-label="Office navigation"><a href="/cv">Living CV</a><a href="/contact">Contact <span aria-hidden="true">↗</span></a></nav>
       </header>
       <div className="studio-tools">
