@@ -62,6 +62,8 @@ export type StudioSceneProps = {
   readonly ready: boolean;
   readonly paused?: boolean;
   readonly focused: ExhibitId | null;
+  // The UBE & Teaching guided view already stands at the workshop objects, so a touch there opens instead of approaching.
+  readonly workshopGuided?: boolean;
   readonly monitorScroll: { scrollTop: number };
   readonly selectedBook: PersonalBookId;
   readonly bookPageIndex: number;

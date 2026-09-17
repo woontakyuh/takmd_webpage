@@ -109,6 +109,29 @@ for (const engine of enginesArg.split(',')) {
   const stored = await page.evaluate(() => ({ legacy: document.body.innerText.includes('Surgeons trained') || document.body.innerText.includes('Education and training.'), selected: document.querySelector('.studio')?.dataset.selected ?? null }));
   check(!stored.legacy, `${tag}a stored education address still shows the retired page`);
   check(stored.selected === 'education', `${tag}a stored education address selected "${stored.selected}" instead of the television`);
+  // Closing a view must not hand focus to a hidden accessibility trigger: :focus-visible would show it at the top of
+  // the room ("Research: Papers & ideas") and keep it there. Checked after the television and after the folio.
+  const zombie = async (label) => {
+    await page.keyboard.press('Escape'); await page.waitForTimeout(1500);
+    const shown = await page.evaluate(() => [...document.querySelectorAll('.office-secret-trigger')].filter(e => e.getBoundingClientRect().height > 2).map(e => e.textContent.trim()));
+    const active = await page.evaluate(() => document.activeElement?.classList.contains('office-secret-trigger') ? document.activeElement.textContent.trim() : null);
+    check(shown.length === 0 && !active, `${tag}${label}: closing revealed a hidden trigger (${shown.join(', ') || active})`);
+  };
+  await zombie('television');
+  await page.getByRole('button', { name: 'Research', exact: true }).evaluate(el => el.click()); await page.waitForTimeout(3500);
+  const locate = (pattern) => page.evaluate(pattern => { const s = window.__qaScene(); let m = null; s.scene.traverse(o => { if (!m && new RegExp(pattern).test(o.name || '')) m = o; }); if (!m) return null; const v = m.getWorldPosition(s.camera.position.clone()); v.project(s.camera); return { x: (v.x + 1) * innerWidth / 2, y: (1 - v.y) * innerHeight / 2 }; }, pattern);
+  const folio = await locate('^Folio front cover$');
+  check(!!folio, `${tag}the research folio is not in the scene`);
+  if (folio) { await page.touchscreen.tap(folio.x, folio.y); await page.waitForTimeout(3500); }
+  check(await page.evaluate(() => document.querySelector('.studio')?.dataset.reading === 'research'), `${tag}touching the folio in the Research view did not open it`);
+  await zombie('folio');
+  // In the UBE & Teaching view the visitor already stands at the workshop objects: one touch on the endoscope opens it.
+  await page.getByRole('button', { name: 'UBE & Teaching', exact: true }).evaluate(el => el.click()); await page.waitForTimeout(3500);
+  const scope = await locate('^Workshop /ube$');
+  check(!!scope, `${tag}the endoscope tray is not in the scene`);
+  if (scope) { await page.touchscreen.tap(scope.x, scope.y); await page.waitForTimeout(3500); }
+  check(await page.evaluate(() => document.querySelector('.studio')?.dataset.reading === 'spine'), `${tag}one touch on the endoscope in the UBE view did not open it (${await page.evaluate(() => JSON.stringify({ ...document.querySelector('.studio')?.dataset }))})`);
+  await zombie('endoscope');
   await page.screenshot({ path: `${evidence}/${engine}-tv.png` });
   await ctx.close(); await browser.close();
 }

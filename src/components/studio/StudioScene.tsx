@@ -97,7 +97,7 @@ export function StudioScene(props: StudioSceneProps) {
       <CalendarClock reducedMotion={props.reducedMotion} />
       <Movable id="plant"><Greenery reducedMotion={props.reducedMotion} /></Movable>
       <SpineExhibit {...props} />
-      <WorkshopObjects focused={props.focused} onApproach={() => props.onSelect('spine')} />
+      <WorkshopObjects focused={props.focused} direct={props.workshopGuided ?? false} onApproach={() => props.onSelect('spine')} />
       <Movable id="desk" handle={false}><Folio {...props} /></Movable>
       <Displays {...props} />
       <CameraRig {...props} reading={props.selected !== null} selected={props.focused ?? props.selected} />

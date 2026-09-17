@@ -172,8 +172,11 @@ function OfficeExperience(content: StudioContent) {
   const open = useCallback((id: ExhibitId) => {
     if (arrangement.editing) return;
     if (id !== 'ai' || ready) setEntry('complete');
+    // Remember the control that opened this only if it is one the visitor can see. Falling back to the hidden
+    // accessibility trigger put keyboard focus on it at close, and :focus-visible then revealed "Research: Papers &
+    // ideas" at the top of the room long after the visitor had moved on.
     const active = document.activeElement;
-    returnFocus.current = active instanceof HTMLElement && active.closest('button, a') ? active : document.getElementById(`studio-exhibit-${id === 'bookshelf' ? 'books' : id}`);
+    returnFocus.current = active instanceof HTMLElement && active.closest('button, a') && !active.closest('.office-secret-trigger') ? active : null;
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
     setExplored(true); setSelected(id);
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -207,7 +210,11 @@ function OfficeExperience(content: StudioContent) {
   }, []);
   const close = useCallback(() => {
     navigation.close();
-    requestAnimationFrame(() => returnFocus.current?.focus({ preventScroll: true }));
+    requestAnimationFrame(() => {
+      const target = returnFocus.current ?? document.querySelector<HTMLElement>('.studio-scene');
+      returnFocus.current = null;
+      target?.focus({ preventScroll: true });
+    });
   }, [navigation.close]);
 
   useEffect(() => {
@@ -282,7 +289,7 @@ function OfficeExperience(content: StudioContent) {
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <div style={{ display: 'contents' }} inert={loadingProfileOpen} aria-hidden={loadingProfileOpen || undefined}><SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} workshopGuided={guidedSection === 2} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary></div>
         <OfficePoster ready={ready} failed={sceneFailed} night={night} onHidden={onPosterHidden} />
         {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
