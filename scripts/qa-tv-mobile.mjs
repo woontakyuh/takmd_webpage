@@ -132,6 +132,13 @@ for (const engine of enginesArg.split(',')) {
   if (scope) { await page.touchscreen.tap(scope.x, scope.y); await page.waitForTimeout(3500); }
   check(await page.evaluate(() => document.querySelector('.studio')?.dataset.reading === 'spine'), `${tag}one touch on the endoscope in the UBE view did not open it (${await page.evaluate(() => JSON.stringify({ ...document.querySelector('.studio')?.dataset }))})`);
   await zombie('endoscope');
+  // The spine model in the same view opens with one touch as well.
+  await page.getByRole('button', { name: 'UBE & Teaching', exact: true }).evaluate(el => el.click()); await page.waitForTimeout(3500);
+  const spine = await locate('^Exhibit spine$');
+  check(!!spine, `${tag}the spine model is not in the scene`);
+  if (spine) { await page.touchscreen.tap(spine.x, spine.y); await page.waitForTimeout(3500); }
+  check(await page.evaluate(() => document.querySelector('.studio')?.dataset.reading === 'spine'), `${tag}one touch on the spine model in the UBE view did not open it`);
+  await zombie('spine');
   await page.screenshot({ path: `${evidence}/${engine}-tv.png` });
   await ctx.close(); await browser.close();
 }

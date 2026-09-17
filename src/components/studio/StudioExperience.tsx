@@ -186,7 +186,8 @@ function OfficeExperience(content: StudioContent) {
   const approach = (id: ExhibitId) => {
     if (arrangement.editing) return;
     if (id === 'award') openAwardPhoto();
-    else if (id === 'ai' || id === 'education' || id === 'family' || id === 'award-photo' || id === 'surfing' || navigation.current.current.focused === id) open(id);
+    // Inside the UBE & Teaching view the visitor already stands at the spine model, like the workshop objects beside it.
+    else if (id === 'ai' || id === 'education' || id === 'family' || id === 'award-photo' || id === 'surfing' || (id === 'spine' && guidedSection === 2) || navigation.current.current.focused === id) open(id);
     // Research is one book, so reaching it by tab or by touching the folio must give the same screen, not the same
     // camera under different titling.
     else { setExplored(true); if (id === 'research') setGuidedSection('research'); navigation.go({ focused: id, selected: null, details: null }); }
