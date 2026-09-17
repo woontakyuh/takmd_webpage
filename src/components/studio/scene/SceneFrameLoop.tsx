@@ -2,7 +2,7 @@ import { useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import { useSceneInspection } from './SceneInspection';
 
-export function SceneFrameLoop({ active, mobile = false }: { readonly active: boolean; readonly mobile?: boolean }) {
+export function SceneFrameLoop({ active }: { readonly active: boolean }) {
   const get = useThree(state => state.get);
   const { inspection } = useSceneInspection();
   const nativeFrames = inspection?.id === 'proposal-memory';
@@ -22,8 +22,7 @@ export function SceneFrameLoop({ active, mobile = false }: { readonly active: bo
     window.addEventListener('pointermove', pointerMove, { passive: true, capture: true });
     const tick = (now: number) => {
       const state = get();
-      // A phone cannot hold 60 fps on this room; asking for it only heats the device and stutters. Half rates keep it smooth.
-      const interval = 1000 / (now < interactiveUntil ? (mobile ? 30 : 60) : (mobile ? 20 : 30));
+      const interval = 1000 / (now < interactiveUntil ? 60 : 30);
       accumulated += now - previous;
       previous = now;
       if (nativeFrames || accumulated >= interval - 0.1) {
@@ -45,6 +44,6 @@ export function SceneFrameLoop({ active, mobile = false }: { readonly active: bo
       for (const event of interactionEvents) window.removeEventListener(event, interact, true);
       window.removeEventListener('pointermove', pointerMove, true);
     };
-  }, [active, get, nativeFrames, mobile]);
+  }, [active, get, nativeFrames]);
   return null;
 }
