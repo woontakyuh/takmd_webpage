@@ -46,7 +46,11 @@ for (const engine of enginesArg.split(',')) {
         .filter(el => getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none')
         .filter(el => { const r = el.getBoundingClientRect(); return box && r.width > 0 && r.left < box.right && r.right > box.left && r.top < box.bottom && r.bottom > box.top; })
         .map(el => el.className.toString().split(' ')[0] || el.tagName);
+      const row = document.querySelector('.office-guided');
+      const rowStyle = row ? getComputedStyle(row) : null;
+      const tabStyle = row?.querySelector('button') ? getComputedStyle(row.querySelector('button')) : null;
       return { title: title?.textContent ?? null, visible: !!box && box.width > 0 && getComputedStyle(title).visibility === 'visible',
+        tabsClickable: rowStyle?.visibility === 'visible' && rowStyle.pointerEvents !== 'none' && tabStyle?.pointerEvents !== 'none',
         overlaps, tabs: document.querySelectorAll('.office-guided button').length,
         close: document.querySelectorAll('.office-guided-close').length };
     });
@@ -54,6 +58,7 @@ for (const engine of enginesArg.split(',')) {
     check(view.visible, `${tag}${name}: the title is not visible`);
     check(view.overlaps.length === 0, `${tag}${name}: controls sit over the title: ${view.overlaps.join(', ')}`);
     check(view.tabs === 5, `${tag}${name}: ${view.tabs} guided tabs visible, expected 5`);
+    check(view.tabsClickable, `${tag}${name}: the guided tabs are visible but do not take taps`);
     check(view.close === 1, `${tag}${name}: no close control beside the title`);
   }
   await page.getByRole('button', { name: 'Talks & Recognition', exact: true }).evaluate(el => el.click());

@@ -109,6 +109,12 @@ export function useCabinetAction({ disabled, onActivate, onHoverChange, visualAc
   };
 }
 
+// Opening the cabinet: how fast each half settles, how close counts as arrived (a quarter of a degree, invisible),
+// and how far the leaf swings before the worktop starts to follow it down.
+const ISIDORO_DAMPING = 16;
+const ISIDORO_SETTLE = 0.004;
+const ISIDORO_WORKTOP_FOLLOW = 0.6;
+
 export function useIsidoroMotion(door: RefObject<Group | null>, worktop: RefObject<Group | null>,
   open: boolean, reducedMotion: boolean, disabled: boolean) {
   const invalidate = useThree(state => state.invalidate);
@@ -125,15 +131,17 @@ export function useIsidoroMotion(door: RefObject<Group | null>, worktop: RefObje
     if (!door.current || !worktop.current) return;
     const leaf = door.current, top = worktop.current;
     const desiredOpen = open && !disabled;
-    const topUp = Math.abs(top.rotation.x - Math.PI / 2) < 0.0015;
-    const leafOpen = Math.abs(leaf.rotation.y + ISIDORO_OPEN_ANGLE) < 0.0015;
+    const topUp = Math.abs(top.rotation.x - Math.PI / 2) < ISIDORO_SETTLE;
+    // The worktop follows the leaf instead of waiting for it to finish: two exponential settles end to end took a
+    // second and a half, most of it an invisible tail. It still trails the leaf, so the half still opens like a book.
+    const leafOpen = Math.abs(leaf.rotation.y + ISIDORO_OPEN_ANGLE) < ISIDORO_OPEN_ANGLE * (1 - ISIDORO_WORKTOP_FOLLOW);
     const leafTarget = desiredOpen ? -ISIDORO_OPEN_ANGLE : topUp ? 0 : leaf.rotation.y;
     const topTarget = desiredOpen && leafOpen ? 0 : Math.PI / 2;
     let moving = false;
     for (const [group, axis, target] of [[leaf, 'y', leafTarget], [top, 'x', topTarget]] as const) {
       if (group.rotation[axis] !== target) {
-        const angle = MathUtils.damp(group.rotation[axis], target, 9, delta);
-        group.rotation[axis] = Math.abs(angle - target) < 0.0015 ? target : angle;
+        const angle = MathUtils.damp(group.rotation[axis], target, ISIDORO_DAMPING, delta);
+        group.rotation[axis] = Math.abs(angle - target) < ISIDORO_SETTLE ? target : angle;
         moving = true;
       }
       group.userData.angle = group.rotation[axis];

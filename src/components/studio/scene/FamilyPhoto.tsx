@@ -25,8 +25,9 @@ export function FamilyPhoto(props: Pick<StudioSceneProps, 'familyPhotoSrc' | 'se
     const { left, top } = positionCollectionCopy(object, layout, size);
     caption.style.transform = `translate3d(${left}px, ${top}px, 0)`;
   });
-  return <Interactive id="family" {...props} position={[-0.72, 0.0185 + ROOM.desk.height, -0.23]}
-    rotation={0.13} onHoverChange={setHovered}>
+  // Mirrored to the desk's other side: the folio sits at one back corner, so the frame balances it at the other.
+  return <Interactive id="family" {...props} position={[0.67, 0.0185 + ROOM.desk.height, -0.23]}
+    rotation={-0.13} onHoverChange={setHovered}>
     <group ref={frame}>
     <DigitalPhotoFrame src={props.familyPhotoSrc} hovered={hovered} active={props.selected === 'family'} reducedMotion={props.reducedMotion} />
     </group>
