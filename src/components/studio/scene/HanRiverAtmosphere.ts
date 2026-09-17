@@ -110,10 +110,19 @@ export function createRiverAtmosphere(scene: THREE.Scene, fog: THREE.Fog) {
   if (!(water.material instanceof THREE.ShaderMaterial)) throw new TypeError('Reflector requires a shader material');
   const reflectionSource = new THREE.PerspectiveCamera();
   const renderReflection = water.onBeforeRender;
+  // The mirror re-renders the whole city (about 700k triangles) into its texture. The mirrored city only changes when
+  // the view does, so between moves the reflection is refreshed a few times a second for the drifting water and
+  // traffic instead of every frame; the previous texture and its matrix stay valid while the camera holds still.
+  const lastReflection = { matrix: new THREE.Matrix4(), at: -Infinity };
   water.onBeforeRender = (renderer, renderScene, camera, geometry, material, group) => {
     if (camera instanceof THREE.PerspectiveCamera) {
       // The window crop must not truncate the reflected scene at oblique room views.
       updateRiverReflectionCamera(camera, reflectionSource);
+      const now = performance.now();
+      const moved = !lastReflection.matrix.equals(reflectionSource.matrixWorld);
+      if (!moved && now - lastReflection.at < 250) return;
+      lastReflection.matrix.copy(reflectionSource.matrixWorld);
+      lastReflection.at = now;
       renderReflection.call(water, renderer, renderScene, reflectionSource, geometry, material, group);
     } else renderReflection.call(water, renderer, renderScene, camera, geometry, material, group);
   };
