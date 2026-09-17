@@ -7,6 +7,7 @@ import { MathUtils, PCFSoftShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { SceneFrameLoop } from './scene/SceneFrameLoop';
 import { StaticMerge } from './scene/StaticMerge';
+import { GuidedViewProvider } from './scene/GuidedView';
 import { GoldAward } from './scene/GoldAward';
 import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
@@ -72,6 +73,7 @@ export function StudioScene(props: StudioSceneProps) {
       // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
       onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
+      <GuidedViewProvider section={props.guidedSection ?? null}>
       <SceneFrameLoop active={visible && (!props.paused || !props.ready)} />
       <StaticMerge />
       {ROOM_ENVIRONMENT}
@@ -97,11 +99,12 @@ export function StudioScene(props: StudioSceneProps) {
       <CalendarClock reducedMotion={props.reducedMotion} />
       <Movable id="plant"><Greenery reducedMotion={props.reducedMotion} /></Movable>
       <SpineExhibit {...props} />
-      <WorkshopObjects focused={props.focused} direct={props.workshopGuided ?? false} onApproach={() => props.onSelect('spine')} />
+      <WorkshopObjects focused={props.focused} onApproach={() => props.onSelect('spine')} />
       <Movable id="desk" handle={false}><Folio {...props} /></Movable>
       <Displays {...props} />
       <CameraRig {...props} reading={props.selected !== null} selected={props.focused ?? props.selected} />
       <OfficeRenderer lighting={props.lighting} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
+      </GuidedViewProvider>
     </Canvas>
   );
 }

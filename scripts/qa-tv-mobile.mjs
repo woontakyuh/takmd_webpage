@@ -111,6 +111,16 @@ for (const engine of enginesArg.split(',')) {
   check(stored.selected === 'education', `${tag}a stored education address selected "${stored.selected}" instead of the television`);
   // Closing a view must not hand focus to a hidden accessibility trigger: :focus-visible would show it at the top of
   // the room ("Research: Papers & ideas") and keep it there. Checked after the television and after the folio.
+  // A guided tab may be hidden while something is open or inspected; leave that state first, then press the tab.
+  const openTab = async (name) => {
+    for (let i = 0; i < 3; i++) {
+      const visible = await page.evaluate(() => { const row = document.querySelector('.office-guided'); return !!row && getComputedStyle(row).visibility === 'visible'; });
+      if (visible) break;
+      await page.keyboard.press('Escape'); await page.waitForTimeout(1500);
+    }
+    await page.evaluate(n => { const b = [...document.querySelectorAll('.office-guided button')].find(x => x.textContent.trim() === n); if (!b) throw new Error('tab missing: ' + n); b.click(); }, name);
+    await page.waitForTimeout(3500);
+  };
   const zombie = async (label) => {
     await page.keyboard.press('Escape'); await page.waitForTimeout(1500);
     const shown = await page.evaluate(() => [...document.querySelectorAll('.office-secret-trigger')].filter(e => e.getBoundingClientRect().height > 2).map(e => e.textContent.trim()));
@@ -118,27 +128,68 @@ for (const engine of enginesArg.split(',')) {
     check(shown.length === 0 && !active, `${tag}${label}: closing revealed a hidden trigger (${shown.join(', ') || active})`);
   };
   await zombie('television');
-  await page.getByRole('button', { name: 'Research', exact: true }).evaluate(el => el.click()); await page.waitForTimeout(3500);
-  const locate = (pattern) => page.evaluate(pattern => { const s = window.__qaScene(); let m = null; s.scene.traverse(o => { if (!m && new RegExp(pattern).test(o.name || '')) m = o; }); if (!m) return null; const v = m.getWorldPosition(s.camera.position.clone()); v.project(s.camera); return { x: (v.x + 1) * innerWidth / 2, y: (1 - v.y) * innerHeight / 2 }; }, pattern);
+  await openTab('Research');
+  // Where a finger can land on the named object: sample points across its meshes and keep the first whose first
+  // hit belongs to the object and is not covered by a control. An object's origin alone may sit on something else.
+  const locate = (pattern) => page.evaluate(pattern => {
+    const s = window.__qaScene(); let target = null; s.scene.traverse(o => { if (!target && new RegExp(pattern).test(o.name || '')) target = o; });
+    if (!target) return null;
+    const meshes = []; target.traverse(o => { if (o.isMesh && o.visible) meshes.push(o); });
+    const V = s.camera.position.constructor; const pts = [];
+    for (const m of meshes) { m.geometry.computeBoundingBox(); const b = m.geometry.boundingBox; m.updateWorldMatrix(true, false); for (const x of [b.min.x, (b.min.x + b.max.x) / 2, b.max.x]) for (const y of [b.min.y, (b.min.y + b.max.y) / 2, b.max.y]) for (const z of [b.min.z, (b.min.z + b.max.z) / 2, b.max.z]) pts.push(m.localToWorld(new V(x, y, z))); }
+    if (!pts.length) return null;
+    const centre = pts.reduce((a, v) => a.add(v), new V()).multiplyScalar(1 / pts.length);
+    const belongs = o => { for (let n = o; n; n = n.parent) if (n === target) return true; return false; };
+    for (const v of [centre, ...pts]) {
+      const q = v.clone().project(s.camera); if (q.z > 1 || Math.abs(q.x) > 0.95 || Math.abs(q.y) > 0.95) continue;
+      s.raycaster.setFromCamera({ x: q.x, y: q.y }, s.camera);
+      const hit = s.raycaster.intersectObjects(s.scene.children, true).find(h => { let vis = true; for (let n = h.object; n; n = n.parent) if (!n.visible) vis = false; return vis; });
+      if (!hit || !belongs(hit.object)) continue;
+      const x = (q.x + 1) * innerWidth / 2, y = (1 - q.y) * innerHeight / 2;
+      if (document.elementFromPoint(x, y)?.tagName !== 'CANVAS') continue;
+      return { x, y };
+    }
+    return null;
+  }, pattern);
   const folio = await locate('^Folio front cover$');
   check(!!folio, `${tag}the research folio is not in the scene`);
   if (folio) { await page.touchscreen.tap(folio.x, folio.y); await page.waitForTimeout(3500); }
   check(await page.evaluate(() => document.querySelector('.studio')?.dataset.reading === 'research'), `${tag}touching the folio in the Research view did not open it`);
   await zombie('folio');
   // In the UBE & Teaching view the visitor already stands at the workshop objects: one touch on the endoscope opens it.
-  await page.getByRole('button', { name: 'UBE & Teaching', exact: true }).evaluate(el => el.click()); await page.waitForTimeout(3500);
+  await openTab('UBE & Teaching');
   const scope = await locate('^Workshop /ube$');
   check(!!scope, `${tag}the endoscope tray is not in the scene`);
   if (scope) { await page.touchscreen.tap(scope.x, scope.y); await page.waitForTimeout(3500); }
   check(await page.evaluate(() => document.querySelector('.studio')?.dataset.reading === 'spine'), `${tag}one touch on the endoscope in the UBE view did not open it (${await page.evaluate(() => JSON.stringify({ ...document.querySelector('.studio')?.dataset }))})`);
   await zombie('endoscope');
   // The spine model in the same view opens with one touch as well.
-  await page.getByRole('button', { name: 'UBE & Teaching', exact: true }).evaluate(el => el.click()); await page.waitForTimeout(3500);
+  await openTab('UBE & Teaching');
   const spine = await locate('^Exhibit spine$');
   check(!!spine, `${tag}the spine model is not in the scene`);
   if (spine) { await page.touchscreen.tap(spine.x, spine.y); await page.waitForTimeout(3500); }
   check(await page.evaluate(() => document.querySelector('.studio')?.dataset.reading === 'spine'), `${tag}one touch on the spine model in the UBE view did not open it`);
   await zombie('spine');
+  // Whisky & Music: one touch on the cabinet body opens the door; one touch on the lecture card opens the lecture.
+  await openTab('Whisky & Music');
+  const body = await locate('^fixed leather trunk half$');
+  check(!!body, `${tag}the cabinet body is not in the scene`);
+  if (body) { await page.touchscreen.tap(body.x, body.y); await page.waitForTimeout(4500); }
+  check(await page.evaluate(() => { const leaf = window.__qaScene().scene.getObjectByName('Isidoro book-opening mobile half'); return !!leaf && Math.abs(Math.abs(leaf.rotation.y) - Math.PI / 2) < 0.02; }), `${tag}one touch on the cabinet in the Whisky view did not open the door`);
+  await zombie('cabinet');
+  await openTab('Whisky & Music');
+  const card = await locate('^Printed whisky lecture cover$');
+  check(!!card, `${tag}the whisky lecture card is not in the scene`);
+  if (card) { await page.touchscreen.tap(card.x, card.y); await page.waitForTimeout(4500); }
+  check(await page.locator('.whisky-lecture-close').count() === 1, `${tag}one touch on the lecture card in the Whisky view did not open the lecture`);
+  await zombie('lecture card');
+  // Jiu-jitsu & Surfing: the gi opens on one touch like the surfboard beside it.
+  await openTab('Jiu-jitsu & Surfing');
+  const gi = await locate('^Exhibit bjj$');
+  check(!!gi, `${tag}the gi is not in the scene`);
+  if (gi) { await page.touchscreen.tap(gi.x, gi.y); await page.waitForTimeout(3500); }
+  check(await page.evaluate(() => document.querySelector('.studio')?.dataset.reading === 'bjj'), `${tag}one touch on the gi in the Jiu-jitsu view did not open it`);
+  await zombie('gi');
   await page.screenshot({ path: `${evidence}/${engine}-tv.png` });
   await ctx.close(); await browser.close();
 }

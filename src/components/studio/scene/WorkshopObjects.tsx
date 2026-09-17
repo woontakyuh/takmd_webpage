@@ -1,5 +1,6 @@
 import type { ExhibitId } from '../types';
 import { HoverAccent } from './HoverAccent';
+import { useGuidedView } from './GuidedView';
 import { requestOfficePath } from '../officeNavigation';
 import { useCursor } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
@@ -19,15 +20,15 @@ const COLLECTION_X = ROOM.credenza.position[0];
 
 type WorkshopLinkProps = {
   readonly focused: ExhibitId | null;
-  readonly direct: boolean;
   readonly onApproach: () => void;
   readonly position: Point;
   readonly route: `/workshops/${string}` | '/ube';
   readonly children: ReactNode;
 };
 
-function WorkshopLink({ focused, direct, onApproach, position, route, children }: WorkshopLinkProps) {
+function WorkshopLink({ focused, onApproach, position, route, children }: WorkshopLinkProps) {
   const canvas = useThree(state => state.gl.domElement);
+  const direct = useGuidedView() === 2;
   const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
   useCursor(hovered);
@@ -74,19 +75,19 @@ function EndoscopeTray() {
   );
 }
 
-export function WorkshopObjects({ focused, direct, onApproach }: { readonly focused: ExhibitId | null; readonly direct: boolean; readonly onApproach: () => void }) {
+export function WorkshopObjects({ focused, onApproach }: { readonly focused: ExhibitId | null; readonly onApproach: () => void }) {
   const dummy = workshops[0];
   const animal = workshops[2];
 
   return (
     <group rotation={[0, 0, 0]}>
-      <WorkshopLink focused={focused} direct={direct} onApproach={onApproach} route={`/workshops/${dummy.slug}`} position={[COLLECTION_X, CABINET_TOP + 0.014, 0.81]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${dummy.slug}`} position={[COLLECTION_X, CABINET_TOP + 0.014, 0.81]}>
         <EndoscopicLumbarBox />
       </WorkshopLink>
-      <WorkshopLink focused={focused} direct={direct} onApproach={onApproach} route={`/workshops/${animal.slug}`} position={[COLLECTION_X, CABINET_TOP, 0.32]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${animal.slug}`} position={[COLLECTION_X, CABINET_TOP, 0.32]}>
         <PigPlush />
       </WorkshopLink>
-      <WorkshopLink focused={focused} direct={direct} onApproach={onApproach} route="/ube" position={[COLLECTION_X, CABINET_TOP, 1.30]}>
+      <WorkshopLink focused={focused} onApproach={onApproach} route="/ube" position={[COLLECTION_X, CABINET_TOP, 1.30]}>
         <group rotation={[0, -Math.PI / 2, 0]}><EndoscopeTray /></group>
       </WorkshopLink>
     </group>

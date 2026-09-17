@@ -17,6 +17,7 @@ import { whiskyCabinetPose, whiskyClosedCabinetPose, whiskyInspectionPose } from
 import { useSceneInspection } from './SceneInspection';
 import { EDBM_MAGAZINE } from '../edbmArchive';
 import { IsidoroInteriorLighting } from './IsidoroInteriorLighting';
+import { useGuidedView } from './GuidedView';
 import { WhiskyLectureCard } from './WhiskyLectureCard';
 import { WhiskyMagazine } from './WhiskyMagazine';
 
@@ -71,14 +72,18 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     if (cabinet.current) setInspection({ id: 'whisky-cabinet',
       ...(opened ? whiskyCabinetPose : whiskyClosedCabinetPose)(cabinet.current, size) });
   }, [open, size, setInspection]);
+  // Inside the Whisky & Music view the visitor already stands before the cabinet: the door and the lecture card open
+  // on the first touch instead of walking up to the closed cabinet first.
+  const standingHere = useGuidedView() === 3;
   const visitClosedCabinet = useCallback(() => {
     if (!cabinet.current) return false;
+    if (standingHere) return true;
     const pose = whiskyClosedCabinetPose(cabinet.current, size);
     if (inspection?.id === 'whisky-cabinet'
       && Math.hypot(...pose.position.map((value, index) => value - camera.position.getComponent(index))) < 0.08) return true;
     approachCabinet(false);
     return false;
-  }, [approachCabinet, camera, inspection, size]);
+  }, [approachCabinet, camera, inspection, size, standingHere]);
   const toggle = useCallback(() => {
     if (editing) return;
     pendingBottle.current = null;
