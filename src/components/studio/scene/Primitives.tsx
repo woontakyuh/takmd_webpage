@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Quaternion, Vector3 } from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { cornerSegments, usePhone } from './Device';
 import type { MeshStandardMaterialParameters, Texture } from 'three';
 import type { Point } from './config';
 
@@ -19,7 +20,8 @@ type BlockProps = {
 export function Block({ size, position = [0, 0, 0], rotation = [0, 0, 0], color,
   radius = 0.035, roughness = 0.65, metalness = 0, texture, material }: BlockProps) {
   const [width, height, depth] = size;
-  const geometry = useMemo(() => new RoundedBoxGeometry(width, height, depth, 3, radius), [width, height, depth, radius]);
+  const segments = cornerSegments(usePhone());
+  const geometry = useMemo(() => new RoundedBoxGeometry(width, height, depth, segments, radius), [width, height, depth, radius, segments]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   return (
     <mesh geometry={geometry} position={[...position]} rotation={[...rotation]} castShadow receiveShadow>

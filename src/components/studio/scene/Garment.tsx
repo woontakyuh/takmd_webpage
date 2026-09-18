@@ -1,11 +1,15 @@
 import { useGLTF, useTexture } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
+import { usePhone } from './Device';
 import { Box3, Euler, Mesh, MeshStandardMaterial, SRGBColorSpace, Vector3 } from 'three';
 import type { BufferGeometry, Texture } from 'three';
 import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
 import { RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 
 const COAT_URL = '/models/garments/physician-coat-2k.glb?v=20260918-meshopt' as const;
+// The same garments at about a third of their triangles (gltf-transform simplify, ratio 0.3), for phones.
+const COAT_URL_PHONE = '/models/garments/physician-coat-2k-phone.glb?v=20260918' as const;
+const GI_URL_PHONE = '/models/garments/control-gi-phone.glb?v=20260918' as const;
 const GI_URL = '/models/garments/control-gi.glb?v=20260918-meshopt' as const;
 const ASSEMBLY_HEIGHT = 0.9;
 // Measured inner hook crowns in the original GLBs; their shoulder planes are YZ.
@@ -26,6 +30,8 @@ type GarmentUrl = typeof COAT_URL | typeof GI_URL;
 type HangingGarmentProps = {
   readonly url: GarmentUrl;
   readonly emblem?: Texture;
+  // The file to load when it differs from the canonical url (the phone's lighter garment).
+  readonly file?: string;
 };
 
 function coatSleeveEmblem(garment: Mesh, texture: Texture) {
@@ -67,8 +73,8 @@ function widenCoatHook(source: BufferGeometry) {
   return geometry;
 }
 
-function HangingGarment({ url, emblem }: HangingGarmentProps) {
-  const { scene } = useGLTF(url);
+function HangingGarment({ url, file = url, emblem }: HangingGarmentProps) {
+  const { scene } = useGLTF(file);
   const fitted = useMemo(() => {
     const model = scene.clone(true);
     const ownedGeometries: BufferGeometry[] = [];
@@ -127,11 +133,11 @@ export function DoctorCoat() {
     return texture;
   }, [source]);
   useEffect(() => () => emblem.dispose(), [emblem]);
-  return <HangingGarment url={COAT_URL} emblem={emblem} />;
+  return <HangingGarment url={COAT_URL} file={usePhone() ? COAT_URL_PHONE : COAT_URL} emblem={emblem} />;
 }
 
 export function JiuJitsuGi() {
-  return <HangingGarment url={GI_URL} />;
+  return <HangingGarment url={GI_URL} file={usePhone() ? GI_URL_PHONE : GI_URL} />;
 }
 
 // No module-scope preload: both garments are mounted after the room is ready (see DeferredAssets).

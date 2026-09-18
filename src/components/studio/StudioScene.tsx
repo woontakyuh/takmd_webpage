@@ -9,6 +9,7 @@ import { SceneFrameLoop } from './scene/SceneFrameLoop';
 import { StaticMerge } from './scene/StaticMerge';
 import { GuidedViewProvider } from './scene/GuidedView';
 import { RoomReadyProvider } from './scene/DeferredAssets';
+import { DeviceProvider } from './scene/Device';
 import { GoldAward } from './scene/GoldAward';
 import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
@@ -74,6 +75,7 @@ export function StudioScene(props: StudioSceneProps) {
       // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
       onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
+      <DeviceProvider phone={mobile}>
       <RoomReadyProvider ready={props.ready}>
       <GuidedViewProvider section={props.guidedSection ?? null}>
       <SceneFrameLoop active={visible && (!props.paused || !props.ready)} />
@@ -108,6 +110,7 @@ export function StudioScene(props: StudioSceneProps) {
       <OfficeRenderer lighting={props.lighting} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
       </GuidedViewProvider>
       </RoomReadyProvider>
+      </DeviceProvider>
     </Canvas>
   );
 }

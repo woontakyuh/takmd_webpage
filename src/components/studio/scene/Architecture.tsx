@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import type { BlindLift } from '../types';
 import type { Group } from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { cornerSegments, usePhone } from './Device';
 import { INTERIOR, ROOM } from './config';
 import type { Point } from './config';
 import { Block } from './Primitives';
@@ -70,8 +71,9 @@ function PlasterWall({ size, position, axis, surface }: {
   readonly axis: 'x' | 'z';
   readonly surface: ReturnType<typeof createMineralSurface>;
 }) {
+  const segments = cornerSegments(usePhone());
   const geometry = useMemo(() => {
-    const wall = new RoundedBoxGeometry(...size, 3, 0.012);
+    const wall = new RoundedBoxGeometry(...size, segments, 0.012);
     const vertices = wall.getAttribute('position');
     const uv = wall.getAttribute('uv');
     const span = axis === 'x' ? depth : width;
@@ -80,7 +82,7 @@ function PlasterWall({ size, position, axis, surface }: {
       uv.setXY(index, horizontal / span + 0.5, (vertices.getY(index) + position[1]) / height);
     }
     return wall;
-  }, [size, position, axis]);
+  }, [size, position, axis, segments]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   return <mesh name="Warm continuous plaster wall" geometry={geometry} position={[...position]} castShadow receiveShadow>
     <meshStandardMaterial {...surface} color={INTERIOR.ivory} roughness={0.96} bumpScale={0.0012} />
