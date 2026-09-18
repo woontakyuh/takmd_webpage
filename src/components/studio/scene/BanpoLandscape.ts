@@ -5,7 +5,7 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { createBanpoFacadeDetails } from './BanpoFacadeDetails';
 import { createBanpoBridges } from './BanpoBridges';
 import { applyBanpoGroundMaterials } from './BanpoGroundMaterials';
-import { createBanpoVegetation } from './BanpoVegetation';
+import { createBanpoVegetation, TREE_ASSET_PHONE } from './BanpoVegetation';
 import { createRiverAtmosphere } from './HanRiverAtmosphere';
 import { createHanRiverLandscape } from './HanRiverLandscape';
 import { createRiverTraffic } from './HanRiverTraffic';
@@ -53,7 +53,12 @@ function disposeModel(root: THREE.Object3D) {
   root.clear();
 }
 
-export function createBanpoLandscape() {
+// Phones draw the same Banpo, built from lighter files: the riverbank tree at a third of its triangles and the city
+// model at half. Through a window on a phone the two are indistinguishable; the desktop keeps the full files.
+export const BANPO_CITY_ASSET = '/models/han-river/banpo-pilot.glb';
+export const BANPO_CITY_ASSET_PHONE = '/models/han-river/banpo-pilot-phone.glb';
+
+export function createBanpoLandscape({ phone = false }: { readonly phone?: boolean } = {}) {
   updateResidentialLights();
   const fallback = createHanRiverLandscape();
   const scene = new THREE.Scene();
@@ -113,7 +118,7 @@ export function createBanpoLandscape() {
     });
   };
 
-  new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load('/models/han-river/banpo-pilot.glb', gltf => {
+  new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load(phone ? BANPO_CITY_ASSET_PHONE : BANPO_CITY_ASSET, gltf => {
     if (disposed) { disposeModel(gltf.scene); return; }
     model = gltf.scene;
     const removed: THREE.Object3D[] = [];
@@ -174,7 +179,7 @@ export function createBanpoLandscape() {
     model.add(park.group);
     facadeDetails = createBanpoFacadeDetails(REPLACED_IDS);
     model.add(facadeDetails.group);
-    vegetation = createBanpoVegetation(model, undefined, generateParkTrees(BANPO_PARK_FEATURES));
+    vegetation = createBanpoVegetation(model, phone ? TREE_ASSET_PHONE : undefined, generateParkTrees(BANPO_PARK_FEATURES));
     bridges = createBanpoBridges();
     model.add(bridges.group);
     jamsu = createBanpoJamsu(model);

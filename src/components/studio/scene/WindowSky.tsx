@@ -7,6 +7,9 @@ import { createBanpoLandscape } from './BanpoLandscape';
 import { ROOM } from './config';
 import { createWindowRegionProjector, cropExteriorCamera } from './WindowRenderRegion';
 
+// Exterior redraw rate while the camera holds still.
+const REST_INTERVAL_MS = 1000 / 15;
+
 const vertexShader = `
   varying vec3 vWorldPosition;
   void main() {
@@ -48,16 +51,17 @@ function nightMixFor(colors: readonly [string, string]): number {
 type WindowSkyProps = {
   readonly colors: readonly [string, string];
   readonly reducedMotion: boolean;
+  readonly phone?: boolean;
 };
 
-export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
+export function WindowSky({ colors, reducedMotion, phone = false }: WindowSkyProps) {
   const { leftX, window: opening } = ROOM.architecture;
   const centerY = (opening.top + opening.bottom) / 2;
   const nightMix = nightMixFor(colors);
   const [exterior, setExterior] = useState<ReturnType<typeof createBanpoLandscape> | null>(null);
   useEffect(() => {
     // Start network and GPU work only after React commits, not on abandoned Suspense attempts.
-    const landscape = createBanpoLandscape();
+    const landscape = createBanpoLandscape({ phone });
     setExterior(landscape);
     return () => landscape.dispose();
   }, []);
@@ -73,6 +77,7 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
   }), [leftX, opening.bottom, opening.top, opening.centerZ, opening.width]);
   const regionFor = useMemo(() => createWindowRegionProjector(visibility.opening), [visibility]);
   const bufferSize = useMemo(() => new Vector2(), []);
+  const throttle = useMemo(() => ({ matrix: new Matrix4(), width: 0, height: 0, x: 0, y: 0, fov: 0, at: -Infinity }), []);
   const uniforms = useMemo(() => ({
     uExterior: { value: output.texture },
     uResolution: { value: new Vector2(1, 1) },
@@ -91,6 +96,10 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
 
   useFrame(({ camera, gl, clock }) => {
     if (!exterior || !(camera instanceof PerspectiveCamera)) return;
+    // The exterior is a full second scene. While the camera holds still it is redrawn fifteen times a second for the
+    // traffic and the water, not every frame; the window keeps showing the last drawing in between. Any camera move
+    // or resize redraws immediately.
+    const now = performance.now();
     camera.updateMatrixWorld();
     visibility.matrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     visibility.frustum.setFromProjectionMatrix(visibility.matrix);
@@ -109,6 +118,12 @@ export function WindowSky({ colors, reducedMotion }: WindowSkyProps) {
     exteriorCamera.updateProjectionMatrix();
     cropExteriorCamera(exteriorCamera, region, width, height);
     exteriorCamera.updateMatrixWorld();
+    const stillFrame = throttle.matrix.equals(exteriorCamera.matrixWorld) && throttle.width === region.width && throttle.height === region.height
+      && throttle.x === region.x && throttle.y === region.y && throttle.fov === exteriorCamera.fov;
+    if (stillFrame && now - throttle.at < REST_INTERVAL_MS) return;
+    throttle.matrix.copy(exteriorCamera.matrixWorld);
+    throttle.width = region.width; throttle.height = region.height; throttle.x = region.x; throttle.y = region.y; throttle.fov = exteriorCamera.fov;
+    throttle.at = now;
     exterior.setTime(reducedMotion ? 0 : clock.elapsedTime);
 
     const target = gl.getRenderTarget();

@@ -27,6 +27,8 @@ const FORMER_BANK_TREES = [
 ] as const satisfies readonly (readonly [east: number, north: number])[];
 
 const TREE_ASSET = '/models/han-river/vegetation/tree-small-02-riverbank.glb';
+// The same tree simplified to about a third of its triangles (gltf-transform simplify, ratio 0.3), for phones.
+export const TREE_ASSET_PHONE = '/models/han-river/vegetation/tree-small-02-riverbank-phone.glb';
 const CANOPY_RADIUS_SQUARED = 3.8 ** 2;
 export const BANPO_REPLACEMENT_TREES: readonly CanopyPlacement[] = canopyPlacements;
 const CANOPY_CELL_SIZE = 16;

@@ -9,14 +9,15 @@ type WindowBayProps = {
   readonly sky: readonly [string, string];
   readonly blindLift: BlindLift;
   readonly reducedMotion: boolean;
+  readonly phone?: boolean;
 };
 
-export function WindowBay({ night, sky, blindLift, reducedMotion }: WindowBayProps) {
+export function WindowBay({ night, sky, blindLift, reducedMotion, phone = false }: WindowBayProps) {
   const { leftX, window: opening } = ROOM.architecture;
   const centerY = (opening.bottom + opening.top) / 2;
   const openingHeight = opening.top - opening.bottom;
   return <group name="two-panel-window-bay">
-    <WindowSky colors={sky} reducedMotion={reducedMotion} />
+    <WindowSky colors={sky} reducedMotion={reducedMotion} phone={phone} />
     <mesh position={[leftX - 0.025, centerY, opening.centerZ]} rotation={[0, Math.PI / 2, 0]}>
       <planeGeometry args={[opening.width, openingHeight]} />
       <meshPhysicalMaterial color={night ? PALETTE.teal : PALETTE.paperLight} transparent

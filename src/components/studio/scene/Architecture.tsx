@@ -34,9 +34,10 @@ type ArchitectureProps = {
   readonly sky: readonly [string, string];
   readonly blindLift: BlindLift;
   readonly reducedMotion: boolean;
+  readonly phone?: boolean;
 };
 
-export function Architecture({ night, sky, blindLift, reducedMotion }: ArchitectureProps) {
+export function Architecture({ night, sky, blindLift, reducedMotion, phone = false }: ArchitectureProps) {
   const plaster = useMemo(() => createMineralSurface('plaster'), []);
   useEffect(() => () => Object.values(plaster).forEach(texture => texture.dispose()), [plaster]);
   return (
@@ -57,7 +58,7 @@ export function Architecture({ night, sky, blindLift, reducedMotion }: Architect
         {LEFT_WALLS.map((wall, index) => <PlasterWall key={index} {...wall} axis="x" surface={plaster} />)}
         <Block size={[0.22, 0.075, depth]} position={[leftX + 0.05, height - 0.035, 0]} color={INTERIOR.ivory} radius={0.004} />
         <Block size={[0.13, 0.05, depth]} position={[leftX + 0.03, height - 0.097, 0]} color={INTERIOR.plaster} radius={0.004} />
-        <WindowBay night={night} sky={sky} blindLift={blindLift} reducedMotion={reducedMotion} />
+        <WindowBay night={night} sky={sky} blindLift={blindLift} reducedMotion={reducedMotion} phone={phone} />
       </CutawayWall>
     </group>
   );

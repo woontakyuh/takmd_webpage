@@ -8,6 +8,7 @@ import { OfficeRenderer } from './scene/OfficeRenderer';
 import { SceneFrameLoop } from './scene/SceneFrameLoop';
 import { StaticMerge } from './scene/StaticMerge';
 import { GuidedViewProvider } from './scene/GuidedView';
+import { RoomReadyProvider } from './scene/DeferredAssets';
 import { GoldAward } from './scene/GoldAward';
 import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
@@ -73,6 +74,7 @@ export function StudioScene(props: StudioSceneProps) {
       // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
       onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
+      <RoomReadyProvider ready={props.ready}>
       <GuidedViewProvider section={props.guidedSection ?? null}>
       <SceneFrameLoop active={visible && (!props.paused || !props.ready)} />
       <StaticMerge />
@@ -87,7 +89,7 @@ export function StudioScene(props: StudioSceneProps) {
       <WindowDaylight daylight={skyFill} blindLift={props.blindLift} />
       <spotLight name="Room ceiling fill" position={[0, ROOM.architecture.height - 0.13, 0]} intensity={sun.lamp * 0.85} distance={7} decay={2}
         angle={1.3} penumbra={1} color={props.roomPalette.color} />
-      <Architecture night={props.night} sky={sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} />
+      <Architecture night={props.night} sky={sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} phone={mobile} />
       <Furniture familyPhotoSrc={props.familyPhotoSrc} lamp={sun.lamp} halo={props.halo} onHaloControls={props.onHaloControls} roomControlPanel={props.roomControlPanel} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} onAwardPhoto={props.onAwardPhoto} />
       <BookshelfBooks selected={props.selected} selectedBook={props.selectedBook} pageIndex={props.bookPageIndex} reducedMotion={props.reducedMotion} onBookSelect={props.onBookSelect} onBookStep={props.onBookStep} onApproach={props.onBookshelfApproach} shelfReady={props.bookshelfReady} onShelfReady={props.onBookshelfReady} />
       <OfficeLounge />
@@ -105,6 +107,7 @@ export function StudioScene(props: StudioSceneProps) {
       <CameraRig {...props} reading={props.selected !== null} selected={props.focused ?? props.selected} />
       <OfficeRenderer lighting={props.lighting} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
       </GuidedViewProvider>
+      </RoomReadyProvider>
     </Canvas>
   );
 }
