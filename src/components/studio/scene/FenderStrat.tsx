@@ -4,7 +4,7 @@ import { Float32BufferAttribute, Mesh, MeshStandardMaterial } from 'three';
 import type { BufferGeometry, Material } from 'three';
 import { Rod } from './Primitives';
 
-const MODEL_URL = '/models/fender/stratocaster-sunburst.glb' as const;
+const MODEL_URL = '/models/fender/stratocaster-sunburst.glb?v=20260918-meshopt-webp' as const;
 const DARK = '#20201d';
 
 const SIENNA_FRAGMENT = `
@@ -184,4 +184,4 @@ export function FenderStrat() {
   </group>;
 }
 
-useGLTF.preload(MODEL_URL);
+// No module-scope preload: the guitar is mounted after the room is ready (see DeferredAssets).

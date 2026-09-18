@@ -1,6 +1,7 @@
 import type { ExhibitId } from '../types';
 import { HoverAccent } from './HoverAccent';
 import { useGuidedView } from './GuidedView';
+import { Deferred } from './DeferredAssets';
 import { requestOfficePath } from '../officeNavigation';
 import { useCursor } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
@@ -85,7 +86,7 @@ export function WorkshopObjects({ focused, onApproach }: { readonly focused: Exh
         <EndoscopicLumbarBox />
       </WorkshopLink>
       <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${animal.slug}`} position={[COLLECTION_X, CABINET_TOP, 0.32]}>
-        <PigPlush />
+        <Deferred><PigPlush /></Deferred>
       </WorkshopLink>
       <WorkshopLink focused={focused} onApproach={onApproach} route="/ube" position={[COLLECTION_X, CABINET_TOP, 1.30]}>
         <group rotation={[0, -Math.PI / 2, 0]}><EndoscopeTray /></group>

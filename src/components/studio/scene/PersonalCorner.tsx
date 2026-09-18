@@ -1,4 +1,5 @@
 import { Suspense, useRef } from 'react';
+import { Deferred } from './DeferredAssets';
 import type { Group } from 'three';
 import type { StudioSceneProps } from '../types';
 import { PERSONAL_LINKS } from '../personal';
@@ -24,17 +25,17 @@ export function PersonalCorner({ selected, onSelect, reducedMotion }: PersonalCo
           onActivate={() => window.open(PERSONAL_LINKS.hospital, '_blank', 'noopener,noreferrer')}
           fixed position={[EPOCH_HANGER_POSITIONS.coat[0], EPOCH_HANGER_POSITIONS.coat[1] - RACK_RAIL_HALF_HEIGHT, EPOCH_HANGER_POSITIONS.coat[2]]}
           rotation={Math.PI / 2 + 0.08}>
-          <DoctorCoat />
+          <Deferred><DoctorCoat /></Deferred>
         </Interactive>
         <Interactive id="bjj" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
           fixed position={[EPOCH_HANGER_POSITIONS.gi[0], EPOCH_HANGER_POSITIONS.gi[1] - RACK_RAIL_HALF_HEIGHT, EPOCH_HANGER_POSITIONS.gi[2]]}
           rotation={Math.PI / 2}>
-          <JiuJitsuGi />
+          <Deferred><JiuJitsuGi /></Deferred>
         </Interactive>
       </group>
       <Interactive id="surfing" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
         position={ROOM.surfboard.position} rotation={ROOM.surfboard.rotation}>
-        <group ref={surfboard}><Suspense fallback={null}><Surfboard /></Suspense></group>
+        <group ref={surfboard}><Deferred><Surfboard /></Deferred></group>
         {selected === 'surfing' && <SurfboardStoryAnchor target={surfboard} />}
       </Interactive>
     </group>

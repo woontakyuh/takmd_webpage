@@ -10,7 +10,7 @@ const FINISHED_FLOOR_TOP = 0.0185;
 const FIN_CLEARANCE = 0.065;
 
 export function Surfboard() {
-  const { scene } = useGLTF('/models/surfboard.glb?v=20260916-planar-fin');
+  const { scene } = useGLTF('/models/surfboard.glb?v=20260918-meshopt-webp');
   const fitted = useMemo(() => {
     const model = scene.clone(true);
     model.traverse((child) => {
@@ -101,4 +101,4 @@ export function Surfboard() {
   );
 }
 
-useGLTF.preload('/models/surfboard.glb?v=20260916-planar-fin');
+// No module-scope preload: the board is mounted after the room is ready (see DeferredAssets).
