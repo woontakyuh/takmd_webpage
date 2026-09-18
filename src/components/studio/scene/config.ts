@@ -87,9 +87,9 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
 
 export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
   { position: [6, 3.5, -6.5], target: [0.1, 0.85, -0.1], zoom: 1 },
-  // Talks from beside the awards shelf: the shelf close on the left, the television receding to the right, the
-  // sideboard below; the books bay stays out of frame (the owner's reference, IMG_1182).
-  { position: [1.7, 1.75, -0.6], target: [0.9, 1.5, 3.36], zoom: 1 },
+  // Talks along the wall from the far right: the certificates, the award photo and the gold plaque on the left, the
+  // whole television, the clock and the Beosound below; the books bay only peeks in at the edge (owner's reference).
+  { position: [3.6, 1.6, -1.0], target: [0.6, 1.5, 3.36], zoom: 1 },
   { position: [1.45, 2.3, 0.6], target: [-2.42, 0.867, 0.6], zoom: 1 },
   { position: [-0.95, 1.7, -4.8], target: [2.4, 0.7, -2.15], zoom: 1 },
   { position: [1.7, 2.2, -3.6], target: [-2.48, 1.5, -2.35], zoom: 1 },

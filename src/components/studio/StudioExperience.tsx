@@ -234,7 +234,10 @@ function OfficeExperience(content: StudioContent) {
         setTalkId(value => requestedTalk?.id ?? value ?? featuredTalk?.id ?? null);
         if (requestedTalk) setTalkSlideIndex(0);
       }
-      navigation.go(next);
+      // Opening one object's page while another's is open replaces it: the close control then returns to the room,
+      // not to the page that was underneath.
+      const switching = Boolean(navigation.current.current.details) && Boolean(next.details);
+      navigation.go(next, switching);
       if (requestedTalk) {
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set('talk', requestedTalk.id);

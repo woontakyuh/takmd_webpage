@@ -385,7 +385,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   const sheetReturnPose = useRef<SavedPose | null>(null);
   useEffect(() => {
     const orbit = controls.current;
-    if (!orbit || !compact || selected) return;
+    if (!orbit || !compact) return;
     if (readingObject) {
       if (!sheetReturnPose.current) sheetReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
       const pose = sheetPose();
@@ -396,7 +396,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       return;
     }
     const back = sheetReturnPose.current;
-    if (!back) return;
+    if (!back || selected) return;
     sheetReturnPose.current = null;
     transition.current = toTransition('return', { position: [back.position.x, back.position.y, back.position.z], target: [back.target.x, back.target.y, back.target.z], zoom: 1 });
   }, [readingObject, compact, selected, camera, sheetPose]);
