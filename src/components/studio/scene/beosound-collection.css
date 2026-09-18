@@ -57,6 +57,14 @@
 .cd-placement-hint button { margin-left: 12px; padding: 0; text-decoration: underline; text-underline-offset: 4px; }
 .cd-physical-slot { position: relative; display: block; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #fff8eb; cursor: pointer; touch-action: manipulation; }
 .cd-physical-slot:disabled { pointer-events: none; }
+/* While the player waits for a slot to be chosen, each disc breathes a soft halo so the choice is seen, not only
+   read below. The pulse stops on the disc under the pointer and, once a slot has been chosen in this session, for good. */
+.cd-physical-slot[data-hint='pulse']::before { content: ''; position: absolute; inset: -14%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 244, 214, 0) 52%, rgba(255, 244, 214, .55) 70%, rgba(255, 244, 214, 0) 86%);
+  animation: cd-slot-breathe 1.15s ease-in-out infinite; }
+.cd-physical-slot[data-hint='pulse'][data-highlighted='true']::before, .cd-physical-slot[data-hint='pulse']:disabled::before { animation: none; opacity: 0; }
+@keyframes cd-slot-breathe { 0%, 100% { opacity: .15; transform: scale(.96); } 50% { opacity: 1; transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .cd-physical-slot[data-hint='pulse']::before { animation: none; opacity: .7; } }
 .cd-physical-slot:focus-visible { outline: 1px solid #fff8eb80; outline-offset: 3px; }
 .cd-physical-slot-label { position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%); width: max-content; max-width: 220px; font: 11px/1.45 var(--font-body, 'Manrope Variable', sans-serif); text-align: center; color: var(--studio-ink, #202d2a); text-shadow: 0 1px 3px var(--studio-light, #f8f6f0); pointer-events: none; opacity: 0; transition: opacity 160ms ease; }
 .cd-physical-slot-label b { display: block; font-weight: 600; }
