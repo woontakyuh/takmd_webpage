@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-06T00:07:24.532Z",
-  "count": 56,
+  "generatedAt": "2026-09-18T06:05:37.449Z",
+  "count": 55,
   "presentations": [
     {
       "id": "3c5908af25b981e5b940f4e8ce3d83d1",
@@ -64,26 +64,6 @@
       "url": ""
     },
     {
-      "id": "3d3908af25b981babd62fd1428145fca",
-      "date": "2026-10-16",
-      "year": 2026,
-      "name": "KNS 2026 — Digital Convergence Luncheon Seminar",
-      "place": "Grand InterContinental Seoul Parnas",
-      "societies": [
-        "KNS",
-        "대신디융"
-      ],
-      "categories": [
-        "Conference",
-        "AI",
-        "Lecture"
-      ],
-      "topics": [
-        "Methodological Framework for Neurosurgical Research Using Claude AI"
-      ],
-      "url": ""
-    },
-    {
       "id": "2cb908af25b9809983b8fb9c1525158c",
       "date": "2026-08-29",
       "year": 2026,
@@ -123,14 +103,14 @@
       "id": "37b908af25b980e2bcaaf32b9487ba87",
       "date": "2026-07-02",
       "year": 2026,
-      "name": "GeneCker AI Lecture",
+      "name": "Corporate AI Lecture",
       "place": "Seongsu-dong, Seoul",
       "societies": [],
       "categories": [
         "AI"
       ],
       "topics": [
-        "AI, Data, Context, Memory, and AX"
+        "AI Lecture"
       ],
       "url": ""
     },

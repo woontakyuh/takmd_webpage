@@ -2700,5 +2700,18 @@
         "height": 1357
       }
     ]
+  },
+  {
+    "id": "2cb908af25b980109844ffc70fdc874a",
+    "kind": "full",
+    "slides": [
+      {
+        "src": "/studio/talks/full/2cb908af25b980109844ffc70fdc874a/5da2566f79d9/page-0001.webp",
+        "thumbnail": "/studio/talks/full/2cb908af25b980109844ffc70fdc874a/5da2566f79d9/thumb-0001.webp",
+        "caption": "10th Neurospine Symposium - Slide 1",
+        "width": 1920,
+        "height": 1357
+      }
+    ]
   }
 ]

@@ -282,8 +282,8 @@ function OfficeExperience(content: StudioContent) {
   const guided = guidedSection === 'research' ? { title: 'Research.', kicker: 'PEER-REVIEWED WORK · OPEN THE FOLIO' }
     : guidedSection === 1 ? { title: 'Talks & Recognition.', kicker: 'LECTURES, PRESENTATIONS, AND AWARDS' }
     : guidedSection === 2 ? { title: 'UBE & Teaching.', kicker: 'CONCEPT, EXPANDING INDICATIONS, AND TRAINING' }
-    : guidedSection === 3 ? { title: 'Liquor & Music.', kicker: 'THE CABINET, THE GUITAR, AND THE MUSIC VIDEO' }
-    : guidedSection === 4 ? { title: 'Work & Life Balance.', kicker: 'THE COAT, THE GI, THE BOARD, AND A PAINTING' }
+    : guidedSection === 3 ? { title: 'Liquor & Music.', kicker: 'SINGLE MALTS, SIX STRINGS, AND ONE MUSIC VIDEO' }
+    : guidedSection === 4 ? { title: 'Work & Life Balance.', kicker: 'THE OPERATING ROOM, THE MAT, AND THE SEA' }
     : { title: 'The office.', kicker: 'WOON TAK YUH, MD · TOUCH ANYTHING' };
   // The /ube page belongs to the endoscope tray even though it selects the spine model, so the address decides first.
   const readingObject = !compact ? null

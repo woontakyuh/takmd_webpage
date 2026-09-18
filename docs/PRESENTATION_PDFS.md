@@ -116,3 +116,11 @@ Requires Python with Pillow and Poppler (`pdfinfo`, `pdftoppm`). The bundled Cod
 The reader displays one page and preloads its next page. Thumbnail navigation uses the separate small images. Focused TV and larger slide readers choose the HD image for large or high-density displays; room textures retain the smaller image. The HD image is requested only for the selected reading page, not for every page at entry. Meeting navigation on the wall TV and in the detail reader shares the same selected meeting; changing meetings resets to slide 1.
 
 Only place decks intended for public viewing in this folder. Importing does not automatically deploy, and Dropbox is not continuously watched. Existing selected preview slides remain until a full PDF is imported for that meeting.
+
+## 2026-09-18 update
+
+- Notion Schedule DB re-fetched (`bun run fetch:presentations` with the token from `~/.journal_alert_env`; a stale `NOTION_TOKEN` in the shell environment shadows the file and produces a misleading `404 object_not_found`): the cancelled KNS 2026 Digital Convergence Luncheon Seminar (2026-10-16) left the list; the 2026-07-02 lecture is now titled "Corporate AI Lecture".
+- `2026-06-13 Neurospine symp/TVPDF_neurospine.pdf` (1 page, the symposium programme; the owner took part as a panellist) imported for presentation ID `2cb908af25b980109844ffc70fdc874a`.
+- The KOMISS Spring folder was renamed to `2026-05-30 KOMISS 춘계`; a `presentation.json` pinning ID `33a908af25b980849210fec32e7391fd` was added inside it so the import keeps matching the May 29 meeting.
+- Wills Memorial Hospital AI Workflow Lecture (23 pages) and the Corporate AI Lecture (11 pages) were already imported and unchanged.
+
