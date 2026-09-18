@@ -1,6 +1,7 @@
 import { Html, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRoomReady } from './DeferredAssets';
+import { useBoundsRaycast } from './boundsRaycast';
 import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import type { Group, Texture } from 'three';
@@ -78,11 +79,19 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       const shown = groups.map(group => group?.visible ?? false);
       groups.forEach(group => { if (group) group.visible = true; });
       root.updateWorldMatrix(true, true);
-      // The room's lights decide which shader variant is used, so the compile must see the whole scene as its target.
-      void gl.compileAsync(root, camera, scene).finally(() => groups.forEach((group, index) => { if (group) group.visible = shown[index]; }));
+      // The interior's two strip lights are hidden with it, so opening the cabinet raises the scene's light count and
+      // every material in the room needs a new program: the whole scene is compiled here with the interior shown.
+      void gl.compileAsync(scene, camera).finally(() => groups.forEach((group, index) => { if (group) group.visible = shown[index]; }));
     });
     return () => { if (cancel && typeof handle === 'number') cancel(handle); };
   }, [roomReady, gl, camera, scene]);
+  // Bottles and glassware answer pointer rays by their bounding boxes; their triangles are for drawing, not picking.
+  // The interior mounts late, so the sweep repeats once a second until nothing new appears.
+  const sweep = useRef(0);
+  useFrame(() => {
+    sweep.current += 1;
+    if (sweep.current % 60 === 1) for (const group of [barware.current, bottles.current, fixedInterior.current, movingInterior.current]) if (group) useBoundsRaycast(group);
+  });
   useFrame(() => {
     const exposed = (open && !editing) || (doorPivot.current?.rotation.y ?? 0) !== 0;
     if (barware.current) barware.current.visible = exposed;
