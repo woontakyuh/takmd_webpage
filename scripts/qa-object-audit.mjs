@@ -85,7 +85,7 @@ const aim = uuid => page.evaluate(uuid => {
   return { error: offscreen === candidates.length ? 'off-screen' : covered ? `covered by UI "${covered}"` : `occluded by ${occludedBy ?? 'something'}` };
 }, uuid);
 
-const contexts = [['overview', null], ['Research', 'Research'], ['Talks & Recognition', 'Talks & Recognition'], ['UBE & Teaching', 'UBE & Teaching'], ['Whisky & Music', 'Whisky & Music'], ['Jiu-jitsu & Surfing', 'Jiu-jitsu & Surfing']];
+const contexts = [['overview', null], ['Research', 'Research'], ['Talks & Recognition', 'Talks & Recognition'], ['UBE & Teaching', 'UBE & Teaching'], ['Liquor & Music', 'Liquor & Music'], ['Work & Life Balance', 'Work & Life Balance']];
 const enter = async tab => {
   if (!tab) { const ok = await page.evaluate(() => { const b = [...document.querySelectorAll('button')].find(x => /^Overview$/.test(x.textContent.trim()) || x.getAttribute('aria-label') === 'Overview'); if (b) { b.click(); return true; } return false; }); if (!ok) await page.keyboard.press('Escape'); }
   else await page.evaluate(n => { const b = [...document.querySelectorAll('.office-guided button')].find(x => x.textContent.trim() === n); if (!b) throw new Error('tab missing ' + n); b.click(); }, tab);

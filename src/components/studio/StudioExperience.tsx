@@ -187,7 +187,7 @@ function OfficeExperience(content: StudioContent) {
     if (arrangement.editing) return;
     if (id === 'award') openAwardPhoto();
     // Inside a guided view the visitor already stands at its objects: the spine model in UBE & Teaching, the gi in
-    // Jiu-jitsu & Surfing open on the first touch, as the workshop objects and the surfboard beside them do.
+    // Work & Life Balance open on the first touch, as the workshop objects and the surfboard beside them do.
     else if (id === 'ai' || id === 'education' || id === 'family' || id === 'award-photo' || id === 'surfing' || (id === 'spine' && guidedSection === 2) || (id === 'bjj' && guidedSection === 4) || navigation.current.current.focused === id) open(id);
     // Research is one book, so reaching it by tab or by touching the folio must give the same screen, not the same
     // camera under different titling.
@@ -277,10 +277,10 @@ function OfficeExperience(content: StudioContent) {
 
   // Each view names what is in front of the visitor and what to do with it, instead of repeating one house line.
   const guided = guidedSection === 'research' ? { title: 'Research.', kicker: 'PEER-REVIEWED WORK · OPEN THE FOLIO' }
-    : guidedSection === 1 ? { title: 'Talks & Recognition.', kicker: 'LECTURES ON THE TELEVISION · AWARDS ON THE SHELF' }
-    : guidedSection === 2 ? { title: 'UBE & Teaching.', kicker: 'ENDOSCOPIC SPINE SURGERY · HOW IT IS TAUGHT' }
-    : guidedSection === 3 ? { title: 'Whisky & Music.', kicker: 'THE CABINET, THE RECORDS AND THE GUITAR' }
-    : guidedSection === 4 ? { title: 'Jiu-jitsu & Surfing.', kicker: 'THE GI AND THE BOARD · WHAT KEEPS HIM STEADY' }
+    : guidedSection === 1 ? { title: 'Talks & Recognition.', kicker: 'LECTURES, PRESENTATIONS, AND AWARDS' }
+    : guidedSection === 2 ? { title: 'UBE & Teaching.', kicker: 'CONCEPT, EXPANDING INDICATIONS, AND TRAINING' }
+    : guidedSection === 3 ? { title: 'Liquor & Music.', kicker: 'THE CABINET, THE GUITAR, AND THE MUSIC VIDEO' }
+    : guidedSection === 4 ? { title: 'Work & Life Balance.', kicker: 'THE COAT, THE GI, THE BOARD, AND A PAINTING' }
     : { title: 'The office.', kicker: 'WOON TAK YUH, MD · TOUCH ANYTHING' };
   const guidedTitle = guided.title;
   const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed);
@@ -329,7 +329,7 @@ function OfficeExperience(content: StudioContent) {
       </div>
       <div className="office-bottom">
         <div className="office-summary">
-          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => { setGuidedSection('research'); setEntry('complete'); setExplored(true); navigation.go({ focused: 'research', selected: null, details: null }); }}>Research</button><button onClick={() => goToView(1)}>Talks &amp; Recognition</button><button onClick={() => goToView(2)}>UBE &amp; Teaching</button><button onClick={() => goToView(3)}>Whisky &amp; Music</button><button onClick={() => goToView(4)}>Jiu-jitsu &amp; Surfing</button></div>
+          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => { setGuidedSection('research'); setEntry('complete'); setExplored(true); navigation.go({ focused: 'research', selected: null, details: null }); }}>Research</button><button onClick={() => goToView(1)}>Talks &amp; Recognition</button><button onClick={() => goToView(2)}>UBE &amp; Teaching</button><button onClick={() => goToView(3)}>Liquor &amp; Music</button><button onClick={() => goToView(4)}>Work &amp; Life Balance</button></div>
         </div>
         <footer className="studio-stage-footer">
         <OfficeHelp ready={ready} explored={explored} compact={compact} onControl={setRoomControl} />

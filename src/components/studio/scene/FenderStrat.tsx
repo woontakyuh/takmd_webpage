@@ -4,7 +4,9 @@ import { Float32BufferAttribute, Mesh, MeshStandardMaterial } from 'three';
 import type { BufferGeometry, Material } from 'three';
 import { Rod } from './Primitives';
 
-const MODEL_URL = '/models/fender/stratocaster-sunburst.glb?v=20260918-meshopt-webp' as const;
+// The original file, uncompressed: the Sienna finish is painted by a shader over the body found by walking the mesh's
+// connectivity, and a recompressed file (re-indexed, quantised) breaks that walk and shows the raw sunburst.
+const MODEL_URL = '/models/fender/stratocaster-sunburst.glb?v=20260918-original' as const;
 const DARK = '#20201d';
 
 const SIENNA_FRAGMENT = `

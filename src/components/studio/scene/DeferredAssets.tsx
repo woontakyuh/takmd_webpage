@@ -13,6 +13,8 @@ export function RoomReadyProvider({ ready, children }: { readonly ready: boolean
 
 let queued = 0;
 
+export const useRoomReady = () => useContext(RoomReadyContext);
+
 export function Deferred({ children }: { readonly children: ReactNode }) {
   const ready = useContext(RoomReadyContext);
   const [mounted, setMounted] = useState(false);

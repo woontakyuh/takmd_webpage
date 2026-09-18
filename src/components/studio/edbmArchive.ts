@@ -3,17 +3,19 @@ import type { MagazineSurface } from './scene/MagazinePrint';
 export const EDBM_MAGAZINE = {
   width: .207, height: .27, thickness: .006,
   cover: { src: '/models/edbm/cover.webp', restoration: 'cover', quad: [[.066, .027], [.977, .03], [.999, .955], [.004, .94]] },
+  // The feature spread opens first; the contributors page, which sat on a left-hand leaf in the printed issue,
+  // comes last and is shown on the left.
   spreads: [
-    { label: 'Contributors · photographed excerpt', leftLeaves: 2,
-      right: { src: '/models/edbm/contributors.webp', restoration: 'contributors', quad: [[0, 0], [1, 0], [1, 1], [0, 1]] } },
-    { label: 'Small but special · pp. 52–53', leftLeaves: 26,
+    { label: 'Small but special · pp. 52–53', leftLeaves: 2,
       left: { src: '/models/edbm/feature.webp', restoration: 'feature-left', quad: [[.997, 0], [.915, .498], [0, .513], [0, 0]] },
       right: { src: '/models/edbm/feature.webp', restoration: 'feature-right', quad: [[.919, .504], [.921, .993], [0, .993], [0, .513]] } },
+    { label: 'Contributors · photographed excerpt', leftLeaves: 26,
+      left: { src: '/models/edbm/contributors.webp', restoration: 'contributors', quad: [[0, 0], [1, 0], [1, 1], [0, 1]] } },
   ],
 } as const satisfies {
   readonly width: number; readonly height: number; readonly thickness: number;
   readonly cover: MagazineSurface;
-  readonly spreads: readonly { readonly label: string; readonly leftLeaves: number; readonly left?: MagazineSurface; readonly right: MagazineSurface }[];
+  readonly spreads: readonly { readonly label: string; readonly leftLeaves: number; readonly left?: MagazineSurface; readonly right?: MagazineSurface }[];
 };
 
 export const EDBM_PHOTOS = [

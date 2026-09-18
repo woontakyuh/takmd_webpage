@@ -36,7 +36,7 @@ for (const engine of enginesArg.split(',')) {
   const build = await page.evaluate(async () => { const r = await fetch('/build.json', { cache: 'no-store' }).catch(() => null); const server = r?.ok ? (await r.json()).id : null; return { page: document.documentElement.dataset.build ?? null, server }; });
   if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(base)) check(build.page && build.server && build.page === build.server, `${tag}build id mismatch: page ${build.page}, server ${build.server}`);
   // Every guided view presents the same way: kicker, italic title, close control, and all five names.
-  for (const name of ['Research', 'Talks & Recognition', 'UBE & Teaching', 'Whisky & Music', 'Jiu-jitsu & Surfing']) {
+  for (const name of ['Research', 'Talks & Recognition', 'UBE & Teaching', 'Liquor & Music', 'Work & Life Balance']) {
     await page.getByRole('button', { name, exact: true }).evaluate(el => el.click());
     await page.waitForTimeout(3000);
     const view = await page.evaluate(() => {
@@ -170,21 +170,21 @@ for (const engine of enginesArg.split(',')) {
   if (spine) { await page.touchscreen.tap(spine.x, spine.y); await page.waitForTimeout(3500); }
   check(await page.evaluate(() => document.querySelector('.studio')?.dataset.reading === 'spine'), `${tag}one touch on the spine model in the UBE view did not open it`);
   await zombie('spine');
-  // Whisky & Music: one touch on the cabinet body opens the door; one touch on the lecture card opens the lecture.
-  await openTab('Whisky & Music');
+  // Liquor & Music: one touch on the cabinet body opens the door; one touch on the lecture card opens the lecture.
+  await openTab('Liquor & Music');
   const body = await locate('^fixed leather trunk half$');
   check(!!body, `${tag}the cabinet body is not in the scene`);
   if (body) { await page.touchscreen.tap(body.x, body.y); await page.waitForTimeout(4500); }
   check(await page.evaluate(() => { const leaf = window.__qaScene().scene.getObjectByName('Isidoro book-opening mobile half'); return !!leaf && Math.abs(Math.abs(leaf.rotation.y) - Math.PI / 2) < 0.02; }), `${tag}one touch on the cabinet in the Whisky view did not open the door`);
   await zombie('cabinet');
-  await openTab('Whisky & Music');
+  await openTab('Liquor & Music');
   const card = await locate('^Printed whisky lecture cover$');
   check(!!card, `${tag}the whisky lecture card is not in the scene`);
   if (card) { await page.touchscreen.tap(card.x, card.y); await page.waitForTimeout(4500); }
   check(await page.locator('.whisky-lecture-close').count() === 1, `${tag}one touch on the lecture card in the Whisky view did not open the lecture`);
   await zombie('lecture card');
-  // Jiu-jitsu & Surfing: the gi opens on one touch like the surfboard beside it.
-  await openTab('Jiu-jitsu & Surfing');
+  // Work & Life Balance: the gi opens on one touch like the surfboard beside it.
+  await openTab('Work & Life Balance');
   const gi = await locate('^Exhibit bjj$');
   check(!!gi, `${tag}the gi is not in the scene`);
   if (gi) { await page.touchscreen.tap(gi.x, gi.y); await page.waitForTimeout(3500); }

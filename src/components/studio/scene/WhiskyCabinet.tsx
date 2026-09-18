@@ -1,5 +1,6 @@
 import { Html, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
+import { useRoomReady } from './DeferredAssets';
 import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import type { Group, Texture } from 'three';
@@ -59,6 +60,29 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const bottles = useRef<Group>(null);
   const fixedInterior = useRef<Group>(null);
   const movingInterior = useRef<Group>(null);
+  // Opening the cabinet reveals materials the renderer has never drawn — glass, bottles, the lit interior — and
+  // linking their programs on the spot froze the door for half a second on a phone. Once the room is ready and the
+  // browser idle, the interior is shown to the compiler for one call and hidden again.
+  const gl = useThree(state => state.gl);
+  const scene = useThree(state => state.scene);
+  const roomReady = useRoomReady();
+  const warmed = useRef(false);
+  useEffect(() => {
+    if (!roomReady || warmed.current) return;
+    const idle = window.requestIdleCallback?.bind(window) ?? ((run: () => void) => window.setTimeout(run, 1500));
+    const cancel = window.cancelIdleCallback?.bind(window);
+    const handle = idle(() => {
+      const root = cabinet.current; if (!root || warmed.current) return;
+      warmed.current = true;
+      const groups = [barware.current, bottles.current, fixedInterior.current, movingInterior.current];
+      const shown = groups.map(group => group?.visible ?? false);
+      groups.forEach(group => { if (group) group.visible = true; });
+      root.updateWorldMatrix(true, true);
+      // The room's lights decide which shader variant is used, so the compile must see the whole scene as its target.
+      void gl.compileAsync(root, camera, scene).finally(() => groups.forEach((group, index) => { if (group) group.visible = shown[index]; }));
+    });
+    return () => { if (cancel && typeof handle === 'number') cancel(handle); };
+  }, [roomReady, gl, camera, scene]);
   useFrame(() => {
     const exposed = (open && !editing) || (doorPivot.current?.rotation.y ?? 0) !== 0;
     if (barware.current) barware.current.visible = exposed;

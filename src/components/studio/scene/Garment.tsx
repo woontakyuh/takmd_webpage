@@ -6,9 +6,10 @@ import type { BufferGeometry, Texture } from 'three';
 import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
 import { RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 
-const COAT_URL = '/models/garments/physician-coat-2k.glb?v=20260918-meshopt' as const;
-// The same garments at about a third of their triangles (gltf-transform simplify, ratio 0.3), for phones.
-const COAT_URL_PHONE = '/models/garments/physician-coat-2k-phone.glb?v=20260918' as const;
+// The coat stays the original file on every device: its hook widening and sleeve emblem are computed from the
+// mesh's vertices, and both a recompressed and a simplified file deformed the shoulders and lost the emblem.
+const COAT_URL = '/models/garments/physician-coat-2k.glb?v=20260918-original' as const;
+// The gi at about a third of its triangles (gltf-transform simplify, ratio 0.3), for phones.
 const GI_URL_PHONE = '/models/garments/control-gi-phone.glb?v=20260918' as const;
 const GI_URL = '/models/garments/control-gi.glb?v=20260918-meshopt' as const;
 const ASSEMBLY_HEIGHT = 0.9;
@@ -133,7 +134,7 @@ export function DoctorCoat() {
     return texture;
   }, [source]);
   useEffect(() => () => emblem.dispose(), [emblem]);
-  return <HangingGarment url={COAT_URL} file={usePhone() ? COAT_URL_PHONE : COAT_URL} emblem={emblem} />;
+  return <HangingGarment url={COAT_URL} emblem={emblem} />;
 }
 
 export function JiuJitsuGi() {

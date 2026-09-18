@@ -11,7 +11,7 @@ import { useCabinetAction } from './WhiskyCabinetDoor';
 
 export type MagazineSpread = {
   readonly left?: MagazineSurface;
-  readonly right: MagazineSurface;
+  readonly right?: MagazineSurface;
   readonly label: string;
   readonly leftLeaves?: number;
 };
