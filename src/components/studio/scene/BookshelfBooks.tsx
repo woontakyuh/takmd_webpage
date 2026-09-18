@@ -23,8 +23,9 @@ type BookshelfBooksProps = {
 };
 
 const BOOK_GAP = .003;
-const ROW_WIDTH = PERSONAL_BOOKS.reduce((sum, book) => sum + book.thickness + BOOK_GAP, -BOOK_GAP);
 const SHELF_SPINE_Z = 3.004;
+// The left bay's inner rail stands at x = -1.35 (RoyalSystem FULL_RAIL_X); the row starts a rail's width inside it.
+const SHELF_LEFT_STOP = -1.35 - 0.045;
 
 export function BookshelfBooks(props: BookshelfBooksProps) {
   const extractedBook = useRef<PersonalBookId | null>(null);
@@ -36,7 +37,9 @@ export function BookshelfBooks(props: BookshelfBooksProps) {
   let offset = 0;
   return <group name="owner-photographed-personal-library">
     {PERSONAL_BOOKS.map(book => {
-      const x = -1.875 + ROW_WIDTH / 2 - offset - book.thickness / 2;
+      // Books stand against the bay's inner rail on the room-facing left (the +x rail at -1.35), the way a shelf is
+      // packed so nothing falls over, and run from there toward the wall's far end.
+      const x = SHELF_LEFT_STOP - offset - book.thickness / 2;
       offset += book.thickness + BOOK_GAP;
       return <ShelfBook key={book.id} book={book} shelfX={x} extractedBook={extractedBook} {...props} />;
     })}

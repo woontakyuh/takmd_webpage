@@ -2,7 +2,7 @@ import { useArrangement, moveFocus } from '../arrangement';
 import { OrbitControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { MathUtils, Mesh, PerspectiveCamera, Vector2, Vector3 } from 'three';
+import { Box3, MathUtils, Mesh, PerspectiveCamera, Vector2, Vector3 } from 'three';
 import type { Camera, Object3D } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import type { StudioSceneProps } from '../types';
@@ -18,7 +18,7 @@ import { folioReadingPose, folioReadingView } from './folioFocus';
 import { DESKTOP_ENTRY, MOBILE_ENTRY } from '../officeEntry';
 
 type CameraRigProps = Pick<StudioSceneProps,
-  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit' | 'entry' | 'onEntryComplete'> & { readonly reading: boolean };
+  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit' | 'entry' | 'onEntryComplete' | 'readingObject'> & { readonly reading: boolean };
 
 type SavedPose = {
   readonly position: Vector3;
@@ -36,6 +36,11 @@ const CAMERA_TOLERANCE = 0.002;
 const KEY_ZOOM_SCALE = 1 / 1.12;
 const FREE_ORBIT_LIMITS = { minDistance: 0.10, maxDistance: 15, minPolarAngle: 0.3, maxPolarAngle: Math.PI / 2 } as const;
 const FOCUSED_ORBIT_LIMITS = { minDistance: 0.08, maxDistance: 5.5, minPolarAngle: 0.35, maxPolarAngle: 1.52 } as const;
+
+// Sheet reading on a phone: the object fills this share of the width, and the picture is shifted up by this share
+// of the height so the object sits in the space above the sheet.
+const SHEET_OBJECT_SHARE = 0.55;
+const SHEET_SHIFT = 0.24;
 
 function toTransition(kind: TransitionKind, pose: CameraPose): Transition {
   return {
@@ -89,7 +94,7 @@ function isVisibleSurface(object: Object3D): boolean {
     && (isSceneControl(object) || !material.transparent || material.opacity > 0.1));
 }
 
-export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit, reading, entry, onEntryComplete }: CameraRigProps) {
+export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit, reading, entry, onEntryComplete, readingObject = null }: CameraRigProps) {
   const { editing, layout } = useArrangement();
   const { inspection, setInspection } = useSceneInspection();
   const screenFocused = selected === 'education' || selected === 'ai';
@@ -101,10 +106,30 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   const inspectionReturnPose = useRef<SavedPose | null>(null);
   const objectReturnPose = useRef<SavedPose | null>(null);
   const previousObject = useRef(inspection);
-  const focusPose = useCallback(() => moveFocus(selected === 'ai' ? monitorReadingPose()
+  // A phone reads an object's content in a sheet over the lower half of the screen. The object itself is framed in
+  // the upper half: seen from the room side, slightly above, close enough to fill about half the width.
+  const sheetPose = useCallback((): CameraPose | null => {
+    if (!readingObject) return null;
+    const object = scene.getObjectByName(readingObject);
+    if (!object) return null;
+    const bounds = new Box3().setFromObject(object);
+    if (bounds.isEmpty()) return null;
+    const centre = bounds.getCenter(new Vector3());
+    const radius = Math.max(0.12, bounds.getSize(new Vector3()).length() / 2);
+    const inward = new Vector3(-centre.x, 0, -centre.z);
+    if (inward.lengthSq() < 1e-6) inward.set(1, 0, 0);
+    inward.normalize();
+    const direction = new Vector3(inward.x, 0.5, inward.z).normalize();
+    const aspect = size.width / Math.max(1, size.height);
+    const halfWidthTangent = Math.tan(MathUtils.degToRad(focusFov(selected, compact, size.width, size.height) / 2)) * aspect;
+    const distance = radius / (halfWidthTangent * SHEET_OBJECT_SHARE);
+    const position = centre.clone().addScaledVector(direction, distance);
+    return { position: [position.x, position.y, position.z], target: [centre.x, centre.y, centre.z], zoom: 1 };
+  }, [readingObject, scene, size.width, size.height, selected, compact]);
+  const focusPose = useCallback(() => (compact && sheetPose()) || moveFocus(selected === 'ai' ? monitorReadingPose()
     : selected === 'research' ? reading ? folioReadingPose(size.width, size.height) : { position: [0.66, 1.65, -2.05], target: [0.66, 0.8, -1.55], zoom: 1 }
     : selected === 'surfing' ? surfboardReadingPose(size.width, size.height)
-    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height, reading]);
+    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height, reading, sheetPose]);
   const activeView = useRef<0 | 1 | 2 | 3 | 4>(viewCommand.view);
   const lastViewSequence = useRef(viewCommand.sequence);
   const previousSelected = useRef(selected);
@@ -357,6 +382,24 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     transition.current = toTransition('guide', (compact ? MOBILE_TOUR : TOUR)[viewCommand.view]);
   }, [compact, selected, viewCommand]);
 
+  const sheetReturnPose = useRef<SavedPose | null>(null);
+  useEffect(() => {
+    const orbit = controls.current;
+    if (!orbit || !compact || selected) return;
+    if (readingObject) {
+      if (!sheetReturnPose.current) sheetReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
+      const pose = sheetPose();
+      if (!pose) return;
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      transition.current = toTransition('focus', pose);
+      return;
+    }
+    const back = sheetReturnPose.current;
+    if (!back) return;
+    sheetReturnPose.current = null;
+    transition.current = toTransition('return', { position: [back.position.x, back.position.y, back.position.z], target: [back.target.x, back.target.y, back.target.z], zoom: 1 });
+  }, [readingObject, compact, selected, camera, sheetPose]);
   useEffect(() => {
     const orbit = controls.current;
     if (!orbit) return;
@@ -397,6 +440,11 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       : !selected && !compact && viewCommand?.view === 1
         ? Math.max(42, 2 * Math.atan(5.6 * size.height / (8 * size.width)) * 180 / Math.PI)
         : focusFov(selected, compact, size.width, size.height);
+    if (compact && readingObject) {
+      camera.setViewOffset(size.width, size.height, 0, SHEET_SHIFT * size.height, size.width, size.height);
+      camera.updateProjectionMatrix();
+      return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
+    }
     if (!selected || screenFocused || (selected === 'research' && !reading)) {
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
@@ -428,7 +476,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
     };
-  }, [camera, compact, selected, reading, size.height, size.width, viewCommand]);
+  }, [camera, compact, selected, reading, size.height, size.width, viewCommand, readingObject]);
 
   useEffect(() => {
     const orbit = controls.current;

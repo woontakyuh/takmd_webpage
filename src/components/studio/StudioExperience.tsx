@@ -282,6 +282,13 @@ function OfficeExperience(content: StudioContent) {
     : guidedSection === 3 ? { title: 'Liquor & Music.', kicker: 'THE CABINET, THE GUITAR, AND THE MUSIC VIDEO' }
     : guidedSection === 4 ? { title: 'Work & Life Balance.', kicker: 'THE COAT, THE GI, THE BOARD, AND A PAINTING' }
     : { title: 'The office.', kicker: 'WOON TAK YUH, MD · TOUCH ANYTHING' };
+  // The /ube page belongs to the endoscope tray even though it selects the spine model, so the address decides first.
+  const readingObject = !compact ? null
+    : details?.startsWith('/ube') ? 'Workshop /ube'
+    : details?.startsWith('/workshops/dummy') ? 'Workshop /workshops/dummy'
+    : details?.startsWith('/workshops/animal-pig') ? 'Workshop /workshops/animal-pig'
+    : selected === 'spine' ? 'Exhibit spine'
+    : null;
   const guidedTitle = guided.title;
   const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed);
 
@@ -291,7 +298,7 @@ function OfficeExperience(content: StudioContent) {
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <div style={{ display: 'contents' }} inert={loadingProfileOpen} aria-hidden={loadingProfileOpen || undefined}><SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} guidedSection={guidedSection} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} guidedSection={guidedSection} readingObject={readingObject} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary></div>
         <OfficePoster ready={ready} failed={sceneFailed} night={night} onHidden={onPosterHidden} />
         {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}

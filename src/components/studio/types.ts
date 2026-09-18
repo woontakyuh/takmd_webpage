@@ -64,6 +64,9 @@ export type StudioSceneProps = {
   readonly focused: ExhibitId | null;
   // The guided view entered from the tabs, if any; objects belonging to it open on the first touch.
   readonly guidedSection?: 'research' | 1 | 2 | 3 | 4 | null;
+  // On a phone, the object whose content is open in the sheet below the room, by scene name; the camera keeps it in
+  // the upper half of the screen.
+  readonly readingObject?: string | null;
   readonly monitorScroll: { scrollTop: number };
   readonly selectedBook: PersonalBookId;
   readonly bookPageIndex: number;
