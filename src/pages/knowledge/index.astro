@@ -1,62 +1,66 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
 import Card from '../../components/Card.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
 import TagChip from '../../components/TagChip.astro';
+import Layout from '../../layouts/Layout.astro';
 
 const knowledgeEntries = (await getCollection('knowledge', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
+const tags = Array.from(new Set(knowledgeEntries.flatMap((entry) => entry.data.tags)));
 ---
 
-<Layout title="Knowledge - takmd" description="Knowledge notes on UBE, AI, outcomes, and endoscopic spine surgery.">
-  <section class="page-shell relative overflow-hidden py-14">
-    <svg class="pointer-events-none absolute inset-0 h-full w-full opacity-[0.04]" viewBox="0 0 800 320" fill="none" aria-hidden="true">
-      <g stroke="currentColor" stroke-width="1" class="text-teal-300">
-        <line x1="80" y1="80" x2="220" y2="120" />
-        <line x1="220" y1="120" x2="360" y2="70" />
-        <line x1="360" y1="70" x2="520" y2="150" />
-        <line x1="520" y1="150" x2="700" y2="100" />
-        <line x1="220" y1="120" x2="250" y2="230" />
-        <line x1="360" y1="70" x2="460" y2="230" />
-        <line x1="520" y1="150" x2="620" y2="240" />
-      </g>
-      <g fill="currentColor" class="text-teal-300">
-        <circle cx="80" cy="80" r="3" />
-        <circle cx="220" cy="120" r="3" />
-        <circle cx="360" cy="70" r="3" />
-        <circle cx="520" cy="150" r="3" />
-        <circle cx="700" cy="100" r="3" />
-        <circle cx="250" cy="230" r="3" />
-        <circle cx="460" cy="230" r="3" />
-        <circle cx="620" cy="240" r="3" />
-      </g>
-    </svg>
-
-    <div class="relative">
-      <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">Knowledge</h1>
-      <div class="mt-6 flex flex-wrap gap-2">
-        <TagChip label="UBE" />
-        <TagChip label="MISS" />
-        <TagChip label="AI" />
-        <TagChip label="outcomes" />
-        <TagChip label="endoscopy" />
-        <TagChip label="workflow" />
-        <TagChip label="research" />
+<Layout title="Knowledge - Woon Tak Yuh, MD" description="Knowledge notes on UBE, AI, outcomes, and endoscopic spine surgery.">
+  <main id="main-content">
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div>
+          <p class="eyebrow">Knowledge</p>
+          <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
+            Short notes that keep the record explainable.
+          </h1>
+        </div>
+        <p class="lede">
+          The knowledge section is the human layer of the CV: surgical concepts, outcome metrics, AI workflow notes, and teaching language that can be revisited.
+        </p>
       </div>
-    </div>
-  </section>
+      <div class="mt-8 flex flex-wrap gap-2">
+        {tags.length > 0 ? tags.map((tag) => <TagChip label={tag} />) : (
+          <>
+            <TagChip label="UBE" />
+            <TagChip label="AI" />
+            <TagChip label="Outcomes" />
+            <TagChip label="Workflow" />
+          </>
+        )}
+      </div>
+    </section>
 
-  <section class="page-shell pb-16">
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {knowledgeEntries.map((entry) => (
-        <Card
-          title={entry.data.title}
-          description={entry.data.description}
-          href={`/knowledge/${entry.id}`}
-          tags={entry.data.tags}
-        />
-      ))}
-    </div>
-  </section>
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader
+        eyebrow="Notes"
+        title="Knowledge base"
+        description="Each note should earn its place by helping a reader understand how the clinical, educational, and research work connects."
+      />
+      {knowledgeEntries.length > 0 ? (
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {knowledgeEntries.map((entry) => (
+            <Card
+              title={entry.data.title}
+              description={entry.data.description}
+              href={`/knowledge/${entry.id}`}
+              tags={entry.data.tags}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="soft-panel">
+          <p class="text-sm leading-6 text-[var(--color-text-secondary)]">
+            Notes are ready to appear once the content collection is populated.
+          </p>
+        </div>
+      )}
+    </section>
+  </main>
 </Layout>

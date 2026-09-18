@@ -1,0 +1,243 @@
+{
+  "generatedAt": "2026-09-11",
+  "events": [
+    {
+      "id": "11f908af25b9803ab955ce75d0ec24dd",
+      "title": "NeuroTrauma focus",
+      "startDate": "2025-01-18",
+      "participation": "Speaker"
+    },
+    {
+      "id": "18f908af25b980fdbc6dfa5830dc13bc",
+      "title": "Korean Society of Geriatric Neurosurgery Annual Meeting",
+      "startDate": "2025-03-15",
+      "venue": "Chungnam National University Hospital",
+      "participation": "Speaker"
+    },
+    {
+      "id": "1c7908af25b9803da586eb0303433cdf",
+      "title": "1st Gyeonggi-South Spine Symposium",
+      "startDate": "2025-04-11",
+      "venue": "Suwon Tuntun Hospital",
+      "participation": "Speaker"
+    },
+    {
+      "id": "1b8908af25b980a792d4dea1adfb7320",
+      "title": "Korean Neurosurgical Society Spring Meeting",
+      "startDate": "2025-04-17",
+      "endDate": "2025-04-19",
+      "venue": "Hotel Inter-Burgo, Daegu",
+      "participation": "Attendee"
+    },
+    {
+      "id": "197908af25b980388e88edde289663ab",
+      "title": "WUBE 2025",
+      "startDate": "2025-04-25",
+      "endDate": "2025-04-26",
+      "venue": "Grand Auditorium, Seoul St. Mary’s Hospital",
+      "participation": "Attendee"
+    },
+    {
+      "id": "18f908af25b980cbbc62f8a899f130dd",
+      "title": "Neurospine Symposium",
+      "startDate": "2025-05-03",
+      "venue": "Samsung Medical Center, Seoul",
+      "participation": "Speaker"
+    },
+    {
+      "id": "1d7908af25b9809c8f30db60b1f2f982",
+      "title": "KOMISS Advanced Spinal Course Symposium",
+      "startDate": "2025-05-24",
+      "venue": "Seoul St. Mary's Hospital",
+      "participation": "Speaker"
+    },
+    {
+      "id": "3d3908af25b9817ca18ef15eb9cadba9",
+      "title": "2nd Gyeonggi-South Spine Case Conference",
+      "startDate": "2025-06-04",
+      "venue": "Tuntun Hospital, Suwon",
+      "participation": "Speaker"
+    },
+    {
+      "id": "98c8dae0d19747b7b73236ee82850497",
+      "title": "The 2th Dummy Workshop for ESS beginner",
+      "startDate": "2025-06-15",
+      "venue": "Hallym Dongtan Sacred Heart Hospital",
+      "participation": "Speaker"
+    },
+    {
+      "id": "1d4908af25b9800ebf57cd2ce51d47d5",
+      "title": "KASS 2025",
+      "startDate": "2025-07-10",
+      "endDate": "2025-07-12",
+      "venue": "Huntington Beach",
+      "participation": "Speaker"
+    },
+    {
+      "id": "1d1908af25b9805d9696fb9ba4ccc593",
+      "title": "KOSESS Annual Meeting",
+      "startDate": "2025-08-23",
+      "venue": "Seoul St. Mary's Hospital",
+      "participation": "Speaker"
+    },
+    {
+      "id": "1b3908af25b980ac808fe3d0081e2cf2",
+      "title": "ASIA Spine 2025",
+      "startDate": "2025-09-04",
+      "endDate": "2025-09-06",
+      "venue": "Lotte Hotel Busan",
+      "participation": "Speaker"
+    },
+    {
+      "id": "1ec908af25b98051904fe502642a6389",
+      "title": "Nanoori 22nd Anniversary Symposium",
+      "startDate": "2025-09-14",
+      "venue": "Grand Walkerhill Seoul",
+      "participation": "Speaker"
+    },
+    {
+      "id": "28f908af25b9800ebe70dc0ae420adbb",
+      "title": "KNS 2025",
+      "startDate": "2025-10-16",
+      "endDate": "2025-10-18",
+      "participation": "Speaker"
+    },
+    {
+      "id": "3d3908af25b981d69c30c5f757620bd6",
+      "title": "Gyeonggi-South Spine Case Conference",
+      "startDate": "2025-11-05",
+      "participation": "Speaker"
+    },
+    {
+      "id": "256908af25b98023b8beeb0cc3d039cc",
+      "title": "ThaiSMISST 2025",
+      "startDate": "2025-11-06",
+      "endDate": "2025-11-08",
+      "venue": "Krungsri River Hotel, Bangkok, Thailand",
+      "participation": "Speaker"
+    },
+    {
+      "id": "255908af25b9803990dac9fda2be6d71",
+      "title": "KOMISS Annual Meeting",
+      "startDate": "2025-11-28",
+      "endDate": "2025-11-29",
+      "venue": "Hyatt Incheon",
+      "participation": "Speaker"
+    },
+    {
+      "id": "2cb908af25b98007b69ddac201e369c2",
+      "title": "11th Neurospine Symposium",
+      "startDate": "2025-12-12",
+      "venue": "Chonnam National University Hospital",
+      "participation": "Attendee"
+    },
+    {
+      "id": "2be908af25b980ef83c2cda3eb19c309",
+      "title": "9th Neurospine Symposium",
+      "startDate": "2025-12-13",
+      "venue": "Eunpyeong St. Mary’s Hospital",
+      "participation": "Chair"
+    },
+    {
+      "id": "2c7908af25b980edbfc6df234f22a8f1",
+      "title": "Spine Summit",
+      "startDate": "2026-02-26",
+      "endDate": "2026-02-28",
+      "venue": "Phoenix, AZ, USA",
+      "participation": "Faculty"
+    },
+    {
+      "id": "2cb908af25b98091829ff1346bdf83c5",
+      "title": "KOSESS Summit",
+      "startDate": "2026-03-14",
+      "endDate": "2026-03-15",
+      "venue": "Yeosu",
+      "participation": "Attendee"
+    },
+    {
+      "id": "2c7908af25b98068a470e39388a403e4",
+      "title": "2026 WUBES meeting",
+      "startDate": "2026-04-04",
+      "endDate": "2026-04-05",
+      "participation": "Speaker"
+    },
+    {
+      "id": "2c7908af25b980ecabfaea73c5b098fd",
+      "title": "WCMISST",
+      "startDate": "2026-05-08",
+      "venue": "Hyatt Regency LAX International Airport, Los Angeles, CA, USA",
+      "participation": "Speaker"
+    },
+    {
+      "id": "33a908af25b980849210fec32e7391fd",
+      "title": "KOMISS Spring Symposium & Cadaver Workshop",
+      "startDate": "2026-05-29",
+      "endDate": "2026-05-30",
+      "venue": "Seoul St. Mary's Hospital",
+      "participation": "Speaker"
+    },
+    {
+      "id": "320908af25b980f38995e684de308401",
+      "title": "KNS Basic & Digital Convergence Research Joint Meeting",
+      "startDate": "2026-06-06",
+      "venue": "Yonsei ABMRC, Seoul",
+      "participation": "Speaker"
+    },
+    {
+      "id": "2cb908af25b980109844ffc70fdc874a",
+      "title": "10th Neurospine Symposium",
+      "startDate": "2026-06-13",
+      "venue": "St. Vincent's Hospital, Suwon",
+      "participation": "Speaker"
+    },
+    {
+      "id": "33b908af25b980699b05c85e9c87f69f",
+      "title": "Busan-Ulsan-Gyeongnam Spine Symposium",
+      "startDate": "2026-06-27",
+      "venue": "Haeundae Paik Hospital, Busan",
+      "participation": "Speaker"
+    },
+    {
+      "id": "22d908af25b980db8fcbfc369cfd8fdb",
+      "title": "KASS 2026",
+      "startDate": "2026-07-09",
+      "endDate": "2026-07-11",
+      "venue": "Sheraton Maui Resort & Spa, Maui, Hawaii",
+      "participation": "Speaker"
+    },
+    {
+      "id": "2cb908af25b9809983b8fb9c1525158c",
+      "title": "KOSESS 2026 Annual Meeting",
+      "startDate": "2026-08-29",
+      "venue": "Seoul St. Mary's Hospital",
+      "participation": "Speaker"
+    },
+    {
+      "id": "3d3908af25b981babd62fd1428145fca",
+      "title": "KNS 2026 — Digital Convergence Luncheon Seminar",
+      "startDate": "2026-10-16",
+      "venue": "Grand InterContinental Seoul Parnas",
+      "participation": "Speaker"
+    },
+    {
+      "id": "3c7908af25b9818aaa7bf4d0178103cd",
+      "title": "KOMISS–KOSESS Summit 2026",
+      "startDate": "2026-10-31",
+      "venue": "Shangria Beach Hotel, Mokpo",
+      "participation": "Speaker"
+    },
+    {
+      "id": "3d1908af25b981118be9c8e11ae1851f",
+      "title": "TSMISS 2026 — KOMISS Invitation Session",
+      "startDate": "2026-11-21",
+      "participation": "Speaker"
+    },
+    {
+      "id": "3c5908af25b981e5b940f4e8ce3d83d1",
+      "title": "World Spine Congress 2026 — KOMISS Session",
+      "startDate": "2026-11-27",
+      "venue": "Hall 4, Songdo Convensia, Incheon, South Korea",
+      "participation": "Speaker"
+    }
+  ]
+}

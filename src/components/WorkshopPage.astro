@@ -1,0 +1,25 @@
+---
+import type { Workshop } from '../data/workshops';
+import { workshops } from '../data/workshops';
+import { sessionsFor } from '../data/workshop-sessions';
+import { facultyAppearances, type FacultyAppearance } from '../data/workshop-faculty-appearances';
+import { workshopOutcomes } from '../data/workshop-outcomes';
+import SessionCard from './workshops/SessionCard.astro';
+import AppearanceCard from './workshops/AppearanceCard.astro';
+import './workshops/workshops.css';
+interface Props { workshop: Workshop }
+const { workshop } = Astro.props;
+const sessions = sessionsFor(workshop.slug);
+const appearances: readonly FacultyAppearance[] = facultyAppearances;
+const cadaverQuote = workshopOutcomes[0].quotes[3];
+---
+<main id="main-content" class="workshop-portfolio page-shell">
+  <header class="wk-hero"><a class="wk-back" href="/workshops">← All workshops</a><p class="eyebrow">Stage 0{workshop.stage} / 05 · {workshop.objectLabel}</p><h1>{workshop.title}</h1><p class="wk-ko" lang="ko">{workshop.titleKo}</p><p class="lede mt-5">{workshop.description}</p><p class="wk-small mt-5">{workshop.focus.join(' · ')}</p></header>
+  <section aria-label={workshop.slug === 'cadaver' ? 'Upcoming team workshop' : 'Workshop sessions'}>{sessions.map(session => <SessionCard session={session} />)}</section>
+  {workshop.slug === 'cadaver' && <>
+    <div class="wk-quotes"><blockquote><p>“{cadaverQuote.en}”</p><details><summary>Original response · 한국어</summary><p lang="ko">{cadaverQuote.ko}</p></details><cite>Anonymous participant · December 2025 survey</cite></blockquote></div>
+    <section class="wk-section mt-12"><p class="eyebrow">International exchange · Team dispatch</p><h2>Teaching across borders.</h2>{appearances.filter(a => a.modality === 'cadaver' && a.relation === 'team-dispatch').map(a => <AppearanceCard appearance={a} />)}</section>
+    <section class="wk-section"><p class="eyebrow">Individual faculty invitations</p><h2>At the cadaver table.</h2>{appearances.filter(a => a.modality === 'cadaver' && a.relation === 'individual').map(a => <AppearanceCard appearance={a} />)}</section>
+  </>}
+  <nav class="wk-navigation" aria-label="Workshop navigation"><a href="/workshops">All workshops</a>{workshops.map(item => <a href={`/workshops/${item.slug}`} aria-current={item.slug === workshop.slug ? 'page' : undefined}>{item.title}</a>)}<a href="/#studio">Return to the office ↗</a></nav>
+</main>

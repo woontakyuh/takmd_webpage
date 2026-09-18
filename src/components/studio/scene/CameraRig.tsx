@@ -1,0 +1,560 @@
+import { useArrangement, moveFocus } from '../arrangement';
+import { OrbitControls } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { Box3, MathUtils, Mesh, PerspectiveCamera, Vector2, Vector3 } from 'three';
+import type { Camera, Object3D } from 'three';
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
+import type { StudioSceneProps } from '../types';
+import { FOCUS, focusFov, MOBILE_FOCUS, MOBILE_TOUR, MOTION, SIDE_READER_SPACE, TOUR } from './config';
+import type { CameraPose } from './config';
+import { cancelSceneSingleAction, zoomPoseForPoint } from './sceneGesture';
+import { useSceneInspection } from './SceneInspection';
+import { monitorReadingPose, monitorReadingFov } from './monitorReading';
+import { isSceneKeyboardEvent, panCameraWithArrow } from './cameraKeyboard';
+import { awardPairReadingFov, awardPairReadingLayout } from './awardPairReading';
+import { surfboardReadingLayout, surfboardReadingPose } from './surfboardReading';
+import { folioReadingPose, folioReadingView } from './folioFocus';
+import { DESKTOP_ENTRY, MOBILE_ENTRY } from '../officeEntry';
+
+type CameraRigProps = Pick<StudioSceneProps,
+  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit' | 'entry' | 'onEntryComplete' | 'readingObject'> & { readonly reading: boolean };
+
+type SavedPose = {
+  readonly position: Vector3;
+  readonly target: Vector3;
+};
+
+type TransitionKind = 'focus' | 'guide' | 'return' | 'inspect' | 'restore-inspection' | 'object' | 'restore-object' | 'intro';
+type Transition = {
+  readonly kind: TransitionKind;
+  readonly position: Vector3;
+  readonly target: Vector3;
+};
+
+const CAMERA_TOLERANCE = 0.002;
+const KEY_ZOOM_SCALE = 1 / 1.12;
+const FREE_ORBIT_LIMITS = { minDistance: 0.10, maxDistance: 15, minPolarAngle: 0.3, maxPolarAngle: Math.PI / 2 } as const;
+const FOCUSED_ORBIT_LIMITS = { minDistance: 0.08, maxDistance: 5.5, minPolarAngle: 0.35, maxPolarAngle: 1.52 } as const;
+
+// Sheet reading on a phone: the object fills this share of the width, and the picture is shifted up by this share
+// of the height so the object sits in the space above the sheet.
+const SHEET_OBJECT_SHARE = 0.55;
+const SHEET_SHIFT = 0.24;
+
+function toTransition(kind: TransitionKind, pose: CameraPose): Transition {
+  return {
+    kind,
+    position: new Vector3(...pose.position),
+    target: new Vector3(...pose.target),
+  };
+}
+
+function clearOrbitMomentum(camera: Camera, orbit: OrbitControlsImpl): void {
+  const position = camera.position.clone();
+  const target = orbit.target.clone();
+  const damping = orbit.enableDamping;
+  orbit.enableDamping = false;
+  orbit.update();
+  camera.position.copy(position);
+  orbit.target.copy(target);
+  orbit.update();
+  orbit.enableDamping = damping;
+}
+
+function applyOrbitLimits(orbit: OrbitControlsImpl, focused: boolean, surfing = false, compact = false): void {
+  const limits = focused ? FOCUSED_ORBIT_LIMITS : FREE_ORBIT_LIMITS;
+  const overview = (compact ? MOBILE_TOUR : TOUR)[0];
+  const overviewDistance = new Vector3(...overview.position).distanceTo(new Vector3(...overview.target));
+  orbit.minDistance = limits.minDistance;
+  orbit.maxDistance = !focused ? Math.max(limits.maxDistance, overviewDistance)
+    : surfing ? FREE_ORBIT_LIMITS.maxDistance : limits.maxDistance;
+  orbit.minPolarAngle = limits.minPolarAngle;
+  orbit.maxPolarAngle = limits.maxPolarAngle;
+}
+
+function isSceneControl(object: Object3D): boolean {
+  let current: Object3D | null = object;
+  while (current) {
+    if (current.userData.sceneControl === true) return true;
+    current = current.parent;
+  }
+  return false;
+}
+
+function isVisibleSurface(object: Object3D): boolean {
+  let current: Object3D | null = object;
+  while (current) {
+    if (!current.visible) return false;
+    current = current.parent;
+  }
+  if (!(object instanceof Mesh)) return false;
+  const materials = Array.isArray(object.material) ? object.material : [object.material];
+  return materials.some(material => material.visible && material.colorWrite
+    && (isSceneControl(object) || !material.transparent || material.opacity > 0.1));
+}
+
+export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit, reading, entry, onEntryComplete, readingObject = null }: CameraRigProps) {
+  const { editing, layout } = useArrangement();
+  const { inspection, setInspection } = useSceneInspection();
+  const screenFocused = selected === 'education' || selected === 'ai';
+  const screenReading = screenFocused && reading;
+  const { camera, size, gl, raycaster, scene } = useThree();
+  const controls = useRef<OrbitControlsImpl>(null);
+  const transition = useRef<Transition | null>(null);
+  const savedFreePose = useRef<SavedPose | null>(null);
+  const inspectionReturnPose = useRef<SavedPose | null>(null);
+  const objectReturnPose = useRef<SavedPose | null>(null);
+  const previousObject = useRef(inspection);
+  // A phone reads an object's content in a sheet over the lower half of the screen. The object itself is framed in
+  // the upper half: seen from the room side, slightly above, close enough to fill about half the width.
+  const sheetPose = useCallback((): CameraPose | null => {
+    if (!readingObject) return null;
+    const object = scene.getObjectByName(readingObject);
+    if (!object) return null;
+    const bounds = new Box3().setFromObject(object);
+    if (bounds.isEmpty()) return null;
+    const centre = bounds.getCenter(new Vector3());
+    const radius = Math.max(0.12, bounds.getSize(new Vector3()).length() / 2);
+    const inward = new Vector3(-centre.x, 0, -centre.z);
+    if (inward.lengthSq() < 1e-6) inward.set(1, 0, 0);
+    inward.normalize();
+    const direction = new Vector3(inward.x, 0.5, inward.z).normalize();
+    const aspect = size.width / Math.max(1, size.height);
+    const halfWidthTangent = Math.tan(MathUtils.degToRad(focusFov(selected, compact, size.width, size.height) / 2)) * aspect;
+    const distance = radius / (halfWidthTangent * SHEET_OBJECT_SHARE);
+    const position = centre.clone().addScaledVector(direction, distance);
+    return { position: [position.x, position.y, position.z], target: [centre.x, centre.y, centre.z], zoom: 1 };
+  }, [readingObject, scene, size.width, size.height, selected, compact]);
+  const focusPose = useCallback(() => (compact && sheetPose()) || moveFocus(selected === 'ai' ? monitorReadingPose()
+    : selected === 'research' ? reading ? folioReadingPose(size.width, size.height) : { position: [0.66, 1.65, -2.05], target: [0.66, 0.8, -1.55], zoom: 1 }
+    : selected === 'surfing' ? surfboardReadingPose(size.width, size.height)
+    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height, reading, sheetPose]);
+  const activeView = useRef<0 | 1 | 2 | 3 | 4>(viewCommand.view);
+  const lastViewSequence = useRef(viewCommand.sequence);
+  const previousSelected = useRef(selected);
+  const previousReading = useRef(reading);
+  const userMoved = useRef(false);
+  const ready = useRef(false);
+  const targetFov = useRef(42);
+  const initialPose = useRef(entry === 'seated' || entry === 'capture'
+    ? compact ? MOBILE_ENTRY : DESKTOP_ENTRY : (compact ? MOBILE_TOUR : TOUR)[viewCommand.view]);
+  const scratch = useMemo(() => ({ pointer: new Vector2(), position: new Vector3(), target: new Vector3() }), []);
+
+  const surfaceAt = useCallback((clientX: number, clientY: number) => {
+    const bounds = gl.domElement.getBoundingClientRect();
+    scratch.pointer.set(
+      ((clientX - bounds.left) / bounds.width) * 2 - 1,
+      -((clientY - bounds.top) / bounds.height) * 2 + 1,
+    );
+    raycaster.setFromCamera(scratch.pointer, camera);
+    return raycaster.intersectObjects(scene.children, true).find(hit => isVisibleSurface(hit.object));
+  }, [camera, gl, raycaster, scene, scratch]);
+
+  const zoomAt = useCallback((clientX: number, clientY: number, scale: number) => {
+    const orbit = controls.current;
+    if (transition.current?.kind === 'intro') transition.current = null;
+    if (entry === 'seated' || entry === 'revealing') onEntryComplete();
+    if (editing || !orbit?.enabled || transition.current) return;
+    clearOrbitMomentum(camera, orbit);
+    const hit = surfaceAt(clientX, clientY);
+    const forward = camera.getWorldDirection(scratch.position);
+    const alignment = Math.max(0.1, raycaster.ray.direction.dot(forward));
+    const currentDepth = camera.position.distanceTo(orbit.target);
+    // Rebase the orbit plane onto real geometry, keeping the viewing direction unchanged.
+    const depth = scale < 1 && hit
+      ? MathUtils.clamp(hit.distance * alignment, orbit.minDistance, orbit.maxDistance)
+      : currentDepth;
+    const nextDepth = MathUtils.clamp(depth * scale, orbit.minDistance, orbit.maxDistance);
+    camera.position.addScaledVector(raycaster.ray.direction, (depth - nextDepth) / alignment);
+    orbit.target.copy(camera.position).addScaledVector(forward, nextDepth);
+    orbit.update();
+    userMoved.current = true;
+  }, [camera, raycaster, scratch, surfaceAt, editing, entry, onEntryComplete]);
+
+  const finishTransition = useCallback((value: Transition, orbit: OrbitControlsImpl) => {
+    camera.position.copy(value.position);
+    orbit.target.copy(value.target);
+    if (camera instanceof PerspectiveCamera) { camera.fov = targetFov.current; camera.updateProjectionMatrix(); }
+    if (value.kind === 'focus') applyOrbitLimits(orbit, true, selected === 'surfing', compact);
+    if (screenFocused) orbit.maxPolarAngle = Math.PI;
+    if (value.kind === 'return' || value.kind === 'guide' || value.kind === 'intro') applyOrbitLimits(orbit, false, false, compact);
+    if (value.kind === 'inspect' || value.kind === 'restore-inspection' || value.kind === 'object' || value.kind === 'restore-object') applyOrbitLimits(orbit, selected !== null, selected === 'surfing', compact);
+    if (selected === 'research') orbit.minPolarAngle = 0.25;
+    orbit.update();
+    transition.current = null;
+    if (value.kind === 'intro') onEntryComplete();
+    if (value.kind === 'return') savedFreePose.current = null;
+    if (value.kind === 'restore-inspection') inspectionReturnPose.current = null;
+    if (value.kind === 'restore-object') objectReturnPose.current = null;
+    orbit.enabled = !screenReading && !editing;
+  }, [camera, compact, selected, screenFocused, screenReading, editing, onEntryComplete]);
+
+  useLayoutEffect(() => {
+    const orbit = controls.current;
+    if (!orbit) return;
+    camera.position.set(...initialPose.current.position);
+    orbit.target.set(...initialPose.current.target);
+    if (camera instanceof PerspectiveCamera) {
+      camera.fov = focusFov(null, compact, size.width, size.height);
+      targetFov.current = camera.fov;
+      camera.updateProjectionMatrix();
+    }
+    applyOrbitLimits(orbit, false, false, compact);
+    orbit.update();
+  }, [camera]);
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? canvas.clientHeight : 1;
+      const pixels = MathUtils.clamp(event.deltaY * unit * (event.ctrlKey ? 8 : 1), -160, 160);
+      if (pixels !== 0) zoomAt(event.clientX, event.clientY, Math.exp(pixels * 0.002));
+    };
+    const handleTouchStart = (event: TouchEvent) => {
+      const orbit = controls.current;
+      if (event.touches.length !== 2 || !orbit?.enabled || transition.current) return;
+      const [first, second] = event.touches;
+      const hit = surfaceAt((first.clientX + second.clientX) / 2, (first.clientY + second.clientY) / 2);
+      if (!hit) return;
+      const forward = camera.getWorldDirection(scratch.position);
+      const depth = MathUtils.clamp(hit.distance * raycaster.ray.direction.dot(forward), orbit.minDistance, orbit.maxDistance);
+      orbit.target.copy(camera.position).addScaledVector(forward, depth);
+      orbit.update();
+    };
+    canvas.addEventListener('wheel', handleWheel, { capture: true, passive: false });
+    canvas.addEventListener('touchstart', handleTouchStart, { capture: true, passive: true });
+    return () => {
+      canvas.removeEventListener('wheel', handleWheel, true);
+      canvas.removeEventListener('touchstart', handleTouchStart, true);
+    };
+  }, [camera, gl, raycaster, scratch, surfaceAt, zoomAt]);
+
+  useEffect(() => {
+    const orbit = controls.current;
+    if (!orbit) return;
+    let touchStart: { id: number; x: number; y: number } | null = null;
+    let lastTap: { time: number; x: number; y: number } | null = null;
+    let touchZoomTime = 0;
+    const inspectAt = (x: number, y: number) => {
+      if (editing || screenReading) return;
+      cancelSceneSingleAction(gl.domElement);
+      const hit = surfaceAt(x, y);
+      const point = hit?.point ?? raycaster.ray.at(camera.position.distanceTo(orbit.target), new Vector3());
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      if (!inspectionReturnPose.current) inspectionReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
+      window.dispatchEvent(new CustomEvent('office:zoomed', { detail: true }));
+      const pose = zoomPoseForPoint(camera.position, point);
+      transition.current = { kind: 'inspect', position: pose.position, target: pose.target };
+      userMoved.current = true;
+    };
+    const restoreZoom = () => {
+      const saved = inspectionReturnPose.current;
+      if (!saved) return;
+      orbit.enabled = false;
+      transition.current = { kind: 'restore-inspection', position: saved.position.clone(), target: saved.target.clone() };
+      window.dispatchEvent(new CustomEvent('office:zoomed', { detail: false }));
+    };
+    const escapeZoom = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !document.fullscreenElement && inspectionReturnPose.current) { event.preventDefault(); event.stopImmediatePropagation(); restoreZoom(); }
+    };
+    window.addEventListener('office:zoom-close', restoreZoom);
+    window.addEventListener('keydown', escapeZoom, true);
+    const handleDoubleClick = (event: MouseEvent) => {
+      if (event.button !== 0 || event.shiftKey || event.ctrlKey || event.metaKey || event.altKey
+        || performance.now() - touchZoomTime < 500) return;
+      event.preventDefault();
+      event.stopPropagation();
+      inspectAt(event.clientX, event.clientY);
+    };
+    const touchDown = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch') return;
+      if (!event.isPrimary) { touchStart = null; lastTap = null; return; }
+      touchStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    };
+    const touchMove = (event: PointerEvent) => {
+      if (touchStart?.id === event.pointerId && Math.hypot(event.clientX - touchStart.x, event.clientY - touchStart.y) > 5) {
+        touchStart = null; lastTap = null;
+      }
+    };
+    const touchUp = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch' || !event.isPrimary || touchStart?.id !== event.pointerId) return;
+      touchStart = null;
+      const time = performance.now();
+      if (lastTap && time - lastTap.time <= 320 && Math.hypot(event.clientX - lastTap.x, event.clientY - lastTap.y) <= 18) {
+        lastTap = null; touchZoomTime = time;
+        inspectAt(event.clientX, event.clientY);
+      } else lastTap = { time, x: event.clientX, y: event.clientY };
+    };
+    const cancelTouch = () => { touchStart = null; lastTap = null; };
+    const canvas = gl.domElement;
+    canvas.addEventListener('dblclick', handleDoubleClick, true);
+    canvas.addEventListener('pointerdown', touchDown, true);
+    canvas.addEventListener('pointermove', touchMove, true);
+    canvas.addEventListener('pointerup', touchUp);
+    canvas.addEventListener('pointercancel', cancelTouch, true);
+    return () => {
+      cancelSceneSingleAction(canvas);
+      window.removeEventListener('office:zoom-close', restoreZoom);
+      window.removeEventListener('keydown', escapeZoom, true);
+      canvas.removeEventListener('dblclick', handleDoubleClick, true);
+      canvas.removeEventListener('pointerdown', touchDown, true);
+      canvas.removeEventListener('pointermove', touchMove, true);
+      canvas.removeEventListener('pointerup', touchUp);
+      canvas.removeEventListener('pointercancel', cancelTouch, true);
+    };
+  }, [camera, gl, raycaster, surfaceAt, editing, screenReading]);
+
+  useEffect(() => {
+    const orbit = controls.current;
+    if (!orbit || previousObject.current === inspection) return;
+    previousObject.current = inspection;
+    inspectionReturnPose.current = null;
+    if (inspection) {
+      if (!objectReturnPose.current) objectReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      transition.current = { kind: 'object', position: new Vector3(...inspection.position), target: new Vector3(...inspection.target) };
+    } else if (objectReturnPose.current) {
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      transition.current = { kind: 'restore-object', position: objectReturnPose.current.position.clone(), target: objectReturnPose.current.target.clone() };
+    }
+  }, [camera, inspection]);
+
+  useEffect(() => {
+    if (!selected && !editing) return;
+    objectReturnPose.current = null;
+    setInspection(null);
+  }, [selected, editing, setInspection]);
+
+  useEffect(() => {
+    const orbit = controls.current;
+    if (!orbit || (previousSelected.current === selected && (selected !== 'research' || previousReading.current === reading))) return;
+    previousReading.current = reading;
+    inspectionReturnPose.current = null;
+    window.dispatchEvent(new CustomEvent('office:zoomed', { detail: false }));
+    if (!selected && inspection) {
+      previousSelected.current = selected;
+      if (camera instanceof PerspectiveCamera) { camera.clearViewOffset(); camera.updateProjectionMatrix(); }
+      return;
+    }
+    if (selected) {
+      if (!previousSelected.current) {
+        savedFreePose.current = {
+          position: camera.position.clone(),
+          target: orbit.target.clone(),
+        };
+      }
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      transition.current = toTransition('focus', focusPose());
+    } else {
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      applyOrbitLimits(orbit, false, false, compact);
+      if (camera instanceof PerspectiveCamera) camera.clearViewOffset();
+      camera.updateProjectionMatrix();
+      const saved = savedFreePose.current;
+      const fallback = (compact ? MOBILE_TOUR : TOUR)[activeView.current];
+      transition.current = saved
+        ? { kind: 'return', position: saved.position.clone(), target: saved.target.clone() }
+        : toTransition('return', fallback);
+    }
+    previousSelected.current = selected;
+  }, [camera, compact, inspection, selected, size.width, size.height, reading]);
+
+  useEffect(() => {
+    const orbit = controls.current;
+    if (!orbit || viewCommand.sequence === lastViewSequence.current) return;
+    inspectionReturnPose.current = null;
+    lastViewSequence.current = viewCommand.sequence;
+    activeView.current = viewCommand.view;
+    userMoved.current = false;
+    if (selected) return;
+    applyOrbitLimits(orbit, false, false, compact);
+    orbit.enabled = false;
+    clearOrbitMomentum(camera, orbit);
+    transition.current = toTransition('guide', (compact ? MOBILE_TOUR : TOUR)[viewCommand.view]);
+  }, [compact, selected, viewCommand]);
+
+  const sheetReturnPose = useRef<SavedPose | null>(null);
+  useEffect(() => {
+    const orbit = controls.current;
+    if (!orbit || !compact) return;
+    if (readingObject) {
+      if (!sheetReturnPose.current) sheetReturnPose.current = { position: camera.position.clone(), target: orbit.target.clone() };
+      const pose = sheetPose();
+      if (!pose) return;
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      transition.current = toTransition('focus', pose);
+      return;
+    }
+    const back = sheetReturnPose.current;
+    if (!back || selected) return;
+    sheetReturnPose.current = null;
+    transition.current = toTransition('return', { position: [back.position.x, back.position.y, back.position.z], target: [back.target.x, back.target.y, back.target.z], zoom: 1 });
+  }, [readingObject, compact, selected, camera, sheetPose]);
+  useEffect(() => {
+    const orbit = controls.current;
+    if (!orbit) return;
+    if (inspectionReturnPose.current || inspection) return;
+    if (selected) {
+      orbit.enabled = false;
+      clearOrbitMomentum(camera, orbit);
+      transition.current = toTransition('focus', focusPose());
+      return;
+    }
+    if (entry === 'seated' || entry === 'capture') {
+      applyOrbitLimits(orbit, false, false, compact);
+      const pose = compact ? MOBILE_ENTRY : DESKTOP_ENTRY;
+      transition.current = null;
+      camera.position.set(...pose.position);
+      orbit.target.set(...pose.target);
+      orbit.update();
+      return;
+    }
+    if (entry === 'revealing') {
+      applyOrbitLimits(orbit, false, false, compact);
+      transition.current = toTransition('intro', (compact ? MOBILE_TOUR : TOUR)[0]);
+      orbit.enabled = !editing;
+      return;
+    }
+    if (!userMoved.current && !savedFreePose.current) {
+      applyOrbitLimits(orbit, false, false, compact);
+      orbit.enabled = false;
+      transition.current = toTransition('guide', (compact ? MOBILE_TOUR : TOUR)[activeView.current]);
+    }
+  }, [bookshelfVisit, compact, selected, size.height, size.width, entry]);
+
+  useEffect(() => {
+    if (!(camera instanceof PerspectiveCamera)) return;
+    targetFov.current = selected === 'ai' ? monitorReadingFov(size.width, size.height)
+      : selected === 'research' && reading ? folioReadingView(size.width, size.height).fov
+      : selected === 'award-photo' ? awardPairReadingFov(size.width, size.height)
+      : !selected && !compact && viewCommand?.view === 1
+        ? Math.max(42, 2 * Math.atan(5.6 * size.height / (8 * size.width)) * 180 / Math.PI)
+        : focusFov(selected, compact, size.width, size.height);
+    if (compact && readingObject) {
+      camera.setViewOffset(size.width, size.height, 0, SHEET_SHIFT * size.height, size.width, size.height);
+      camera.updateProjectionMatrix();
+      return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
+    }
+    if (!selected || screenFocused || (selected === 'research' && !reading)) {
+      camera.clearViewOffset();
+      camera.updateProjectionMatrix();
+      return;
+    }
+    if (selected === 'award-photo') {
+      camera.setViewOffset(size.width, size.height, 0, awardPairReadingLayout(size.width, size.height).offsetY, size.width, size.height);
+      camera.updateProjectionMatrix();
+      return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
+    }
+    if (selected === 'surfing') {
+      const story = surfboardReadingLayout(size.width, size.height);
+      camera.setViewOffset(size.width, size.height, story.offsetX, story.offsetY, size.width, size.height);
+      camera.updateProjectionMatrix();
+      return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
+    }
+    if (selected === 'research') {
+      const folio = folioReadingView(size.width, size.height);
+      camera.setViewOffset(size.width, size.height, folio.offsetX, folio.offsetY, size.width, size.height);
+      camera.updateProjectionMatrix();
+      return () => { camera.clearViewOffset(); camera.updateProjectionMatrix(); };
+    }
+    const compactReader = selected === 'family' || selected === 'books' || selected === 'bookshelf';
+    const xOffset = selected === 'spine' && !reading ? 0 : compact ? 0 : (compactReader ? 352 : SIDE_READER_SPACE) / 2;
+    const yOffset = selected === 'spine' && !reading ? 0 : compact ? size.height * (selected === 'books' ? .13 : .24) : 0;
+    camera.setViewOffset(size.width, size.height, xOffset, yOffset, size.width, size.height);
+    camera.updateProjectionMatrix();
+    return () => {
+      camera.clearViewOffset();
+      camera.updateProjectionMatrix();
+    };
+  }, [camera, compact, selected, reading, size.height, size.width, viewCommand, readingObject]);
+
+  useEffect(() => {
+    const orbit = controls.current;
+    const wrapper = gl.domElement.closest('.studio-scene');
+    const keyTarget = wrapper instanceof HTMLElement ? wrapper : gl.domElement;
+    if (!orbit) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (transition.current?.kind === 'intro' && isSceneKeyboardEvent(event, keyTarget, gl.domElement)
+        && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) {
+        transition.current = null;
+        userMoved.current = true;
+        onEntryComplete();
+      }
+      if (selected || editing || transition.current || !orbit.enabled
+        || !isSceneKeyboardEvent(event, keyTarget, gl.domElement)) return;
+      let handled = true;
+      switch (event.key) {
+        case '+':
+        case '=': {
+          const bounds = gl.domElement.getBoundingClientRect();
+          zoomAt(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2, KEY_ZOOM_SCALE);
+          break;
+        }
+        case '-':
+        case '_': {
+          const bounds = gl.domElement.getBoundingClientRect();
+          zoomAt(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2, 1 / KEY_ZOOM_SCALE);
+          break;
+        }
+        default: handled = orbit.enablePan && panCameraWithArrow(camera, orbit.target, event.key);
+      }
+      if (!handled) return;
+      event.preventDefault();
+      userMoved.current = true;
+      orbit.update();
+    };
+    keyTarget.addEventListener('keydown', handleKeyDown);
+    return () => keyTarget.removeEventListener('keydown', handleKeyDown);
+  }, [camera, gl, zoomAt, editing, selected, onEntryComplete]);
+
+  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && !screenReading; }, [editing, screenReading]);
+
+  useFrame((_, delta) => {
+    const orbit = controls.current;
+    if (!orbit) return;
+    if (editing) { orbit.enabled = false; return; }
+    if (camera instanceof PerspectiveCamera && Math.abs(camera.fov - targetFov.current) > 0.01) {
+      camera.fov += (targetFov.current - camera.fov) * (reducedMotion ? 1 : 1 - Math.exp(-MOTION.camera * Math.min(delta, 0.1)));
+      camera.updateProjectionMatrix();
+    }
+    const active = transition.current;
+    if (active) {
+      const damping = reducedMotion ? 1 : 1 - Math.exp(-MOTION.camera * Math.min(delta, 0.1));
+      camera.position.lerp(active.position, damping);
+      orbit.target.lerp(active.target, damping);
+      camera.lookAt(orbit.target);
+      scratch.position.copy(camera.position).sub(active.position);
+      scratch.target.copy(orbit.target).sub(active.target);
+      if (reducedMotion || (scratch.position.lengthSq() <= CAMERA_TOLERANCE ** 2
+        && scratch.target.lengthSq() <= CAMERA_TOLERANCE ** 2)) {
+        finishTransition(active, orbit);
+      }
+    }
+    if (!ready.current) {
+      ready.current = true;
+      onReady();
+    }
+  });
+
+  return (
+    <OrbitControls ref={controls} makeDefault enablePan zoomToCursor={!selected} enableDamping={!reducedMotion}
+      dampingFactor={0.08}
+      onStart={() => {
+        if (entry === 'seated' || entry === 'revealing') {
+          if (transition.current?.kind === 'intro') transition.current = null;
+          userMoved.current = true;
+          onEntryComplete();
+        } else if (!selected && !transition.current) userMoved.current = true;
+      }} />
+  );
+}

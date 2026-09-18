@@ -1,3 +1,5 @@
+import { fileURLToPath } from "node:url";
+
 /**
  * Build-time script: Fetches all 발표 entries from Notion Schedule DB,
  * parses multi-topic entries (1) ..., 2) ...), and writes presentations.json.
@@ -127,8 +129,7 @@ interface Override {
 
 async function loadOverrides(): Promise<Record<string, Override>> {
   const fs = await import("fs");
-  const path = await import("path");
-  const p = path.join(import.meta.dir, "..", "src", "data", "schedule-overrides.json");
+  const p = fileURLToPath(new URL("../src/data/schedule-overrides.json", import.meta.url));
   if (!fs.existsSync(p)) return {};
   const raw = JSON.parse(fs.readFileSync(p, "utf-8"));
   // Strip metadata keys starting with _
@@ -230,7 +231,7 @@ async function main() {
 
   const fs = await import("fs");
   const path = await import("path");
-  const outDir = path.join(import.meta.dir, "..", "src", "data");
+  const outDir = fileURLToPath(new URL("../src/data/", import.meta.url));
   fs.mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, "presentations.json");
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
