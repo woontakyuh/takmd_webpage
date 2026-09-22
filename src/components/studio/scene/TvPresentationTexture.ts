@@ -6,6 +6,7 @@ import { talkMedia } from '../collection';
 import { containPhoto, photoPageIndex, TV_PHOTO_BOARD, tvPhotoPages } from '../tvPhotoGallery';
 import { setWallTvContentEdges } from './hoverReactions';
 import { sampleTvImageEdges, TV_DARK_EDGES } from './tvBacklightColor';
+import { drawTvEventRecord, eventRecord } from './tvEventRecordModel';
 
 type Props = {
   readonly compact: boolean;
@@ -191,7 +192,16 @@ export function useTvPresentationTexture({ compact, cover, talk, presentations, 
       context.drawImage(image, treeWidth + (1600 - treeWidth - width) / 2, (900 - FOOTER_HEIGHT - height) / 2, width, height);
       setWallTvContentEdges(sampleTvImageEdges(image, cover));
     });
-    else setWallTvContentEdges(TV_DARK_EDGES);
+    else {
+      const record = eventRecord(talk, media?.role);
+      drawTvEventRecord(context, record, compact, treeWidth);
+      void document.fonts.ready.then(() => {
+        if (cancelled) return;
+        drawTvEventRecord(context, record, compact, treeWidth);
+        texture.needsUpdate = true;
+      });
+      setWallTvContentEdges(TV_DARK_EDGES);
+    }
     context.textBaseline = 'top';
     context.fillStyle = '#F6F3EA';
     context.font = '500 17px "Manrope Variable", "Avenir Next", sans-serif';
@@ -203,13 +213,13 @@ export function useTvPresentationTexture({ compact, cover, talk, presentations, 
     context.font = '17px "Manrope Variable", "Avenir Next", sans-serif';
     context.fillText(count ? `${current + 1} / ${count}` : 'Record', 1510, 836);
     context.font = '14px "Manrope Variable", "Avenir Next", sans-serif';
-    context.fillText(count ? (page ? `${media?.slides.length} photos` : photos ? 'Photos' : 'Slides') : '', 1510, 861);
+    context.fillText(count ? (page ? `${media?.slides.length} photos` : photos ? 'Photos' : 'Slides') : 'Event', 1510, 861);
     texture.needsUpdate = true;
     return () => {
       cancelled = true;
       images.forEach(image => { image.onload = null; });
     };
-  }, [texture, cover, talk, presentations, treeScrollOffset, treeWidth]);
+  }, [texture, cover, talk, presentations, treeScrollOffset, treeWidth, compact]);
   useEffect(() => () => texture.dispose(), [texture]);
   return texture;
 }

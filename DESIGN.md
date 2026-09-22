@@ -1029,3 +1029,17 @@ On compact screens, the temporary gesture hint moves below the open global volum
 The global volume range is 64px high, with a 44px-wide invisible touch area; keep it compact beside the existing toolbar.
 
 The closed research folio rests parallel to the desk edge on its left side. Opening moves the same object to its established reading pose as its cover unfolds; closing restores the tidy position. Mobile seated entry moves nearer the monitor while retaining desk context; desktop entry remains unchanged.
+
+## September 21 — CGBIO workshop certificate folder
+
+Display the owner's September 12, 2026 CGBIO faculty certificate as one standing, open landscape bifold, with the original group photograph on the left and certificate on the right. Place centrally on the vacant 1.7 m shelf in the credentials bay. Estimated covers are 321 × 234 × 5 mm, with a shallow 156-degree opening and no invented frame/stand. Source pixels preserve faces, print, gold photo corners, signature and cover logo; derivatives exclude room surroundings. Black leather #101113 uses fine existing leather normal grain, roughness .3, clearcoat .38 / clearcoat roughness .24: a restrained satin-gloss highlight, not mirror chrome. The paper stays matte (.78). Reuse CollectionInspectionItem, HoverAccent and responsive object/text fitting; first click approaches the pair, a second click inspects the chosen leaf. Existing X/Escape exits and font/color tokens remain. Keep this exhibit’s captions to role, event and date so they clear neighboring awards on small screens; the complete original wording stays visible on the certificate.
+
+## September 22 — Public release readiness
+
+Preserve the room composition, photographed source material, lighting and object-native interactions. The Research reader uses the same native reveal-and-scroll surface as the workshop readers on phones: reading moves the sheet up continuously, returning to the top reveals the object, and manual expansion remains available. While a reader is active, its keyboard controls form one focus scope; closing restores the opener. Pointer interaction with the room remains non-modal and nested photo dialogs retain their own focus.
+
+Event-only TV records use one shared layout in the physical screen and active reader, using existing TV ink/teal/paper tokens and verified event metadata. Clearly distinguish an upcoming event from an archive entry without uploaded materials; never invent slides. Preserve existing slide typography and framing. Contact remains reachable in the compact header using the existing quiet link style.
+
+Closed-cabinet bottle artwork loads after room readiness, while inspection retains its original image fidelity. Preserve prewarming before opening. If the room fails to load, reuse the existing poster and blurred status typography with an ordinary, keyboard-accessible retry link/button and the existing CV route; do not introduce an error modal or a boxed loading page. Reduced motion continues to bypass spatial transitions.
+
+The compressed-model decoder ships with the site and is configured before scene modules preload assets. Opening the room must work with external hosts blocked; decoder licenses and source hashes accompany the vendored files.

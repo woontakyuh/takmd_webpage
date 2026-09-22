@@ -19,6 +19,7 @@ type CollectionProps = {
   readonly reducedMotion: boolean;
   readonly onSelect: (id: WhiskyBottleId) => void;
   readonly onReturned: (id: WhiskyBottleId) => void;
+  readonly onReady: () => void;
 };
 
 // The render loop owns these mutable animation values independently of React selection.
@@ -54,7 +55,7 @@ function InspectableBottle({ bottle, texture, selection, enabled, onSelect, moti
   </group>;
 }
 
-export function WhiskyCollection({ cabinet, selection, enabled, reducedMotion, onSelect, onReturned }: CollectionProps) {
+export function WhiskyCollection({ cabinet, selection, enabled, reducedMotion, onSelect, onReturned, onReady }: CollectionProps) {
   const motions = useRef(new Map<WhiskyBottleId, BottleMotion>());
   const sources = useTexture(WHISKY_BOTTLES.map(bottle => bottle.image));
   const textures = useMemo(() => sources.map(source => {
@@ -65,6 +66,7 @@ export function WhiskyCollection({ cabinet, selection, enabled, reducedMotion, o
     return texture;
   }), [sources]);
   useEffect(() => () => textures.forEach(texture => texture.dispose()), [textures]);
+  useEffect(onReady, [onReady]);
   useFrame((state, delta) => {
     if (!cabinet.current) return;
     const bottles = [...motions.current.values()];
@@ -104,5 +106,3 @@ export function WhiskyCollection({ cabinet, selection, enabled, reducedMotion, o
     })}
   </group>;
 }
-
-useTexture.preload(WHISKY_BOTTLES.map(bottle => bottle.image));

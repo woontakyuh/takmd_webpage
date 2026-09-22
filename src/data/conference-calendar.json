@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-11",
+  "generatedAt": "2026-09-22",
   "events": [
     {
       "id": "11f908af25b9803ab955ce75d0ec24dd",
@@ -210,13 +210,6 @@
       "title": "KOSESS 2026 Annual Meeting",
       "startDate": "2026-08-29",
       "venue": "Seoul St. Mary's Hospital",
-      "participation": "Speaker"
-    },
-    {
-      "id": "3d3908af25b981babd62fd1428145fca",
-      "title": "KNS 2026 — Digital Convergence Luncheon Seminar",
-      "startDate": "2026-10-16",
-      "venue": "Grand InterContinental Seoul Parnas",
       "participation": "Speaker"
     },
     {

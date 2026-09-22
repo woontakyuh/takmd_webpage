@@ -42,4 +42,14 @@ describe('conferenceEvents', () => {
   it('Given September 2026, when listed conferences are read, then the month is empty', () => {
     expect(conferenceEvents.filter(event => event.startDate.startsWith('2026-09'))).toEqual([]);
   });
+
+  it('Given the confirmed cancellation, when October is read, then only the remaining summit is listed', () => {
+    expect(conferenceEvents.filter(event => event.startDate.startsWith('2026-10')).map(event => event.id))
+      .toEqual(['3c7908af25b9818aaa7bf4d0178103cd']);
+  });
+
+  it('Given independent attendance records, when the calendar is reconciled, then they remain available', () => {
+    expect(conferenceEvents.filter(event => event.participation === 'Attendee').map(event => event.id))
+      .toEqual(['1b8908af25b980a792d4dea1adfb7320', '197908af25b980388e88edde289663ab', '2cb908af25b98007b69ddac201e369c2', '2cb908af25b98091829ff1346bdf83c5']);
+  });
 });

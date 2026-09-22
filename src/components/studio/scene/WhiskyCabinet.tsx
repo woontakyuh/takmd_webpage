@@ -39,6 +39,8 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const [selection, setSelection] = useState<WhiskyInspectionState>(null);
   const [magazineBusy, setMagazineBusy] = useState(false);
   const [archiveLoaded, setArchiveLoaded] = useState(false);
+  const [bottlesReady, setBottlesReady] = useState(false);
+  const onBottlesReady = useCallback(() => setBottlesReady(true), []);
   const pendingBottle = useRef<WhiskyBottleId | null>(null);
   const cabinet = useRef<Group>(null);
   const closing = useRef(false);
@@ -69,7 +71,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const roomReady = useRoomReady();
   const warmed = useRef(false);
   useEffect(() => {
-    if (!roomReady || warmed.current) return;
+    if (!roomReady || !bottlesReady || warmed.current) return;
     const idle = window.requestIdleCallback?.bind(window) ?? ((run: () => void) => window.setTimeout(run, 1500));
     const cancel = window.cancelIdleCallback?.bind(window);
     const handle = idle(() => {
@@ -84,7 +86,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       void gl.compileAsync(scene, camera).finally(() => groups.forEach((group, index) => { if (group) group.visible = shown[index]; }));
     });
     return () => { if (cancel && typeof handle === 'number') cancel(handle); };
-  }, [roomReady, gl, camera, scene]);
+  }, [roomReady, bottlesReady, gl, camera, scene]);
   // Bottles and glassware answer pointer rays by their bounding boxes; their triangles are for drawing, not picking.
   // The interior mounts late, so the sweep repeats once a second until nothing new appears.
   const sweep = useRef(0);
@@ -218,13 +220,14 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       </group>
     </IsidoroFixedHalf>
     <WhiskyCabinetDoor open={open} pivot={doorPivot} worktop={worktopPivot} interior={movingInterior} wood={wood}
-      exterior={<Suspense fallback={null}><WhiskyLectureCard open={open} disabled={editing}
+      exterior={<WhiskyLectureCard open={open} disabled={editing}
         onApproach={visitClosedCabinet} onReturn={approachCabinet} />
-      </Suspense>}
+      }
       disabled={editing} onActivate={toggle}>
       <group ref={bottles} name="complete seven-bottle whisky and Armagnac collection">
-        <Suspense fallback={null}><WhiskyCollection cabinet={cabinet} selection={selection}
-          enabled={ready && !editing} reducedMotion={reducedMotion || editing} onSelect={chooseBottle} onReturned={returned} /></Suspense>
+        {roomReady && <Suspense fallback={null}><WhiskyCollection cabinet={cabinet} selection={selection}
+          enabled={ready && !editing} reducedMotion={reducedMotion || editing} onSelect={chooseBottle} onReturned={returned}
+          onReady={onBottlesReady} /></Suspense>}
         {archiveLoaded && <Suspense fallback={null}><WhiskyMagazine enabled={ready && !editing && !selection} reducedMotion={reducedMotion || editing}
           onBusyChange={setMagazineBusy} onReturn={approachCabinet} /></Suspense>}
         <IsidoroInteriorLighting lowerShelf={0.648} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />

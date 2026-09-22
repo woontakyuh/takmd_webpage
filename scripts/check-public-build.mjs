@@ -41,6 +41,7 @@ const checks = [
   { label: 'latest clinical case date', test: (bytes) => bytes.includes(lastCaseDate) },
   { label: 'private auth value', test: (bytes) => authMarkers.some((marker) => bytes.includes(marker)) },
   { label: 'development React tooling', test: (_bytes, text) => /react-grab|react-scan|react-doctor/.test(text) },
+  { label: 'local authoring viewer', test: (_bytes, text) => /data-authoring-only|<model-viewer\b|ajax\.googleapis\.com\/ajax\/libs\/model-viewer\//i.test(text) },
 ];
 const sourceExtensions = new Set(['.astro', '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.mts', '.cts']);
 const internalSources = new Set(['components/Dashboard.tsx', 'components/DashboardWithAuth.tsx']);
@@ -79,6 +80,10 @@ async function inspect(directory) {
       await inspect(path);
     } else if (entry.isFile()) {
       scanned += 1;
+      if (/^asset-viewer(?:\.|$)/i.test(entry.name)) {
+        violations += 1;
+        console.error(`Blocked local authoring viewer path in ${relative(outputDir, path)}`);
+      }
       const bytes = await readFile(path);
       const text = bytes.toString('utf8');
       for (const check of checks) {
@@ -109,4 +114,4 @@ if (violations) {
   console.error(`Public build check failed: ${violations} marker groups detected. Matched values are never logged.`);
   process.exit(1);
 }
-console.log(`Public build check passed: ${scanned} assets contain no private dashboard, clinical dataset, auth, or dev-tool markers.`);
+console.log(`Public build check passed: ${scanned} assets contain no private dashboard, clinical dataset, auth, dev-tool, or authoring-viewer markers.`);

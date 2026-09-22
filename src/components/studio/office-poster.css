@@ -11,4 +11,6 @@
 @media (prefers-reduced-motion: reduce) { .office-poster { transition: none; } }
 
 .office-poster-status::before { content: ''; position: absolute; z-index: -1; left: 50%; top: 50%; width: 360px; height: 160px; transform: translate(-50%, -58%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: color-mix(in srgb, var(--studio-paper) 50%, transparent); mask-image: radial-gradient(ellipse at center, black 15%, rgba(0,0,0,.9) 40%, transparent 72%); -webkit-mask-image: radial-gradient(ellipse at center, black 15%, rgba(0,0,0,.9) 40%, transparent 72%); }
+.office-poster-retry { display: block; margin: 8px auto 0; min-height: 44px; padding: 8px 12px; border: 0; background: transparent; color: var(--studio-ink); font: 500 14px/1.4 var(--studio-sans); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; pointer-events: auto; }
+.office-poster-retry:focus-visible { outline: 2px solid var(--studio-ink); outline-offset: 2px; }
 @media (min-width: 760px) { .office-poster-status { font-size: 34px; } .office-poster-status::before { width: 480px; height: 200px; } }

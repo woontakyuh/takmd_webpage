@@ -28,6 +28,8 @@ import { SceneInspectionProvider, useSceneInspection } from './scene/SceneInspec
 import { officeEntryPhase, type OfficeEntryPhase } from './officeEntry';
 
 const Scene = lazy(async () => {
+  const { useGLTF } = await import('@react-three/drei/core/Gltf.js');
+  useGLTF.setDecoderPath('/vendor/draco/');
   const module = await import('./StudioScene');
   return { default: module.StudioScene };
 });

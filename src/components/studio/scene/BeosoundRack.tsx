@@ -1,5 +1,5 @@
 import { Html } from '@react-three/drei';
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useThree } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import type { Group } from 'three';
@@ -42,8 +42,8 @@ export function BeosoundRack({ state, active, expanded, showTrigger, disabled, r
     <Block size={[.28, .06, .012]} position={[.59, .045, -.094]} rotation={[-.15, 0, 0]} radius={.002} color="#876b52" texture={wood} roughness={.7} />
     <Block size={[.018, .075, .15]} position={[.456, .0495, -.018]} rotation={[0, 0, -.13]} radius={.002} color="#71573f" texture={wood} roughness={.7} />
     <Block size={[.018, .055, .15]} position={[.724, .037, -.018]} radius={.002} color="#71573f" texture={wood} roughness={.7} />
-    {ALBUM_IDS.map(id => <Suspense key={id} fallback={null}><BeosoundCase album={id} disabled={disabled}
-      selected={album === id} browsing={active && expanded} reducedMotion={reducedMotion} onOpen={choose} /></Suspense>)}
+    {ALBUM_IDS.map(id => <BeosoundCase key={id} album={id} disabled={disabled}
+      selected={album === id} browsing={active && expanded} reducedMotion={reducedMotion} onOpen={choose} />)}
     {active && (expanded || present || showTrigger) && <Html wrapperClass="cd-screen-ui" calculatePosition={screenOrigin} zIndexRange={[46, 44]} style={{ pointerEvents: 'none' }}>
       {(expanded || present) ? <BeosoundBooklet focusAlbum={focusAlbum ?? album} placement={placement} onPlace={onPlace} expanded={expanded} reducedMotion={reducedMotion} origin={origin} onClosed={finishClose} state={state} album={album} onAlbum={setAlbum} onClose={() => onExpanded(false)} dispatch={dispatch} />
         : <button ref={trigger} className="cd-collection-trigger" type="button" aria-expanded={false}

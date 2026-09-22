@@ -100,5 +100,3 @@ export function Surfboard() {
     </group>
   );
 }
-
-// No module-scope preload: the board is mounted after the room is ready (see DeferredAssets).

@@ -2,10 +2,17 @@ import { describe, expect, test } from 'bun:test';
 import { EDBM_MAGAZINE } from '../edbmArchive';
 import { magazinePrintUv } from './MagazinePrint';
 
+function restoredSurface(restoration) {
+  const surfaces = [EDBM_MAGAZINE.cover, ...EDBM_MAGAZINE.spreads.flatMap(spread => [spread.left, spread.right])];
+  const matches = surfaces.filter(surface => surface?.restoration === restoration);
+  expect(matches).toHaveLength(1);
+  return matches[0];
+}
+
 describe('continuous whole-page magazine projection', () => {
   test('retains every edge of the supplied contributor photograph', () => {
     // Given a photograph whose outer column was already cropped by the camera.
-    const surface = EDBM_MAGAZINE.spreads[0].right;
+    const surface = restoredSurface('contributors');
     // When the complete image boundary is projected onto the printed page.
     const edges = Array.from({ length: 101 }, (_, i) => i / 100).flatMap(value => [
       [magazinePrintUv(surface, 0, value), 0, 0], [magazinePrintUv(surface, 1, value), 0, 1],
@@ -17,7 +24,7 @@ describe('continuous whole-page magazine projection', () => {
 
   test('straightens the original group portrait without relocating it', () => {
     // Given the four measured corners of the large photograph in IMG_5246.JPG.
-    const surface = EDBM_MAGAZINE.spreads[0].right;
+    const surface = restoredSurface('contributors');
     const guides = [[.17, .075, .173, .067], [.77, .075, .769, .083],
       [.17, .375, .169, .359], [.77, .375, .757, .376]];
     // When each rectified print corner is mapped to the original image.
@@ -28,18 +35,19 @@ describe('continuous whole-page magazine projection', () => {
 
   test('shares the original gutter continuously across both article pages', () => {
     // Given both halves of one photographed spread, including the running header.
-    const spread = EDBM_MAGAZINE.spreads[1];
+    const left = restoredSurface('feature-left');
+    const right = restoredSurface('feature-right');
     // When corresponding points are sampled along the complete binding edge.
     const seam = Array.from({ length: 101 }, (_, i) => i / 100).map(v => [
-      magazinePrintUv(spread.left, 1, v), magazinePrintUv(spread.right, 0, v),
+      magazinePrintUv(left, 1, v), magazinePrintUv(right, 0, v),
     ]);
     // Then no source strip disappears or repeats between the two physical sheets.
     for (const [left, right] of seam) left.forEach((value, axis) => expect(value).toBeCloseTo(right[axis], 8));
   });
 
-  for (const surface of [EDBM_MAGAZINE.cover, EDBM_MAGAZINE.spreads[0].right,
-    EDBM_MAGAZINE.spreads[1].left, EDBM_MAGAZINE.spreads[1].right]) {
-    test(`${surface.restoration} maps the whole print continuously without folding`, () => {
+  for (const restoration of ['cover', 'contributors', 'feature-left', 'feature-right']) {
+    test(`${restoration} maps the whole print continuously without folding`, () => {
+      const surface = restoredSurface(restoration);
       // Given one continuous coordinate lattice for this complete page.
       const signs = [];
       // When small neighboring squares are mapped throughout the page.

@@ -77,9 +77,18 @@ describe('office poster projection', () => {
     const september10 = datedVisualState(new Date('2026-09-10T03:00:00Z'));
     const september11 = datedVisualState(new Date('2026-09-11T03:00:00Z'));
     const october16 = datedVisualState(new Date('2026-10-16T03:00:00Z'));
+    const october30 = datedVisualState(new Date('2026-10-30T03:00:00Z'));
+    const october31 = datedVisualState(new Date('2026-10-31T03:00:00Z'));
+    const november1 = datedVisualState(new Date('2026-11-01T03:00:00Z'));
 
     assert.equal(september10, september11);
-    assert.notEqual(september11, october16);
-    assert.match(september11, /22d908af25b980db8fcbfc369cfd8fdb/);
+    assert.equal(september11, october16);
+    assert.equal(october16, october30);
+    assert.notEqual(october30, october31);
+    assert.equal(october31, november1);
+    assert.equal(october31, JSON.stringify({
+      featured: '22d908af25b980db8fcbfc369cfd8fdb',
+      board: ['3c7908af25b9818aaa7bf4d0178103cd:delivered', '2cb908af25b9809983b8fb9c1525158c:delivered'],
+    }));
   });
 });

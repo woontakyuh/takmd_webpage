@@ -1,11 +1,8 @@
 import type { ExhibitId } from '../types';
 import { HoverAccent } from './HoverAccent';
 import { useGuidedView } from './GuidedView';
-import { Deferred } from './DeferredAssets';
 import { requestOfficePath } from '../officeNavigation';
-import { useCursor } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
-import { useRef, useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { workshops } from '../../../data/workshops';
 import { Block } from './Primitives';
 import { BiportalEndoscope } from './BiportalEndoscope';
@@ -13,9 +10,8 @@ import { EndoscopicLumbarBox } from './EndoscopicLumbarBox';
 import { PigPlush } from './PigPlush';
 import { PALETTE, ROOM } from './config';
 import type { Point } from './config';
-import { scheduleSceneSingleAction } from './sceneGesture';
+import { useSceneAction } from './useSceneAction';
 
-const CLICK_DRAG_THRESHOLD = 5;
 const CABINET_TOP = ROOM.credenza.position[1] + ROOM.credenza.height;
 const COLLECTION_X = ROOM.credenza.position[0];
 
@@ -28,40 +24,14 @@ type WorkshopLinkProps = {
 };
 
 function WorkshopLink({ focused, onApproach, position, route, children }: WorkshopLinkProps) {
-  const canvas = useThree(state => state.gl.domElement);
   const direct = useGuidedView() === 2;
-  const pointerStart = useRef<{ readonly x: number; readonly y: number } | null>(null);
-  const [hovered, setHovered] = useState(false);
-  useCursor(hovered);
-
-  return (
-    <group
-      name={`Workshop ${route}`}
-      position={[...position]}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        if (event.pointerType !== 'touch' && !event.buttons) setHovered(true);
-      }}
-      onPointerOut={() => setHovered(false)}
-      onPointerDown={(event) => {
-        setHovered(false);
-        pointerStart.current = { x: event.clientX, y: event.clientY };
-      }}
-      onPointerCancel={() => {
-        pointerStart.current = null;
-      }}
-      onClick={(event) => {
-        event.stopPropagation();
-        const start = pointerStart.current;
-        pointerStart.current = null;
-        if (!start || event.delta >= CLICK_DRAG_THRESHOLD
-          || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= CLICK_DRAG_THRESHOLD) return;
-        scheduleSceneSingleAction(canvas, () => focused === 'spine' || direct ? requestOfficePath(route) : onApproach());
-      }}
-    >
-      <HoverAccent active={hovered}>{children}</HoverAccent>
-    </group>
-  );
+  const { hovered, handlers } = useSceneAction({
+    disabled: false,
+    onActivate: () => focused === 'spine' || direct ? requestOfficePath(route) : onApproach(),
+  });
+  return <group name={`Workshop ${route}`} position={[...position]} {...handlers}>
+    <HoverAccent active={hovered}>{children}</HoverAccent>
+  </group>;
 }
 
 function EndoscopeTray() {
@@ -86,7 +56,7 @@ export function WorkshopObjects({ focused, onApproach }: { readonly focused: Exh
         <EndoscopicLumbarBox />
       </WorkshopLink>
       <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${animal.slug}`} position={[COLLECTION_X, CABINET_TOP, 0.32]}>
-        <Deferred><PigPlush /></Deferred>
+        <PigPlush />
       </WorkshopLink>
       <WorkshopLink focused={focused} onApproach={onApproach} route="/ube" position={[COLLECTION_X, CABINET_TOP, 1.30]}>
         <group rotation={[0, -Math.PI / 2, 0]}><EndoscopeTray /></group>

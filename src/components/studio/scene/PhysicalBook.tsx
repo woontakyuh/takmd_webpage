@@ -54,10 +54,8 @@ export function PhysicalBook({ book, showDetails, page, openAmount, reducedMotio
     <Solid name="binding-body" size={[.002, h, t]} position={[0, 0, 0]} color={book.binding} />
     <Solid name="back-cover-board" size={[w, h, board]}
       position={[w / 2, 0, -t / 2 + board / 2]} color={book.binding} />
-    <Suspense fallback={null}>
-      <BookSurfaceMesh surface={book.spine} width={t} height={h} name={`book-spine-${book.id}`}
-        position={[-.0011, 0, 0]} rotation={[0, -Math.PI / 2, 0]} />
-    </Suspense>
+    <BookSurfaceMesh surface={book.spine} width={t} height={h} name={`book-spine-${book.id}`}
+      position={[-.0011, 0, 0]} rotation={[0, -Math.PI / 2, 0]} />
     {showDetails && <Suspense fallback={null}>
       <BookSurfaceMesh surface={book.back} width={w} height={h} name={`book-back-${book.id}`}
         position={[w / 2, 0, -t / 2 - .00003]} rotation={[0, Math.PI, 0]} />

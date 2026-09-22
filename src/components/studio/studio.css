@@ -108,8 +108,9 @@
 @media (max-width: 759px) {
   .studio-stage { min-height: min(540px, 100svh); }
   .studio-header { top: 20px; left: 18px; right: 18px; gap: 12px; }
-  .studio-header nav { font-size: 10px; gap: 0; }
-  .studio-header nav a:last-child { display: none; }
+  .studio-header nav { font-size: 10px; gap: 12px; }
+  .studio-header nav a { display: inline-flex; align-items: center; min-width: 44px; min-height: 44px; }
+  .studio-header nav a:last-child span { display: none; }
   .studio-tools { top: 92px; right: 18px; gap: 6px; }
   .studio-tools button { padding: 8px 10px; }
   .studio-tools button span { display: none; }
@@ -360,4 +361,3 @@ body:has(.studio) { overflow: clip; }
 /* WebKit still composites a backdrop-filter while its element is visibility:hidden, leaving frosted ghosts. Hidden chrome drops the blur. */
 .studio[data-selected] :is(.studio-tools button, .studio-header nav, .office-help-toggle, .office-local-time, .office-gesture-hint),
 .studio[data-entry="seated"] :is(.studio-tools button, .office-local-time, .office-help-toggle, .office-gesture-hint) { backdrop-filter: none; -webkit-backdrop-filter: none; }
-

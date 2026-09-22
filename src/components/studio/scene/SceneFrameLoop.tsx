@@ -15,8 +15,9 @@ export function SceneFrameLoop({ active }: { readonly active: boolean }) {
     let accumulated = 0;
     let interactiveUntil = previous + 1000;
     const cameraMatrix = get().camera.matrixWorld.clone();
-    const interact = () => { interactiveUntil = performance.now() + 5000; };
-    const pointerMove = () => { interactiveUntil = Math.max(interactiveUntil, performance.now() + 150); };
+    const isReading = (event: Event) => event.target instanceof Element && Boolean(event.target.closest('.studio-dialog'));
+    const interact = (event: Event) => { if (!isReading(event)) interactiveUntil = performance.now() + 5000; };
+    const pointerMove = (event: Event) => { if (!isReading(event)) interactiveUntil = Math.max(interactiveUntil, performance.now() + 150); };
     const interactionEvents = ['pointerdown', 'pointerup', 'keydown', 'wheel', 'resize'] as const;
     for (const event of interactionEvents) window.addEventListener(event, interact, { passive: true, capture: true });
     window.addEventListener('pointermove', pointerMove, { passive: true, capture: true });

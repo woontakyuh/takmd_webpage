@@ -2,19 +2,27 @@ import { Html } from '@react-three/drei';
 import { useEffect, useState } from 'react';
 import type { Dispatch } from 'react';
 import type { BeosoundAction } from './Beosound9000State';
-import { BEOSOUND_PANEL_KEYS, panelKeyPosition } from './BeosoundPanel';
+import { BEOSOUND_PANEL_KEYS, panelKeyPosition, panelKeyHitArea } from './BeosoundPanel';
 import { useCabinetAction } from './WhiskyCabinetDoor';
 import './beosound-9000.css';
+import { usePhone } from './Device';
 
 type PanelKey = typeof BEOSOUND_PANEL_KEYS[number];
 function NativeKey({ item, disabled, focused, onActivate }: {
   readonly item: PanelKey; readonly disabled: boolean; readonly focused: boolean; readonly onActivate: () => void;
 }) {
   const { hovered, handlers } = useCabinetAction({ disabled, onActivate });
-  return <mesh name={`Beosound native ${item.name}`} position={panelKeyPosition(item.x, item.y)} {...handlers}>
+  const phone = usePhone();
+  const touch = panelKeyHitArea(item);
+  return <group {...handlers}>
+    {phone && <mesh name={`Beosound touch ${item.name}`} position={touch.position}>
+      <planeGeometry args={touch.size} />
+      <meshBasicMaterial transparent opacity={0} colorWrite={false} depthWrite={false} />
+    </mesh>}
+    <mesh name={`Beosound native ${item.name}`} position={panelKeyPosition(item.x, item.y)}>
     <planeGeometry args={[.039, .035]} />
     <meshBasicMaterial color="#c7cec5" transparent opacity={hovered || focused ? .12 : 0} depthWrite={false} toneMapped={false} />
-  </mesh>;
+  </mesh></group>;
 }
 
 export function Beosound9000Controls({ active, disabled, dispatch, onApproach, onClose }: {

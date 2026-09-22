@@ -140,5 +140,3 @@ export function DoctorCoat() {
 export function JiuJitsuGi() {
   return <HangingGarment url={GI_URL} file={usePhone() ? GI_URL_PHONE : GI_URL} />;
 }
-
-// No module-scope preload: both garments are mounted after the room is ready (see DeferredAssets).

@@ -35,3 +35,17 @@ export function panelKeyAppearance(key: typeof BEOSOUND_PANEL_KEYS[number], stat
     default: return { primary: false, available: true, selected: false };
   }
 }
+
+/** Fill the gaps between physical keys without letting adjacent touch targets overlap. */
+export function panelKeyHitArea(key: typeof BEOSOUND_PANEL_KEYS[number]) {
+  const row = BEOSOUND_PANEL_KEYS.filter(item => item.y === key.y).sort((a, b) => a.x - b.x);
+  const index = row.findIndex(item => item.name === key.name);
+  const previous = row[index - 1]?.x ?? key.x - (row[index + 1].x - key.x);
+  const next = row[index + 1]?.x ?? key.x + (key.x - row[index - 1].x);
+  const left = (previous + key.x) / 2 + 2;
+  const right = (next + key.x) / 2 - 2;
+  const top = key.y < 135 ? 26 : 137;
+  const bottom = key.y < 135 ? 133 : 242;
+  return { position: panelKeyPosition((left + right) / 2, (top + bottom) / 2),
+    size: [(right - left) / 2048 * .818, (bottom - top) / 256 * .093] satisfies [number, number] };
+}

@@ -184,6 +184,8 @@ async function captureVariant(browser: Browser, baseUrl: string, variant: Captur
     await page.waitForTimeout(1_500);
     if (pageErrors.length || responseErrors.length) throw new PosterPipelineError(`Rendered page errors: ${[...pageErrors, ...responseErrors].join(' | ')}`);
     await page.screenshot({ path: destination, type: 'png', animations: 'disabled', scale: 'device' });
+  } catch (error) {
+    throw new PosterPipelineError(`${variant.id}/${time}: ${error instanceof Error ? error.stack : String(error)}`);
   } finally {
     await context.close();
   }

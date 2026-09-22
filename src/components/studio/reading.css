@@ -71,16 +71,17 @@
 .studio-reader-body { display: contents; }
 .studio-reader-reveal { display: none; }
 @media (max-width:759px) {
-  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) {
-    top: max(8px, env(safe-area-inset-top)); bottom: 8px; height: auto; max-height: none;
+  .studio-dialog[data-scroll-sheet="true"][open]:not([data-expanded="true"]) {
+    display: block; inset: max(8px, env(safe-area-inset-top)) 8px 8px; width: calc(100vw - 16px); height: auto; max-height: none;
     padding: 0; border: 0; background: transparent; box-shadow: none;
-    pointer-events: none; overflow-anchor: none; scrollbar-width: none; z-index: 100;
+    pointer-events: none; overflow-y: auto; overflow-anchor: none; scrollbar-width: none; z-index: 100;
   }
-  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) .studio-reader-reveal { display: block; height: calc(50dvh - max(8px, env(safe-area-inset-top))); }
-  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) .studio-reader-body {
+  .studio-dialog[data-scroll-sheet="true"][open]:not([data-expanded="true"]) .studio-reader-reveal { display: block; height: calc(50dvh - max(8px, env(safe-area-inset-top))); }
+  .studio-dialog[data-scroll-sheet="true"][open]:not([data-expanded="true"]) .studio-reader-body {
     display: block; position: relative; min-height: calc(100dvh - 16px); padding: 18px;
     background: var(--studio-light); border: 1px solid var(--studio-line); border-radius: 4px;
     pointer-events: auto;
   }
-  .studio-dialog[data-workshop-sheet="true"]:not([data-expanded="true"]) .studio-panel-top { top: 0; }
+  .studio-dialog[data-scroll-sheet="true"][open]:not([data-expanded="true"]) .studio-panel-top { position: sticky; top: 0; }
+  .studio-dialog[data-scroll-sheet="true"][open]:not([data-expanded="true"]) .folio-content { overflow: visible; }
 }

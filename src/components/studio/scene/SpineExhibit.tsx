@@ -1,5 +1,5 @@
 import { Html, useGLTF } from '@react-three/drei';
-import { Component, Suspense, useEffect, useMemo } from 'react';
+import { Component, useEffect, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { Box3, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import type { Material } from 'three';
@@ -27,6 +27,7 @@ function AnatomyModel() {
   const { scene } = useGLTF('/models/spine.glb');
   const model = useMemo(() => {
     const clone = scene.clone(true);
+    clone.name = 'Anatomical spine specimen';
     const cloneMaterial = (original: Material) => {
       const material = original.clone();
       if (material instanceof MeshStandardMaterial) material.roughness = 0.74;
@@ -63,7 +64,7 @@ export function SpineExhibit({ selected, onSelect, reducedMotion }: SpineProps) 
     <Interactive id="spine" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.spine.position} onActivate={() => selected === 'spine' ? requestOfficePath('/workshops/cadaver') : onSelect('spine')}>
       <Block size={[0.26, 0.035, 0.22]} position={[0, 0.0175, 0]} radius={0.006} color={PALETTE.ink} roughness={0.78} />
       <group position={[0, 0.055, 0]} rotation={[0, ROOM.spine.rotation, 0]}>
-        <AnatomyBoundary><Suspense fallback={<ModelStatus text="Loading specimen" />}><AnatomyModel /></Suspense></AnatomyBoundary>
+        <AnatomyBoundary><AnatomyModel /></AnatomyBoundary>
       </group>
     </Interactive>
   );

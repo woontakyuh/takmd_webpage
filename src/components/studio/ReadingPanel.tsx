@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ExhibitId, OfficeCollection, StudioContent } from './types';
 import { TeachingReader } from './TeachingReader';
 import { CvReader } from './CvReader';
@@ -34,16 +34,29 @@ type Props = StudioContent & {
 
 export function ReadingPanel({ selected, detailsPath, publications, presentations, updatedAt, presentationsUpdatedAt, collection, onPaper, onTalk, talkSlideIndex, onTalkSlide, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
   const [expanded, setExpanded] = useState(false);
-  const workshopSheet = selected === 'spine' || detailsPath === '/ube' || Boolean(detailsPath?.startsWith('/workshops'));
   const [folioLeft, setFolioLeft] = useState<number>();
+  const scrollSheet = (selected === 'research' && folioLeft === undefined) || selected === 'spine' || detailsPath === '/ube' || Boolean(detailsPath?.startsWith('/workshops'));
   const active = detailsPath || selected;
+  const open = Boolean(active);
   const researchFocused = !detailsPath && selected === 'research';
   const screenFocused = !detailsPath && (selected === 'education' || selected === 'ai');
   const modal = expanded || screenFocused;
   const resetScroll = () => dialogRef.current?.scrollTo({ top: 0 });
+  const close = useCallback(() => {
+    const opener = openerRef.current;
+    onClose();
+    requestAnimationFrame(() => { if (opener?.isConnected) opener.focus({ preventScroll: true }); });
+  }, [onClose]);
 
   useEffect(() => { setExpanded(false); dialogRef.current?.scrollTo({ top: 0 }); }, [active]);
+
+  useEffect(() => {
+    if (!open) return;
+    const focused = document.activeElement;
+    openerRef.current = focused instanceof HTMLElement && focused !== document.body && !dialogRef.current?.contains(focused) ? focused : null;
+  }, [open]);
 
   useEffect(() => {
     if (selected !== 'research') return;
@@ -67,13 +80,22 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const onKey = (event: KeyboardEvent) => {
-      const modal = document.querySelector('dialog:modal');
-      if (modal && modal !== dialog) return;
-      if (event.key === 'Escape' && !event.defaultPrevented) { event.preventDefault(); onClose(); }
+      if (event.defaultPrevented || Array.from(document.querySelectorAll('dialog:modal')).some(openDialog => openDialog !== dialog)) return;
+      if (event.key === 'Escape') { event.preventDefault(); close(); }
+      if (event.key !== 'Tab') return;
+      const controls = Array.from(dialog.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea, summary, [tabindex], [contenteditable="true"]'))
+        .filter(element => element.tabIndex >= 0 && !element.matches(':disabled') && !element.closest('[inert]') && element.checkVisibility({ visibilityProperty: true }));
+      const first = controls[0];
+      const last = controls.at(-1);
+      if (!first || !last) { event.preventDefault(); return; }
+      if (!dialog.contains(document.activeElement) || document.activeElement === dialog || (event.shiftKey ? document.activeElement === first : document.activeElement === last)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => { document.body.style.overflow = previousOverflow; window.removeEventListener('keydown', onKey); };
-  }, [active, modal, onClose]);
+  }, [active, modal, close]);
 
 
   return (
@@ -83,25 +105,25 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
       style={!detailsPath && selected === 'research' && !expanded && folioLeft !== undefined ? { left: folioLeft, right: 'auto' } : undefined}
       data-exhibit={detailsPath ? 'details' : selected}
       data-expanded={expanded}
-      data-workshop-sheet={workshopSheet}
+      data-scroll-sheet={scrollSheet}
       data-screen-focus={screenFocused}
       aria-modal={modal}
       aria-labelledby="studio-panel-title"
-      onCancel={event => { event.preventDefault(); onClose(); }}
+      onCancel={event => { event.preventDefault(); close(); }}
       onClick={event => {
         if (event.target !== event.currentTarget) return;
         const rect = event.currentTarget.getBoundingClientRect();
-        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose();
+        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
       }}
     >
       {active && <>
-        {workshopSheet && <div className="studio-reader-reveal" aria-hidden="true" />}
+        {scrollSheet && <div className="studio-reader-reveal" aria-hidden="true" />}
         <div className="studio-reader-body">
         <div className="studio-panel-top">
           {researchFocused ? <h2 id="studio-panel-title">Research folio</h2> : <span className="studio-kicker">TakMD / {detailsPath ? 'Office collection' : selected === 'spine' ? 'Cadaver teaching' : selected === 'ai' ? 'CV' : selected}</span>}
           <div className="studio-panel-actions">
             {!screenFocused && <button className="studio-icon-button" onClick={() => setExpanded(value => !value)} aria-label={expanded ? 'Return to side reader' : 'Expand reading view'}><OfficeIcon name={expanded ? 'collapse' : 'expand'} /></button>}
-            <button className="studio-icon-button" onClick={onClose} aria-label="Close and return to office" data-reader-close><OfficeIcon name="close" /></button>
+            <button className="studio-icon-button" onClick={close} aria-label="Close and return to office" data-reader-close><OfficeIcon name="close" /></button>
           </div>
         </div>
         {!researchFocused && <h2 id="studio-panel-title">{detailsPath ? officeDetailsTitle(detailsPath) : selected ? titles[selected] : ''}</h2>}

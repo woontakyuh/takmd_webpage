@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-authoring-only>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -40,7 +40,7 @@ const assets = [
 document.getElementById('grid').innerHTML = assets.map(([name, tag]) => `
   <div class="card">
     <header><span>${name}.glb</span><span class="tag">${tag}</span></header>
-    <model-viewer src="/models/${name}.glb" camera-controls auto-rotate shadow-intensity="0.8"
+    <model-viewer src="../../public/models/${name}.glb" camera-controls auto-rotate shadow-intensity="0.8"
       exposure="1.05" interaction-prompt="none"></model-viewer>
   </div>`).join('');
 </script>

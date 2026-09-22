@@ -1,23 +1,16 @@
-import { useMaterialAccent } from './HoverAccent';
-import { useCursor } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { ReactNode, RefObject } from 'react';
-import type { ThreeEvent } from '@react-three/fiber';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { MathUtils } from 'three';
-import type { Group, Object3D, Texture } from 'three';
+import type { Group, Texture } from 'three';
 import { PALETTE } from './config';
 import { IsidoroOpeningHalf } from './IsidoroCabinetGeometry';
 import { Block, Rod } from './Primitives';
-import { cancelSceneSingleAction, scheduleSceneSingleAction } from './sceneGesture';
+import { useSceneAction as useCabinetAction, type ActionOptions } from './useSceneAction';
 import { ISIDORO_DIMENSIONS, ISIDORO_OPEN_ANGLE, ISIDORO_WORKTOP_TOP } from './WhiskyCabinetLayout';
 
-type ActionOptions = {
-  readonly visualAccent?: boolean;
-  readonly disabled: boolean;
-  readonly onActivate: () => void;
-  readonly onHoverChange?: (hovered: boolean) => void;
-};
+export { useSceneAction as useCabinetAction } from './useSceneAction';
+
 type DoorProps = ActionOptions & {
   readonly open: boolean;
   readonly reducedMotion: boolean;
@@ -25,90 +18,6 @@ type DoorProps = ActionOptions & {
   readonly children: ReactNode;
   readonly exterior?: ReactNode;
 };
-type Gesture = { readonly id: number; readonly x: number; readonly y: number };
-
-function modified(event: Pick<MouseEvent, 'shiftKey' | 'ctrlKey' | 'metaKey' | 'altKey'>) {
-  return event.shiftKey || event.ctrlKey || event.metaKey || event.altKey;
-}
-
-export function useCabinetAction({ disabled, onActivate, onHoverChange, visualAccent = false }: ActionOptions) {
-  const canvas = useThree(state => state.gl.domElement);
-  const gesture = useRef<Gesture | null>(null);
-  const mounted = useRef(false);
-  const enabled = useRef(!disabled);
-  const revision = useRef(0);
-  const activate = useRef(onActivate);
-  const [hovered, setHovered] = useState(false);
-  useCursor(hovered && !disabled);
-  const hoverTarget = useRef<Object3D | null>(null);
-  useMaterialAccent(hoverTarget, hovered && !disabled && visualAccent);
-  useLayoutEffect(() => {
-    enabled.current = !disabled;
-    activate.current = onActivate;
-    if (disabled) { revision.current += 1; gesture.current = null; setHovered(false); }
-  }, [disabled, onActivate]);
-  useEffect(() => { onHoverChange?.(hovered && !disabled); }, [hovered, disabled, onHoverChange]);
-  useEffect(() => {
-    mounted.current = true;
-    const cancel = () => { gesture.current = null; setHovered(false); };
-    const track = (event: PointerEvent) => {
-      const start = gesture.current;
-      if (start && (event.pointerId !== start.id || modified(event)
-        || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 5)) cancel();
-    };
-    window.addEventListener('pointerdown', track, true);
-    window.addEventListener('pointermove', track, true);
-    window.addEventListener('pointerup', cancel);
-    window.addEventListener('pointercancel', cancel, true);
-    window.addEventListener('blur', cancel);
-    return () => {
-      mounted.current = false;
-      window.removeEventListener('pointerdown', track, true);
-      window.removeEventListener('pointermove', track, true);
-      window.removeEventListener('pointerup', cancel);
-      window.removeEventListener('pointercancel', cancel, true);
-      window.removeEventListener('blur', cancel);
-    };
-  }, []);
-  const hover = (event: ThreeEvent<PointerEvent>) => {
-    event.stopPropagation();
-    hoverTarget.current = event.eventObject;
-    setHovered(!disabled && event.pointerType !== 'touch' && event.buttons === 0);
-  };
-  return {
-    hovered: hovered && !disabled,
-    handlers: {
-      onPointerOver: hover,
-      onPointerMove: hover,
-      onPointerOut: () => setHovered(false),
-      onPointerDown: (event: ThreeEvent<PointerEvent>) => {
-        setHovered(false);
-        event.stopPropagation();
-        gesture.current = !disabled && event.button === 0 && event.isPrimary && !modified(event)
-          ? { id: event.pointerId, x: event.clientX, y: event.clientY } : null;
-      },
-      onPointerCancel: () => { gesture.current = null; setHovered(false); },
-      onPointerUp: (event: ThreeEvent<PointerEvent>) => {
-        event.stopPropagation();
-        const start = gesture.current;
-        gesture.current = null;
-        if (disabled || !start || event.button !== 0 || !event.isPrimary || modified(event)
-          || start.id !== event.pointerId || event.delta >= 5
-          || Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 5) return;
-        const currentRevision = revision.current;
-        scheduleSceneSingleAction(canvas, () => {
-          if (mounted.current && enabled.current && currentRevision === revision.current) activate.current();
-        });
-      },
-      onClick: (event: ThreeEvent<MouseEvent>) => event.stopPropagation(),
-      onDoubleClick: (event: ThreeEvent<MouseEvent>) => {
-        event.stopPropagation();
-        cancelSceneSingleAction(canvas);
-      },
-    },
-  };
-}
-
 // Opening the cabinet: how fast each half settles, how close counts as arrived (a quarter of a degree, invisible),
 // and how far the leaf swings before the worktop starts to follow it down.
 const ISIDORO_DAMPING = 16;

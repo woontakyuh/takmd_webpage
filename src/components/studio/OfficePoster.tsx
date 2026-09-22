@@ -45,7 +45,8 @@ export function OfficePoster({ ready, failed, night, onHidden }: {
       const top = variant.monitor.y + variant.monitor.across[1] / 2 - variant.height / 2;
       return <span key={variant.id} className="office-poster-status" data-variant={variant.id} role="status"
         style={{ left: `calc(50% + ${center} * ${scale})`, top: `calc(50% + ${top} * ${scale} - ${clearance})` }}>
-        {failed ? 'The office couldn’t open. Please reload.' : 'Opening the office…'}
+        {failed ? 'The office couldn’t open.' : 'Opening the office…'}
+        {failed && <button className="office-poster-retry" type="button" onClick={() => window.location.reload()}>Try again</button>}
       </span>;
     })}
   </div>;

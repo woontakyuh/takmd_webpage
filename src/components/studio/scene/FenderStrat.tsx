@@ -1,11 +1,12 @@
 import { useGLTF } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
-import { Float32BufferAttribute, Mesh, MeshStandardMaterial } from 'three';
-import type { BufferGeometry, Material } from 'three';
+import { Float32BufferAttribute, Mesh, MeshStandardMaterial, Source } from 'three';
+import type { BufferGeometry, Material, Texture } from 'three';
 import { Rod } from './Primitives';
 
-// The original file, uncompressed: the Sienna finish is painted by a shader over the body found by walking the mesh's
-// connectivity, and a recompressed file (re-indexed, quantised) breaks that walk and shows the raw sunburst.
+// Preserve vertex/index order: the Sienna shader identifies the body through mesh connectivity.
+// The phone copy changes only textures, matching the existing 1024px browser upload.
 const MODEL_URL = '/models/fender/stratocaster-sunburst.glb?v=20260918-original' as const;
 const DARK = '#20201d';
 
@@ -43,9 +44,33 @@ const MAPLE_FRAGMENT = `
   diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.025, 0.018, 0.012), blackDot * boardU);
 `;
 
-function adaptMaterial(source: Material): Material {
+function fitGuitarTexture(texture: Texture, limit: number, resized: Map<Texture, Texture>): Texture {
+  const image: unknown = texture.image;
+  if (typeof ImageBitmap === 'undefined' || !(image instanceof ImageBitmap) || Math.max(image.width, image.height) <= limit) return texture;
+  const cached = resized.get(texture);
+  if (cached) return cached;
+  const canvas = document.createElement('canvas');
+  const scale = limit / Math.max(image.width, image.height);
+  canvas.width = Math.max(1, Math.floor(image.width * scale));
+  canvas.height = Math.max(1, Math.floor(image.height * scale));
+  const context = canvas.getContext('2d');
+  if (!context) return texture;
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const fitted = texture.clone();
+  // A pre-sized canvas makes Three honor flipY=false; its internal Bitmap resize inherits unrelated upload state.
+  fitted.source = new Source(canvas);
+  fitted.needsUpdate = true;
+  resized.set(texture, fitted);
+  return fitted;
+}
+
+function adaptMaterial(source: Material, limit: number, resized: Map<Texture, Texture>): Material {
   const material = source.clone();
   if (!(material instanceof MeshStandardMaterial)) return material;
+  for (const key of ['map', 'normalMap', 'roughnessMap', 'metalnessMap'] as const) {
+    const texture = material[key];
+    if (texture) material[key] = fitGuitarTexture(texture, limit, resized);
+  }
   const fragment = material.name === 'Neck' ? MAPLE_FRAGMENT : material.name === 'Guitar' ? SIENNA_FRAGMENT : null;
   if (!fragment) return material;
   material.onBeforeCompile = shader => {
@@ -131,11 +156,13 @@ function prepareGeometry(source: BufferGeometry): BufferGeometry {
 }
 
 export function FenderStrat() {
-  const { scene } = useGLTF(MODEL_URL);
+  const textureLimit = useThree(state => state.gl.capabilities.maxTextureSize);
+  const { scene } = useGLTF(textureLimit <= 1024 ? '/models/fender/stratocaster-phone.glb?v=20260922-1' : MODEL_URL);
   const prepared = useMemo(() => {
     const clone = scene.clone(true);
     const materials: Material[] = [];
     const geometries: BufferGeometry[] = [];
+    const textures = new Map<Texture, Texture>();
     clone.name = 'Fender Stratocaster sunburst licensed mesh';
     clone.traverse((child) => {
       if (!(child instanceof Mesh)) return;
@@ -145,17 +172,18 @@ export function FenderStrat() {
       geometries.push(child.geometry);
       const source = Array.isArray(child.material) ? child.material : [child.material];
       const adapted = source.map(material => {
-        const result = adaptMaterial(material);
+        const result = adaptMaterial(material, textureLimit, textures);
         materials.push(result);
         return result;
       });
       child.material = Array.isArray(child.material) ? adapted : adapted[0];
     });
-    return { model: clone, materials, geometries };
-  }, [scene]);
+    return { model: clone, materials, geometries, textures };
+  }, [scene, textureLimit]);
   useEffect(() => () => {
     prepared.materials.forEach(material => material.dispose());
     prepared.geometries.forEach(geometry => geometry.dispose());
+    prepared.textures.forEach(texture => texture.dispose());
   }, [prepared]);
 
   return <group name="Fender USA Stratocaster Sienna Sunburst on floor stand">
@@ -185,5 +213,3 @@ export function FenderStrat() {
     </group>
   </group>;
 }
-
-// No module-scope preload: the guitar is mounted after the room is ready (see DeferredAssets).

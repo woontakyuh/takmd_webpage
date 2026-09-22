@@ -6,7 +6,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 // The walls, shelf boards, rails, wall boxes and window frames are drawn as some seventy separate meshes although
 // nobody clicks, hovers or moves them and they share a handful of materials. Each of those is a draw call. This
-// sweeps the scene once a second, gathers static opaque meshes that share a material and a parent arrangement,
+// sweeps the scene once a second, gathers static opaque siblings that share a material,
 // and draws each group as one mesh; the originals stay in the tree, hidden, so React keeps owning them. If an
 // original moves, changes material or leaves the scene, its group is taken apart again and redrawn from scratch.
 
@@ -31,12 +31,9 @@ function isInteractive(object: Object3D): boolean {
   return false;
 }
 
-// Furniture that the visitor can rearrange keeps its own merged pieces inside its own group, so moving it moves them.
-function anchorOf(object: Object3D, scene: Object3D): Object3D {
-  for (let node: Object3D | null = object.parent; node; node = node.parent) {
-    if (node.name.startsWith('Furniture layout')) return node;
-  }
-  return scene;
+// Keep every visibility/transform ancestor: hoisting above one leaves cutaway walls visible from outside.
+export function anchorOf(object: Object3D, scene: Object3D): Object3D {
+  return object.parent ?? scene;
 }
 
 function materialKey(mesh: Mesh, material: MeshStandardMaterial, anchor: Object3D): string {
@@ -88,7 +85,7 @@ export function StaticMerge({ enabled = true }: { readonly enabled?: boolean }) 
     // 1. Take apart any group whose originals changed.
     groups.current = groups.current.filter(group => {
       const intact = group.merged.parent === group.anchor && group.originals.every((original, index) => {
-        if (!original.parent || !isConnected(original, scene)) return false;
+        if (original.parent !== group.anchor || !isConnected(original, scene)) return false;
         const material = candidateMaterial(original);
         if (!material || materialKey(original, material, group.anchor) !== group.key) return false;
         original.updateWorldMatrix(true, false);
