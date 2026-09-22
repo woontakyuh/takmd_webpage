@@ -169,7 +169,7 @@ export const AWARD_PRINTS: Readonly<Record<string, PrintSpec>> = {
   },
 };
 
-function projector({ view, corners }: PrintSpec) {
+export function projector({ view, corners }: PrintSpec) {
   const [a, b, c, d] = corners,
     x1 = b[0] - c[0],
     x2 = d[0] - c[0],

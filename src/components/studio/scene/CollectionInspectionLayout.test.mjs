@@ -3,8 +3,9 @@ import { Box3, PerspectiveCamera, Vector3 } from 'three';
 import { fitCollectionItem, positionCollectionCopy, projectCollectionBounds } from './CollectionInspectionLayout.ts';
 import { collectionInspection } from './CollectionInspectionData.ts';
 
-const portrait = new Box3(new Vector3(1.816, 1.82, 3.098), new Vector3(2.054, 2.142, 3.197));
-const landscape = new Box3(new Vector3(1.43, 1.82, 3.098), new Vector3(1.755, 2.056, 3.197));
+// Conservative mounted-frame bounds on CertificateFrames' current 2.0m shelf, including rear props.
+const portrait = new Box3(new Vector3(1.816, 2, 3.109), new Vector3(2.054, 2.325, 3.203));
+const landscape = new Box3(new Vector3(1.43, 2, 3.109), new Vector3(1.755, 2.239, 3.203));
 
 function displayedLayout(bounds, placement, width, height, textHeight, obstacle) {
   const viewport = { width, height };
@@ -19,18 +20,23 @@ function displayedLayout(bounds, placement, width, height, textHeight, obstacle)
 }
 
 describe('collection inspection composition', () => {
-  it('Given an ultrawide display, when the credential group opens, then all three complete frames fit vertically and horizontally', () => {
-    const viewport = { width: 2560, height: 720 };
-    const allFrames = portrait.clone().union(landscape).union(new Box3(new Vector3(2.106, 1.82, 3.098), new Vector3(2.344, 2.142, 3.197)));
-    const pose = collectionInspection('credentials', viewport.width, viewport.height);
-    const camera = new PerspectiveCamera(42, viewport.width / viewport.height, .015, 60);
-    camera.position.set(...pose.position); camera.lookAt(...pose.target); camera.updateMatrixWorld();
-    const projected = projectCollectionBounds(allFrames, camera, viewport);
-    expect(projected.left).toBeGreaterThan(16);
-    expect(projected.right).toBeLessThan(viewport.width - 16);
-    expect(projected.top).toBeGreaterThan(64);
-    expect(projected.bottom).toBeLessThan(viewport.height - 64);
-  });
+  for (const [width, height] of [[2560, 720], [1920, 960], [1280, 720], [768, 1024], [390, 844], [375, 667], [844, 390]]) {
+    it(`Given a ${width} × ${height} display, when the credential group opens, then all three complete frames fit vertically and horizontally`, () => {
+      // Given the current physical shelf positions and the collection's runtime field of view.
+      const viewport = { width, height };
+      const allFrames = portrait.clone().union(landscape).union(new Box3(new Vector3(2.106, 2, 3.109), new Vector3(2.344, 2.325, 3.203)));
+      const pose = collectionInspection('credentials', width, height);
+      const camera = new PerspectiveCamera(width < height ? 60 : 42, width / height, .015, 60);
+      // When the collection pose projects all three frames, including their depth.
+      camera.position.set(...pose.position); camera.lookAt(...pose.target); camera.updateMatrixWorld();
+      const projected = projectCollectionBounds(allFrames, camera, viewport);
+      // Then all frames clear the viewport edges and inspection controls.
+      expect(projected.left).toBeGreaterThan(16);
+      expect(projected.right).toBeLessThan(width - 16);
+      expect(projected.top).toBeGreaterThan(64);
+      expect(projected.bottom).toBeLessThan(height - 64);
+    });
+  }
 
   for (const [width, height] of [[1920, 960], [1280, 720], [768, 1024], [390, 844], [375, 667], [844, 390]]) {
     for (const [placement, bounds, obstacle] of [['left', portrait], ['upper-right', portrait, landscape], ['right', landscape], ['bottom', portrait]]) {

@@ -62,6 +62,7 @@ export function collectionInspection(collection: CollectionId, width: number, he
   const targets = {
     credentials: [1.91, 2.145, 3.12], awards: [-1.875, 2.15, 3.11],
     honors: [-1.875, 2.55, 3.12], certificates: [1.875, 2.52, 3.12],
+    'workshop-certificates': [1.875, 1.82, 3.14],
   } as const;
   const target = targets[collection];
   const verticalFov = width < height ? 60 : 42;

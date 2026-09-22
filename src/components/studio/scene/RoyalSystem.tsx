@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Color, CylinderGeometry, InstancedMesh, MeshStandardMaterial, Object3D, Vector3 } from 'three';
 import type { Texture } from 'three';
 import type { StudioSceneProps } from '../types';
@@ -11,6 +11,7 @@ import { AwardCeremonyPhoto, CertificateFrames } from './CertificateFrames';
 import { CollectionInspectionExit, CollectionInspectionItem } from './CollectionInspection';
 import { AWARD_ITEMS } from './CollectionInspectionData';
 import { AdditionalHonors } from './AdditionalHonors';
+import { CgbioCertificate } from './CgbioCertificate';
 
 const WOOD_BASE = new Color(PALETTE.paperLight);
 const WOOD_TINT = new Color(INTERIOR.lightWood).multiply(
@@ -71,9 +72,10 @@ export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: Roy
     <SteelHangers />
 
     <group name="personal-awards-collection">
-      <Suspense fallback={null}><AdditionalHonors wood={wood} /></Suspense>
-      <Suspense fallback={null}><CertificateFrames /></Suspense>
-      <Suspense fallback={null}><AwardCeremonyPhoto onOpen={onAwardPhoto} selected={selected} reducedMotion={reducedMotion} /></Suspense>
+      <AdditionalHonors wood={wood} />
+      <CgbioCertificate />
+      <CertificateFrames />
+      <AwardCeremonyPhoto onOpen={onAwardPhoto} selected={selected} reducedMotion={reducedMotion} />
       <CollectionInspectionItem item={AWARD_ITEMS[0]}>
         <group name="Hallym appreciation display" position={[-1.54, LEFT_LEVELS[2], 3.095]} rotation={[0, Math.PI, 0]}>
           <HallymPlaque />

@@ -18,3 +18,8 @@ describe('nextCollectionInspection', () => {
     expect(nextCollectionInspection('award-hallym', 'credentials', 'credential-snu')).toBe('collection-credentials');
   });
 });
+
+it('Given the CGBIO pair, when either leaf is selected, then the hyphenated collection opens its leaf directly', () => {
+  expect(nextCollectionInspection('collection-workshop-certificates', 'workshop-certificates', 'workshop-certificate-cgbio-photo')).toBe('workshop-certificate-cgbio-photo');
+  expect(nextCollectionInspection('workshop-certificate-cgbio-photo', 'workshop-certificates', 'workshop-certificate-cgbio-faculty')).toBe('workshop-certificate-cgbio-faculty');
+});

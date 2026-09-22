@@ -164,7 +164,7 @@ function CollectionDescription({ item, target }: { readonly item: CollectionItem
       <p className="collection-inspection-label">{item.label}</p>
       <h2 id={`collection-title-${item.id}`}>{item.title}</h2>
       <p className="collection-inspection-date">{item.date}</p>
-      <p>{item.description}</p>
+      {item.description && <p>{item.description}</p>}
       </div>
     </section>
   </Html>;
