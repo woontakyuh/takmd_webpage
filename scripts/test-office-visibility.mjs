@@ -43,6 +43,7 @@ try {
         'Fender Stratocaster sunburst licensed mesh', 'Fender 65 Deluxe Reverb amplifier',
         'Hanging physician coat', 'Hanging Control gi', 'Bing 9ft6 surfboard',
         'Reference pale-pink plush pig', 'Personal painting above the garment rack',
+        'SZQ Gallery textured canvas, 2020',
         'CGBIO standing bifold certificate', 'Framed academic credentials',
         'Additional photographed honors', 'Magnetic whisky lecture card',
         'Anatomical spine specimen', 'Award photo interaction',

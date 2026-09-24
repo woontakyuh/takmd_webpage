@@ -6,6 +6,7 @@ import { DoctorCoat, JiuJitsuGi } from './Garment';
 import { EPOCH_HANGER_POSITIONS, GarmentRack, RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 import { Interactive } from './Interactive';
 import { PersonalArtworkFrame } from './PersonalArtworkFrame';
+import { TexturedArtwork } from './TexturedArtwork';
 import { Surfboard } from './Surfboard';
 import { SurfboardStoryAnchor } from './SurfboardStoryAnchor';
 import { ROOM } from './config';
@@ -18,6 +19,7 @@ export function PersonalCorner({ selected, onSelect, reducedMotion }: PersonalCo
   return (
     <group>
       <PersonalArtworkFrame />
+      <TexturedArtwork />
       <group position={[...wardrobe.position]} rotation={[0, wardrobe.rotation, 0]}>
         <GarmentRack />
         <Interactive id="spine" name="Exhibit hospital" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
