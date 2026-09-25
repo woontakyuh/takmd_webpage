@@ -13,6 +13,7 @@ try {
     ['loading', 'test-office-loading.mjs'],
     ['reader', 'test-reading-panel.mjs'],
     ['content', 'test-office-content.mjs'],
+    ['artwork', 'test-artwork-navigation.mjs'],
     ['headers', 'test-public-headers-browser.mjs'],
     ['media', 'test-office-media.mjs'],
     ['visibility', 'test-office-visibility.mjs'],

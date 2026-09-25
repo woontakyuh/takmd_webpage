@@ -24,15 +24,16 @@ export function TexturedArtwork() {
   ]);
   art.colorSpace = SRGBColorSpace;
   const group = useRef<Group>(null);
-  const size = useThree(state => state.size);
+  const viewportWidth = useThree(state => state.size.width);
+  const viewportHeight = useThree(state => state.size.height);
   const { editing } = useArrangement();
   const { inspection, setInspection } = useSceneInspection();
   const active = inspection?.id === 'szq-textured-artwork';
   const approach = useCallback(() => {
     if (!group.current) return;
-    const pose = archivePose(group.current, size, WIDTH, HEIGHT, true);
+    const pose = archivePose(group.current, { width: viewportWidth, height: viewportHeight }, WIDTH, HEIGHT, true);
     setInspection({ id: 'szq-textured-artwork', position: pose.position, target: pose.target });
-  }, [size, setInspection]);
+  }, [viewportWidth, viewportHeight, setInspection]);
   const close = useCallback(() => setInspection(null), [setInspection]);
   const { handlers } = useCabinetAction({ disabled: editing || active, onActivate: approach, visualAccent: true });
   useEffect(() => { if (active) approach(); }, [active, approach]);
