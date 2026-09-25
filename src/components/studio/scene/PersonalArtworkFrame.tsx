@@ -11,8 +11,8 @@ import { archivePose } from './roomArchiveLayout';
 import { RoomArchiveCaption } from './RoomArchiveCaption';
 import { INTERIOR, ROOM } from './config';
 
-const WIDTH = .62;
-const PRINT = .51;
+const WIDTH = .42;
+const PRINT = .345;
 const RIM = .018;
 
 export function PersonalArtworkFrame() {
@@ -32,7 +32,7 @@ export function PersonalArtworkFrame() {
   const { handlers } = useCabinetAction({ disabled: editing || active, onActivate: approach, visualAccent: true });
   useEffect(() => { if (active) approach(); }, [active, approach]);
   return <group ref={group} name="Personal painting above the garment rack"
-    position={[ROOM.architecture.leftX + .036, 2.35, ROOM.wardrobe.position[2] + .21]}
+    position={[ROOM.architecture.leftX + .036, 2.35, ROOM.wardrobe.position[2] + .27]}
     rotation={[0, Math.PI / 2, 0]} {...handlers}>
     <Block size={[WIDTH, WIDTH, .022]} color={INTERIOR.oak} radius={.002} roughness={.8} />
     <mesh position={[0, 0, .012]}>

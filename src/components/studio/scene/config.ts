@@ -67,7 +67,7 @@ export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, Cam
   { position: [0, 1.6, -0.8], target: [0, 1.6, 3.2], zoom: 1 },
   { position: [0.6, 2.1, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   { position: [0.1, 1.55, -4.2], target: [2.4, 0.75, -1.85], zoom: 1 },
-  { position: [3.5, 2.0, -3.8], target: [-2.48, 1.5, -2.35], zoom: 1 },
+  { position: [1.7, 1.92, -3.45], target: [-2.48, 1.55, -2.35], zoom: 1 },
 ];
 
 export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
@@ -92,7 +92,7 @@ export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPo
   { position: [3.6, 1.6, -1.0], target: [0.6, 1.5, 3.36], zoom: 1 },
   { position: [1.45, 2.3, 0.6], target: [-2.42, 0.867, 0.6], zoom: 1 },
   { position: [-0.95, 1.7, -4.8], target: [2.4, 0.7, -2.15], zoom: 1 },
-  { position: [1.7, 2.2, -3.6], target: [-2.48, 1.5, -2.35], zoom: 1 },
+  { position: [.95, 2.074, -3.375], target: [-2.48, 1.5, -2.35], zoom: 1 },
 ];
 
 export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {

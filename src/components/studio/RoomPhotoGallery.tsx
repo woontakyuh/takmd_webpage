@@ -5,7 +5,7 @@ import './room-photo-gallery.css';
 
 type Photo = { readonly src: string; readonly caption: string };
 
-function PhotoViewer({ photos, initial, onClose }: { readonly photos: readonly Photo[]; readonly initial: number; readonly onClose: () => void }) {
+function PhotoViewer({ photos, initial, onClose, label }: { readonly photos: readonly Photo[]; readonly initial: number; readonly onClose: () => void; readonly label: string }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(initial);
@@ -19,7 +19,7 @@ function PhotoViewer({ photos, initial, onClose }: { readonly photos: readonly P
     return () => { dialog?.close(); if (trigger instanceof HTMLElement) trigger.focus({ preventScroll: true }); };
   }, []);
   if (!photo) return null;
-  return createPortal(<dialog ref={dialogRef} className="room-photo-viewer" aria-label="Workshop photograph"
+  return createPortal(<dialog ref={dialogRef} className="room-photo-viewer" aria-label={label}
     onCancel={event => { event.preventDefault(); event.stopPropagation(); onClose(); }}
     onKeyDown={event => { if (event.key === 'ArrowRight') { event.preventDefault(); move(1); } if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); } }}>
     <header><span>{index + 1} / {photos.length}</span><div>
@@ -31,13 +31,13 @@ function PhotoViewer({ photos, initial, onClose }: { readonly photos: readonly P
   </dialog>, document.body);
 }
 
-export function RoomPhotoGallery({ photos }: { readonly photos: readonly Photo[] }) {
+export function RoomPhotoGallery({ photos, label = 'Workshop photograph' }: { readonly photos: readonly Photo[]; readonly label?: string }) {
   const [selected, setSelected] = useState<number | null>(null);
   return <>
     <div className="workshop-room-gallery">{photos.map((photo, index) => <figure key={photo.src}>
       <button type="button" className="room-photo-open" onClick={() => setSelected(index)} aria-label={`Enlarge photograph: ${photo.caption}`}><img src={photo.src} alt={photo.caption} loading="lazy" /><span aria-hidden="true"><OfficeIcon name="expand" /></span></button>
       <figcaption>{photo.caption}</figcaption>
     </figure>)}</div>
-    {selected !== null && <PhotoViewer photos={photos} initial={selected} onClose={() => setSelected(null)} />}
+    {selected !== null && <PhotoViewer photos={photos} initial={selected} onClose={() => setSelected(null)} label={label} />}
   </>;
 }
