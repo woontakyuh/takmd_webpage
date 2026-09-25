@@ -182,6 +182,8 @@ async function captureVariant(browser: Browser, baseUrl: string, variant: Captur
     });
     await page.addStyleTag({ content: '.office-poster,.studio-header,.studio-tools,.office-bottom,.monitor-screen-header{display:none!important}' });
     await page.waitForTimeout(1_500);
+    await page.locator('.studio canvas').waitFor({ state: 'visible', timeout: 120_000 });
+    await page.locator('.office-poster[data-ready="true"]').waitFor({ state: 'attached', timeout: 120_000 });
     if (pageErrors.length || responseErrors.length) throw new PosterPipelineError(`Rendered page errors: ${[...pageErrors, ...responseErrors].join(' | ')}`);
     await page.screenshot({ path: destination, type: 'png', animations: 'disabled', scale: 'device' });
   } catch (error) {
