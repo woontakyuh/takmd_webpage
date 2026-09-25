@@ -1,0 +1,16 @@
+.office-poster { position: absolute; inset: 0; z-index: 2; container-type: size; background: var(--studio-paper); opacity: 1; transition: opacity var(--studio-micro, 180ms) var(--studio-ease), visibility var(--studio-micro, 180ms); pointer-events: none; }
+.office-poster picture, .office-poster img { display: block; width: 100%; height: 100%; }
+.office-poster img { object-fit: cover; object-position: center; }
+.office-poster[data-ready="true"] { opacity: 0; visibility: hidden; }
+.office-poster-status { display: none; position: absolute; transform: translate(-50%, -100%); width: max-content; max-width: calc(100% - 32px); color: var(--studio-ink); font: italic 24px/1.4 Georgia, serif; letter-spacing: -.02em; isolation: isolate; text-align: center; text-shadow: 0 1px 8px var(--studio-paper); pointer-events: none; }
+@media (max-width: 759px) and (aspect-ratio < 1/1) { .office-poster-status[data-variant="mobile-portrait"] { display: block; } }
+@media (max-width: 759px) and (aspect-ratio >= 1/1) { .office-poster-status[data-variant="mobile-landscape"] { display: block; } }
+@media (min-width: 760px) and (aspect-ratio < 1/1) { .office-poster-status[data-variant="desktop-portrait"] { display: block; } }
+@media (min-width: 760px) and (aspect-ratio >= 1/1) { .office-poster-status[data-variant="desktop-landscape"] { display: block; } }
+.studio[data-entry="seated"] :is(.studio-tools, .office-bottom) { visibility: hidden; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .office-poster { transition: none; } }
+
+.office-poster-status::before { content: ''; position: absolute; z-index: -1; left: 50%; top: 50%; width: 360px; height: 160px; transform: translate(-50%, -58%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: color-mix(in srgb, var(--studio-paper) 50%, transparent); mask-image: radial-gradient(ellipse at center, black 15%, rgba(0,0,0,.9) 40%, transparent 72%); -webkit-mask-image: radial-gradient(ellipse at center, black 15%, rgba(0,0,0,.9) 40%, transparent 72%); }
+.office-poster-retry { display: block; margin: 8px auto 0; min-height: 44px; padding: 8px 12px; border: 0; background: transparent; color: var(--studio-ink); font: 500 14px/1.4 var(--studio-sans); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; pointer-events: auto; }
+.office-poster-retry:focus-visible { outline: 2px solid var(--studio-ink); outline-offset: 2px; }
+@media (min-width: 760px) { .office-poster-status { font-size: 34px; } .office-poster-status::before { width: 480px; height: 200px; } }

@@ -1,49 +1,129 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import Layout from '../layouts/Layout.astro';
+import presentationsData from '../data/presentations.json';
+import publicationsData from '../data/publications.json';
+import { aiProjects, hasAiSignal } from '../data/ai-projects';
+
+const aiPresentations = presentationsData.presentations.filter((presentation) => hasAiSignal(`${presentation.name} ${presentation.topics.join(' ')}`));
+const aiPublications = publicationsData.publications.filter((publication) => hasAiSignal(publication.title));
 ---
 
-<Layout title="AI - takmd" description="AI integration in clinical spine surgery practice.">
-  <section class="page-shell py-14">
-    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">AI Integration in Clinical Spine Practice</h1>
-    <p class="mt-4 text-base text-[var(--color-link)]">AI assists cognition, not replaces surgeons.</p>
-  </section>
+<Layout title="AI Work - Woon Tak Yuh, MD" description="Documented AI-related projects, talks, and publications by Woon Tak Yuh, MD.">
+  <main id="main-content">
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div>
+          <p class="eyebrow">AI work</p>
+          <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
+            Projects, teaching, and research with a clear source trail.
+          </h1>
+        </div>
+        <p class="lede">
+          Projects, lectures, and research exploring AI in practice.
+        </p>
+      </div>
+    </section>
 
-  <section class="page-shell space-y-8 pb-16">
-    <div>
-      <SectionHeader icon="🧠" title="Workflow Augmentation" />
-      <p class="max-w-3xl text-[var(--color-text-secondary)]">
-        AI supports preoperative and postoperative workflow continuity by reducing repetitive synthesis tasks and helping
-        maintain structured clinical context across encounters.
-      </p>
-    </div>
+    <section class="page-shell pb-12 sm:pb-16">
+      <div class="grid gap-3 md:grid-cols-3">
+        <article class="data-card">
+          <p class="metric-number">{aiPresentations.length}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">AI-related talks</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{aiPublications.length}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">AI-related papers</p>
+        </article>
+        <article class="data-card">
+          <p class="metric-number">{aiProjects.length}</p>
+          <p class="mt-3 text-sm font-semibold text-[var(--color-text)]">Documented side projects</p>
+        </article>
+      </div>
+    </section>
 
-    <div>
-      <SectionHeader icon="🗂️" title="Documentation Assist" />
-      <p class="max-w-3xl text-[var(--color-text-secondary)]">
-        Voice-to-structured note pipelines reduce documentation burden while preserving surgeon review at every stage of
-        final clinical communication.
-      </p>
-    </div>
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader
+        eyebrow="Side projects"
+        title="Projects in progress"
+        description="A workflow study and K-Spinoscopy dashboard project connect AI methods with clinical practice, teaching, and research."
+      />
+      <div class="grid gap-4 md:grid-cols-2">
+        {aiProjects.map((project) => (
+          <Card title={project.title} description={project.description} href={project.href} tags={[project.eyebrow]} />
+        ))}
+      </div>
+    </section>
 
-    <div>
-      <SectionHeader icon="📊" title="Registry Structuring" />
-      <p class="max-w-3xl text-[var(--color-text-secondary)]">
-        Standardized fields and consistent tagging support prospective data quality and simplify later analysis for quality
-        improvement and publication-ready registries.
-      </p>
-    </div>
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.35fr_0.65fr]">
+        <div>
+          <SectionHeader
+            eyebrow="Teaching record"
+            title="AI-related presentations"
+            description="Selected lectures on AI methods, workflow, peer review, imaging, and clinical practice."
+            href="/ai-workflow"
+            linkText="Detailed workflow"
+          />
+        </div>
+        <div class="data-card">
+          <div class="record-list">
+            {aiPresentations.map((presentation) => (
+              <article class="record-item">
+                <div>
+                  <p class="record-kicker">{presentation.date}</p>
+                  <p class="mt-1 text-xs text-[var(--color-text-muted)]">{presentation.place || 'Location TBA'}</p>
+                </div>
+                <div>
+                  <h2 class="text-base font-semibold leading-7 text-[var(--color-text)]"><a href={`/?exhibit=education&talk=${encodeURIComponent(presentation.id)}`} class="hover:underline">{presentation.name}</a></h2>
+                  <p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{presentation.topics[0]}</p>
+                </div>
+              </article>
+            ))}
+            {aiPresentations.length === 0 && <p class="text-sm leading-6 text-[var(--color-text-secondary)]">No AI-related presentation records are available yet.</p>}
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <div>
-      <SectionHeader icon="✅" title="Decision Checklist Support" />
-      <p class="max-w-3xl text-[var(--color-text-secondary)]">
-        Prompt-driven checklists offer cognitive safety rails around indications, contraindications, and expected outcomes,
-        while final decisions remain physician-led.
-      </p>
-    </div>
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <div class="grid gap-8 lg:grid-cols-[0.35fr_0.65fr]">
+        <div>
+          <SectionHeader
+            eyebrow="Publication record"
+            title="AI-related papers"
+            description="Published work on deep learning, foundation models, and computational imaging in spine care."
+            href="/research"
+            linkText="Research archive"
+          />
+        </div>
+        <div class="data-card">
+          <div class="record-list">
+            {aiPublications.map((publication) => (
+              <article class="record-item">
+                <div>
+                  <p class="record-kicker">{publication.year}</p>
+                  <p class="mt-1 text-xs text-[var(--color-text-muted)]">{publication.journal}</p>
+                </div>
+                <div>
+                  <h2 class="text-base font-semibold leading-7 text-[var(--color-text)]"><a href={`/?exhibit=research&paper=${encodeURIComponent(publication.doiUrl || publication.title)}`} class="hover:underline">{publication.title}</a></h2>
+                  <p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{publication.role} · Opens in the research folio</p>
+                </div>
+              </article>
+            ))}
+            {aiPublications.length === 0 && <p class="text-sm leading-6 text-[var(--color-text-secondary)]">No AI-related publication records are available yet.</p>}
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <a href="/ai-workflow" class="inline-flex text-sm font-medium text-[var(--color-link)] transition-colors hover:text-[var(--color-text)]">
-      See the detailed workflow ->
-    </a>
-  </section>
+    <section id="spinoscopy" class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader
+        eyebrow="K-Spinoscopy dashboard"
+        title="Project note in development"
+        description="This project is listed as active work. A public project note is being prepared."
+      />
+    </section>
+  </main>
 </Layout>

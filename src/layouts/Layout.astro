@@ -1,26 +1,33 @@
 ---
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import OfficeEntry from '../components/OfficeEntry.astro';
 
 interface Props {
   title?: string;
   description?: string;
   hideNav?: boolean;
   hideFooter?: boolean;
+  bodyClass?: string;
+  documentPage?: boolean;
 }
 
 const {
-  title = "Woon Tak Yuh, MD — Spine Surgeon & AI Researcher",
-  description = "Woon Tak Yuh, MD - Neurosurgeon specializing in endoscopic spine surgery (UBE) and clinical AI research. Director of Spine Endoscopy Center.",
+  title = "Woon Tak Yuh, MD — Spine Surgeon, Educator & AI Researcher",
+  description = "TakMD.com is the living brand hub for Woon Tak Yuh, MD: spine surgery, education, clinical AI, research, and professional contact.",
   hideNav = false,
   hideFooter = false,
+  bodyClass = '',
+  documentPage = false,
 } = Astro.props;
 
+const officeEntry = !documentPage && /^\/(cv|research|education|ube|ai|ai-workflow|contact|credits|dashboard|jiu-jitsu|surfing|knowledge|media|workshops)(\/|$)/.test(Astro.url.pathname);
 const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
+const buildId = process.env.BUILD_ID ?? 'dev';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-build={buildId}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,15 +40,53 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL.href} />
-    <meta property="og:image" content="https://takmd.com/desk-setup.webp" />
+    <meta property="og:image" content="https://takmd.com/studio/office-share-20260909c.jpg" />
+
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="The TakMD office overlooking the Han River" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="https://takmd.com/desk-setup.webp" />
+    <meta name="twitter:image" content="https://takmd.com/studio/office-share-20260909c.jpg" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/legacy.css" />
+
+    <script>
+      if (import.meta.env.DEV && new URLSearchParams(window.location.search).has('inspect')) {
+        void import('react-grab');
+        void import('react-scan').then(({ scan }) => scan({ enabled: true }));
+      }
+    </script>
+
+    <script>
+      // A home-screen web app keeps the copy it first launched. When this page is shown again, compare its build id
+      // with the one on the server and reload once if the site has moved on.
+      const current = document.documentElement.dataset.build ?? '';
+      const check = async () => {
+        if (!current || current === 'dev') return; // the dev server and the poster capture are unmarked and publish no build.json
+        try {
+          const response = await fetch('/build.json', { cache: 'no-store' });
+          if (!response.ok) return;
+          const { id } = await response.json();
+          if (typeof id !== 'string' || id === current || sessionStorage.getItem('office-build-reload') === id) return;
+          sessionStorage.setItem('office-build-reload', id);
+          location.reload();
+        } catch { /* offline or blocked: keep the page */ }
+      };
+      void check();
+      addEventListener('pageshow', event => { if (event.persisted) void check(); });
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') void check(); });
+    </script>
+
+    <script is:inline>
+      // TakOS embed mode: pages opened inside the desk-scene monitor hide site chrome
+      if (new URLSearchParams(window.location.search).has('embed'))
+        document.documentElement.classList.add('embed-frame');
+    </script>
 
     <title>{title}</title>
 
@@ -68,13 +113,21 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
       ]
     })} />
   </head>
-  <body class="min-h-screen">
-    {!hideNav && <Nav />}
-    <slot />
-    {!hideFooter && <Footer />}
+  <body class={`min-h-screen ${bodyClass}`.trim()}>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    {!hideNav && !officeEntry && <Nav />}
+    {officeEntry ? <OfficeEntry /> : <slot />}
+    {!hideFooter && !officeEntry && <Footer />}
   </body>
 </html>
 
 <style is:global>
   @import "../styles/global.css";
+
+  /* TakOS embed mode — page content only, no site chrome */
+  html.embed-frame body > header,
+  html.embed-frame body > footer,
+  html.embed-frame .skip-link {
+    display: none !important;
+  }
 </style>

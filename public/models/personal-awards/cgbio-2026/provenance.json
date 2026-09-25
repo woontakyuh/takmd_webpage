@@ -1,0 +1,81 @@
+{
+  "process": "Owner photographs; HEIC decode, measured projective rectification, bilinear resampling, WebP encoding. No invented faces, lettering, signatures, dates, or logos. Surroundings excluded. IMG_1390 and IMG_1391 are shape references only and are not published.",
+  "dimensions": "A4 landscape leaves and 321 × 234 mm covers estimated from photographs, not measured.",
+  "sources": [
+    {
+      "name": "group-photo",
+      "file": "IMG_1388.HEIC",
+      "corners": [
+        [
+          45,
+          78
+        ],
+        [
+          946,
+          79
+        ],
+        [
+          935,
+          720
+        ],
+        [
+          45,
+          708
+        ]
+      ],
+      "width": 2048,
+      "height": 1448,
+      "sha256": "301e9555050482cee4892ee9488a7cc080849e35fc252f0ee05651b37625ee0c"
+    },
+    {
+      "name": "certificate",
+      "file": "IMG_1389.HEIC",
+      "corners": [
+        [
+          76,
+          101
+        ],
+        [
+          944,
+          110
+        ],
+        [
+          950,
+          731
+        ],
+        [
+          61,
+          726
+        ]
+      ],
+      "width": 2048,
+      "height": 1448,
+      "sha256": "dd2ecab1c8b1ab361efbc28932d0f10fc7b97ead26f197201502a4cc5bc6ae02"
+    },
+    {
+      "name": "cover",
+      "file": "IMG_1392.HEIC",
+      "corners": [
+        [
+          438,
+          280
+        ],
+        [
+          889,
+          259
+        ],
+        [
+          854,
+          538
+        ],
+        [
+          441,
+          579
+        ]
+      ],
+      "width": 1200,
+      "height": 848,
+      "sha256": "d7def8d5cf36a2071209fd90bb151dc111e69aec4995c76ed78bfd0fae2df993"
+    }
+  ]
+}
