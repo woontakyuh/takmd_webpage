@@ -10,7 +10,7 @@ const FINISHED_FLOOR_TOP = 0.0185;
 const FIN_CLEARANCE = 0.065;
 
 export function Surfboard() {
-  const { scene } = useGLTF('/models/surfboard.glb?v=20260918-meshopt-webp');
+  const { scene } = useGLTF('/models/surfboard-packed.glb?v=20260925');
   const fitted = useMemo(() => {
     const model = scene.clone(true);
     model.traverse((child) => {

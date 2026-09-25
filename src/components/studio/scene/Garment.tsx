@@ -10,7 +10,7 @@ import { RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 // mesh's vertices, and both a recompressed and a simplified file deformed the shoulders and lost the emblem.
 const COAT_URL = '/models/garments/physician-coat-2k.glb?v=20260918-original' as const;
 // The gi at about a third of its triangles (gltf-transform simplify, ratio 0.3), for phones.
-const GI_URL_PHONE = '/models/garments/control-gi-phone.glb?v=20260918' as const;
+const GI_URL_PHONE = '/models/garments/control-gi-phone-packed.glb?v=20260925' as const;
 const GI_URL = '/models/garments/control-gi.glb?v=20260918-meshopt' as const;
 const ASSEMBLY_HEIGHT = 0.9;
 // Measured inner hook crowns in the original GLBs; their shoulder planes are YZ.
@@ -140,3 +140,6 @@ export function DoctorCoat() {
 export function JiuJitsuGi() {
   return <HangingGarment url={GI_URL} file={usePhone() ? GI_URL_PHONE : GI_URL} />;
 }
+
+// Start the coat alongside its sleeve emblem instead of waiting for the image to resolve.
+useGLTF.preload(COAT_URL);

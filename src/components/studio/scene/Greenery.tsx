@@ -8,7 +8,7 @@ import { INTERIOR, MOTION, PALETTE, ROOM } from './config';
 import { createPalmPlanterGeometries } from './PalmGeometry';
 import { useArrangement } from '../arrangement';
 
-const MODEL_URL = '/models/plant-dypsis/scene.gltf';
+const MODEL_URL = '/models/plant-dypsis/scene-packed.glb';
 const SOIL_HEIGHT = 0.646;
 const FOLIAGE_HEIGHT = 2.05 - SOIL_HEIGHT;
 const HOVER_SWAY_RADIANS = Math.PI / 120;

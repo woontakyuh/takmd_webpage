@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { Box3, Mesh, Vector3 } from 'three';
 import type { Group } from 'three';
 
-const MODEL_URL = '/models/soft-pad/chair.glb' as const;
+const MODEL_URL = '/models/soft-pad/chair-packed.glb' as const;
 const TARGET_HEIGHT = 1.08;
 
 export function OfficeChair({ reducedMotion }: { readonly reducedMotion: boolean }) {

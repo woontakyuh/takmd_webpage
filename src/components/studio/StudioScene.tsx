@@ -11,6 +11,7 @@ import { GuidedViewProvider } from './scene/GuidedView';
 import { RoomReadyProvider } from './scene/DeferredAssets';
 import { DeviceProvider } from './scene/Device';
 import { servePhoneImages } from './scene/phoneImages';
+import { preloadRoomAssets } from './scene/preloadRoomAssets';
 import { GoldAward } from './scene/GoldAward';
 import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
@@ -74,7 +75,7 @@ export function StudioScene(props: StudioSceneProps) {
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       // A phone's web process is killed near 1.5 GB and the room held 858 MB of textures alone, fifteen of them 2048².
       // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
-      onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); if (mobile) servePhoneImages(); }}
+      onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); if (mobile) servePhoneImages(); preloadRoomAssets(mobile); }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
       <DeviceProvider phone={mobile}>
       <RoomReadyProvider ready={props.ready}>

@@ -2,7 +2,7 @@ import { useGLTF } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { FrontSide, Mesh, MeshPhysicalMaterial } from 'three';
 
-const MODEL_URL = '/models/noguchi/table.glb';
+const MODEL_URL = '/models/noguchi/table-packed.glb';
 
 type NoguchiTableProps = {
   readonly position?: [number, number, number];

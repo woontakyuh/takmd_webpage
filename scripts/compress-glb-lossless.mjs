@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { dirname, resolve } from 'node:path';
 import { MeshoptDecoder } from 'three-stdlib';
 import sharp from 'sharp';
 
@@ -58,7 +59,7 @@ function semanticJson(json) {
 }
 
 const [input, output, encoderModule, imageMode] = process.argv.slice(2);
-const usage = 'Usage: node scripts/compress-glb-lossless.mjs INPUT.glb OUTPUT.glb /absolute/path/to/meshopt_encoder.js [--lossless-webp]';
+const usage = 'Usage: node scripts/compress-glb-lossless.mjs INPUT.glb|INPUT.gltf OUTPUT.glb /absolute/path/to/meshopt_encoder.js [--lossless-webp]';
 if (input === '--help') {
   console.log(usage);
   process.exit(0);
@@ -71,7 +72,15 @@ const decoder = typeof MeshoptDecoder === 'function' ? MeshoptDecoder() : Meshop
 await Promise.all([MeshoptEncoder.ready, decoder.ready]);
 assert(decoder.supported, 'The installed Drei/three-stdlib decoder must support Meshopt');
 const originalBytes = await readFile(input);
-const original = readGlb(originalBytes);
+const original = input.endsWith('.gltf')
+  ? { json: JSON.parse(originalBytes.toString()), bin: null }
+  : readGlb(originalBytes);
+if (input.endsWith('.gltf')) {
+  assert.equal(dirname(resolve(input)), dirname(resolve(output)), 'Keep external image paths relative to the same directory');
+  assert.equal(original.json.buffers.length, 1, 'Only a single external geometry buffer is supported');
+  original.bin = await readFile(new URL(original.json.buffers[0].uri, pathToFileURL(resolve(input))));
+  delete original.json.buffers[0].uri;
+}
 assert.equal(original.json.buffers.length, 1, 'Only standalone GLB input is supported');
 assert.equal(original.json.buffers[0].uri, undefined, 'External buffers are unsupported');
 assert(!original.json.extensionsUsed?.includes(EXTENSION), 'Start from the uncompressed original');
@@ -148,6 +157,7 @@ json.buffers = [{ ...json.buffers[0], byteLength: storedLength }, { byteLength: 
 json.extensionsUsed = [...(json.extensionsUsed ?? []), EXTENSION];
 json.extensionsRequired = [...(json.extensionsRequired ?? []), EXTENSION];
 const result = writeGlb({ json, bin: Buffer.concat(pieces) });
+const originalSize = originalBytes.length + (input.endsWith('.gltf') ? original.bin.length : 0);
 const packed = readGlb(result);
 assert.deepEqual(semanticJson(packed.json), semanticJson(expected), 'Scene, accessor, material or texture semantics changed');
 
@@ -171,6 +181,6 @@ for (const [index, view] of packed.json.bufferViews.entries()) {
   }
 }
 
-assert(result.length < originalBytes.length, 'Compression must reduce the file size');
+assert(result.length < originalSize, 'Compression must reduce the file size');
 await writeFile(output, result);
-console.log(JSON.stringify({ input, output, originalBytes: originalBytes.length, compressedBytes: result.length, savedBytes: originalBytes.length - result.length, originalSha256: hash(originalBytes), compressedSha256: hash(result), semanticSha256: hash(JSON.stringify(semanticJson(json))), exactRuntimeDecodedBufferViews: views.length - convertedImages.size, exactDecodedImageCount: convertedImages.size, views }, null, 2));
+console.log(JSON.stringify({ input, output, originalBytes: originalSize, compressedBytes: result.length, savedBytes: originalSize - result.length, originalSha256: hash(originalBytes), compressedSha256: hash(result), semanticSha256: hash(JSON.stringify(semanticJson(json))), exactRuntimeDecodedBufferViews: views.length - convertedImages.size, exactDecodedImageCount: convertedImages.size, views }, null, 2));

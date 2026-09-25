@@ -7,8 +7,7 @@ const OTTOMAN_URL = '/models/eames/ottoman.glb';
 const YAW = Math.PI - 0.32;
 
 export function EamesLounge() {
-  const lounge = useGLTF(LOUNGE_URL);
-  const ottoman = useGLTF(OTTOMAN_URL);
+  const [lounge, ottoman] = useGLTF([LOUNGE_URL, OTTOMAN_URL]);
   const models = useMemo(() => [lounge.scene, ottoman.scene].map(scene => {
     const model = scene.clone(true);
     model.traverse(object => {

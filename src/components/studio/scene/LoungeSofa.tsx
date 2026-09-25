@@ -2,7 +2,7 @@ import { useGLTF } from '@react-three/drei';
 import { useMemo } from 'react';
 import { Box3, Mesh, Vector3 } from 'three';
 
-const MODEL_URL = '/models/florence-knoll/relaxed-two-seater-ivory.glb';
+const MODEL_URL = '/models/florence-knoll/relaxed-two-seater-ivory-packed.glb';
 const WIDTH = 1.6002;
 
 export function LoungeSofa() {
