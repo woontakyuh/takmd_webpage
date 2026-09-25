@@ -98,7 +98,7 @@ async function availablePort(): Promise<number> {
 }
 async function startServer(port: number): Promise<ChildProcess> {
   const child = spawn('bun', ['x', 'astro', 'dev', '--host', '127.0.0.1', '--port', String(port)], {
-    cwd: root, env: { ...process.env, OFFICE_POSTER_CAPTURE: '1' }, stdio: ['ignore', 'pipe', 'pipe'],
+    cwd: root, env: { ...process.env, BUILD_ID: undefined, OFFICE_POSTER_CAPTURE: '1' }, stdio: ['ignore', 'pipe', 'pipe'],
   });
   const output: string[] = [];
   child.stdout?.on('data', chunk => output.push(String(chunk)));
