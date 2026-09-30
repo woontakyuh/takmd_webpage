@@ -107,3 +107,45 @@
   .studio .monitor-screen-content { transition: none; }
   .loading-monitor-reader::before { animation: none; }
 }
+
+@media (max-width: 759px), (max-height: 500px) and (pointer: coarse) {
+  .loading-monitor-reader { z-index: 100; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+  .studio:is([data-entry="peeking"], [data-entry="reading"]) .loading-monitor-reader { bottom: calc(56px + env(safe-area-inset-bottom)); }
+  .loading-monitor-bezel { width: 100%; height: 100%; min-height: 0; aspect-ratio: auto !important; padding: 4px; }
+  .loading-monitor-bezel::after { display: none; }
+  .loading-monitor-screen { position: relative; inset: auto !important; width: 100% !important; height: 100%; aspect-ratio: auto !important; }
+  .loading-monitor-surface { position: relative; inset: auto; height: 100%; transform: none !important; }
+  .loading-monitor-reader .monitor-screen-reader { --monitor-control-scale: 1 !important; width: 100% !important; height: 100% !important; display: grid; grid-template-rows: auto minmax(0, 1fr); font: 16px/1.65 var(--studio-sans, Arial, sans-serif); }
+  .loading-monitor-reader .monitor-screen-header { position: static; min-width: 0; padding-left: 16px; border-radius: 4px 4px 0 0; }
+  .loading-monitor-reader .monitor-screen-header h2 { font-size: 14px; }
+  .loading-monitor-reader .monitor-screen-content { position: relative; inset: auto; min-height: 0; border-radius: 0 0 4px 4px; }
+  .loading-monitor-reader .cv-reader { width: 100%; }
+  .loading-monitor-reader .monitor-cv-cover { height: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 24px; }
+  .loading-monitor-reader .monitor-cv-cover > * { position: static; width: auto; }
+  .loading-monitor-reader .monitor-cv-eyebrow { font-size: 12px; gap: 12px; }
+  .loading-monitor-reader .monitor-cv-identity h1 { font-size: 32px; line-height: 1.15; }
+  .loading-monitor-reader .monitor-cv-identity > p { font-size: 16px; }
+  .loading-monitor-reader .monitor-cv-identity > .monitor-cv-appointment { font-size: 14px; }
+  .loading-monitor-reader .monitor-cv-cover h2 { font-size: 14px; }
+  .loading-monitor-reader .monitor-cv-interests p { font: inherit; }
+  .loading-monitor-reader .monitor-cv-activities { padding-top: 24px; }
+  .loading-monitor-reader .monitor-cv-activity-columns { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .loading-monitor-reader .monitor-cv-activity { margin-bottom: 16px; }
+  .loading-monitor-reader .monitor-cv-activity:last-child { margin-bottom: 0; }
+  .loading-monitor-reader .monitor-cv-activity p { font: inherit; }
+  .loading-monitor-reader .monitor-cv-activity p + p { font-size: 14px; line-height: 1.65; }
+  .loading-monitor-reader .monitor-cv-cover > .monitor-cv-portrait { width: min(100%, 240px); height: auto; aspect-ratio: 3 / 4; }
+  .loading-monitor-reader .monitor-cv-cover-footer { font-size: 12px; padding-top: 16px; }
+  .loading-monitor-reader .monitor-cv-details { padding: 0 20px 24px; }
+  .loading-monitor-reader .monitor-cv-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; padding-bottom: 24px; }
+  .loading-monitor-reader .monitor-cv-metrics strong { font-size: 40px; }
+  .loading-monitor-reader .monitor-cv-metrics span { margin-top: 8px; font-size: 16px; }
+  .loading-monitor-reader .monitor-cv-metrics p { font-size: 14px; }
+  .loading-monitor-reader .monitor-cv-detail-columns { display: block; }
+  .loading-monitor-reader .monitor-cv-section { padding: 24px 0; }
+  .loading-monitor-reader .monitor-cv-section h2 { margin-bottom: 24px; font-size: 24px; }
+  .loading-monitor-reader .monitor-cv-section h3 { font-size: 18px; }
+  .loading-monitor-reader .monitor-cv-timeline { grid-template-columns: minmax(0, 1fr); gap: 4px; margin-top: 20px; }
+  .loading-monitor-reader .monitor-cv-timeline > span, .loading-monitor-reader .monitor-cv-meta { font-size: 14px; }
+  .loading-monitor-reader .monitor-cv-footer { flex-wrap: wrap; gap: 16px; padding-top: 24px; }
+}

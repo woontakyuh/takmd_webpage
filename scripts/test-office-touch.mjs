@@ -27,8 +27,8 @@ try {
       };
       window.officeArrival = null;
       new MutationObserver(() => {
-        if (!window.officeArrival && document.querySelector('.office-poster[data-ready="true"]')) window.officeArrival = performance.now();
-      }).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-ready'] });
+        if (!window.officeArrival && document.querySelector('.studio[data-room-ready="true"]')) window.officeArrival = performance.now();
+      }).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-room-ready'] });
     });
 
   const page=await context.newPage(), errors=[];

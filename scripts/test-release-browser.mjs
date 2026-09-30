@@ -11,6 +11,8 @@ const results = [];
 try {
   for (const [name, file] of [
     ['loading', 'test-office-loading.mjs'],
+    ['desk-entry', 'test-desk-entry.mjs'],
+    ['mobile-cv', 'test-mobile-cv.mjs'],
     ['reader', 'test-reading-panel.mjs'],
     ['content', 'test-office-content.mjs'],
     ['artwork', 'test-artwork-navigation.mjs'],

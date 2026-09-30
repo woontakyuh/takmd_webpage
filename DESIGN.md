@@ -63,6 +63,10 @@ Reduced motion: no ambient sway/parallax; camera jumps to chapter composition; f
 
 ## 7. Architecture and performance
 
+September 30 mobile entry: load the desk, monitor and research folio independently before requesting room models. CV and publication reading are available while the rest of the room prepares. Background room groups mount in separate Suspense boundaries so a room asset cannot hide the desk. Once the room is ready, reveal its surroundings with a small camera pullback while preserving the active document and scroll position; closing the reader continues to the overview. Reduced motion skips the travel. Entry links use existing quiet underlined text, with 44px touch targets.
+
+Phone CV reader: use the existing paper/ink/teal palette in a viewport sheet, with 16px body, 14px metadata, 32px serif title, 24px section titles and 20px padding. The reader owns native vertical scroll and permits native pinch zoom; no desktop-width downscaling. Place it outside the scene gesture surface. A shallow strip of the scene remains visible when the room is revealed, without changing the document type size or scroll position. Desktop retains the monitor composition.
+
 Astro preserves metadata/static content. React shell renders on server; 3D loads asynchronously after the shell. Root and spine-model error boundaries preserve usable content. Local geometry is split into architecture/exhibit components. Only the existing spine GLB is reused. No external environment map or 3D runtime font download.
 
 Aim below previous 1.08 MB scene chunk; capped DPR/shadows; avoid postprocessing. Pause continuous rendering when stage is offscreen. Keep old experiments separate. Dev tools must be DEV-gated and absent in production.

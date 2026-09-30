@@ -159,7 +159,7 @@ async function captureVariant(browser: Browser, baseUrl: string, variant: Captur
     const captureUrl = new URL(baseUrl);
     captureUrl.searchParams.set('office-capture', 'seated');
     await page.goto(captureUrl.href, { waitUntil: 'domcontentloaded', timeout: 120_000 });
-    await page.locator('.office-poster[data-ready="true"]').waitFor({ state: 'attached', timeout: 120_000 });
+    await page.locator('.studio[data-room-ready="true"]').waitFor({ state: 'attached', timeout: 120_000 });
     const lightButton = page.locator('.studio-tools > button').nth(1);
     await lightButton.click();
     await page.waitForFunction(() => document.querySelector('.studio-tools > button:nth-of-type(2)')?.getAttribute('aria-label')

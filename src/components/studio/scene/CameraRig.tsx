@@ -1,5 +1,5 @@
 import { useArrangement, moveFocus } from '../arrangement';
-import { OrbitControls, useProgress } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Box3, MathUtils, Mesh, PerspectiveCamera, Vector2, Vector3 } from 'three';
@@ -137,7 +137,6 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   const userMoved = useRef(false);
   const ready = useRef(false);
   const readyFrames = useRef(0);
-  const assetsLoading = useProgress(state => state.active);
   const targetFov = useRef(42);
   const initialPose = useRef(entry === 'seated' || entry === 'capture'
     ? compact ? MOBILE_ENTRY : DESKTOP_ENTRY : (compact ? MOBILE_TOUR : TOUR)[viewCommand.view]);
@@ -406,6 +405,16 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const orbit = controls.current;
     if (!orbit) return;
     if (inspectionReturnPose.current || inspection) return;
+    if (entry === 'reading') return;
+    if (entry === 'peeking') {
+      const position = camera.position.clone().sub(orbit.target).multiplyScalar(compact ? 1.12 : 1.18).add(orbit.target);
+      position.x -= compact ? 0.18 : 0.3;
+      const target = orbit.target.clone();
+      target.x -= compact ? 0.08 : 0.12;
+      transition.current = toTransition('intro', { position: position.toArray(), target: target.toArray(), zoom: 1 });
+      orbit.enabled = false;
+      return;
+    }
     if (selected) {
       orbit.enabled = false;
       clearOrbitMomentum(camera, orbit);
@@ -543,7 +552,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       }
     }
     if (!ready.current) {
-      readyFrames.current = assetsLoading ? 0 : readyFrames.current + 1;
+      readyFrames.current += 1;
       if (readyFrames.current >= 2) {
         ready.current = true;
         onReady();

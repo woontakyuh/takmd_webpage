@@ -1,8 +1,7 @@
-import { BookshelfBooks } from './scene/BookshelfBooks';
 import { Movable } from './scene/Movable';
 import { Canvas } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { MathUtils, PCFSoftShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { SceneFrameLoop } from './scene/SceneFrameLoop';
@@ -11,24 +10,14 @@ import { GuidedViewProvider } from './scene/GuidedView';
 import { RoomReadyProvider } from './scene/DeferredAssets';
 import { DeviceProvider } from './scene/Device';
 import { servePhoneImages } from './scene/phoneImages';
-import { preloadRoomAssets } from './scene/preloadRoomAssets';
-import { GoldAward } from './scene/GoldAward';
-import { PERSONAL_LINKS } from './personal';
 import type { StudioSceneProps } from './types';
-import { Architecture } from './scene/Architecture';
 import { CameraRig } from './scene/CameraRig';
-import { Furniture } from './scene/Furniture';
-import { Greenery } from './scene/Greenery';
-import { WorkshopObjects } from './scene/WorkshopObjects';
-import { SpineExhibit } from './scene/SpineExhibit';
+import { DeskFurniture } from './scene/DeskFurniture';
 import { Folio } from './scene/Folio';
 import { Displays } from './scene/Displays';
-import { CalendarClock } from './scene/CalendarClock';
-import { RoomSwitches } from './scene/RoomSwitches';
-import { OfficeLighting, WindowDaylight } from './scene/OfficeLighting';
-import { OfficeLounge } from './scene/OfficeLounge';
-import { PersonalCorner } from './scene/PersonalCorner';
 import { PALETTE, ROOM, TOUR } from './scene/config';
+
+const RoomContents = lazy(() => import('./scene/RoomContents').then(module => ({ default: module.RoomContents })));
 
 const ROOM_ENVIRONMENT = (
   <Environment resolution={128} frames={1} environmentIntensity={0.12}>
@@ -75,12 +64,12 @@ export function StudioScene(props: StudioSceneProps) {
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       // A phone's web process is killed near 1.5 GB and the room held 858 MB of textures alone, fifteen of them 2048².
       // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
-      onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); if (mobile) servePhoneImages(); preloadRoomAssets(mobile); }}
+      onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); if (mobile) servePhoneImages(); }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
       <DeviceProvider phone={mobile}>
-      <RoomReadyProvider ready={props.ready}>
+      <RoomReadyProvider ready={props.roomReady}>
       <GuidedViewProvider section={props.guidedSection ?? null}>
-      <SceneFrameLoop active={visible && (!props.paused || !props.ready)} />
+      <SceneFrameLoop active={visible && (!props.paused || !props.roomReady)} />
       <StaticMerge />
       {ROOM_ENVIRONMENT}
       <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
@@ -90,24 +79,12 @@ export function StudioScene(props: StudioSceneProps) {
         shadow-camera-left={-5} shadow-camera-right={5} shadow-camera-top={6} shadow-camera-bottom={-5}
         shadow-normalBias={0.018} shadow-bias={-0.0001} shadow-radius={3} />
       <directionalLight position={[4, 4, -3]} intensity={0.04 + skyFill * 0.18} color={PALETTE.paperLight} />
-      <WindowDaylight daylight={skyFill} blindLift={props.blindLift} />
       <spotLight name="Room ceiling fill" position={[0, ROOM.architecture.height - 0.13, 0]} intensity={sun.lamp * 0.85} distance={7} decay={2}
         angle={1.3} penumbra={1} color={props.roomPalette.color} />
-      <Architecture night={props.night} sky={sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} phone={mobile} />
-      <Furniture familyPhotoSrc={props.familyPhotoSrc} lamp={sun.lamp} halo={props.halo} onHaloControls={props.onHaloControls} roomControlPanel={props.roomControlPanel} reducedMotion={props.reducedMotion} selected={props.selected} onSelect={props.onSelect} onClaudeSticker={props.onClaudeSticker} onAwardPhoto={props.onAwardPhoto} />
-      <BookshelfBooks selected={props.selected} selectedBook={props.selectedBook} pageIndex={props.bookPageIndex} reducedMotion={props.reducedMotion} onBookSelect={props.onBookSelect} onBookStep={props.onBookStep} onApproach={props.onBookshelfApproach} shelfReady={props.bookshelfReady} onShelfReady={props.onBookshelfReady} />
-      <OfficeLounge />
-      <RoomSwitches onControl={props.onRoomControl} panel={props.roomControlPanel} />
-      <OfficeLighting palette={props.roomPalette} power={sun.lamp} tvFocused={props.selected === 'education'} reducedMotion={props.reducedMotion} />
-      <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={ROOM.award.position} rotation={ROOM.award.rotation}
-        focused={props.selected === 'award-photo'} reducedMotion={props.reducedMotion} onSelect={props.onAwardPhoto} />
-      <PersonalCorner {...props} />
-      <CalendarClock reducedMotion={props.reducedMotion} />
-      <Movable id="plant"><Greenery reducedMotion={props.reducedMotion} /></Movable>
-      <SpineExhibit {...props} />
-      <WorkshopObjects focused={props.focused} onApproach={() => props.onSelect('spine')} />
+      <DeskFurniture {...props} />
+      {props.ready && <Suspense fallback={null}><RoomContents {...props} phone={mobile} daylight={skyFill} /></Suspense>}
       <Movable id="desk" handle={false}><Folio {...props} /></Movable>
-      <Displays {...props} />
+      <Displays {...props} display="monitor" />
       <CameraRig {...props} reading={props.selected !== null} selected={props.focused ?? props.selected} />
       <OfficeRenderer lighting={props.lighting} environmentIntensity={0.12 + skyFill * (0.2 + windowOpen * 0.38)} />
       </GuidedViewProvider>

@@ -101,15 +101,18 @@ function OfficeExperience(content: StudioContent) {
   const night = (lighting?.sun.daylight ?? 1) < 0.35;
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
+  const [roomReady, setRoomReady] = useState(false);
+  const [phoneReader, setPhoneReader] = useState(false);
+  const onRoomReady = useCallback(() => setRoomReady(true), []);
   const [entry, setEntry] = useState<OfficeEntryPhase>('seated');
   const [posterHidden, setPosterHidden] = useState(false);
   const onPosterHidden = useCallback(() => setPosterHidden(true), []);
-  const onEntryComplete = useCallback(() => setEntry('complete'), []);
+  const onEntryComplete = useCallback(() => setEntry(current => current === 'peeking' ? 'reading' : 'complete'), []);
   useLayoutEffect(() => { setEntry(officeEntryPhase(new URL(window.location.href))); }, []);
   const [sceneFailed, setSceneFailed] = useState(false);
   const onSceneError = useCallback(() => setSceneFailed(true), []);
   const [loadingProfileSession, setLoadingProfileSession] = useState(false);
-  const loadingProfileOpen = selected === 'ai' && (loadingProfileSession || !ready || sceneFailed);
+  const loadingProfileOpen = selected === 'ai' && (phoneReader || loadingProfileSession || !roomReady || sceneFailed);
   useLayoutEffect(() => { setLoadingProfileSession(loadingProfileOpen); }, [loadingProfileOpen]);
   useEffect(() => {
     // The poster reports when its fade has finished; if a browser never delivers that report, do not leave the visitor seated forever.
@@ -118,11 +121,10 @@ function OfficeExperience(content: StudioContent) {
     return () => window.clearTimeout(timer);
   }, [ready, posterHidden, entry]);
   useEffect(() => {
-    if (!posterHidden || entry !== 'seated' || loadingProfileOpen) return;
-    const delay = window.matchMedia('(min-width: 760px)').matches ? 4000 : 0;
-    const timer = window.setTimeout(() => setEntry('revealing'), delay);
-    return () => window.clearTimeout(timer);
-  }, [entry, loadingProfileOpen, posterHidden]);
+    if (!posterHidden || !roomReady) return;
+    if (entry === 'seated') setEntry(selected || details ? 'peeking' : 'revealing');
+    if (entry === 'reading' && !selected && !details) setEntry('revealing');
+  }, [entry, selected, details, roomReady, posterHidden]);
   const [zoomed, setZoomed] = useState(false);
   const [explored, setExplored] = useState(false);
   const [compact, setCompact] = useState(false);
@@ -161,19 +163,21 @@ function OfficeExperience(content: StudioContent) {
 
   useEffect(() => {
     const mobile = window.matchMedia('(max-width: 759px)');
+    const reader = window.matchMedia('(max-width: 759px), (max-height: 500px) and (pointer: coarse)');
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => { setCompact(mobile.matches); setReducedMotion(motion.matches); };
+    const sync = () => { setCompact(mobile.matches); setPhoneReader(reader.matches); setReducedMotion(motion.matches); };
     sync();
     setMounted(true);
     mobile.addEventListener('change', sync);
+    reader.addEventListener('change', sync);
     motion.addEventListener('change', sync);
-    return () => { mobile.removeEventListener('change', sync); motion.removeEventListener('change', sync); };
+    return () => { mobile.removeEventListener('change', sync); reader.removeEventListener('change', sync); motion.removeEventListener('change', sync); };
   }, []);
 
   const featuredTalk = featuredPresentation(content.presentations);
   const open = useCallback((id: ExhibitId) => {
     if (arrangement.editing) return;
-    if (id !== 'ai' || ready) setEntry('complete');
+    if (roomReady && entry !== 'peeking' && entry !== 'reading') setEntry('complete');
     // Remember the control that opened this only if it is one the visitor can see. Falling back to the hidden
     // accessibility trigger put keyboard focus on it at close, and :focus-visible then revealed "Research: Papers &
     // ideas" at the top of the room long after the visitor had moved on.
@@ -182,7 +186,7 @@ function OfficeExperience(content: StudioContent) {
     if (id === 'education') setTalkId(current => current ?? featuredTalk?.id ?? null);
     setExplored(true); setSelected(id);
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [featuredTalk?.id, arrangement.editing, setSelected, ready, entry]);
+  }, [featuredTalk?.id, arrangement.editing, setSelected, roomReady, entry]);
   const openAwardPhoto = useCallback(() => open('award-photo'), [open]);
   const openLoadingProfile = () => open('ai');
   const approach = (id: ExhibitId) => {
@@ -227,7 +231,7 @@ function OfficeExperience(content: StudioContent) {
       if (url.origin !== window.location.origin && url.origin !== 'https://takmd.com') return false;
       const next = officePathView(url.pathname + url.search + url.hash, navigation.current.current);
       if (!next) return false;
-      setEntry('complete');
+      if (roomReady) setEntry('complete');
       setExplored(true);
       const requestedTalk = next.selected === 'education'
         ? content.presentations.find(talk => talk.id === url.searchParams.get('talk')) : undefined;
@@ -266,7 +270,7 @@ function OfficeExperience(content: StudioContent) {
     window.addEventListener('office:navigate', onNavigate);
     window.addEventListener('keydown', onEscape);
     return () => { window.removeEventListener('office:zoomed', onZoomed); document.removeEventListener('click', onLink, true); window.removeEventListener('office:navigate', onNavigate); window.removeEventListener('keydown', onEscape); };
-  }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection, guidedSection, inspection]);
+  }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection, guidedSection, inspection, roomReady]);
   useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
   const goToView = (view: 0 | 1 | 2 | 3 | 4) => {
@@ -297,16 +301,15 @@ function OfficeExperience(content: StudioContent) {
   const guidedTitle = guided.title;
   const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed);
 
-  return <div className="studio" data-entry={entry} data-guided={guidedSection ?? undefined} data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
+  return <div className="studio" data-entry={entry} data-desk-ready={ready} data-room-ready={roomReady} data-guided={guidedSection ?? undefined} data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
     <section className="studio-stage" aria-label="TakMD's office">
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <div style={{ display: 'contents' }} inert={loadingProfileOpen} aria-hidden={loadingProfileOpen || undefined}><SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} paused={loadingProfileOpen} focused={loadingProfileOpen ? null : focused} guidedSection={guidedSection} readingObject={readingObject} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} roomReady={roomReady} onRoomReady={onRoomReady} paused={loadingProfileOpen && entry !== 'peeking'} focused={loadingProfileOpen ? null : focused} guidedSection={guidedSection} readingObject={readingObject} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary></div>
         <OfficePoster ready={ready} failed={sceneFailed} night={night} onHidden={onPosterHidden} />
-        {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
         <button className="office-secret-trigger" id="studio-exhibit-books" onClick={approachBookshelf}>Browse personal books</button>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
         {selected === 'award-photo'
@@ -361,6 +364,8 @@ function OfficeExperience(content: StudioContent) {
         </footer>
       </div>
     </section>
+    {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
+    {!roomReady && !selected && !details && <nav className="office-desk-entry" aria-label="Start at the desk"><button onClick={() => open('ai')}>Read CV</button><button onClick={() => open('research')}>Publications</button></nav>}
     {showOverviewReturn && <button className="office-overview-return" onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>}
     <ReadingPanel {...content} detailsPath={details} selected={details ? null : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' || selected === 'surfing' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
     {zoomed && <div className="office-approach-actions"><button className="studio-icon-button" onClick={() => window.dispatchEvent(new Event('office:zoom-close'))} aria-label="Return from closer view"><OfficeIcon name="close" /></button></div>}

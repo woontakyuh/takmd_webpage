@@ -96,7 +96,7 @@ try {
     const response = await page.goto(`${productionPreview.origin}${path}`);
     assert.equal(response.status(), 200);
     assert.equal(response.headers()['content-security-policy'], (await fetch(fixturePreview.origin)).headers.get('content-security-policy'));
-    await page.locator('.office-poster[data-ready=true]').waitFor({ state: 'attached', timeout: 120000 });
+    await page.locator('.studio[data-room-ready=true]').waitFor({ state: 'attached', timeout: 120000 });
     if (path === '/') {
       assert.ok(decoderResponses.has('/vendor/draco/draco_wasm_wrapper.js'), 'Draco wrapper must load from the site');
       assert.ok(decoderResponses.has('/vendor/draco/draco_decoder.wasm'), 'Draco WebAssembly must load from the site');

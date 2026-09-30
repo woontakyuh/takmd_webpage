@@ -60,6 +60,8 @@ export type StudioSceneProps = {
   readonly entry: OfficeEntryPhase;
   readonly onEntryComplete: () => void;
   readonly ready: boolean;
+  readonly roomReady: boolean;
+  readonly onRoomReady: () => void;
   readonly paused?: boolean;
   readonly focused: ExhibitId | null;
   // The guided view entered from the tabs, if any; objects belonging to it open on the first touch.

@@ -21,9 +21,9 @@ import { setWallTvHovered, useWallTvBacklight } from './hoverReactions';
 import { monitorReadingPose } from './monitorReading';
 import { isScreenFocusSettled } from './screenFocus';
 
-type DisplaysProps = Pick<StudioSceneProps, 'entry' | 'compact' | 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'>;
+type DisplaysProps = Pick<StudioSceneProps, 'entry' | 'compact' | 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'> & { readonly display?: 'monitor' | 'tv' };
 
-export function Displays({ entry, compact, ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll }: DisplaysProps) {
+export function Displays({ entry, compact, ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll, display }: DisplaysProps) {
   const entryReader = ready && !selected && (entry === 'capture' || (!compact && entry === 'seated'));
   const camera = useThree(state => state.camera);
   const { layout } = useArrangement();
@@ -45,9 +45,8 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
       tvMaterial.current.emissiveIntensity = reducedMotion ? target
         : MathUtils.damp(tvMaterial.current.emissiveIntensity, target, MOTION.object, delta);
     }
-    if (!monitorMaterial.current) return;
     const targetBrightness = monitorHovered || selected === 'ai' ? 0.5 : 0.1;
-    monitorMaterial.current.emissiveIntensity = reducedMotion ? targetBrightness
+    if (monitorMaterial.current) monitorMaterial.current.emissiveIntensity = reducedMotion ? targetBrightness
       : MathUtils.damp(monitorMaterial.current.emissiveIntensity, targetBrightness, MOTION.object, delta);
     if (selected !== 'ai' && selected !== 'education') return;
     const pose = moveFocus(selected === 'ai' ? monitorReadingPose() : FOCUS.education, selected, layout);
@@ -63,7 +62,7 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
   const board = useTvPresentationTexture({ compact, cover: cover ?? null, talk, presentations, treeScrollOffset: tvTreeScrollOffset });
   return (
     <group>
-      <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
+      {display !== 'tv' && <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
         position={ROOM.monitor.position} rotation={ROOM.monitor.rotation} onHoverChange={setMonitorHovered}>
         <MonitorArm />
         <group position={MONITOR_SCREEN.mount} rotation={[MONITOR_SCREEN.tilt, 0, 0]}>
@@ -74,8 +73,8 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
           <mesh position={[0.332, -0.203, 0.015]}><sphereGeometry args={[0.002, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
           <ScreenBarHalo2 power={halo.power} temperature={halo.temperature} />
         </group>
-      </Interactive></Movable>
-      <Interactive id="education" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.gallery.position} rotation={ROOM.gallery.rotation}
+      </Interactive></Movable>}
+      {display !== 'monitor' && <Interactive id="education" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.gallery.position} rotation={ROOM.gallery.rotation}
         fixed onHoverChange={setWallTvHovered}>
         <group name={WALL_TV.model}>
           <Block size={[WALL_TV.width, WALL_TV.height, WALL_TV.depth]} color={PALETTE.graphite} radius={0.005} roughness={0.32} metalness={0.5} />
@@ -90,7 +89,7 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
           <mesh position={[WALL_TV.width / 2 - 0.034, -WALL_TV.height / 2 + 0.008, 0.017]}><sphereGeometry args={[0.0015, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         </group>
 
-      </Interactive>
+      </Interactive>}
     </group>
   );
 }

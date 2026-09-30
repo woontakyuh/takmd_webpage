@@ -14,7 +14,7 @@ try {
     performance.setResourceTimingBufferSize(2000);
     window.releaseReadyAt = null;
     new MutationObserver(() => {
-      if (window.releaseReadyAt === null && document.querySelector('.office-poster[data-ready="true"]')) {
+      if (window.releaseReadyAt === null && document.querySelector('.studio[data-room-ready="true"]')) {
         window.releaseReadyAt = performance.now();
       }
     }).observe(document, { subtree: true, attributes: true, childList: true });

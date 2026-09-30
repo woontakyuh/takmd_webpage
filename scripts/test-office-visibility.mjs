@@ -49,7 +49,7 @@ try {
         'Anatomical spine specimen', 'Award photo interaction',
       ];
       const observeArrival = () => {
-        if (window.officeTestArrival || !document.querySelector('.office-poster[data-ready="true"]')) return;
+        if (window.officeTestArrival || !document.querySelector('.studio[data-room-ready="true"]')) return;
         const scene = window.officeTestScene()?.scene;
         const objects = initialObjects.map(name => {
           let meshes = 0;
@@ -67,7 +67,7 @@ try {
         });
         window.officeTestArrival = { objects, albumCases, bookSpines, at: performance.now() };
       };
-      new MutationObserver(observeArrival).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-ready'] });
+      new MutationObserver(observeArrival).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-room-ready'] });
     }, profile.idle);
     const page = await context.newPage(), errors = [], failures = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -82,9 +82,10 @@ try {
     await page.goto(process.env.OFFICE_TEST_URL ?? preview.origin, { waitUntil: 'domcontentloaded' });
     {
       await page.waitForTimeout(6000);
-      const held = await page.locator('.office-poster').getAttribute('data-ready');
+      const held = await page.locator('.studio').getAttribute('data-room-ready');
       await page.screenshot({ path: join(evidence, `${profile.name}-held-loading.png`) });
-      assert.equal(held, 'false', 'the loading poster must remain while an initially visible model is still downloading');
+      assert.equal(held, 'false', 'the full-room reveal must wait while an initially visible model is still downloading');
+      assert.equal(await page.locator('.studio').getAttribute('data-desk-ready'), 'true', 'the desk must remain usable while room models download');
       releaseModel();
     }
     await page.waitForFunction(() => window.officeTestArrival, null, { timeout: 120000 });
