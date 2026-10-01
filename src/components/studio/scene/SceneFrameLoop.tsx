@@ -1,9 +1,12 @@
 import { useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
 import { useSceneInspection } from './SceneInspection';
+import { usePhone } from './Device';
+import { frameInterval } from './frameCadence';
 
-export function SceneFrameLoop({ active }: { readonly active: boolean }) {
+export function SceneFrameLoop({ active, settled }: { readonly active: boolean; readonly settled: boolean }) {
   const get = useThree(state => state.get);
+  const phone = usePhone();
   const { inspection } = useSceneInspection();
   const nativeFrames = inspection?.id === 'proposal-memory';
   const elapsed = useRef(0);
@@ -14,19 +17,34 @@ export function SceneFrameLoop({ active }: { readonly active: boolean }) {
     let rendered = previous;
     let accumulated = 0;
     let interactiveUntil = previous + 1000;
+    let readingUntil = 0;
+    let player = get().scene.getObjectByName('Bang & Olufsen Beosound 9000');
     const cameraMatrix = get().camera.matrixWorld.clone();
     const isReading = (event: Event) => event.target instanceof Element && Boolean(event.target.closest('.studio-dialog'));
-    const interact = (event: Event) => { if (!isReading(event)) interactiveUntil = performance.now() + 5000; };
-    const pointerMove = (event: Event) => { if (!isReading(event)) interactiveUntil = Math.max(interactiveUntil, performance.now() + 150); };
+    const interact = (event: Event) => {
+      if (isReading(event)) { readingUntil = performance.now() + 400; return; }
+      readingUntil = 0;
+      interactiveUntil = performance.now() + 5000;
+    };
+    const pointerMove = (event: Event) => {
+      if (isReading(event)) { readingUntil = performance.now() + 400; return; }
+      interactiveUntil = Math.max(interactiveUntil, performance.now() + 150);
+    };
     const interactionEvents = ['pointerdown', 'pointerup', 'keydown', 'wheel', 'resize'] as const;
     for (const event of interactionEvents) window.addEventListener(event, interact, { passive: true, capture: true });
     window.addEventListener('pointermove', pointerMove, { passive: true, capture: true });
+    window.addEventListener('scroll', pointerMove, { passive: true, capture: true });
     const tick = (now: number) => {
       const state = get();
-      const interval = 1000 / (now < interactiveUntil ? 60 : 30);
+      player ??= state.scene.getObjectByName('Bang & Olufsen Beosound 9000');
+      const interval = frameInterval({ phone, settled, interacting: now < interactiveUntil,
+        animating: player?.userData.animating === true });
       accumulated += now - previous;
       previous = now;
-      if (nativeFrames || accumulated >= interval - 0.1) {
+      const reader = phone && settled ? document.querySelector('.studio-dialog[open]') : null;
+      const covered = now >= interactiveUntil && reader && (reader.getAttribute('data-expanded') === 'true'
+        || (reader.querySelector('.studio-reader-body')?.getBoundingClientRect().top ?? Infinity) < 80);
+      if (!covered && !(reader && now < readingUntil) && (nativeFrames || accumulated >= interval - 0.1)) {
         accumulated = Math.max(0, accumulated - interval);
         if (accumulated >= interval) accumulated %= interval;
         elapsed.current += (now - rendered) / 1000;
@@ -44,7 +62,8 @@ export function SceneFrameLoop({ active }: { readonly active: boolean }) {
       cancelAnimationFrame(request);
       for (const event of interactionEvents) window.removeEventListener(event, interact, true);
       window.removeEventListener('pointermove', pointerMove, true);
+      window.removeEventListener('scroll', pointerMove, true);
     };
-  }, [active, get, nativeFrames]);
+  }, [active, get, nativeFrames, phone, settled]);
   return null;
 }

@@ -6,9 +6,10 @@ import type { BufferGeometry, Texture } from 'three';
 import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
 import { RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 
-// The coat stays the original file on every device: its hook widening and sleeve emblem are computed from the
-// mesh's vertices, and both a recompressed and a simplified file deformed the shoulders and lost the emblem.
+// Preserve the coat's vertices: hook widening and the sleeve emblem depend on them.
+// The phone derivative changes only texture images, with geometry bytes checked by its build script.
 const COAT_URL = '/models/garments/physician-coat-2k.glb?v=20260918-original' as const;
+const COAT_URL_PHONE = '/models/garments/physician-coat-phone.glb' as const;
 // The gi at about a third of its triangles (gltf-transform simplify, ratio 0.3), for phones.
 const GI_URL_PHONE = '/models/garments/control-gi-phone-packed.glb?v=20260925' as const;
 const GI_URL = '/models/garments/control-gi.glb?v=20260918-meshopt' as const;
@@ -125,6 +126,7 @@ function HangingGarment({ url, file = url, emblem }: HangingGarmentProps) {
 }
 
 export function DoctorCoat() {
+  const phone = usePhone();
   const source = useTexture('/images/brands/davos-hospital-emblem.png');
   const emblem = useMemo(() => {
     const texture = source.clone();
@@ -134,12 +136,9 @@ export function DoctorCoat() {
     return texture;
   }, [source]);
   useEffect(() => () => emblem.dispose(), [emblem]);
-  return <HangingGarment url={COAT_URL} emblem={emblem} />;
+  return <HangingGarment url={COAT_URL} file={phone ? COAT_URL_PHONE : COAT_URL} emblem={emblem} />;
 }
 
 export function JiuJitsuGi() {
   return <HangingGarment url={GI_URL} file={usePhone() ? GI_URL_PHONE : GI_URL} />;
 }
-
-// Start the coat alongside its sleeve emblem instead of waiting for the image to resolve.
-useGLTF.preload(COAT_URL);

@@ -55,9 +55,9 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   useEffect(() => {
     const source = EDBM_MAGAZINE.cover.src;
     const idle = window.requestIdleCallback?.bind(window) ?? ((run: () => void) => window.setTimeout(run, 2000));
-    const cancel = window.cancelIdleCallback?.bind(window);
+    const cancel = typeof window.requestIdleCallback === 'function' ? window.cancelIdleCallback.bind(window) : window.clearTimeout.bind(window);
     const handle = idle(() => useTexture.preload(source));
-    return () => { if (cancel && typeof handle === 'number') cancel(handle); };
+    return () => cancel(handle);
   }, []);
   const barware = useRef<Group>(null);
   const bottles = useRef<Group>(null);
@@ -65,7 +65,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const movingInterior = useRef<Group>(null);
   // Opening the cabinet reveals materials the renderer has never drawn — glass, bottles, the lit interior — and
   // linking their programs on the spot froze the door for half a second on a phone. Once the room is ready and the
-  // browser idle, the interior is shown to the compiler for one call and hidden again.
+  // browser idle, only the cabinet is compiled and its visibility is restored before the next frame.
   const gl = useThree(state => state.gl);
   const scene = useThree(state => state.scene);
   const roomReady = useRoomReady();
@@ -73,7 +73,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   useEffect(() => {
     if (!roomReady || !bottlesReady || warmed.current) return;
     const idle = window.requestIdleCallback?.bind(window) ?? ((run: () => void) => window.setTimeout(run, 1500));
-    const cancel = window.cancelIdleCallback?.bind(window);
+    const cancel = typeof window.requestIdleCallback === 'function' ? window.cancelIdleCallback.bind(window) : window.clearTimeout.bind(window);
     const handle = idle(() => {
       const root = cabinet.current; if (!root || warmed.current) return;
       warmed.current = true;
@@ -81,11 +81,11 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       const shown = groups.map(group => group?.visible ?? false);
       groups.forEach(group => { if (group) group.visible = true; });
       root.updateWorldMatrix(true, true);
-      // The interior's two strip lights are hidden with it, so opening the cabinet raises the scene's light count and
-      // every material in the room needs a new program: the whole scene is compiled here with the interior shown.
-      void gl.compileAsync(scene, camera).finally(() => groups.forEach((group, index) => { if (group) group.visible = shown[index]; }));
+      // Async whole-room compilation polls materials that other room objects may dispose before it finishes.
+      try { gl.compile(root, camera, scene); }
+      finally { groups.forEach((group, index) => { if (group) group.visible = shown[index]; }); }
     });
-    return () => { if (cancel && typeof handle === 'number') cancel(handle); };
+    return () => cancel(handle);
   }, [roomReady, bottlesReady, gl, camera, scene]);
   // Bottles and glassware answer pointer rays by their bounding boxes; their triangles are for drawing, not picking.
   // The interior mounts late, so the sweep repeats once a second until nothing new appears.

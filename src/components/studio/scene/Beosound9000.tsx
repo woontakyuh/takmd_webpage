@@ -73,7 +73,7 @@ export function Beosound9000({ reducedMotion }: { readonly reducedMotion: boolea
     if (next) setInspection(next);
   }, [active, pose, setInspection]);
   useEffect(() => { if (editing && active) setInspection(null); }, [active, editing, setInspection]);
-  return <group name="Bang & Olufsen Beosound 9000" userData={{ sceneControl: true, active, selectedDisc: state.disc }}>
+  return <group name="Bang & Olufsen Beosound 9000" userData={{ sceneControl: true, active, selectedDisc: state.disc, animating: state.playback === 'playing' || state.exchange !== null }}>
     <Beosound9000Bracket />
     <BeosoundMiniPlayer state={state} dispatch={dispatch} />
     <BeosoundRack placement={placement} onPlace={setPlacement} focusAlbum={state.exchange ? insertRequest === state.transportRequest ? state.exchange.album : state.exchange.outgoing ?? state.exchange.album : null} state={state} active={active} expanded={libraryOpen} showTrigger={false} disabled={editing} reducedMotion={reducedMotion} onOpen={open} onExpanded={expandLibrary} dispatch={dispatch} />

@@ -38,6 +38,16 @@ try {
   const close=page.getByRole('button',{name:'Close and return to office',exact:true});
   if(await close.isVisible()) await close.click();
   const cdp=await context.newCDPSession(page);
+  await page.waitForTimeout(7000);
+  await page.evaluate(()=>{
+    const s=window.officeTestScene(),render=s.gl.render;
+    window.idleFrames=0;
+    s.gl.render=function(scene,camera){if(scene===s.scene)window.idleFrames++;return render.call(this,scene,camera);};
+  });
+  await page.waitForTimeout(2000);
+  const idleFrames=await page.evaluate(()=>window.idleFrames);
+  assert(idleFrames<=16,`An idle phone should draw about six room frames per second, got ${idleFrames/2}`);
+  records.push({scenario:'idle phone',frames:idleFrames,seconds:2});
   async function point(name,local=[0,0,0]) {
     return page.evaluate(({name,local})=>{
       const s=window.officeTestScene(),o=s.scene.getObjectByName(name);
@@ -105,11 +115,25 @@ try {
   const start=Date.now();
   for(let i=0;i<24;i++){await page.mouse.wheel(0,i<12?20:-20);await page.waitForTimeout(125);}
   const frames=await page.evaluate(()=>window.readerFrames),fps=frames/((Date.now()-start)/1000);
-  assert(fps<38,`Reader scrolling should retain the 30fps room cadence, got ${fps}`);
-  records.push({scenario:'reading scroll',fps,frames,result:'room stays at resting cadence'});
+  assert(fps<8,`Reading should yield GPU time instead of redrawing behind the scroll, got ${fps}`);
+  records.push({scenario:'reading scroll',fps,frames,result:'room yields during reading'});
+  await page.getByRole('button',{name:'Expand reading view',exact:true}).click();
+  await page.waitForTimeout(6000);
+  await page.evaluate(()=>{window.readerFrames=0;});
+  await page.waitForTimeout(1500);
+  assert.equal(await page.evaluate(()=>window.readerFrames),0,'The covered room should stop rendering');
+  await page.evaluate(()=>{
+    document.querySelector('[data-reader-close]').addEventListener('click',()=>{
+      const s=window.officeTestScene(),advance=s.advance,closedAt=performance.now();
+      s.advance=(...args)=>{window.firstReturnFrame??=performance.now()-closedAt;return advance(...args);};
+    },{once:true});
+  });
   await page.screenshot({path:join(evidence,'phone-workshop-scrolled.png')});
   await page.getByRole('button',{name:'Close and return to office',exact:true}).click();
   await page.waitForTimeout(2200);
+  const firstReturnFrame=await page.evaluate(()=>window.firstReturnFrame);
+  assert(firstReturnFrame<300,`Closing the reader must immediately resume the room, got ${firstReturnFrame}ms`);
+  records.push({scenario:'reader closes without a pause',firstReturnFrame});
   const listenerResult=await cdp.send('Runtime.evaluate',{expression:'getEventListeners(window).pointermove?.length ?? 0',includeCommandLineAPI:true,returnByValue:true});
   assert(listenerResult.result.value<10);
   records.push({scenario:'idle listeners after interactions',count:listenerResult.result.value});

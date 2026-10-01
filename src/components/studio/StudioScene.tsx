@@ -69,7 +69,7 @@ export function StudioScene(props: StudioSceneProps) {
       <DeviceProvider phone={mobile}>
       <RoomReadyProvider ready={props.roomReady}>
       <GuidedViewProvider section={props.guidedSection ?? null}>
-      <SceneFrameLoop active={visible && (!props.paused || !props.roomReady)} />
+      <SceneFrameLoop active={visible && (!props.paused || !props.roomReady)} settled={props.roomReady && (props.entry === 'complete' || props.entry === 'reading')} />
       <StaticMerge />
       {ROOM_ENVIRONMENT}
       <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />

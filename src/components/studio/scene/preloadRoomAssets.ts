@@ -12,6 +12,7 @@ export function preloadRoomAssets(phone: boolean): void {
     '/models/spine.glb',
     '/models/workshop/plush-pig-packed.glb?v=20260925',
     '/models/workshop/biportal-endoscope.glb',
+    phone ? '/models/garments/physician-coat-phone.glb' : '/models/garments/physician-coat-2k.glb?v=20260918-original',
     phone ? '/models/garments/control-gi-phone-packed.glb?v=20260925' : '/models/garments/control-gi.glb?v=20260918-meshopt',
     phone ? '/models/fender/stratocaster-phone.glb?v=20260922-1' : '/models/fender/stratocaster-sunburst.glb?v=20260918-original',
   ];
