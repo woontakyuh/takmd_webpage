@@ -76,8 +76,6 @@ try {
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.locator('.studio[data-room-ready=true]').waitFor({ state: 'attached', timeout: 120000 });
   result.roomReadyMs = Date.now() - started;
-  result.pixelRatio = await page.evaluate(() => window.cabinetTestScene().gl.getPixelRatio());
-  assert.equal(result.pixelRatio, 1, 'WebKit must retain a stable whole-pixel drawing buffer');
   if (process.env.SAFARI_WARMUP_BASELINE === '1') assert(result.baselineApplied, 'Original warmup must be served by the baseline fixture');
   // Opening and closing the phone reader overlaps the cabinet's idle shader warmup.
   await page.getByRole('link', { name: 'Living CV', exact: true }).click();

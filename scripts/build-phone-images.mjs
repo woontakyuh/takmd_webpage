@@ -1,5 +1,5 @@
-// Lightweight copies of room raster textures for every device: longest edge 1024 px, WebP.
-// Keep the established -phone asset names for cache compatibility. Writes <name>-phone.webp next to
+// Phone copies of the room's largest raster textures: longest edge 1024 px, WebP. A phone's GPU cap already resizes
+// anything larger to 1024 before upload, so the extra pixels were only download. Writes <name>-phone.webp next to
 // each source and the manifest src/components/studio/phone-images.manifest.json (source path → phone path).
 // Run after adding or replacing any file listed in src/components/studio/phone-images.json.
 import sharp from 'sharp';

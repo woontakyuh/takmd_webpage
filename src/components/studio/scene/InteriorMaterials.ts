@@ -2,6 +2,7 @@ import { useTexture } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { NoColorSpace, RepeatWrapping, SRGBColorSpace, Vector2 } from 'three';
 import type { Texture } from 'three';
+import { usePhone } from './Device';
 import phoneImages from '../phone-images.manifest.json';
 
 export type InteriorSurface = 'oak' | 'linen' | 'stone';
@@ -59,12 +60,13 @@ export function useInteriorMaterial(
   repeat: readonly [number, number] = [1, 1],
 ): InteriorMaterial {
   const [repeatX, repeatY] = repeat;
+  const phone = usePhone();
   const paths = useMemo(() => {
     const source = INTERIOR_TEXTURE_PATHS[surface];
     const variants: Record<string, string> = phoneImages;
-    const resolve = (path: string) => variants[path] ?? path;
+    const resolve = (path: string) => phone ? variants[path] ?? path : path;
     return { map: resolve(source.map), normalMap: resolve(source.normalMap), roughnessMap: resolve(source.roughnessMap) };
-  }, [surface]);
+  }, [phone, surface]);
   const sources = useTexture(paths);
   const material = useMemo<InteriorMaterial>(() => ({
     map: prepareTexture(sources.map, repeatX, repeatY, SRGBColorSpace),

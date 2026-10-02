@@ -34,8 +34,8 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(process.env.OFFICE_TEST_URL ?? preview.origin, { waitUntil: 'domcontentloaded' });
   await page.locator('.studio[data-room-ready="true"]').waitFor({ timeout: 120000 });
-  // The initial reader closes itself during reveal; wait instead of racing its disappearing close button.
-  await page.waitForFunction(() => document.querySelector('.studio')?.dataset.entry === 'complete', null, { timeout: 60000 });
+  const close = page.getByRole('button', { name: 'Close and return to office', exact: true });
+  if (await close.isVisible()) await close.click();
   await page.waitForTimeout(7500);
   await page.evaluate(() => {
     const state = window.officeScene(), render = state.gl.render;
