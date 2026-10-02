@@ -1,3 +1,10 @@
+.whisky-inspector-scrim {
+  position: absolute; left: 0; pointer-events: none;
+  background: linear-gradient(to right, var(--studio-paper) 0%, color-mix(in srgb, var(--studio-paper) 96%, transparent) 80%, transparent);
+}
+.whisky-inspector-scrim[data-layout='below'] {
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--studio-paper) 96%, transparent) 32px, var(--studio-paper) 120px);
+}
 .whisky-inspector {
   position: absolute; transform: translateY(-50%);
   box-sizing: border-box;

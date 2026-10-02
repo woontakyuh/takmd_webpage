@@ -16,7 +16,7 @@ try {
     await page.route(/\/src\/components\/studio\/scene\/WhiskyCabinet\.tsx(?:\?|$)/, async route => {
       const response = await route.fetch();
       const source = await response.text();
-      const current = /try \{\s*gl\.compile\(root, camera, scene\);\s*\} finally \{\s*groups\.forEach\(\(group, index\) => \{\s*if \(group\) group\.visible = shown\[index\];\s*\}\);\s*\}/;
+      const current = /try \{\s*gl\.compile\((?:root|materials), camera, scene\);\s*\} finally \{\s*groups\.forEach\(\(group, index\) => \{\s*if \(group\) group\.visible = shown\[index\];\s*\}\);\s*\}/;
       assert(current.test(source), 'Baseline fixture requires the local development module');
       result.baselineApplied = true;
       await route.fulfill({ response, body: source.replace(current,
@@ -100,6 +100,14 @@ try {
       .map(name => ({ name, visible: scene.getObjectByName(name)?.visible }));
   });
   assert(result.closedInterior.every(group => group.visible === false), 'Warmup must restore the closed interior');
+  result.closedCabinetLights = await page.evaluate(() => {
+    const cabinet = window.cabinetTestScene().scene.getObjectByName('Poltrona Frau Isidoro drinks cabinet');
+    const lights = [];
+    cabinet.traverseVisible(object => { if (object.isRectAreaLight) lights.push(object.intensity); });
+    return lights;
+  });
+  assert.equal(result.closedCabinetLights.length, 4, 'Closed cabinet lights must stay registered to avoid room-wide shader recompilation on first open');
+  assert(result.closedCabinetLights.every(intensity => intensity === 0), 'Closed cabinet lights must be off');
   await page.getByRole('button', { name: 'View Isidoro drinks cabinet', exact: true }).press('Enter');
   await page.getByRole('button', { name: 'Open Isidoro drinks cabinet', exact: true }).waitFor();
   await page.waitForTimeout(2500);

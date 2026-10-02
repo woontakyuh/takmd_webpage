@@ -4,7 +4,7 @@ import { OfficeIcon } from '../OfficeIcon';
 import { useEffect, useRef } from 'react';
 import { WHISKY_BOTTLE_INFO } from './WhiskyBottleInfo';
 import type { WhiskyBottleId } from './WhiskyInspectionState';
-import { whiskyCabinetScreenBounds, whiskyInspectionLayout } from './WhiskyInspectionMotion';
+import { whiskyInspectionLayout } from './WhiskyInspectionMotion';
 import './whisky-inspector.css';
 
 export function WhiskyBottleInspector({ bottleId, returning, onReturn }: {
@@ -14,8 +14,6 @@ export function WhiskyBottleInspector({ bottleId, returning, onReturn }: {
 }) {
   const size = useThree(state => state.size);
   const layout = whiskyInspectionLayout(size);
-  const panel = useRef<HTMLElement>(null);
-  const presented = useRef(false);
   const button = useRef<HTMLButtonElement>(null);
   const info = WHISKY_BOTTLE_INFO[bottleId];
   useEffect(() => {
@@ -33,26 +31,10 @@ export function WhiskyBottleInspector({ bottleId, returning, onReturn }: {
     return () => window.removeEventListener('keydown', onKey);
   }, [onReturn]);
   return <Html fullscreen zIndexRange={[35, 30]} style={{ pointerEvents: 'none' }}
-    calculatePosition={(object, camera, viewport) => {
-      if (object.parent && panel.current) {
-        const bounds = whiskyCabinetScreenBounds(object.parent, camera, viewport);
-        const desiredLeft = layout.stacked ? layout.inset : bounds.left - layout.gap - layout.panel.width;
-        const desiredTop = layout.stacked ? bounds.bottom + layout.gap
-          : Math.max(panel.current.offsetHeight / 2 + layout.inset, Math.min(viewport.height - panel.current.offsetHeight / 2 - layout.inset, (bounds.top + bounds.bottom) / 2));
-        const fits = desiredLeft >= layout.inset - 1 && desiredLeft + layout.panel.width <= viewport.width - layout.inset + 1
-          && (!layout.stacked || desiredTop <= viewport.height - layout.inset - 160);
-        presented.current ||= fits;
-        const left = Math.max(layout.inset, Math.min(desiredLeft, viewport.width - layout.inset - layout.panel.width));
-        const top = layout.stacked ? Math.max(layout.inset, Math.min(desiredTop, viewport.height - layout.inset - 160)) : desiredTop;
-        const height = viewport.height - (layout.stacked ? top : layout.inset) - layout.inset;
-        panel.current.style.left = `${left}px`;
-        panel.current.style.top = `${top}px`;
-        panel.current.style.maxHeight = `${Math.max(0, height)}px`;
-        panel.current.style.visibility = presented.current ? 'visible' : 'hidden';
-      }
-      return [viewport.width / 2, viewport.height / 2];
-    }}>
-    <section ref={panel} className="whisky-inspector" data-layout={layout.stacked ? 'below' : 'beside'}
+    calculatePosition={(_object, _camera, viewport) => [viewport.width / 2, viewport.height / 2]}>
+    <div className="whisky-inspector-scrim" data-layout={layout.stacked ? 'below' : 'beside'} aria-hidden="true"
+      style={{ top: layout.stacked ? layout.panel.top - 24 : 0, width: layout.stacked ? '100%' : layout.panel.left + layout.panel.width + layout.gap, bottom: 0 }} />
+    <section className="whisky-inspector" data-layout={layout.stacked ? 'below' : 'beside'}
       style={{ left: layout.panel.left, top: layout.stacked ? layout.panel.top : '50%', width: layout.panel.width, maxHeight: layout.panel.maxHeight }}
       role="dialog" aria-modal="false" aria-labelledby="whisky-title" lang="en"
       onPointerDown={event => event.stopPropagation()} onDoubleClick={event => event.stopPropagation()}>

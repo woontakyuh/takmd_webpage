@@ -1,5 +1,5 @@
 import { Box3, CurvePath, LineCurve3, MathUtils, Matrix4, QuadraticBezierCurve3, Quaternion, Vector3 } from 'three';
-import type { Camera, Group, Object3D } from 'three';
+import type { Group, Object3D } from 'three';
 import { focusFov } from './config';
 import type { Point } from './config';
 import type { BottleSpec } from './WhiskyBottleSpecs';
@@ -8,8 +8,6 @@ import { ISIDORO_LOWER_DOOR_FRONT, isidoroOpeningObstacles } from './IsidoroColl
 
 export const WHISKY_PRESENTATION = {
   position: [0, ISIDORO_WORKTOP_TOP, -0.205],
-  camera: [0.03, 1.13, -1.10],
-  target: [0, 0.82, -0.205],
 } as const satisfies Readonly<Record<string, Point>>;
 type WhiskyViewport = { readonly width: number; readonly height: number };
 
@@ -46,19 +44,7 @@ function cabinetFramePoints(angles: readonly number[]) {
   return points;
 }
 
-export function whiskyCabinetScreenBounds(cabinet: Object3D, camera: Camera, { width, height }: WhiskyViewport) {
-  const angle = cabinet.getObjectByName('Isidoro book-opening mobile half')?.rotation.y ?? 0;
-  cabinet.updateWorldMatrix(true, false);
-  const points = cabinetFramePoints([angle]).map(point => cabinet.localToWorld(point).project(camera));
-  return {
-    left: (Math.min(...points.map(point => point.x)) + 1) * width / 2,
-    right: (Math.max(...points.map(point => point.x)) + 1) * width / 2,
-    top: (1 - Math.max(...points.map(point => point.y))) * height / 2,
-    bottom: (1 - Math.min(...points.map(point => point.y))) * height / 2,
-  };
-}
-
-function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'closed' | 'open' | 'bottle') {
+function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'closed' | 'open' | 'bottle', bottle = { height: .37, radius: .062 }) {
   const inspecting = view === 'bottle';
   const closed = view === 'closed';
   const { width, height } = viewport;
@@ -72,14 +58,18 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'clos
   const top = 1 - 2 * area.top / height;
   const bottom = 1 - 2 * area.bottom / height;
   const centerX = (left + right) / 2, centerY = (top + bottom) / 2;
-  const outward = (closed ? new Vector3(-0.55, 0.22, -1)
-    : new Vector3(-1.57, inspecting && layout.stacked ? 2.5 : 0.8, -1.7)).normalize();
+  const outward = (inspecting ? new Vector3(.08, .12, -1) : closed ? new Vector3(-0.55, 0.22, -1)
+    : new Vector3(-1.57, 0.8, -1.7)).normalize();
   const horizontal = new Vector3(0, 1, 0).cross(outward).normalize();
   const vertical = outward.clone().cross(horizontal);
-  const center = new Vector3(closed ? 0 : 0.12, ISIDORO_DIMENSIONS.height / 2, -0.25);
+  const center = inspecting ? new Vector3(...WHISKY_PRESENTATION.position).add(new Vector3(0, bottle.height / 2, 0))
+    : new Vector3(closed ? 0 : 0.12, ISIDORO_DIMENSIONS.height / 2, -0.25);
   let distance = 0;
-  const angles = closed ? [0] : inspecting ? [-Math.PI / 2] : Array.from({ length: 13 }, (_, index) => -index * Math.PI / 24);
-  for (const point of cabinetFramePoints(angles)) {
+  const points = inspecting ? [] : cabinetFramePoints(closed ? [0] : Array.from({ length: 13 }, (_, index) => -index * Math.PI / 24));
+  if (inspecting) for (const x of [-bottle.radius, bottle.radius]) for (const y of [-bottle.height / 2, bottle.height / 2]) for (const z of [-bottle.radius, bottle.radius]) {
+    points.push(center.clone().add(new Vector3(x, y, z)));
+  }
+  for (const point of points) {
     const corner = point.sub(center);
     const horizontalPosition = corner.dot(horizontal), verticalPosition = corner.dot(vertical), depth = corner.dot(outward);
     distance = Math.max(distance,
@@ -88,7 +78,7 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'clos
       (verticalPosition + top * tangentY * depth) / ((top - centerY) * tangentY),
       (-verticalPosition - bottom * tangentY * depth) / ((centerY - bottom) * tangentY));
   }
-  distance *= 1.005;
+  distance *= inspecting ? 1.08 : 1.005;
   const target = center.addScaledVector(horizontal, -centerX * tangentX * distance)
     .addScaledVector(vertical, -centerY * tangentY * distance);
   const position = target.clone().addScaledVector(outward, distance);
@@ -104,8 +94,8 @@ export function whiskyClosedCabinetPose(cabinet: Group, viewport: WhiskyViewport
   return fittedCabinetPose(cabinet, viewport, 'closed');
 }
 
-export function whiskyInspectionPose(cabinet: Group, viewport: WhiskyViewport) {
-  return fittedCabinetPose(cabinet, viewport, 'bottle');
+export function whiskyInspectionPose(cabinet: Group, viewport: WhiskyViewport, bottle?: Pick<BottleSpec, 'height' | 'radius'>) {
+  return fittedCabinetPose(cabinet, viewport, 'bottle', bottle);
 }
 
 function roundedRoute(points: readonly Vector3[]) {

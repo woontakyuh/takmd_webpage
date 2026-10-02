@@ -4,7 +4,7 @@ import { useRoomReady } from './DeferredAssets';
 import { useBoundsRaycast } from './boundsRaycast';
 import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-import type { Group, Texture } from 'three';
+import type { Group, Object3D, Texture } from 'three';
 import { OfficeIcon } from '../OfficeIcon';
 import { useArrangement } from '../arrangement';
 import { IsidoroBarware } from './IsidoroBarware';
@@ -12,6 +12,7 @@ import { IsidoroFixedHalf } from './IsidoroCabinetGeometry';
 import { IsidoroWorktop, WhiskyCabinetDoor, useCabinetAction, useIsidoroMotion } from './WhiskyCabinetDoor';
 import { WHISKY_CABINET } from './WhiskyCabinetLayout';
 import { WhiskyCollection } from './WhiskyCollection';
+import { WHISKY_BOTTLES } from './WhiskyBottleSpecs';
 import { WhiskyBottleInspector } from './WhiskyBottleInspector';
 import { finishWhiskyReturn, returnWhiskyBottle, selectWhiskyBottle } from './WhiskyInspectionState';
 import type { WhiskyBottleId, WhiskyInspectionState } from './WhiskyInspectionState';
@@ -38,7 +39,6 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const [open, setOpen] = useState(false);
   const [selection, setSelection] = useState<WhiskyInspectionState>(null);
   const [magazineBusy, setMagazineBusy] = useState(false);
-  const [archiveLoaded, setArchiveLoaded] = useState(false);
   const [bottlesReady, setBottlesReady] = useState(false);
   const onBottlesReady = useCallback(() => setBottlesReady(true), []);
   const pendingBottle = useRef<WhiskyBottleId | null>(null);
@@ -81,8 +81,12 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       const shown = groups.map(group => group?.visible ?? false);
       groups.forEach(group => { if (group) group.visible = true; });
       root.updateWorldMatrix(true, true);
-      // Async whole-room compilation polls materials that other room objects may dispose before it finishes.
-      try { gl.compile(root, camera, scene); }
+      // Keep synchronous Safari warmup, but exclude these lights: the target scene already contains them.
+      const materials = root.clone(true);
+      const lights: Object3D[] = [];
+      materials.traverse(object => { if ('isLight' in object) lights.push(object); });
+      lights.forEach(light => light.removeFromParent());
+      try { gl.compile(materials, camera, scene); }
       finally { groups.forEach((group, index) => { if (group) group.visible = shown[index]; }); }
     });
     return () => cancel(handle);
@@ -147,7 +151,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     }
     closing.current = false;
     setSelection(current => selectWhiskyBottle(current, id));
-    setInspection({ id: `whisky:${id}`, ...whiskyInspectionPose(cabinet.current, size) });
+    setInspection({ id: `whisky:${id}`, ...whiskyInspectionPose(cabinet.current, size, WHISKY_BOTTLES.find(bottle => bottle.image === id)) });
   }, [approachCabinet, magazineBusy, size, ready, setInspection]);
   useEffect(() => {
     if (magazineBusy || !pendingBottle.current) return;
@@ -170,7 +174,6 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   useEffect(() => {
     if (editing) { closing.current = false; setOpen(false); setSelection(null); }
   }, [editing]);
-  useEffect(() => { if (open) setArchiveLoaded(true); }, [open]);
   useEffect(() => {
     if (selection || magazineBusy || !closing.current) return;
     closing.current = false;
@@ -198,7 +201,9 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     if (previousViewport.current.width === size.width && previousViewport.current.height === size.height) return;
     previousViewport.current = size;
     if (!approached || !inspection || !cabinet.current || magazineActive) return;
-    const pose = (inspection.id.startsWith('whisky:') ? whiskyInspectionPose : open ? whiskyCabinetPose : whiskyClosedCabinetPose)(cabinet.current, size);
+    const pose = inspection.id.startsWith('whisky:')
+      ? whiskyInspectionPose(cabinet.current, size, WHISKY_BOTTLES.find(bottle => `whisky:${bottle.image}` === inspection.id))
+      : (open ? whiskyCabinetPose : whiskyClosedCabinetPose)(cabinet.current, size);
     setInspection({ id: inspection.id, ...pose });
   }, [approached, inspection, magazineActive, open, setInspection, size]);
   return <group ref={cabinet} name="Poltrona Frau Isidoro drinks cabinet"
@@ -216,8 +221,9 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
     <IsidoroFixedHalf wood={wood} interior={fixedInterior}>
       <group ref={barware} name="Enclosed Isidoro barware">
       <IsidoroBarware />
-      <IsidoroInteriorLighting lowerShelf={0.973} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />
       </group>
+      {/* Keep zero-intensity lights registered while closed so opening does not recompile the room. */}
+      <IsidoroInteriorLighting lowerShelf={0.973} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />
     </IsidoroFixedHalf>
     <WhiskyCabinetDoor open={open} pivot={doorPivot} worktop={worktopPivot} interior={movingInterior} wood={wood}
       exterior={<WhiskyLectureCard open={open} disabled={editing}
@@ -228,10 +234,10 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
         {roomReady && <Suspense fallback={null}><WhiskyCollection cabinet={cabinet} selection={selection}
           enabled={ready && !editing} reducedMotion={reducedMotion || editing} onSelect={chooseBottle} onReturned={returned}
           onReady={onBottlesReady} /></Suspense>}
-        {archiveLoaded && <Suspense fallback={null}><WhiskyMagazine enabled={ready && !editing && !selection} reducedMotion={reducedMotion || editing}
+        {roomReady && <Suspense fallback={null}><WhiskyMagazine enabled={ready && !editing && !selection} reducedMotion={reducedMotion || editing}
           onBusyChange={setMagazineBusy} onReturn={approachCabinet} /></Suspense>}
-        <IsidoroInteriorLighting lowerShelf={0.648} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />
       </group>
+      <IsidoroInteriorLighting lowerShelf={0.648} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />
     </WhiskyCabinetDoor>
     <IsidoroWorktop open={open} pivot={worktopPivot} wood={wood} disabled={editing} />
     <Html fullscreen zIndexRange={[17, 11]} style={{ pointerEvents: 'none' }}

@@ -1,8 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Box3, Group, PerspectiveCamera, Vector3 } from 'three';
 import { WHISKY_BOTTLES } from '../src/components/studio/scene/WhiskyBottleSpecs';
-import { focusFov, ROOM } from '../src/components/studio/scene/config';
-import { WHISKY_CABINET } from '../src/components/studio/scene/WhiskyCabinetLayout';
+import { focusFov } from '../src/components/studio/scene/config';
 import { advanceWhiskyProgress, applyWhiskyPresentation, resolveWhiskyBottleClearance, whiskyCabinetPose, whiskyInspectionLayout, whiskyInspectionPose, whiskyPresentationPath } from '../src/components/studio/scene/WhiskyInspectionMotion';
 import { finishWhiskyReturn, returnWhiskyBottle, selectWhiskyBottle } from '../src/components/studio/scene/WhiskyInspectionState';
 
@@ -79,57 +78,54 @@ describe('physical whisky presentation', () => {
     });
   }
   for (const [width, height] of [[1440, 900], [1280, 800], [768, 1024], [390, 844], [375, 667], [844, 390], [667, 375]]) {
-    for (const inspecting of [false, true]) {
-      test(`frames the physical cabinet at ${width}x${height} with inspector ${inspecting}`, () => {
+      test(`frames the complete cabinet opening at ${width}x${height}`, () => {
         // Given: actual shell, feet, carry-handle and worktop corners, with no removed text-label volume.
         const { cabinet } = openingHierarchy();
         const narrow = width < 760;
         const viewport = { width, height };
         // When: the fitted camera is applied to a real perspective projection.
-        const pose = inspecting ? whiskyInspectionPose(cabinet, viewport) : whiskyCabinetPose(cabinet, viewport);
+        const pose = whiskyCabinetPose(cabinet, viewport);
         const camera = new PerspectiveCamera(focusFov(null, narrow, width, height), width / height, 0.015, 60);
         camera.position.set(...pose.position); camera.lookAt(new Vector3(...pose.target)); camera.updateMatrixWorld();
         const projected = [];
-        const angles = inspecting ? [-Math.PI / 2] : Array.from({ length: 91 }, (_, degree) => -degree * Math.PI / 180);
+        const angles = Array.from({ length: 91 }, (_, degree) => -degree * Math.PI / 180);
         for (const angle of angles) for (const corner of physicalCabinetCorners(angle)) {
           const point = cabinet.localToWorld(corner).project(camera);
           projected.push({ x: (point.x + 1) * width / 2, y: (1 - point.y) * height / 2 });
         }
         // Then: every physical corner, including the complete opening sweep, stays in view.
-        const stacked = width < 960 && height >= width;
-        const panelWidth = Math.min(300, width * .36);
-        expect(Math.min(...projected.map(point => point.x))).toBeGreaterThanOrEqual(inspecting && !stacked ? panelWidth + 32 + 16 : 16);
+        expect(Math.min(...projected.map(point => point.x))).toBeGreaterThanOrEqual(16);
         expect(Math.max(...projected.map(point => point.x))).toBeLessThanOrEqual(width - 16);
         expect(Math.min(...projected.map(point => point.y))).toBeGreaterThanOrEqual(16);
-        expect(Math.max(...projected.map(point => point.y))).toBeLessThanOrEqual(height - (inspecting && stacked ? 160 + 32 + 16 : 16));
+        expect(Math.max(...projected.map(point => point.y))).toBeLessThanOrEqual(height - 16);
       });
-    }
   }
 });
 
-describe('whisky caption background clearance', () => {
-  for (const [width, height] of [[1440, 900], [1280, 800], [390, 844], [375, 667]]) {
-    test(`keeps the caption clear of the guitar at ${width}x${height}`, () => {
-      // Given the real room positions and the full guitar/stand envelope.
-      const cabinet = new Group();
-      cabinet.position.set(...WHISKY_CABINET.center); cabinet.rotation.y = WHISKY_CABINET.rotation;
-      const guitar = new Group();
-      guitar.position.set(...ROOM.music.position); guitar.rotation.y = ROOM.music.rotation;
-      guitar.updateMatrixWorld();
+describe('bottle detail framing', () => {
+  for (const [width, height] of [[1440, 900], [1280, 800], [768, 1024], [420, 912], [390, 844], [375, 667], [844, 390]]) {
+    for (const bottle of WHISKY_BOTTLES) test(`shows ${bottle.name} at label height at ${width}x${height}`, () => {
+      const { cabinet } = openingHierarchy();
       const viewport = { width, height };
-      // When the selected-bottle camera frames the room.
-      const pose = whiskyInspectionPose(cabinet, viewport);
+      const pose = whiskyInspectionPose(cabinet, viewport, bottle);
       const camera = new PerspectiveCamera(focusFov(null, width < 760, width, height), width / height, .015, 60);
       camera.position.set(...pose.position); camera.lookAt(...pose.target); camera.updateMatrixWorld();
       const points = [];
-      for (const x of [-.576, -.196]) for (const y of [0, 1.112]) for (const z of [-.13, .16]) {
-        const point = guitar.localToWorld(new Vector3(x, y, z)).project(camera);
+      for (const x of [-bottle.radius, bottle.radius]) for (const y of [.666, .666 + bottle.height]) for (const z of [-.205 - bottle.radius, -.205 + bottle.radius]) {
+        const point = cabinet.localToWorld(new Vector3(x, y, z)).project(camera);
         points.push({ x: (point.x + 1) * width / 2, y: (1 - point.y) * height / 2 });
       }
-      const layout = whiskyInspectionLayout(viewport);
-      // Then desktop text has a clear side, and mobile text begins below the guitar.
-      expect(layout.stacked ? layout.panel.top >= Math.max(...points.map(point => point.y))
-        : layout.panel.left + layout.panel.width < Math.min(...points.map(point => point.x))).toBe(true);
+      const { object: area, panel, stacked } = whiskyInspectionLayout(viewport);
+      const left = Math.min(...points.map(p => p.x)), right = Math.max(...points.map(p => p.x));
+      const top = Math.min(...points.map(p => p.y)), bottom = Math.max(...points.map(p => p.y));
+      expect(left).toBeGreaterThanOrEqual(area.left);
+      expect(right).toBeLessThanOrEqual(area.right);
+      expect(top).toBeGreaterThanOrEqual(area.top);
+      expect(bottom).toBeLessThanOrEqual(area.bottom);
+      expect((bottom - top) / (area.bottom - area.top)).toBeGreaterThan(.8);
+      expect(stacked ? bottom < panel.top : left > panel.left + panel.width).toBe(true);
+      const direction = new Vector3(...pose.position).sub(new Vector3(...pose.target)).normalize();
+      expect(Math.abs(direction.y)).toBeLessThan(.18);
     });
   }
 });
