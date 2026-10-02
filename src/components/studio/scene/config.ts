@@ -62,6 +62,26 @@ export const ROOM = {
   surfboard: { position: [-2.382, 0, -3.01], rotation: Math.PI / 2 + 0.18 },
 } as const;
 
+export const FAMILY_PHOTO = {
+  position: [0.67, 0.0185 + ROOM.desk.height, -0.23],
+  rotation: -0.13,
+} as const;
+
+const familyTarget: Point = [
+  ROOM.desk.position[0] + FAMILY_PHOTO.position[0] * Math.cos(ROOM.desk.rotation)
+    + FAMILY_PHOTO.position[2] * Math.sin(ROOM.desk.rotation),
+  ROOM.desk.position[1] + FAMILY_PHOTO.position[1] + 0.0965,
+  ROOM.desk.position[2] - FAMILY_PHOTO.position[0] * Math.sin(ROOM.desk.rotation)
+    + FAMILY_PHOTO.position[2] * Math.cos(ROOM.desk.rotation),
+];
+const familyFacing = ROOM.desk.rotation + FAMILY_PHOTO.rotation;
+const familyFocus: CameraPose = {
+  position: [familyTarget[0] + Math.sin(familyFacing) * 0.478,
+    familyTarget[1] + 0.09, familyTarget[2] + Math.cos(familyFacing) * 0.478],
+  target: familyTarget,
+  zoom: 1,
+};
+
 export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
   { position: [5.43472317, 3.236, -4.71354786], target: [-0.15, 1.35, -0.4], zoom: 1 },
   { position: [0, 1.6, -0.8], target: [0, 1.6, 3.2], zoom: 1 },
@@ -77,7 +97,7 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   research: { position: [0.33257091, 1.38670429, -2.00025145], target: [0.405, 0.7985, -1.696], zoom: 1 },
   education: { position: [0, 1.943, 1.02], target: [0, 1.943, 3.22], zoom: 1 },
   ai: { position: [0.03, 1.255, -2.2], target: [-0.05, 1.155, -1.2], zoom: 1 },
-  family: { position: [0.604, 0.96, -1.74], target: [0.67, 0.87, -1.27], zoom: 1 },
+  family: familyFocus,
   'award-photo': { position: [1.876, 1.58, 2.08], target: [1.876, 1.45, 3.09], zoom: 1 },
   award: { position: [ROOM.award.position[0], 1.58, 2.215], target: [ROOM.award.position[0], 1.448, 3.06], zoom: 1 },
   projects: { position: [0.11473774, 1.44831439, -1.78846985], target: [-0.055, 0.815, -1.155], zoom: 1 },

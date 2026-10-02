@@ -5,7 +5,7 @@ import type { Group } from 'three';
 import type { StudioSceneProps } from '../types';
 import { DigitalPhotoFrame } from './DigitalPhotoFrame';
 import { Interactive } from './Interactive';
-import { ROOM } from './config';
+import { FAMILY_PHOTO } from './config';
 import { positionCollectionCopy, projectCollectionBounds } from './CollectionInspectionLayout';
 
 export function FamilyPhoto(props: Pick<StudioSceneProps, 'familyPhotoSrc' | 'selected' | 'onSelect' | 'reducedMotion'>) {
@@ -26,8 +26,8 @@ export function FamilyPhoto(props: Pick<StudioSceneProps, 'familyPhotoSrc' | 'se
     caption.style.transform = `translate3d(${left}px, ${top}px, 0)`;
   });
   // Mirrored to the desk's other side: the folio sits at one back corner, so the frame balances it at the other.
-  return <Interactive id="family" {...props} position={[0.67, 0.0185 + ROOM.desk.height, -0.23]}
-    rotation={-0.13} onHoverChange={setHovered}>
+  return <Interactive id="family" {...props} position={FAMILY_PHOTO.position}
+    rotation={FAMILY_PHOTO.rotation} onHoverChange={setHovered}>
     <group ref={frame}>
     <DigitalPhotoFrame src={props.familyPhotoSrc} hovered={hovered} active={props.selected === 'family'} reducedMotion={props.reducedMotion} />
     </group>
