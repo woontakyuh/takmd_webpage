@@ -1,6 +1,7 @@
 import { Html, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRoomReady } from './DeferredAssets';
+import { prepareAreaLightMaterials } from './AreaLightCulling';
 import { useBoundsRaycast } from './boundsRaycast';
 import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
@@ -86,6 +87,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       const lights: Object3D[] = [];
       materials.traverse(object => { if ('isLight' in object) lights.push(object); });
       lights.forEach(light => light.removeFromParent());
+      prepareAreaLightMaterials(materials);
       try { gl.compile(materials, camera, scene); }
       finally { groups.forEach((group, index) => { if (group) group.visible = shown[index]; }); }
     });

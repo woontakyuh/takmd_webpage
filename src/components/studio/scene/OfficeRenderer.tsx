@@ -4,6 +4,7 @@ import { Frustum, Matrix4, Mesh, MeshPhysicalMaterial, Vector3 } from 'three';
 import type { BufferGeometry } from 'three';
 import type { StudioSceneProps } from '../types';
 import { DistantGlass } from './DistantGlass';
+import { prepareAreaLightMaterial } from './AreaLightCulling';
 
 type ShadowSnapshot = {
   readonly matrix: Matrix4;
@@ -46,6 +47,7 @@ export function OfficeRenderer({ lighting, environmentIntensity }: Pick<StudioSc
     scene.traverseVisible(object => {
       if (!(object instanceof Mesh)) return;
       const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach(prepareAreaLightMaterial);
       if (materials.some(material => material instanceof MeshPhysicalMaterial && glass.tracks(material))) {
         if (!object.geometry.boundingSphere) object.geometry.computeBoundingSphere();
         const sphere = object.geometry.boundingSphere;

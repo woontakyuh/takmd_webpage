@@ -20,6 +20,8 @@ try {
     ['media', 'test-office-media.mjs'],
     ['visibility', 'test-office-visibility.mjs'],
     ['touch', 'test-office-touch.mjs'],
+    ['family-photo', 'test-family-photo.mjs'],
+    ['cadence', 'test-office-cadence.mjs'],
   ]) {
     console.log(`Release browser check: ${name}`);
     const started = Date.now();

@@ -19,6 +19,7 @@ export function SceneFrameLoop({ active, settled }: { readonly active: boolean; 
     let interactiveUntil = previous + 1000;
     let readingUntil = 0;
     let player = get().scene.getObjectByName('Bang & Olufsen Beosound 9000');
+    let palm = get().scene.getObjectByName('palm foliage canopy');
     const cameraMatrix = get().camera.matrixWorld.clone();
     const isReading = (event: Event) => event.target instanceof Element && Boolean(event.target.closest('.studio-dialog'));
     const interact = (event: Event) => {
@@ -28,7 +29,7 @@ export function SceneFrameLoop({ active, settled }: { readonly active: boolean; 
     };
     const pointerMove = (event: Event) => {
       if (isReading(event)) { readingUntil = performance.now() + 400; return; }
-      interactiveUntil = Math.max(interactiveUntil, performance.now() + 150);
+      interactiveUntil = Math.max(interactiveUntil, performance.now() + 500);
     };
     const interactionEvents = ['pointerdown', 'pointerup', 'keydown', 'wheel', 'resize'] as const;
     for (const event of interactionEvents) window.addEventListener(event, interact, { passive: true, capture: true });
@@ -37,8 +38,9 @@ export function SceneFrameLoop({ active, settled }: { readonly active: boolean; 
     const tick = (now: number) => {
       const state = get();
       player ??= state.scene.getObjectByName('Bang & Olufsen Beosound 9000');
-      const interval = frameInterval({ phone, settled, interacting: now < interactiveUntil,
-        animating: player?.userData.animating === true });
+      palm ??= state.scene.getObjectByName('palm foliage canopy');
+      const interval = frameInterval({ settled, interacting: now < interactiveUntil,
+        animating: player?.userData.animating === true || palm?.userData.animating === true });
       accumulated += now - previous;
       previous = now;
       const reader = phone && settled ? document.querySelector('.studio-dialog[open]') : null;

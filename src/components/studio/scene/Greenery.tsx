@@ -58,6 +58,7 @@ export function Greenery({ reducedMotion }: { readonly reducedMotion: boolean })
     if (!canopy.current) return;
     const targetSway = hovered && !editing && !reducedMotion ? Math.sin(clock.elapsedTime * 1.25) * HOVER_SWAY_RADIANS : 0;
     canopy.current.rotation.z = MathUtils.damp(canopy.current.rotation.z, targetSway, MOTION.object, delta);
+    canopy.current.userData.animating = (hovered && !editing && !reducedMotion) || Math.abs(canopy.current.rotation.z) > 0.0001;
   });
 
   return (
