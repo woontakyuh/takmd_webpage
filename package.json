@@ -23,7 +23,7 @@
     "posters:check": "bun run scripts/capture-office-posters.ts --check",
     "test:public:headers": "node scripts/test-public-headers.mjs",
     "test:release:browser": "node scripts/test-release-browser.mjs",
-    "check:release": "bun run check && bun test --timeout 20000 && bun run test:public && bun run test:public:headers && bun run build && bun run test:release:browser"
+    "check:release": "bun run check && bun test --timeout 20000 && bun run test:public && node scripts/test-room-lite-models.mjs && bun run test:public:headers && bun run build && bun run test:release:browser"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",

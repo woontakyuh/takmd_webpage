@@ -5,7 +5,7 @@ import { Box3, Mesh, Vector3 } from 'three';
 const PLUSH_LENGTH = 0.36;
 
 export function PigPlush() {
-  const { scene } = useGLTF('/models/workshop/plush-pig-packed.glb?v=20260925');
+  const { scene } = useGLTF('/models/workshop/plush-pig-lite.glb');
   const model = useMemo(() => {
     const clone = scene.clone(true);
     clone.name = 'Reference pale-pink plush pig';

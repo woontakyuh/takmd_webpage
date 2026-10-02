@@ -1,14 +1,12 @@
 import { DefaultLoadingManager } from 'three';
 import manifest from '../phone-images.manifest.json';
 
-// On phones, the room's largest textures are fetched as their 1024-pixel WebP copies (scripts/build-phone-images.mjs).
-// Every loader in the room — drei's useTexture and useGLTF, three's TextureLoader and GLTFLoader — resolves its
-// addresses through the default loading manager, so one modifier covers them all; the GPU cap resizes anything
-// larger than 1024 on a phone anyway, so the picture on screen is the same.
+// Room objects use the existing smaller image variants on all devices. HTML readers
+// load their original documents directly and are unaffected by the Three loader.
 const variants: Record<string, string> = manifest;
 let installed = false;
 
-export function servePhoneImages(): void {
+export function serveRoomImages(): void {
   if (installed) return;
   installed = true;
   DefaultLoadingManager.setURLModifier(url => {

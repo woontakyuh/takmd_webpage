@@ -8,13 +8,13 @@ export function preloadRoomAssets(phone: boolean): void {
   const models = [
     '/models/florence-knoll/relaxed-two-seater-ivory-packed.glb',
     '/models/noguchi/table-packed.glb',
-    '/models/surfboard-packed.glb?v=20260925',
+    '/models/surfboard-lite.glb',
     '/models/spine.glb',
-    '/models/workshop/plush-pig-packed.glb?v=20260925',
+    '/models/workshop/plush-pig-lite.glb',
     '/models/workshop/biportal-endoscope.glb',
-    phone ? '/models/garments/physician-coat-phone.glb' : '/models/garments/physician-coat-2k.glb?v=20260918-original',
-    phone ? '/models/garments/control-gi-phone-packed.glb?v=20260925' : '/models/garments/control-gi.glb?v=20260918-meshopt',
-    phone ? '/models/fender/stratocaster-phone.glb?v=20260922-1' : '/models/fender/stratocaster-sunburst.glb?v=20260918-original',
+    '/models/garments/physician-coat-lite.glb',
+    phone ? '/models/garments/control-gi-phone-lite.glb' : '/models/garments/control-gi-lite.glb',
+    '/models/fender/stratocaster-lite.glb',
   ];
   models.forEach(model => useGLTF.preload(model));
   useGLTF.preload(['/models/eames/lounge.glb', '/models/eames/ottoman.glb']);

@@ -10,6 +10,8 @@ const preview = await startPublicPreview(resolve('dist'));
 const results = [];
 try {
   for (const [name, file] of [
+    ['room-budget', 'test-office-budget.mjs'],
+    ...(process.env.WEBKIT_EXECUTABLE_PATH ? [['webkit-cabinet', 'test-safari-cabinet-warmup.mjs']] : []),
     ['loading', 'test-office-loading.mjs'],
     ['desk-entry', 'test-desk-entry.mjs'],
     ['mobile-cv', 'test-mobile-cv.mjs'],

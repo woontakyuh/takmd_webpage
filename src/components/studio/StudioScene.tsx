@@ -4,12 +4,13 @@ import { Environment, Lightformer } from '@react-three/drei';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { MathUtils, PCFSoftShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
+import { needsWholePixelRatio } from './scene/renderBudget';
 import { SceneFrameLoop } from './scene/SceneFrameLoop';
 import { StaticMerge } from './scene/StaticMerge';
 import { GuidedViewProvider } from './scene/GuidedView';
 import { RoomReadyProvider } from './scene/DeferredAssets';
 import { DeviceProvider } from './scene/Device';
-import { servePhoneImages } from './scene/phoneImages';
+import { serveRoomImages } from './scene/phoneImages';
 import type { StudioSceneProps } from './types';
 import { CameraRig } from './scene/CameraRig';
 import { DeskFurniture } from './scene/DeskFurniture';
@@ -33,6 +34,8 @@ const ROOM_ENVIRONMENT = (
 
 export function StudioScene(props: StudioSceneProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const [wholePixels] = useState(() => typeof navigator !== 'undefined' && needsWholePixelRatio(navigator.userAgent));
+  const [pixelRatio, setPixelRatio] = useState(wholePixels ? 1 : 0.85);
   const [visible, setVisible] = useState(true);
   const [coarsePointer, setCoarsePointer] = useState(false);
   useEffect(() => {
@@ -60,22 +63,22 @@ export function StudioScene(props: StudioSceneProps) {
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
     <Canvas ref={canvas} frameloop="never" camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
-      dpr={props.entry === 'capture' ? 2 : [1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
+      dpr={props.entry === 'capture' ? 2 : pixelRatio} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       // A phone's web process is killed near 1.5 GB and the room held 858 MB of textures alone, fifteen of them 2048².
       // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
-      onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); if (mobile) servePhoneImages(); }}
+      onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); serveRoomImages(); }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
       <DeviceProvider phone={mobile}>
       <RoomReadyProvider ready={props.roomReady}>
       <GuidedViewProvider section={props.guidedSection ?? null}>
-      <SceneFrameLoop active={visible && (!props.paused || !props.roomReady)} settled={props.roomReady && (props.entry === 'complete' || props.entry === 'reading')} />
+      <SceneFrameLoop onPixelRatioChange={setPixelRatio} wholePixels={wholePixels} capture={props.entry === 'capture'} active={visible && (!props.paused || !props.roomReady)} settled={props.roomReady && (props.entry === 'complete' || props.entry === 'reading')} />
       <StaticMerge />
       {ROOM_ENVIRONMENT}
       <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
       <hemisphereLight args={[sun.skyColor, PALETTE.walnut, 0.10 + skyFill * 0.48]} />
       <directionalLight position={[...position]} intensity={sun.sunIntensity}
-        color={sun.sunColor} castShadow shadow-mapSize={[mobile ? 1024 : 2048, mobile ? 1024 : 2048]}
+        color={sun.sunColor} castShadow shadow-mapSize={[1024, 1024]}
         shadow-camera-left={-5} shadow-camera-right={5} shadow-camera-top={6} shadow-camera-bottom={-5}
         shadow-normalBias={0.018} shadow-bias={-0.0001} shadow-radius={3} />
       <directionalLight position={[4, 4, -3]} intensity={0.04 + skyFill * 0.18} color={PALETTE.paperLight} />

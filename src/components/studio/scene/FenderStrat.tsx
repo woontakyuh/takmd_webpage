@@ -6,8 +6,8 @@ import type { BufferGeometry, Material, Texture } from 'three';
 import { Rod } from './Primitives';
 
 // Preserve vertex/index order: the Sienna shader identifies the body through mesh connectivity.
-// The phone copy changes only textures, matching the existing 1024px browser upload.
-const MODEL_URL = '/models/fender/stratocaster-sunburst.glb?v=20260918-original' as const;
+// The lite copy changes only textures, matching the existing 1024px browser upload.
+const MODEL_URL = '/models/fender/stratocaster-lite.glb' as const;
 const DARK = '#20201d';
 
 const SIENNA_FRAGMENT = `
@@ -157,7 +157,7 @@ function prepareGeometry(source: BufferGeometry): BufferGeometry {
 
 export function FenderStrat() {
   const textureLimit = useThree(state => state.gl.capabilities.maxTextureSize);
-  const { scene } = useGLTF(textureLimit <= 1024 ? '/models/fender/stratocaster-phone.glb?v=20260922-1' : MODEL_URL);
+  const { scene } = useGLTF(MODEL_URL);
   const prepared = useMemo(() => {
     const clone = scene.clone(true);
     const materials: Material[] = [];

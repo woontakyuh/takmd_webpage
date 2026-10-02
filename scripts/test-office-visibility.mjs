@@ -12,8 +12,8 @@ const results = [];
 let releaseModel = () => {};
 try {
   for (const profile of [
-    { name: 'desktop', width: 1440, height: 1000, idle: 'busy', held: '**/models/fender/stratocaster-sunburst.glb*' },
-    { name: 'tablet', width: 768, height: 1024, idle: 'normal', held: '**/models/personal-awards/cgbio-2026/certificate.webp*' },
+    { name: 'desktop', width: 1440, height: 1000, idle: 'busy', held: '**/models/fender/stratocaster-lite.glb*' },
+    { name: 'tablet', width: 768, height: 1024, idle: 'normal', held: '**/models/personal-awards/cgbio-2026/certificate-phone.webp*' },
     { name: 'phone', width: 375, height: 812, idle: 'unavailable', held: '**/models/spine.glb*' },
   ].filter(profile => !process.env.VISIBILITY_PROFILE || profile.name === process.env.VISIBILITY_PROFILE)) {
     const context = await browser.newContext({ viewport: { width: profile.width, height: profile.height }, hasTouch: profile.name !== 'desktop', isMobile: profile.name === 'phone' });
