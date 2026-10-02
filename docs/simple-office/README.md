@@ -6,8 +6,8 @@ The detailed site remains on **takmd.com**, Cloudflare Pages project `takmdwebpa
 
 - Local: `PUBLIC_OFFICE_STYLE=simple bun run dev`
 - Production build: `BUILD_ID=simple-office-20261003 bun run build:simple`
-- Publish after validation: `npm exec --yes --package=wrangler@4.129.0 -- wrangler pages deploy dist --config wrangler.simple.toml --project-name takmd-simple --branch main`
-- `bun run deploy:simple` builds and publishes the same independent project.
+- Publish after validation: `node scripts/deploy-simple.mjs`
+- `bun run deploy:simple` builds and publishes the same independent project. The deployment helper stages its config and Pages function in a temporary directory because Pages does not accept custom configuration filenames. It verifies the simple canonical URL before publishing.
 
 `PUBLIC_OFFICE_STYLE` is a build-time selection. The detailed profile is the default when absent. The existing interaction state, content sources, routes, camera controls, local sunlight, room lamps, blinds, night skyline, TV, readers, music and CD operations are shared, not reimplemented. Neither profile lowers the canvas pixel ratio for the miniature conversion.
 

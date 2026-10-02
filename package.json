@@ -25,7 +25,7 @@
     "test:release:browser": "node scripts/test-release-browser.mjs",
     "check:release": "bun run check && bun test --timeout 20000 && bun run test:public && bun run test:public:headers && bun run build && bun run test:release:browser",
     "build:simple": "PUBLIC_OFFICE_STYLE=simple bun run build",
-    "deploy:simple": "bun run build:simple && npm exec --yes --package=wrangler@4.129.0 -- wrangler pages deploy dist --config wrangler.simple.toml --project-name takmd-simple --branch main"
+    "deploy:simple": "bun run build:simple && node scripts/deploy-simple.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
