@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { parseHeaders, headersForPath } from './preview-public-build.mjs';
+
+const source = await readFile(new URL('../public/_headers', import.meta.url), 'utf8');
+const rules = parseHeaders(source);
+const headers = headersForPath(rules, '/');
+assert.equal(headers['x-content-type-options'], 'nosniff');
+assert.equal(headers['x-frame-options'], 'SAMEORIGIN');
+assert.equal(headers['referrer-policy'], 'strict-origin-when-cross-origin');
+const csp = new Map(headers['content-security-policy'].split(';').filter(value => value.trim()).map(value => {
+  const [name, ...values] = value.trim().split(/\s+/);
+  return [name, values];
+}));
+assert.deepEqual(csp.get('default-src'), ["'self'"]);
+assert.deepEqual(csp.get('frame-ancestors'), ["'self'"]);
+assert.deepEqual(csp.get('frame-src'), ["'self'"]);
+assert.deepEqual(csp.get('object-src'), ["'none'"]);
+assert.deepEqual(csp.get('base-uri'), ["'self'"]);
+assert.deepEqual(csp.get('form-action'), ["'self'"]);
+assert.ok(!headers['content-security-policy'].includes("'unsafe-eval'"));
+assert.ok(![...csp.values()].flat().includes('https:'));
+assert.deepEqual(csp.get('connect-src'), ["'self'", 'blob:']);
+for (const capability of ['camera', 'microphone', 'geolocation', 'payment', 'usb']) assert.ok(headers['permissions-policy'].includes(`${capability}=()`));
+for (const path of ['/cv', '/document/cv', '/audio/two-ton-shoe-paper-bag.m4a', '/_astro/app.js']) assert.equal(headersForPath(rules, path)['content-security-policy'], headers['content-security-policy']);
+for (const path of ['/models/proposal-memory/hls/master.m3u8', '/models/proposal-memory/hls/720/index.m3u8', '/models/proposal-memory/hls/1080/index.m3u8']) assert.equal(headersForPath(rules, path)['content-type'], 'application/vnd.apple.mpegurl');
+for (const height of ['720', '1080']) assert.equal(headersForPath(rules, `/models/proposal-memory/hls/${height}/segment-000.ts`)['content-type'], 'video/mp2t');
+assert.equal(headersForPath(rules, '/build.json')['cache-control'], 'no-store');
+assert.ok(source.split('\n').every(line => line.length <= 2000), 'Cloudflare header lines must fit the platform limit');
+console.log('PASS: security policy, media MIME types, cache rule, and platform header limits');

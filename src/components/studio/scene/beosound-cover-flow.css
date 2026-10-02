@@ -1,0 +1,12 @@
+.cd-cover-flow { --cover-size: 160px; position: relative; height: 208px; padding: 0 12px; gap: 0; background: transparent; color: inherit; }
+.cd-cover-flow > button { z-index: 20; background: transparent; color: inherit; }
+.cd-cover-flow .cd-case-rail { position: relative; display: block; flex: 1; min-width: 0; align-self: stretch; padding: 0; overflow: hidden; perspective: 680px; touch-action: pan-y; scrollbar-width: none; }
+.cd-cover-flow .cd-case-rail button { position: absolute; top: 16px; left: 50%; width: var(--cover-size); height: var(--cover-size); min-height: 0; padding: 0; opacity: 1; border: 1px solid color-mix(in srgb, var(--studio-light, #f8f6f0) 20%, transparent); border-radius: 2px; background: var(--studio-ink, #202d2a); box-shadow: 0 6px 18px #0005; transform: translate3d(calc(-50% + var(--cover-offset) * var(--cover-size) + var(--drag-offset)), 0, var(--cover-depth)) rotateY(var(--cover-angle)); transition: transform var(--cd-cover-duration, 380ms) var(--studio-ease, cubic-bezier(.22,1,.36,1)), filter var(--cd-cover-duration, 380ms); filter: brightness(.72); transform-style: preserve-3d; }
+.cd-cover-flow .cd-case-rail button[aria-pressed="true"] { filter: brightness(1); box-shadow: 0 8px 22px #0006; }
+.cd-cover-flow .cd-case-rail img { width: 100%; height: 100%; display: block; object-fit: cover; border: 0; border-radius: 1px; }
+.cd-cover-flow .cd-case-rail button::after { content: ''; position: absolute; left: 0; right: 0; top: calc(100% + 3px); height: 30px; background-image: var(--cover-image); background-size: 100% auto; background-position: bottom; transform: scaleY(-1); mask-image: linear-gradient(to top, #0005, transparent); opacity: .3; pointer-events: none; }
+.cd-cover-flow .cd-case-rail[data-dragging="true"] button { transition: none; }
+.cd-cover-flow-position { position: absolute; right: 20px; bottom: 8px; font-size: 10px; letter-spacing: .16em; color: inherit; opacity: .7; pointer-events: none; }
+@media (max-width: 759px) { .cd-cover-flow { --cover-size: 124px; height: 170px; padding: 0 2px; } .cd-cover-flow > button { width: 32px; } }
+@media (max-height: 599px) and (min-width: 600px) { .cd-cover-flow { --cover-size: 92px; height: 128px; padding: 0; } .cd-cover-flow .cd-case-rail button { top: 10px; } }
+@media (prefers-reduced-motion: reduce) { .cd-cover-flow .cd-case-rail button { transition: none; } }

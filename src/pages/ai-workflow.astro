@@ -1,117 +1,149 @@
 ---
-import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import Layout from '../layouts/Layout.astro';
 
 const workflowSteps = [
   {
-    title: 'Patient Encounter',
-    description: 'Structured history, examination, and problem framing at point of care.',
+    title: 'Encounter capture',
+    description: 'History, examination, imaging impressions, and patient goals are captured into a structured clinical frame.',
   },
   {
-    title: 'AI-assisted Documentation',
-    description: 'Voice capture and guided drafts for notes, plans, and communication.',
+    title: 'Surgeon-reviewed draft',
+    description: 'AI-assisted summaries produce drafts for notes, patient communication, and internal reasoning, then remain subject to review.',
   },
   {
-    title: 'Notion DB',
-    description: 'Clean registry fields for case indexing and longitudinal follow-up.',
+    title: 'Registry structure',
+    description: 'Clean fields flow into Notion databases for case indexing, outcomes, schedule metadata, and future analysis.',
   },
   {
-    title: 'PROM Capture',
-    description: 'Standardized patient-reported outcome collection at defined intervals.',
+    title: 'Knowledge synthesis',
+    description: 'Clinical observations, literature notes, and teaching concepts are linked into a reusable knowledge base.',
   },
   {
-    title: 'Obsidian Insight Graph',
-    description: 'Cross-linking concepts, outcomes, and hypotheses for clinical learning.',
+    title: 'Research surface',
+    description: 'Questions become audits, abstracts, talks, or publication pipelines when the underlying data remains structured.',
+  },
+];
+
+const stack = [
+  {
+    title: 'Voice capture',
+    description: 'Fast first-pass input for consult details, procedure context, and post-encounter reflection.',
   },
   {
-    title: 'Research/Registry',
-    description: 'Export-ready datasets for audits, abstracts, and publication pipelines.',
+    title: 'LLM review layer',
+    description: 'Structured drafting, checklist support, and second-pass synthesis without replacing physician judgment.',
+  },
+  {
+    title: 'Notion databases',
+    description: 'Case registry, publication, presentation, and schedule data used by the public website and dashboard.',
+  },
+  {
+    title: 'Obsidian knowledge base',
+    description: 'Linked notes for concepts, hypotheses, operative lessons, and reusable teaching language.',
+  },
+  {
+    title: 'Automation scripts',
+    description: 'Repeatable file flow, JSON sync, data cleanup, and publication-ready formatting.',
+  },
+  {
+    title: 'Dashboard layer',
+    description: 'Aggregated, de-identified data surfaces for internal review and public-facing summaries.',
   },
 ];
 ---
 
-<Layout title="AI Workflow - takmd" description="AI-augmented workflow used in endoscopic spine practice.">
-  <section class="page-shell py-14">
-    <h1 class="page-title-gradient text-4xl font-extrabold sm:text-5xl">AI-Augmented Surgical Workflow</h1>
-    <p class="mt-3 max-w-3xl text-[var(--color-text-secondary)]">
-      How I integrate LLMs and automation into daily endoscopic spine practice.
-    </p>
-    <p class="mt-6 inline-flex rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-2 text-sm text-[var(--color-link)]">
-      Educational example only. No patient-identifiable data.
-    </p>
-  </section>
-
-  <section class="page-shell pb-10">
-    <SectionHeader icon="🧬" title="Workflow Map" />
-    <div class="mx-auto max-w-2xl">
-      {workflowSteps.map((step, index) => (
+<Layout title="AI Workflow - Woon Tak Yuh, MD" description="A practical AI-augmented workflow for endoscopic spine practice, documentation, registries, and research.">
+  <main id="main-content">
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
         <div>
-          <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <h3 class="text-base font-semibold text-[var(--color-text)]">{step.title}</h3>
-            <p class="mt-1 text-sm text-[var(--color-text-secondary)]">{step.description}</p>
-          </div>
-          {index < workflowSteps.length - 1 && (
-            <div class="py-2 text-center text-xl text-[var(--color-text-muted)]">&darr;</div>
-          )}
+          <p class="eyebrow">AI Workflow</p>
+          <h1 class="serif-display mt-5 text-6xl text-[var(--color-text)] sm:text-7xl">
+            A clinical workflow built around review, structure, and reuse.
+          </h1>
         </div>
-      ))}
-    </div>
-  </section>
+        <div class="data-card">
+          <p class="text-base leading-7 text-[var(--color-text-secondary)]">
+            Educational example only. No patient-identifiable data is published here. The workflow is intentionally external to direct EMR integration.
+          </p>
+        </div>
+      </div>
+    </section>
 
-  <section class="page-shell pb-10">
-    <SectionHeader icon="🧰" title="What I Use" />
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <Card title="Voice capture" description="Rapid input for consult details and procedure context." />
-      <Card title="Claude Desktop + MCP" description="Structured drafting and safe prompt-driven checklists." />
-      <Card title="Notion databases" description="Case registry organization and downstream analytics readiness." />
-      <Card title="Obsidian knowledge base" description="Linked notes for pattern recognition across cases." />
-      <Card title="Automation scripts" description="File flow and standardized formatting for repeatable pipelines." />
-      <Card title="LLM consultation assist" description="Second-pass synthesis for educational and planning support." />
-    </div>
-  </section>
+    <section class="page-shell page-section border-t border-[var(--color-border)]">
+      <SectionHeader
+        eyebrow="Map"
+        title="From encounter to reusable knowledge"
+        description="The point of the workflow is not novelty. It is continuity between care, documentation, registry structure, teaching, and research."
+      />
+      <div class="data-card">
+        <div class="grid gap-4">
+          {workflowSteps.map((step, index) => (
+            <article class="grid gap-4 sm:grid-cols-[4rem_1fr]">
+              <div class="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface-alt)] font-mono text-sm font-bold text-[var(--color-link)]">
+                {String(index + 1).padStart(2, '0')}
+              </div>
+              <div>
+                <h2 class="text-lg font-semibold tracking-[-0.01em] text-[var(--color-text)]">{step.title}</h2>
+                <p class="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{step.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
 
-  <section class="page-shell pb-10">
-    <SectionHeader icon="📈" title="Sample Dashboard" />
-    <div class="rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-alt)] p-10 text-center text-sm text-[var(--color-text-secondary)]">
-      Mock data demonstration only. No real patient data.
-    </div>
-  </section>
+    <section class="page-shell page-section">
+      <SectionHeader
+        eyebrow="Stack"
+        title="Tools as quiet infrastructure"
+        description="The stack is deliberately ordinary: capture, structure, review, link, automate, and surface the record."
+      />
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {stack.map((item) => (
+          <Card title={item.title} description={item.description} />
+        ))}
+      </div>
+    </section>
 
-  <section class="page-shell pb-10">
-    <SectionHeader icon="🕸️" title="Obsidian Insight Graph" />
-    <div class="rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface-alt)] p-10 text-center text-sm text-[var(--color-text-secondary)]">
-      Knowledge graph visualization placeholder
-    </div>
-  </section>
+    <section class="page-shell page-section">
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div class="data-card">
+          <SectionHeader eyebrow="Guardrails" title="Clinical constraints" />
+          <div class="record-list">
+            {[
+              'No public patient-identifiable data',
+              'Surgeon review before clinical communication',
+              'No autonomous diagnosis or treatment decision',
+              'Structured export only after de-identification and quality checks',
+            ].map((item) => (
+              <article class="py-5">
+                <p class="text-base font-semibold leading-7 text-[var(--color-text)]">{item}</p>
+              </article>
+            ))}
+          </div>
+        </div>
 
-  <section class="page-shell pb-10">
-    <SectionHeader icon="📚" title="Starter Resources" />
-    <div class="space-y-2">
-      <a href="#" class="block text-sm text-[var(--color-link)] hover:text-[var(--color-text)]">Notion template (placeholder)</a>
-      <a href="#" class="block text-sm text-[var(--color-link)] hover:text-[var(--color-text)]">GitHub scripts (placeholder)</a>
-    </div>
-  </section>
-
-  <section class="page-shell pb-16">
-    <SectionHeader icon="❓" title="FAQ" />
-    <div class="space-y-3">
-      <details class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <summary class="cursor-pointer font-medium text-[var(--color-text)]">No EMR integration?</summary>
-        <p class="mt-2 text-sm text-[var(--color-text-secondary)]">Current workflow is intentionally external and educational, without direct EMR hooks.</p>
-      </details>
-      <details class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <summary class="cursor-pointer font-medium text-[var(--color-text)]">No PHI?</summary>
-        <p class="mt-2 text-sm text-[var(--color-text-secondary)]">The model flow uses de-identified and abstracted data structures only.</p>
-      </details>
-      <details class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <summary class="cursor-pointer font-medium text-[var(--color-text)]">Minimal setup possible?</summary>
-        <p class="mt-2 text-sm text-[var(--color-text-secondary)]">A simple stack can start with voice notes, one database, and basic summary prompts.</p>
-      </details>
-      <details class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <summary class="cursor-pointer font-medium text-[var(--color-text)]">Coding optional?</summary>
-        <p class="mt-2 text-sm text-[var(--color-text-secondary)]">Yes. Most flow can be configured with no-code tools and lightweight templates.</p>
-      </details>
-    </div>
-  </section>
+        <div class="data-card">
+          <SectionHeader eyebrow="FAQ" title="Practical answers" />
+          <div class="space-y-3">
+            <details class="rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-alt)] p-4">
+              <summary class="cursor-pointer font-semibold text-[var(--color-text)]">No EMR integration?</summary>
+              <p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">Correct. The current workflow is intentionally external and educational, without direct EMR hooks.</p>
+            </details>
+            <details class="rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-alt)] p-4">
+              <summary class="cursor-pointer font-semibold text-[var(--color-text)]">Is coding required?</summary>
+              <p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">Not always. A useful version can start with voice notes, one database, and a few careful review prompts.</p>
+            </details>
+            <details class="rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-alt)] p-4">
+              <summary class="cursor-pointer font-semibold text-[var(--color-text)]">Why put this on a branding site?</summary>
+              <p class="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">Because the workflow is part of the professional identity: how clinical care, education, and research stay connected.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>

@@ -1,0 +1,17 @@
+---
+import { competencyDomains } from '../../data/workshop-curriculum';
+import { workshopOutcomes } from '../../data/workshop-outcomes';
+const outcome = workshopOutcomes[0];
+---
+<section class="wk-section" aria-labelledby="outcomes-heading">
+  <div class="wk-section-heading"><div><p class="eyebrow">Learning, measured</p><h2 id="outcomes-heading">From rehearsal to confidence.</h2></div><p>20 December 2025 · Live animal lab<br />Paired pre/post self-assessment · n = {outcome.n}<br />Mean scores, 0–{outcome.scale.domainMax} per domain.</p></div>
+  <div class="wk-outcomes">
+    <div class="wk-domain-chart" role="group" aria-label="Six-domain pre and post self-assessment scores">
+      <p class="wk-legend"><span>○ Before</span><span>● After</span><span>0 → 15</span></p>
+      {outcome.domains.map(domain => <div class="wk-domain"><p>{competencyDomains.find(item => item.key === domain.key)?.label}</p><svg viewBox="0 0 360 42" role="img" aria-label={`Before ${domain.pre}, after ${domain.post}, out of 15`}><line x1="18" y1="18" x2="342" y2="18" class="wk-chart-axis" /><line x1={18 + domain.pre / 15 * 324} y1="18" x2={18 + domain.post / 15 * 324} y2="18" class="wk-chart-change" /><circle cx={18 + domain.pre / 15 * 324} cy="18" r="5" class="wk-chart-pre" /><circle cx={18 + domain.post / 15 * 324} cy="18" r="5" class="wk-chart-post" /><text x={18 + domain.pre / 15 * 324} y="39" text-anchor="middle">{domain.pre.toFixed(2)}</text><text x={18 + domain.post / 15 * 324} y="39" text-anchor="middle">{domain.post.toFixed(2)}</text></svg></div>)}
+      <p class="wk-small">Three items per domain, each scored 0–5. Self-reported confidence, not an assessment of independent surgical competence.</p>
+    </div>
+    <aside class="wk-composition"><p class="eyebrow">Respondents · n = {outcome.n}</p><ul>{outcome.composition.map(item => <li>{item}</li>)}</ul></aside>
+  </div>
+  <div class="wk-quotes">{outcome.quotes.map(quote => <blockquote><p>“{quote.en}”</p><details><summary>Original response · 한국어</summary><p lang="ko">{quote.ko}</p></details><cite>Anonymous workshop participant</cite></blockquote>)}</div>
+</section>
