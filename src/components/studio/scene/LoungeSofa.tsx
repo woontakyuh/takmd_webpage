@@ -1,3 +1,5 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
+import { SimpleLoungeSofa } from './simple/SimpleSeating';
 import { useGLTF } from '@react-three/drei';
 import { useMemo } from 'react';
 import { Box3, Mesh, Vector3 } from 'three';
@@ -5,7 +7,7 @@ import { Box3, Mesh, Vector3 } from 'three';
 const MODEL_URL = '/models/florence-knoll/relaxed-two-seater-ivory-packed.glb';
 const WIDTH = 1.6002;
 
-export function LoungeSofa() {
+function DetailedLoungeSofa() {
   const { scene } = useGLTF(MODEL_URL);
   const fitted = useMemo(() => {
     const model = scene.clone(true);
@@ -25,3 +27,5 @@ export function LoungeSofa() {
     <group scale={fitted.scale}><primitive object={fitted.model} dispose={null} /></group>
   </group>;
 }
+
+export const LoungeSofa = SIMPLE_OFFICE ? SimpleLoungeSofa : DetailedLoungeSofa;

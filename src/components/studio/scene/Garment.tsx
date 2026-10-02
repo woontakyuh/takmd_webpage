@@ -1,3 +1,4 @@
+import { officeModel } from './OfficeStyle';
 import { useGLTF, useTexture } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { usePhone } from './Device';
@@ -76,7 +77,7 @@ function widenCoatHook(source: BufferGeometry) {
 }
 
 function HangingGarment({ url, file = url, emblem }: HangingGarmentProps) {
-  const { scene } = useGLTF(file);
+  const { scene } = useGLTF(officeModel(file));
   const fitted = useMemo(() => {
     const model = scene.clone(true);
     const ownedGeometries: BufferGeometry[] = [];

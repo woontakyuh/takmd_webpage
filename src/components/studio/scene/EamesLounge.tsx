@@ -1,3 +1,5 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
+import { SimpleEamesLounge } from './simple/SimpleSeating';
 import { useGLTF } from '@react-three/drei';
 import { useMemo } from 'react';
 import { Mesh } from 'three';
@@ -6,7 +8,7 @@ const LOUNGE_URL = '/models/eames/lounge.glb';
 const OTTOMAN_URL = '/models/eames/ottoman.glb';
 const YAW = Math.PI - 0.32;
 
-export function EamesLounge() {
+function DetailedEamesLounge() {
   const [lounge, ottoman] = useGLTF([LOUNGE_URL, OTTOMAN_URL]);
   const models = useMemo(() => [lounge.scene, ottoman.scene].map(scene => {
     const model = scene.clone(true);
@@ -27,3 +29,5 @@ export function EamesLounge() {
     </group>
   </>;
 }
+
+export const EamesLounge = SIMPLE_OFFICE ? SimpleEamesLounge : DetailedEamesLounge;

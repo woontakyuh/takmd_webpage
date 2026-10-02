@@ -1,3 +1,4 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
 import type { ExhibitId } from '../types';
 
 export const LIGHTING = {
@@ -83,7 +84,7 @@ const familyFocus: CameraPose = {
 };
 
 export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
-  { position: [5.43472317, 3.236, -4.71354786], target: [-0.15, 1.35, -0.4], zoom: 1 },
+  SIMPLE_OFFICE ? { position: [7.7, 4.5, -8.5], target: [0, 1.18, 0], zoom: 1 } : { position: [5.43472317, 3.236, -4.71354786], target: [-0.15, 1.35, -0.4], zoom: 1 },
   { position: [0, 1.6, -0.8], target: [0, 1.6, 3.2], zoom: 1 },
   { position: [0.6, 2.1, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
   { position: [0.1, 1.55, -4.2], target: [2.4, 0.75, -1.85], zoom: 1 },

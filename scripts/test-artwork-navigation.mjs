@@ -89,7 +89,8 @@ try {
       }
       await page.getByRole('button', { name: `Close ${title}`, exact: true }).click();
       await caption.waitFor({ state: 'detached' }); await page.waitForTimeout(2400);
-      assert(moved(returnPose.position, (await state()).position) < .01, 'close restores the pre-inspection view');
+      const restored = await state();
+      assert(moved(returnPose.position, restored.position) < .01, `close restores the pre-inspection view: ${JSON.stringify({returnPose,restored})}`);
       results.push({ profile: name, title, before, zoom, orbit, held, photoAndClose: true });
       console.log('PASS', name, title);
     }

@@ -1,0 +1,26 @@
+[
+  {
+    "input": "garments/physician-coat-phone.glb",
+    "output": "coat.glb",
+    "before": 94752,
+    "after": 94752
+  },
+  {
+    "input": "garments/control-gi-phone-packed.glb",
+    "output": "gi.glb",
+    "before": 29078,
+    "after": 29078
+  },
+  {
+    "input": "spine.glb",
+    "output": "spine.glb",
+    "before": 30867,
+    "after": 14379
+  },
+  {
+    "input": "workshop/biportal-endoscope.glb",
+    "output": "endoscope.glb",
+    "before": 14064,
+    "after": 4000
+  }
+]

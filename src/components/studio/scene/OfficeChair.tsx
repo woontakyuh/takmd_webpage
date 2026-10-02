@@ -1,3 +1,5 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
+import { SimpleOfficeChair } from './simple/SimpleSeating';
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
@@ -7,7 +9,7 @@ import type { Group } from 'three';
 const MODEL_URL = '/models/soft-pad/chair-packed.glb' as const;
 const TARGET_HEIGHT = 1.08;
 
-export function OfficeChair({ reducedMotion }: { readonly reducedMotion: boolean }) {
+function DetailedOfficeChair({ reducedMotion }: { readonly reducedMotion: boolean }) {
   const swivel = useRef<Group>(null);
   const elapsed = useRef(2);
   useFrame((_, delta) => {
@@ -57,4 +59,6 @@ export function OfficeChair({ reducedMotion }: { readonly reducedMotion: boolean
   );
 }
 
-useGLTF.preload(MODEL_URL);
+if (!SIMPLE_OFFICE) useGLTF.preload(MODEL_URL);
+
+export const OfficeChair = SIMPLE_OFFICE ? SimpleOfficeChair : DetailedOfficeChair;

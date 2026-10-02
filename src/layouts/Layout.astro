@@ -22,7 +22,7 @@ const {
 } = Astro.props;
 
 const officeEntry = !documentPage && /^\/(cv|research|education|ube|ai|ai-workflow|contact|credits|dashboard|jiu-jitsu|surfing|knowledge|media|workshops)(\/|$)/.test(Astro.url.pathname);
-const canonicalURL = new URL(Astro.url.pathname, 'https://takmd.com');
+const canonicalURL = new URL(Astro.url.pathname, import.meta.env.PUBLIC_OFFICE_STYLE === 'simple' ? 'https://simple.takmd.com' : 'https://takmd.com');
 const buildId = process.env.BUILD_ID ?? 'dev';
 ---
 

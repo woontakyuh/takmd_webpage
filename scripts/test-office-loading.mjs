@@ -35,13 +35,14 @@ try {
   await page.close();
   }
 
+  const failedAsset = process.env.PUBLIC_OFFICE_STYLE === 'simple' ? '**/models/simple/coat.glb' : '**/models/soft-pad/chair-packed.glb';
   const recovery = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await recovery.route('**/models/soft-pad/chair-packed.glb', route => route.abort());
+  await recovery.route(failedAsset, route => route.abort());
   await recovery.goto(`${base}/?exhibit=research&stage=approach`);
   await recovery.locator('.office-poster[data-failed="true"]').waitFor({ timeout: 60000 });
   await recovery.getByRole('button', { name: 'Try again', exact: true }).waitFor({ timeout: 5000 });
   await recovery.screenshot({ path: `${evidence}/loading-failure.png` });
-  await recovery.unroute('**/models/soft-pad/chair-packed.glb');
+  await recovery.unroute(failedAsset);
   await recovery.getByRole('button', { name: 'Try again', exact: true }).click();
   await recovery.locator('.office-poster[data-ready="true"]').waitFor({ state: 'attached', timeout: 60000 });
   assert.equal(new URL(recovery.url()).searchParams.get('exhibit'), 'research');

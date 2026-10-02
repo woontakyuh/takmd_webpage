@@ -1,3 +1,4 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
 import { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 
@@ -13,4 +14,4 @@ export const usePhone = () => useContext(DeviceContext);
 
 // Rounded corners are built from this many segments per corner. A phone cannot show the difference between one and
 // three on a two-millimetre radius, and the shelving alone is several hundred such boxes.
-export const cornerSegments = (phone: boolean) => (phone ? 1 : 3);
+export const cornerSegments = (phone: boolean) => (SIMPLE_OFFICE || phone ? 1 : 3);

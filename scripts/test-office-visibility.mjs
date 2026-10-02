@@ -12,9 +12,9 @@ const results = [];
 let releaseModel = () => {};
 try {
   for (const profile of [
-    { name: 'desktop', width: 1440, height: 1000, idle: 'busy', held: '**/models/fender/stratocaster-sunburst.glb*' },
+    { name: 'desktop', width: 1440, height: 1000, idle: 'busy', held: process.env.PUBLIC_OFFICE_STYLE === 'simple' ? '**/models/simple/coat.glb' : '**/models/fender/stratocaster-sunburst.glb*' },
     { name: 'tablet', width: 768, height: 1024, idle: 'normal', held: '**/models/personal-awards/cgbio-2026/certificate.webp*' },
-    { name: 'phone', width: 375, height: 812, idle: 'unavailable', held: '**/models/spine.glb*' },
+    { name: 'phone', width: 375, height: 812, idle: 'unavailable', held: process.env.PUBLIC_OFFICE_STYLE === 'simple' ? '**/models/simple/spine.glb' : '**/models/spine.glb*' },
   ].filter(profile => !process.env.VISIBILITY_PROFILE || profile.name === process.env.VISIBILITY_PROFILE)) {
     const context = await browser.newContext({ viewport: { width: profile.width, height: profile.height }, hasTouch: profile.name !== 'desktop', isMobile: profile.name === 'phone' });
     await context.addInitScript(idle => {
@@ -40,7 +40,7 @@ try {
         return result;
       };
       const initialObjects = [
-        'Fender Stratocaster sunburst licensed mesh', 'Fender 65 Deluxe Reverb amplifier',
+        'Fender USA Stratocaster Sienna Sunburst on floor stand', 'Fender 65 Deluxe Reverb amplifier',
         'Hanging physician coat', 'Hanging Control gi', 'Bing 9ft6 surfboard',
         'Reference pale-pink plush pig', 'Personal painting above the garment rack',
         'SZQ Gallery textured canvas, 2020',
@@ -101,7 +101,7 @@ try {
     await page.waitForTimeout(4000);
     const unsafeGuitarTextures = await page.evaluate(() => {
       const s = window.officeTestScene(), unsafe = [];
-      s.scene.getObjectByName('Fender Stratocaster sunburst licensed mesh').traverse(object => {
+      s.scene.getObjectByName('Fender USA Stratocaster Sienna Sunburst on floor stand').traverse(object => {
         if (!object.isMesh) return;
         for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
           for (const key of ['map', 'normalMap', 'roughnessMap', 'metalnessMap']) {
@@ -119,7 +119,7 @@ try {
         function visible(object) { for (let node = object; node; node = node.parent) if (!node.visible) return false; return true; }
         const walls = [], music = {};
         s.scene.traverse(object => { if (object.name === 'Warm continuous plaster wall') walls.push({ visible: visible(object), parentVisible: object.parent.visible }); });
-        for (const name of ['Fender Stratocaster sunburst licensed mesh', 'Fender 65 Deluxe Reverb amplifier']) {
+        for (const name of ['Fender USA Stratocaster Sienna Sunburst on floor stand', 'Fender 65 Deluxe Reverb amplifier']) {
           const object = s.scene.getObjectByName(name); let meshes = 0;
           object?.traverse(child => { if (child.isMesh && visible(child)) meshes += 1; });
           music[name] = meshes;

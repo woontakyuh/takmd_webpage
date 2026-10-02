@@ -1,9 +1,10 @@
+import { officeModel } from './OfficeStyle';
 import { useGLTF } from '@react-three/drei';
 import { useMemo } from 'react';
 import { Mesh } from 'three';
 
 export function BiportalEndoscope() {
-  const { scene } = useGLTF('/models/workshop/biportal-endoscope.glb');
+  const { scene } = useGLTF(officeModel('/models/workshop/biportal-endoscope.glb'));
   const model = useMemo(() => {
     const clone = scene.clone(true);
     clone.name = 'Reference biportal scope and working sheath';

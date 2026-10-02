@@ -1,3 +1,4 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
 import { DataTexture, LinearFilter, LinearMipmapLinearFilter, SRGBColorSpace } from 'three';
 
 function noise(x: number, y: number): number {
@@ -14,7 +15,7 @@ function noise(x: number, y: number): number {
 }
 
 export function createMineralSurface(finish: 'microcement' | 'plaster') {
-  const size = 512;
+  const size = SIMPLE_OFFICE ? 1 : 512;
   const albedo = new Uint8Array(size * size * 4);
   const relief = new Uint8Array(size * size * 4);
   const contrast = finish === 'microcement' ? 1.8 : 0.9;
@@ -23,8 +24,8 @@ export function createMineralSurface(finish: 'microcement' | 'plaster') {
       const broad = noise(x / 38, y / 43);
       const worked = noise(x / 12 + broad * 2.8, y / 18 + broad * 3.2);
       const grain = noise(x / 1.3, y / 1.3);
-      const value = Math.min(255, Math.round(246 + contrast * ((broad - 0.5) * 14 + (worked - 0.5) * 8 + grain - 0.5)));
-      const height = Math.round(128 + (worked - 0.5) * 84 + (grain - 0.5) * 46);
+      const value = SIMPLE_OFFICE ? 255 : Math.min(255, Math.round(246 + contrast * ((broad - 0.5) * 14 + (worked - 0.5) * 8 + grain - 0.5)));
+      const height = SIMPLE_OFFICE ? 128 : Math.round(128 + (worked - 0.5) * 84 + (grain - 0.5) * 46);
       const offset = (y * size + x) * 4;
       albedo.set([value, value, value, 255], offset);
       relief.set([height, height, height, 255], offset);

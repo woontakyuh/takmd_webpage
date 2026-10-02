@@ -1,3 +1,4 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
 import { useEffect, useMemo } from 'react';
 import { CanvasTexture, SRGBColorSpace } from 'three';
 import type { Presentation } from '../types';
@@ -34,6 +35,7 @@ export function usePrintedTexture(surface: PrintedSurface) {
           break;
         }
         case 'wood':
+          if (SIMPLE_OFFICE) break;
           context.strokeStyle = PALETTE.walnutDark;
           for (let line = 0; line < 160; line += 1) {
             context.globalAlpha = 0.025 + (Math.sin(line * 2.4) + 1) * 0.025;

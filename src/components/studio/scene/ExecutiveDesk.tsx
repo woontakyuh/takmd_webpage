@@ -1,3 +1,4 @@
+import { SIMPLE_OFFICE, MAQUETTE } from './OfficeStyle';
 import { useEffect, useMemo } from 'react';
 import { Color, DataTexture, LinearFilter, LinearMipmapLinearFilter, RepeatWrapping, Vector2 } from 'three';
 import { createBodilDeskGeometry } from './BodilDeskGeometry';
@@ -46,13 +47,13 @@ export function ExecutiveDesk() {
 
   return <group name="bodil-kjaer-office-desk">
     <mesh name="walnut-carcass-and-four-flush-drawers" geometry={geometry.veneer} castShadow receiveShadow>
-      <meshPhysicalMaterial {...veneer} color={DESK_FINISH} normalScale={normalScale}
-        roughness={0.53} clearcoat={0.06} clearcoatRoughness={0.6} />
+      <meshPhysicalMaterial {...veneer} color={SIMPLE_OFFICE ? MAQUETTE.timber : DESK_FINISH} normalScale={normalScale}
+        roughness={SIMPLE_OFFICE ? 0.85 : 0.53} clearcoat={SIMPLE_OFFICE ? 0 : 0.06} clearcoatRoughness={0.6} />
     </mesh>
     <mesh name="brushed-stainless-sled-frame" geometry={geometry.steel} castShadow receiveShadow>
       <meshPhysicalMaterial color={PALETTE.aluminiumEdge} metalness={1} roughness={0.4}
-        roughnessMap={brush} bumpMap={brush} bumpScale={0.000_015}
-        anisotropy={0.5} anisotropyRotation={Math.PI / 2} envMapIntensity={1.15} />
+        roughnessMap={SIMPLE_OFFICE ? null : brush} bumpMap={SIMPLE_OFFICE ? null : brush} bumpScale={0.000_015}
+        anisotropy={SIMPLE_OFFICE ? 0 : 0.5} anisotropyRotation={Math.PI / 2} envMapIntensity={1.15} />
     </mesh>
     <mesh name="recessed-drawer-pulls" geometry={geometry.recess} castShadow receiveShadow>
       <meshStandardMaterial color={DRAWER_RECESS} roughness={0.7} />

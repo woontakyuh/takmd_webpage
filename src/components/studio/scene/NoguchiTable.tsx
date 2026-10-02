@@ -1,3 +1,5 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
+import { SimpleNoguchiTable } from './simple/SimpleSeating';
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { FrontSide, Mesh, MeshPhysicalMaterial } from 'three';
@@ -31,7 +33,7 @@ export function createNoguchiGlassMaterials() {
   return { face, edge };
 }
 
-export function NoguchiTable({ position, rotation }: NoguchiTableProps) {
+function DetailedNoguchiTable({ position, rotation }: NoguchiTableProps) {
   const { scene } = useGLTF(MODEL_URL);
   const glass = useMemo(createNoguchiGlassMaterials, []);
   const model = useMemo(() => {
@@ -54,3 +56,5 @@ export function NoguchiTable({ position, rotation }: NoguchiTableProps) {
     <primitive object={model} dispose={null} />
   </group>;
 }
+
+export const NoguchiTable = SIMPLE_OFFICE ? SimpleNoguchiTable : DetailedNoguchiTable;

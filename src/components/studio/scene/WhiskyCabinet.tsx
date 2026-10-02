@@ -1,3 +1,5 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
+import { Mesh } from 'three';
 import { Html, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRoomReady } from './DeferredAssets';
@@ -87,6 +89,17 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       const lights: Object3D[] = [];
       materials.traverse(object => { if ('isLight' in object) lights.push(object); });
       lights.forEach(light => light.removeFromParent());
+      if (SIMPLE_OFFICE) {
+        // Recompiling shared, already-rendered matte programs can leave Safari's shadow samplers stale.
+        // Warm only unseen materials; the exterior programs are already ready for the first opening.
+        const rendered: Mesh[] = [];
+        materials.traverse(object => {
+          if (!(object instanceof Mesh)) return;
+          const finishes = Array.isArray(object.material) ? object.material : [object.material];
+          if (finishes.every(material => (gl.properties.get(material) as { currentProgram?: unknown }).currentProgram)) rendered.push(object);
+        });
+        rendered.forEach(object => object.removeFromParent());
+      }
       prepareAreaLightMaterials(materials);
       try { gl.compile(materials, camera, scene); }
       finally { groups.forEach((group, index) => { if (group) group.visible = shown[index]; }); }

@@ -1,3 +1,5 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
+import { SimpleGreenery } from './simple/SimpleGreenery';
 import { useGLTF } from '@react-three/drei';
 import { useCursor } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
@@ -13,7 +15,7 @@ const SOIL_HEIGHT = 0.646;
 const FOLIAGE_HEIGHT = 2.05 - SOIL_HEIGHT;
 const HOVER_SWAY_RADIANS = Math.PI / 120;
 
-export function Greenery({ reducedMotion }: { readonly reducedMotion: boolean }) {
+function DetailedGreenery({ reducedMotion }: { readonly reducedMotion: boolean }) {
   const { scene } = useGLTF(MODEL_URL);
   const { editing } = useArrangement();
   const planter = useMemo(createPalmPlanterGeometries, []);
@@ -81,4 +83,6 @@ export function Greenery({ reducedMotion }: { readonly reducedMotion: boolean })
   );
 }
 
-useGLTF.preload(MODEL_URL);
+if (!SIMPLE_OFFICE) useGLTF.preload(MODEL_URL);
+
+export const Greenery = SIMPLE_OFFICE ? SimpleGreenery : DetailedGreenery;

@@ -1,3 +1,4 @@
+import { SIMPLE_OFFICE, officeModel } from './OfficeStyle';
 import { useGLTF, useTexture } from '@react-three/drei';
 import { BEOSOUND_ALBUMS } from './BeosoundAlbums';
 
@@ -16,6 +17,6 @@ export function preloadRoomAssets(phone: boolean): void {
     phone ? '/models/garments/control-gi-phone-packed.glb?v=20260925' : '/models/garments/control-gi.glb?v=20260918-meshopt',
     phone ? '/models/fender/stratocaster-phone.glb?v=20260922-1' : '/models/fender/stratocaster-sunburst.glb?v=20260918-original',
   ];
-  models.forEach(model => useGLTF.preload(model));
-  useGLTF.preload(['/models/eames/lounge.glb', '/models/eames/ottoman.glb']);
+  models.filter(model => !SIMPLE_OFFICE || !['florence-knoll', 'noguchi', 'plush-pig', 'fender'].some(name => model.includes(name))).forEach(model => useGLTF.preload(officeModel(model)));
+  if (!SIMPLE_OFFICE) useGLTF.preload(['/models/eames/lounge.glb', '/models/eames/ottoman.glb']);
 }

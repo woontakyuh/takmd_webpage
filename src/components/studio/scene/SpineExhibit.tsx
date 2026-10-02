@@ -1,3 +1,4 @@
+import { officeModel } from './OfficeStyle';
 import { Html, useGLTF } from '@react-three/drei';
 import { Component, useEffect, useMemo } from 'react';
 import type { ReactNode } from 'react';
@@ -24,7 +25,7 @@ function ModelStatus({ text }: { readonly text: string }) {
 }
 
 function AnatomyModel() {
-  const { scene } = useGLTF('/models/spine.glb');
+  const { scene } = useGLTF(officeModel('/models/spine.glb'));
   const model = useMemo(() => {
     const clone = scene.clone(true);
     clone.name = 'Anatomical spine specimen';

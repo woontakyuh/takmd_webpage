@@ -1,3 +1,4 @@
+import { SIMPLE_OFFICE } from './OfficeStyle';
 import { useTexture } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { NoColorSpace, RepeatWrapping, SRGBColorSpace, Vector2 } from 'three';
@@ -55,10 +56,10 @@ function prepareTexture(texture: Texture, repeatX: number, repeatY: number, colo
   return clone;
 }
 
-export function useInteriorMaterial(
+function useDetailedInteriorMaterial(
   surface: InteriorSurface,
   repeat: readonly [number, number] = [1, 1],
-): InteriorMaterial {
+): Partial<InteriorMaterial> {
   const [repeatX, repeatY] = repeat;
   const phone = usePhone();
   const paths = useMemo(() => {
@@ -83,3 +84,6 @@ export function useInteriorMaterial(
 
   return material;
 }
+
+const useMatteInteriorMaterial = (): Partial<InteriorMaterial> => ({});
+export const useInteriorMaterial = SIMPLE_OFFICE ? useMatteInteriorMaterial : useDetailedInteriorMaterial;
