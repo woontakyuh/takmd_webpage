@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test';
 import { eventRecord } from './tvEventRecordModel';
 
-const talk = { id: '3c5908af25b981e5b940f4e8ce3d83d1', title: 'World Spine Congress 2026 — KOMISS Session', date: '2026-11-27', venue: 'Hall 4, Songdo Convensia, Incheon, South Korea', topic: 'Existing lecture topic' };
+const talk = { id: '3c5908af25b981e5b940f4e8ce3d83d1', title: 'World Spinoscopy Congress (WSC) 2026 — KOMISS Registry', date: '2026-11-27', venue: 'Hall 4, Songdo Convensia, Incheon, South Korea', topic: 'Existing lecture topic' };
 
 describe('eventRecord', () => {
   it('marks a future dated event upcoming and retains its verified metadata', () => {

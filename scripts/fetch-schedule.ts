@@ -1,4 +1,6 @@
 import { fileURLToPath } from "node:url";
+import { applyOverrides } from "./schedule-overrides";
+import type { ScheduleOverride } from "./schedule-overrides";
 
 /**
  * Build-time script: Fetches all 발표 entries from Notion Schedule DB,
@@ -121,34 +123,17 @@ function transformPage(page: NotionPage): Presentation | null {
 
 // ─── Overrides (manual English translations) ─────────────
 
-interface Override {
-  name?: string;
-  place?: string;
-  topics?: string[];
-}
-
-async function loadOverrides(): Promise<Record<string, Override>> {
+async function loadOverrides(): Promise<Record<string, ScheduleOverride>> {
   const fs = await import("fs");
   const p = fileURLToPath(new URL("../src/data/schedule-overrides.json", import.meta.url));
   if (!fs.existsSync(p)) return {};
   const raw = JSON.parse(fs.readFileSync(p, "utf-8"));
   // Strip metadata keys starting with _
-  const result: Record<string, Override> = {};
+  const result: Record<string, ScheduleOverride> = {};
   for (const [k, v] of Object.entries(raw)) {
-    if (!k.startsWith("_")) result[k] = v as Override;
+    if (!k.startsWith("_")) result[k] = v as ScheduleOverride;
   }
   return result;
-}
-
-function applyOverrides(pres: Presentation, overrides: Record<string, Override>): Presentation {
-  const o = overrides[pres.date];
-  if (!o) return pres;
-  return {
-    ...pres,
-    name: o.name ?? pres.name,
-    place: o.place ?? pres.place,
-    topics: o.topics ?? pres.topics,
-  };
 }
 
 // ─── Fetch ───────────────────────────────────────────────

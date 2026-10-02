@@ -1,8 +1,9 @@
 {
-  "_comment": "Manual English overrides for Korean presentation entries. Keyed by YYYY-MM-DD. Each override may specify name, place, and/or topics (full array to replace).",
+  "_comment": "Source-backed English overrides for presentation entries. Keyed by YYYY-MM-DD. Each override may specify name, place, topics (full array to replace), and/or url. _source records naming provenance.",
 
   "2026-11-27": {
-    "name": "World Spine Congress 2026 — KOMISS Session"
+    "name": "World Spinoscopy Congress (WSC) 2026 — KOMISS Registry",
+    "_source": "https://www.spinoscopy.com/about/overview; KOMISS Registry is retained from the Notion Name. Verified 2026-10-02."
   },
   "2026-11-21": {
     "name": "TSMISS 2026 — KOMISS Invitation Session",
@@ -49,6 +50,11 @@
   "2026-05-29": {
     "name": "KOMISS Spring Symposium & Cadaver Workshop",
     "place": "Seoul St. Mary's Hospital"
+  },
+  "2026-05-08": {
+    "name": "8th World Congress of Minimally Invasive Spine Surgery and Techniques (WCMISST 2026)",
+    "url": "https://unitedscientificgroup.org/wcmisst/about",
+    "_source": "Organizer overview and welcome message: https://unitedscientificgroup.org/wcmisst/about. Verified 2026-10-02; the old wcmisst2026.org program URL redirects to unrelated content."
   },
   "2026-04-29": {
     "name": "MediGate Key Opinion Leader Interview",
