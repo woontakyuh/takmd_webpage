@@ -74,15 +74,24 @@ for (const engine of process.env.MONITOR_ENGINE ? [process.env.MONITOR_ENGINE] :
     await writeFile(`${evidence}/${engine}-cover-texture.png`, Buffer.from(texture.split(',')[1], 'base64'));
     await content.screenshot({ path: `${evidence}/${engine}-cover-interactive.png` });
     if (mobile) {
-      const typography = await content.evaluate(e => [...e.querySelectorAll('.monitor-cv-activity p')].map(p => ({
-        text: p.textContent, lines: Math.round(p.getBoundingClientRect().height / parseFloat(getComputedStyle(p).lineHeight)),
-      })));
-      assert(typography.filter(p => p.lines === 1).length >= typography.length - 1, JSON.stringify(typography));
+      const typography = await content.evaluate(e => [...e.querySelectorAll('.monitor-cv-activity')].map(activity => {
+        const [name, role] = activity.querySelectorAll('p');
+        return { text: name.textContent, lines: name.getClientRects().length,
+          inlineRole: Math.abs(name.getBoundingClientRect().top - role.getBoundingClientRect().top) < 2,
+          separator: getComputedStyle(role, '::before').content };
+      }));
+      assert(typography.every(p => p.lines === 1), JSON.stringify(typography));
+      assert(typography.filter(p => ['Neurospine', 'JMISST', 'World UBE Society (WUBES)', 'North American Spine Society (NASS)'].includes(p.text)).every(p => p.inlineRole && p.separator.includes(',')), JSON.stringify(typography));
       await content.locator('.monitor-cv-activity').first().evaluate(e => {
         const parent = e.closest('.monitor-screen-content');
         parent.scrollTop += e.getBoundingClientRect().top - parent.getBoundingClientRect().top - 10;
       });
       await page.screenshot({ path: `${evidence}/${engine}-activities.png` });
+      await content.locator('.monitor-cv-activity').nth(4).evaluate(e => {
+        const parent = e.closest('.monitor-screen-content');
+        parent.scrollTop += e.getBoundingClientRect().top - parent.getBoundingClientRect().top - 10;
+      });
+      await page.screenshot({ path: `${evidence}/${engine}-editorial-roles.png` });
     }
     await content.focus();
     await page.keyboard.press('End');

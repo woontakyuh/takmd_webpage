@@ -48,7 +48,7 @@ try {
     await page.screenshot({ path: `${evidence}/${baseline ? 'red' : 'readable'}-${width}-${ready}.png` });
     // Then real rendered text is readable without zoom and no content is removed.
     // offsetWidth rounds to whole pixels; allow only its sub-pixel measurement error.
-    if (mobile) assert(metrics.effectiveFont >= (automaticReader ? 11.99 : 15.99), `Effective body font ${metrics.effectiveFont}px is too small`);
+    if (mobile) assert(metrics.effectiveFont >= (automaticReader ? 10.49 : 15.99), `Effective body font ${metrics.effectiveFont}px is too small`);
     assert(metrics.scrollWidth <= metrics.clientWidth + 1, 'Reader must not overflow horizontally');
     assert(metrics.activities > 5 && metrics.portraitVisible);
     if (mobile) {

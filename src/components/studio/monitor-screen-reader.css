@@ -173,10 +173,11 @@
   :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-interests p { font-size: 12px; }
   :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-cover > .monitor-cv-portrait { position: absolute; top: 30px; left: auto; right: 12px; width: 56px; height: 75px; }
   :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activities { padding-top: 12px; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity-columns { margin-top: 10px; gap: 10px; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity { margin-bottom: 10px; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity p { font-size: 12px; line-height: 1.4; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity p + p { margin-top: 2px; font-size: 11px; line-height: 1.4; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity-columns { margin-top: 8px; gap: 8px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity { margin-bottom: 8px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity p { display: inline; font-size: 10.5px; line-height: 1.45; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity p + p { margin-top: 0; font-size: 10px; line-height: inherit; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity p + p::before { content: ', '; }
   .monitor-inline-reader .monitor-screen-reader { width: 100% !important; height: 100% !important; }
   .monitor-inline-reader .monitor-screen-header { inset: auto 0 calc(100% + 8px); padding: 0; justify-content: flex-end; color: var(--studio-ink); background: none; }
   .monitor-inline-reader .monitor-screen-header h2 { display: none; }

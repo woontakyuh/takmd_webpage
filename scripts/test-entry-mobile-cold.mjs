@@ -46,7 +46,7 @@ for (const engine of process.env.ENTRY_TEST_ENGINE ? [process.env.ENTRY_TEST_ENG
       await page.waitForFunction(() => document.querySelector('.office-poster img')?.naturalWidth > 0);
       await page.screenshot({ path: `${evidence}/${engine}-${engaged}-pre-check.png` });
       const metrics = await content.evaluate(e => ({ width: e.getBoundingClientRect().width, height: e.getBoundingClientRect().height, clientWidth: e.clientWidth, scrollWidth: e.scrollWidth, font: parseFloat(getComputedStyle(e.querySelector('.monitor-cv-activity p')).fontSize), top: e.getBoundingClientRect().top }));
-      assert(metrics.width >= 390 * .86 && metrics.width <= 390 && metrics.font === 12, JSON.stringify(metrics));
+      assert(metrics.width >= 390 * .86 && metrics.width <= 390 && metrics.font === 10.5, JSON.stringify(metrics));
       assert(metrics.scrollWidth <= metrics.clientWidth + 1);
       const bezel = await reader.locator('.loading-monitor-bezel').boundingBox();
       assert(bezel.width / bezel.height > 1.65 && bezel.width / bezel.height < 1.85, 'Entry must stay within a physical landscape monitor');
