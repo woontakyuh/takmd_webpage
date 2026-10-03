@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { MONITOR_CV_HEIGHT, MONITOR_CV_WIDTH, MonitorCvSurface } from './MonitorCvSurface';
 import type { MonitorScrollState } from './MonitorCvSurface';
-import { activeOfficePosterVariant } from './officePosterConfig';
+import { activeOfficePosterVariant, OFFICE_POSTER_MANIFEST } from './officePosterConfig';
 import { MONITOR } from './scene/config';
 
 type Props = {
@@ -66,6 +66,11 @@ export function LoadingMonitorReader({ publicationCount, presentationCount, onCl
   return <div ref={overlay} className="loading-monitor-reader" data-entry-reader={entry || undefined} role={entry ? 'region' : 'dialog'} aria-modal={entry ? undefined : true} aria-label="Curriculum Vitae on desk monitor"
     onPointerDown={event => event.stopPropagation()}
     onDoubleClick={event => event.stopPropagation()}>
+    {entry && <style>{`.loading-monitor-reader[data-entry-reader='true'] .loading-monitor-screen { left: ${50 * (MONITOR.width - MONITOR.screenWidth) / MONITOR.width}% !important; top: ${100 * ((MONITOR.height - MONITOR.screenHeight) / 2 - 0.004) / MONITOR.height}% !important; width: ${100 * MONITOR.screenWidth / MONITOR.width}% !important; height: ${100 * MONITOR.screenHeight / MONITOR.height}% !important; }` + [...OFFICE_POSTER_MANIFEST.variants].reverse().map(variant => {
+      const unit = `max(${100 / variant.width}cqw, ${100 / variant.height}cqh)`;
+      const rule = `.loading-monitor-reader[data-entry-reader='true'] .loading-monitor-bezel { left: calc(50% + ${variant.monitor.x - variant.width / 2} * ${unit}); top: calc(50% + ${variant.monitor.y - variant.height / 2} * ${unit}); width: calc(${variant.monitor.across[0]} * ${unit}); height: calc(${variant.monitor.down[1]} * ${unit}); transform: skewX(${Math.atan2(variant.monitor.down[0], variant.monitor.down[1]).toFixed(8)}rad); }`;
+      return variant.media ? `@media ${variant.media} { ${rule} }` : rule;
+    }).join('\n')}</style>}
     <div ref={bezel} className="loading-monitor-bezel" style={{ aspectRatio: `${MONITOR.width} / ${MONITOR.height}` }}>
       <div ref={frame} className="loading-monitor-screen" style={{
         aspectRatio: `${MONITOR_CV_WIDTH} / ${MONITOR_CV_HEIGHT}`,
@@ -75,13 +80,12 @@ export function LoadingMonitorReader({ publicationCount, presentationCount, onCl
       }}>
         <div className="loading-monitor-surface" style={{ transform: `scale(${scale})` }}>
           <MonitorCvSurface publicationCount={publicationCount} presentationCount={presentationCount}
-            active onClose={onClose} scrollState={scrollState} controlScale={1 / scale} autoFocus={!entry} onEngage={onEngage} closeDisabled={entry && !roomReady} />
+            active onClose={onClose} scrollState={scrollState} controlScale={1 / scale} autoFocus={!entry} onEngage={onEngage} closeDisabled={entry && !roomReady} embeddedEntry={entry} />
         </div>
       </div>
     </div>
-    {entry && <div className="office-entry-actions">
-      <a href="/cv">Full CV</a>
-      <button type="button" disabled={!roomReady} onClick={onClose}>{roomReady ? 'Explore the office' : 'Opening the office…'}</button>
+    {entry && roomReady && <div className="office-entry-actions">
+      <button type="button" onClick={onClose}>Explore the office</button>
     </div>}
   </div>;
 }

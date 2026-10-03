@@ -67,7 +67,7 @@ try {
     }
     releaseRoom();
     if (simple) {
-      await page.locator('.studio[data-entry=peeking]').waitFor({ state: 'attached', timeout: 120000 });
+      await page.locator(`.studio[data-entry=${width === 390 ? 'reading' : 'peeking'}]`).waitFor({ state: 'attached', timeout: 120000 });
       await page.locator('canvas').evaluate(canvas => canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, clientX: 200, clientY: 200, bubbles: true, cancelable: true })));
       await page.locator('.studio-scene').press('ArrowRight');
     }
@@ -75,7 +75,7 @@ try {
     assert(await content.isVisible(), 'Room reveal must keep the active CV open');
     assert.equal(await content.evaluate(element => element.scrollTop), scroll, 'Room reveal must retain reading position');
     await page.screenshot({ path: `${evidence}/reader-reveal-${width}.png` });
-    await page.getByRole('button', { name: 'Close and return to office', exact: true }).click();
+    await page.getByRole('button', { name: simple && width === 390 ? 'Explore the office' : 'Close and return to office', exact: true }).click();
     await page.locator('.studio[data-entry=complete]').waitFor({ state: 'attached', timeout: 15000 });
     await page.screenshot({ path: `${evidence}/overview-${width}.png` });
     assert.deepEqual(errors, []);

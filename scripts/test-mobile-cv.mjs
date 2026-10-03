@@ -24,11 +24,11 @@ try {
     // When the visitor opens their CV from the visible navigation.
     const automaticReader = await page.locator('.loading-monitor-reader[data-entry-reader=true]').isVisible();
     if (!automaticReader) await page.getByRole('link', { name: 'Living CV', exact: true }).click();
-    const reader = page.locator('.monitor-screen-reader[data-active=true]');
+    const reader = page.locator('.loading-monitor-reader .monitor-screen-reader[data-active=true]');
     const content = reader.locator('.monitor-screen-content');
     await content.waitFor();
     await page.locator('.loading-monitor-bezel').evaluate(element => Promise.all(element.getAnimations().map(animation => animation.finished)));
-    if (mobile && !baseline) {
+    if (mobile && !baseline && !automaticReader) {
       assert(await reader.locator('.monitor-screen-header h2').evaluate(element => {
         const box = element.getBoundingClientRect();
         return element.contains(document.elementFromPoint(box.x + 4, box.y + box.height / 2));
@@ -47,7 +47,8 @@ try {
     results.push({ width, height, ready, metrics, entryOnOpen: await page.locator('.studio').getAttribute('data-entry') });
     await page.screenshot({ path: `${evidence}/${baseline ? 'red' : 'readable'}-${width}-${ready}.png` });
     // Then real rendered text is readable without zoom and no content is removed.
-    if (mobile) assert(metrics.effectiveFont >= 16, `Effective body font ${metrics.effectiveFont}px is too small`);
+    // offsetWidth rounds to whole pixels; allow only its sub-pixel measurement error.
+    if (mobile) assert(metrics.effectiveFont >= 15.99, `Effective body font ${metrics.effectiveFont}px is too small`);
     assert(metrics.scrollWidth <= metrics.clientWidth + 1, 'Reader must not overflow horizontally');
     assert(metrics.activities > 5 && metrics.portraitVisible);
     if (mobile) {
@@ -72,7 +73,7 @@ try {
         await new Promise(resolve => setTimeout(resolve, 20));
       }
       await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-      await page.waitForFunction(() => document.querySelector('.monitor-screen-reader[data-active=true] .monitor-screen-content').scrollTop > 50);
+      await page.waitForFunction(() => document.querySelector('.loading-monitor-reader .monitor-screen-reader[data-active=true] .monitor-screen-content').scrollTop > 50);
       results.at(-1).touchScroll = await content.evaluate(e => e.scrollTop);
       results.at(-1).entryAfterSwipe = await page.locator('.studio').getAttribute('data-entry');
       await client.detach();
@@ -99,15 +100,15 @@ try {
       await page.screenshot({ path: `${evidence}/footer-after-reveal-${width}.png` });
       scrollBefore = await content.evaluate(e => e.scrollTop);
     }
-    if (automaticReader && await page.locator('.loading-monitor-reader button[aria-label="Close and return to office"]').isDisabled()) {
+    if (automaticReader && await page.locator('.studio').getAttribute('data-room-ready') !== 'true') {
       releaseScene();
       await page.locator('.studio[data-room-ready=true]').waitFor({ state: 'attached', timeout: 120000 });
     }
-    await page.getByRole('button', { name: 'Close and return to office', exact: true }).click();
+    await page.getByRole('button', { name: automaticReader ? 'Explore the office' : 'Close and return to office', exact: true }).click();
     if (automaticReader) await page.locator('.studio[data-entry=complete]').waitFor({ timeout: 15000 });
     await page.getByRole('link', { name: 'Living CV', exact: true }).click();
     await page.waitForFunction(previous => {
-      const element = document.querySelector('.monitor-screen-reader[data-active=true] .monitor-screen-content');
+      const element = document.querySelector('.loading-monitor-reader .monitor-screen-reader[data-active=true] .monitor-screen-content');
       return element && Math.abs(element.scrollTop - Math.min(previous, element.scrollHeight - element.clientHeight)) < 2;
     }, scrollBefore);
     results.at(-1).scrollBeforeClose = scrollBefore;

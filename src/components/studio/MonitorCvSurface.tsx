@@ -22,11 +22,12 @@ type Props = {
   readonly autoFocus?: boolean;
   readonly onEngage?: () => void;
   readonly closeDisabled?: boolean;
+  readonly embeddedEntry?: boolean;
 };
 
 type SurfaceStyle = CSSProperties & { readonly '--monitor-control-scale': number };
 
-export function MonitorCvSurface({ publicationCount, presentationCount, active, onClose, scrollState, controlScale = 1, hovered = false, onSnapshot, autoFocus = true, onEngage, closeDisabled = false }: Props) {
+export function MonitorCvSurface({ publicationCount, presentationCount, active, onClose, scrollState, controlScale = 1, hovered = false, onSnapshot, autoFocus = true, onEngage, closeDisabled = false, embeddedEntry = false }: Props) {
   const content = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const restoring = useRef(true);
@@ -72,7 +73,7 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
     onPointerDown={event => { if (active) { event.stopPropagation(); onEngage?.(); } }}
     onWheel={event => { if (active) event.stopPropagation(); }}
     onDoubleClick={event => { if (active) event.stopPropagation(); }}>
-    {active && <header className="monitor-screen-header">
+    {active && !embeddedEntry && <header className="monitor-screen-header">
       <h2>Curriculum Vitae</h2>
       <button ref={closeButton} type="button" disabled={closeDisabled} onClick={close} aria-label="Close and return to office"><OfficeIcon name="close" /></button>
     </header>}

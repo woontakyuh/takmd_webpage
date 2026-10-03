@@ -126,7 +126,7 @@ function OfficeExperience(content: StudioContent) {
   }, [roomReady, posterHidden, entry]);
   useEffect(() => {
     if (!posterHidden || !roomReady) return;
-    if (entry === 'seated') setEntry(selected || details || entryMonitor ? 'peeking' : 'revealing');
+    if (entry === 'seated') setEntry(entryMonitor ? 'reading' : selected || details ? 'peeking' : 'revealing');
     if (entry === 'reading' && !selected && !details && !entryMonitor) setEntry('revealing');
   }, [entry, selected, details, roomReady, posterHidden, entryMonitor]);
   useEffect(() => {
