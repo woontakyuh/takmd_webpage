@@ -11,7 +11,7 @@ for (const engine of process.env.WORKSHOP_ENGINE ? [process.env.WORKSHOP_ENGINE]
     ? { executablePath: '/Users/TakMD/Library/Caches/ms-playwright/webkit-2336/pw_run.sh' }
     : { channel: 'chrome', args: ['--use-angle=metal'] }) });
   try {
-    for (const [slug, count] of [['dummy', 14], ['cadaver', 11], ['animal-pig', 3]]) {
+    for (const [slug, count] of [['dummy', 14], ['cadaver', 29], ['animal-pig', 3]]) {
       const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: engine === 'chromium' });
       const page = await context.newPage();
       const errors = [];

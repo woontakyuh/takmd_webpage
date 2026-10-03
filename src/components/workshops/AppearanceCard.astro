@@ -1,6 +1,8 @@
 ---
 import type { FacultyAppearance } from '../../data/workshop-faculty-appearances';
 import { workshopDate } from './presentation';
+import tsessPhotos from '../../data/tsess-workshop-photos.json';
+import { RoomPhotoGallery } from '../studio/RoomPhotoGallery';
 interface Props { appearance: FacultyAppearance }
 const { appearance: a } = Astro.props;
 ---
@@ -10,5 +12,6 @@ const { appearance: a } = Astro.props;
   <p class="wk-location">{a.venue.name} · {a.venue.city}, {a.venue.country}</p>
   {a.requestedBy && <p>Invited by {a.requestedBy.name} · {a.requestedBy.affiliation}</p>}
   {a.note && <p>{a.note}</p>}
+  {a.id === '2026-06-08-tsess-hualien' && <RoomPhotoGallery client:visible photos={tsessPhotos} label="TSESS workshop photograph" />}
   {a.links?.presentationId && <a class="wk-link" href={`/?exhibit=education&talk=${encodeURIComponent(a.links.presentationId)}`}>View the presentation ↗</a>}
 </article>

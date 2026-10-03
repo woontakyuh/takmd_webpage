@@ -1,5 +1,6 @@
 import { facultyAppearances } from '../../data/workshop-faculty-appearances';
 import talkMedia from '../../data/studio-talk-media.json';
+import tsessPhotos from '../../data/tsess-workshop-photos.json';
 import { RoomPhotoGallery } from './RoomPhotoGallery';
 
 export function CadaverExperience({ onTalk }: { readonly onTalk: (id: string) => void }) {
@@ -13,6 +14,7 @@ export function CadaverExperience({ onTalk }: { readonly onTalk: (id: string) =>
       <p className="office-detail-source">{appearance.relation === 'team-dispatch' ? 'Team faculty exchange' : 'Invited faculty'}{appearance.id === '2026-09-12-cgbio-cadaver' ? ' · Participants from Korea and Brazil' : ''}</p>
       {'links' in appearance && <RoomPhotoGallery photos={talkMedia.find(media => media.id === appearance.links.presentationId && media.kind === 'photos')?.slides ?? []} />}
       {appearance.id === '2026-06-08-tsess-hualien' && <RoomPhotoGallery photos={[
+        ...tsessPhotos,
         { src: '/models/personal-awards/additions/tsess-instructor-2026.webp', thumbnail: '/models/personal-awards/additions/tsess-instructor-2026-phone.webp', caption: 'TSESS 2026 · Instructor certificate' },
       ]} />}
       {appearance.id === '2026-09-12-cgbio-cadaver' && <RoomPhotoGallery photos={[
