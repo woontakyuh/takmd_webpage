@@ -6,7 +6,6 @@
 .room-photo-viewer::backdrop { background:#182824d9; }
 .room-photo-viewer header, .room-photo-viewer footer, .room-photo-viewer header > div { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .room-photo-viewer header { font-size:12px; }
-.room-photo-viewer footer p { margin:0; font-size:13px; line-height:1.5; text-align:center; }
 .room-photo-viewport { flex:1; min-height:0; overflow:auto; overscroll-behavior:contain; }
 .room-photo-viewport img { display:block; width:100%; height:100%; object-fit:contain; }
 .room-photo-viewport[data-zoomed="true"] img { width:200%; max-width:none; height:auto; }
@@ -15,6 +14,5 @@
 .workshop-room-gallery figure { margin:0; min-width:0; }
 .workshop-room-gallery figure:first-child { grid-column:1 / -1; }
 .workshop-room-gallery img { display:block; width:100%; height:auto; }
-.workshop-room-gallery figcaption { margin-top:6px; color:var(--studio-muted, #68726c); font-size:11px; line-height:1.6; }
 .room-photo-viewer .studio-icon-button { display:grid; place-items:center; width:44px; height:44px; flex:0 0 44px; border-radius:4px; border:1px solid var(--studio-line); color:var(--studio-ink); background:transparent; }
 .room-photo-viewer .studio-icon-button:hover { background:var(--studio-paper); }

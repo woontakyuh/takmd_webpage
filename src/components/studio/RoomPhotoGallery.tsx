@@ -27,7 +27,7 @@ function PhotoViewer({ photos, initial, onClose, label }: { readonly photos: rea
       <button type="button" className="studio-icon-button" onClick={onClose} aria-label="Close photograph" autoFocus><OfficeIcon name="close" /></button>
     </div></header>
     <div ref={viewportRef} className="room-photo-viewport" data-zoomed={zoomed}><img src={photo.src} alt={photo.caption} /></div>
-    <footer><button type="button" className="studio-icon-button" onClick={() => move(-1)} aria-label="Previous photograph">‹</button><p>{photo.caption}</p><button type="button" className="studio-icon-button" onClick={() => move(1)} aria-label="Next photograph">›</button></footer>
+    <footer><button type="button" className="studio-icon-button" onClick={() => move(-1)} aria-label="Previous photograph">‹</button><button type="button" className="studio-icon-button" onClick={() => move(1)} aria-label="Next photograph">›</button></footer>
   </dialog>, document.body);
 }
 
@@ -37,7 +37,6 @@ export function RoomPhotoGallery({ photos, label = 'Workshop photograph' }: { re
   return <>
     <div className="workshop-room-gallery">{photos.map((photo, index) => <figure key={photo.src}>
       <button type="button" className="room-photo-open" onClick={() => setSelected(index)} aria-label={`Enlarge photograph: ${photo.caption}`}><img src={photo.thumbnail ?? photo.src} width={photo.width} height={photo.height} alt={photo.caption} loading="lazy" decoding="async" /><span aria-hidden="true"><OfficeIcon name="expand" /></span></button>
-      <figcaption>{photo.caption}</figcaption>
     </figure>)}</div>
     {selected !== null && <PhotoViewer photos={photos} initial={selected} onClose={() => setSelected(null)} label={label} />}
   </>;
