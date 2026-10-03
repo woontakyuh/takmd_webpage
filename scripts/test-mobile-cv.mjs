@@ -107,12 +107,15 @@ try {
     await page.getByRole('button', { name: automaticReader ? 'Explore the office' : 'Close and return to office', exact: true }).click();
     if (automaticReader) await page.locator('.studio[data-entry=complete]').waitFor({ timeout: 15000 });
     await page.getByRole('link', { name: 'Living CV', exact: true }).click();
-    await page.waitForFunction(previous => {
-      const element = document.querySelector('.loading-monitor-reader .monitor-screen-reader[data-active=true] .monitor-screen-content');
+    const reopenedSelector = await page.locator('.studio').getAttribute('data-room-ready') === 'true'
+      ? '.monitor-screen-portal .monitor-screen-content'
+      : '.loading-monitor-reader .monitor-screen-content';
+    await page.waitForFunction(({ previous, selector }) => {
+      const element = document.querySelector(selector);
       return element && Math.abs(element.scrollTop - Math.min(previous, element.scrollHeight - element.clientHeight)) < 2;
-    }, scrollBefore);
+    }, { previous: scrollBefore, selector: reopenedSelector });
     results.at(-1).scrollBeforeClose = scrollBefore;
-    results.at(-1).restoredScroll = await content.evaluate(element => element.scrollTop);
+    results.at(-1).restoredScroll = await page.locator(reopenedSelector).evaluate(element => element.scrollTop);
     releaseScene();
     await context.close();
   }

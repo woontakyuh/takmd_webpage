@@ -25,6 +25,8 @@ export function MonitorScreenReader({ publicationCount, presentationCount, onClo
   const snapshot = useRef<Promise<boolean> | null>(null);
   const queuedSnapshot = useRef<HTMLElement | null>(null);
   const size = useThree(state => state.size);
+  const inlineMobile = size.width < 760 || (size.height < 500 && window.matchMedia('(pointer: coarse)').matches);
+  const surfaceWidth = inlineMobile ? monitorReadingSize(size.width, size.height) : MONITOR_CV_WIDTH;
   const capture = useCallback((element: HTMLElement): Promise<boolean> => {
     queuedSnapshot.current = element;
     if (snapshot.current) return snapshot.current;
@@ -49,13 +51,15 @@ export function MonitorScreenReader({ publicationCount, presentationCount, onClo
   }, [texture]);
   // Reading and seated entry poses face the screen head-on, so a screen-aligned overlay matches the bezel exactly.
   // Drei's CSS 3D transform mode is avoided: WebKit rasterises its metre-scaled layer at that tiny scale, leaving Safari a blank screen.
-  return <Html ref={surface} wrapperClass="monitor-screen-portal" center distanceFactor={MONITOR.screenWidth * size.height / MONITOR_CV_WIDTH}
+  return <Html ref={surface} wrapperClass="monitor-screen-portal" center distanceFactor={MONITOR.screenWidth * size.height / surfaceWidth}
     position={MONITOR_SCREEN.reader} zIndexRange={[20, 16]} occlude pointerEvents={active ? 'auto' : 'none'}
     style={{ pointerEvents: active ? 'auto' : 'none' }}>
+    <div className={inlineMobile ? 'monitor-inline-reader' : undefined} style={{ width: surfaceWidth, height: surfaceWidth * MONITOR.screenHeight / MONITOR.screenWidth }}>
     <MonitorCvSurface publicationCount={publicationCount} presentationCount={presentationCount}
       active={active} hovered={hovered} onClose={onClose} scrollState={scrollState}
       autoFocus={!entry} onEngage={onEngage}
-      onSnapshot={capture}
-      controlScale={MONITOR_CV_WIDTH / monitorReadingSize(size.width, size.height)} />
+      onSnapshot={inlineMobile ? undefined : capture}
+      controlScale={surfaceWidth / monitorReadingSize(size.width, size.height)} />
+    </div>
   </Html>;
 }

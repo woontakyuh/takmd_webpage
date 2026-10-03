@@ -116,7 +116,7 @@ function OfficeExperience(content: StudioContent) {
   const [sceneFailed, setSceneFailed] = useState(false);
   const onSceneError = useCallback(() => setSceneFailed(true), []);
   const [loadingProfileSession, setLoadingProfileSession] = useState(false);
-  const loadingProfileOpen = selected === 'ai' && (phoneReader || loadingProfileSession || !roomReady || sceneFailed);
+  const loadingProfileOpen = selected === 'ai' && (loadingProfileSession || !roomReady || sceneFailed);
   useLayoutEffect(() => { setLoadingProfileSession(loadingProfileOpen); }, [loadingProfileOpen]);
   useEffect(() => {
     // The poster reports when its fade has finished; if a browser never delivers that report, do not leave the visitor seated forever.
