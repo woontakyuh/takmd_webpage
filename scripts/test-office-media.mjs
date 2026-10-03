@@ -108,7 +108,9 @@ try {
   log.push(`Surface: Chromium desktop ${await page.evaluate(() => `${innerWidth}x${innerHeight}`)} at ${base}`);
   // The first view opens the monitor's CV reader. Dismiss it through its visible close control to reach the office.
   const readerClose = page.getByRole('button', { name: 'Close and return to office', exact: true });
-  if (await readerClose.isVisible()) await readerClose.click();
+  if (await page.locator('.studio').getAttribute('data-office-style') === 'simple') {
+    await page.locator('.studio[data-room-ready=true][data-entry=complete]').waitFor({ timeout: 90000 });
+  } else if (await readerClose.isVisible()) await readerClose.click();
   await page.getByRole('button', { name: 'Play music', exact: true }).waitFor({ timeout: 30000 });
   await page.screenshot({ path: join(evidence, 'office-desktop.png'), fullPage: true });
 

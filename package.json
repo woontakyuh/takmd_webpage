@@ -3,8 +3,9 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "build": "bun run posters:ensure && astro build && bun run check:public",
+    "dev": "PUBLIC_OFFICE_STYLE=simple astro dev",
+    "build": "PUBLIC_OFFICE_STYLE=simple bun run build:office",
+    "build:office": "bun run posters:ensure && astro build && bun run check:public",
     "check": "astro check",
     "check:public": "node scripts/check-public-build.mjs",
     "test:public": "node scripts/test-public-build.mjs",
@@ -15,7 +16,7 @@
     "fetch:presentations": "bun run scripts/fetch-schedule.ts",
     "fetch:surgery": "bun run scripts/fetch-notion-data.ts",
     "fetch:data": "bun run fetch:publications && bun run fetch:presentations && bun run fetch:surgery",
-    "deploy": "bun run check:release && npm exec --yes --package=wrangler@4.129.0 -- wrangler pages deploy dist --project-name takmdwebpage --branch main",
+    "deploy": "bun run check:release && node scripts/deploy-main.mjs",
     "photos:import": "node scripts/import-frame-photos.mjs",
     "photos:workshops": "node scripts/import-workshop-photos.mjs",
     "posters:capture": "bun run scripts/capture-office-posters.ts --force",
@@ -24,7 +25,9 @@
     "test:public:headers": "node scripts/test-public-headers.mjs",
     "test:release:browser": "node scripts/test-release-browser.mjs",
     "check:release": "bun run check && bun test --timeout 20000 && bun run test:public && bun run test:public:headers && bun run build && bun run test:release:browser",
-    "build:simple": "PUBLIC_OFFICE_STYLE=simple bun run build",
+    "build:simple": "PUBLIC_OFFICE_STYLE=simple PUBLIC_SITE_ORIGIN=https://simple.takmd.com bun run build",
+    "build:main": "PUBLIC_OFFICE_STYLE=simple PUBLIC_SITE_ORIGIN=https://takmd.com bun run build",
+    "deploy:main": "bun run build:main && node scripts/deploy-main.mjs",
     "deploy:simple": "bun run build:simple && node scripts/deploy-simple.mjs"
   },
   "dependencies": {

@@ -134,6 +134,43 @@ try {
   const firstReturnFrame=await page.evaluate(()=>window.firstReturnFrame);
   assert(firstReturnFrame<300,`Closing the reader must immediately resume the room, got ${firstReturnFrame}ms`);
   records.push({scenario:'reader closes without a pause',firstReturnFrame});
+  async function settledArrangementCamera() {
+    await page.evaluate(()=>{window.arrangementCameraSample=null;window.arrangementStableFrames=0;});
+    await page.waitForFunction(()=>{
+      const s=window.officeTestScene(),now=[...s.camera.position.toArray(),...s.controls.target.toArray()],before=window.arrangementCameraSample;
+      window.arrangementCameraSample=now;
+      if(!before||Math.hypot(...now.map((value,index)=>value-before[index]))>.0001){window.arrangementStableFrames=0;return false;}
+      return ++window.arrangementStableFrames>=6;
+    },null,{timeout:15000});
+  }
+  await page.getByRole('button',{name:'Arrange furniture',exact:true}).click();
+  await settledArrangementCamera();
+  const clearTouch=await page.evaluate(()=>{
+    const canvas=window.officeTestScene().gl.domElement;
+    for(let y=280;y<500;y+=30) for(let x=70;x<220;x+=30) {
+      if([[x,y],[x+60,y],[x-20,y],[x+90,y+25]].every(([px,py])=>document.elementFromPoint(px,py)===canvas)) return {x,y};
+    }
+    return null;
+  });
+  assert(clearTouch,'Arrangement must leave room space available for touch gestures');
+  const cameraPose=()=>page.evaluate(()=>{
+    const s=window.officeTestScene();return {position:s.camera.position.toArray(),target:s.controls.target.toArray()};
+  });
+  const difference=(a,b)=>Math.hypot(...a.map((value,index)=>value-b[index]));
+  const beforeArrange=await cameraPose(), {x:ax,y:ay}=clearTouch;
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[touch(ax,ay),touch(ax+60,ay,2)]});
+  for(let step=1;step<=8;step++) await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[touch(ax-step*2,ay),touch(ax+60+step*2,ay,2)]});
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  await settledArrangementCamera();const afterPinch=await cameraPose();
+  assert(difference(beforeArrange.position,afterPinch.position)>.01,'Pinch zoom must remain active while arranging');
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[touch(ax,ay),touch(ax+60,ay,2)]});
+  for(let step=1;step<=8;step++) await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[touch(ax+step*2,ay+step*2),touch(ax+60+step*2,ay+step*2,2)]});
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  await settledArrangementCamera();const afterPan=await cameraPose();
+  assert(difference(afterPinch.target,afterPan.target)>.01,'Two-finger pan must remain active while arranging');
+  await page.screenshot({path:join(evidence,'phone-arrangement-gestures.png')});
+  await page.getByRole('button',{name:'Done',exact:true}).click();
+  records.push({scenario:'mobile arrangement gestures',beforeArrange,afterPinch,afterPan,result:'pinch and two-finger pan work'});
   const listenerResult=await cdp.send('Runtime.evaluate',{expression:'getEventListeners(window).pointermove?.length ?? 0',includeCommandLineAPI:true,returnByValue:true});
   assert(listenerResult.result.value<10);
   records.push({scenario:'idle listeners after interactions',count:listenerResult.result.value});

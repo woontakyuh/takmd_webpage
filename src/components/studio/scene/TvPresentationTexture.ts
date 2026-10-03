@@ -14,6 +14,7 @@ type Props = {
   readonly talk: Presentation | null;
   readonly presentations: readonly Presentation[];
   readonly treeScrollOffset?: number;
+  readonly enabled?: boolean;
 };
 
 const TREE_WIDTH = 304;
@@ -122,20 +123,21 @@ function drawLectureTree(context: CanvasRenderingContext2D, talk: Presentation |
   context.restore();
 }
 
-export function useTvPresentationTexture({ compact, cover, talk, presentations, treeScrollOffset = 0 }: Props) {
+export function useTvPresentationTexture({ compact, cover, talk, presentations, treeScrollOffset = 0, enabled = true }: Props) {
   const anisotropy = useThree(state => Math.min(4, state.gl.capabilities.getMaxAnisotropy()));
   // A phone opens the archive over the slide, so the unopened screen must not show a column the reader will drop.
   // The same compact breakpoint drives the loading poster, so the poster agrees with the live screen.
   const treeWidth = compact ? 0 : TREE_WIDTH;
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
-    canvas.width = 1600; canvas.height = 900;
+    canvas.width = enabled ? 1600 : 1; canvas.height = enabled ? 900 : 1;
     const result = new CanvasTexture(canvas);
     result.colorSpace = SRGBColorSpace;
     result.anisotropy = anisotropy;
     return result;
-  }, [anisotropy]);
+  }, [anisotropy, enabled]);
   useEffect(() => {
+    if (!enabled) return;
     const canvas: unknown = texture.image;
     if (!(canvas instanceof HTMLCanvasElement)) return;
     const context = canvas.getContext('2d');
@@ -219,7 +221,7 @@ export function useTvPresentationTexture({ compact, cover, talk, presentations, 
       cancelled = true;
       images.forEach(image => { image.onload = null; });
     };
-  }, [texture, cover, talk, presentations, treeScrollOffset, treeWidth, compact]);
+  }, [texture, cover, talk, presentations, treeScrollOffset, treeWidth, compact, enabled]);
   useEffect(() => () => texture.dispose(), [texture]);
   return texture;
 }

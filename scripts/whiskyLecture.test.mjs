@@ -1,11 +1,26 @@
 import { describe, expect, test } from 'bun:test';
-import { Group, PerspectiveCamera, Vector3 } from 'three';
+import { Group, PerspectiveCamera, PlaneGeometry, Vector3 } from 'three';
 import { WHISKY_LECTURE, whiskyLectureLayout, whiskyLecturePose } from '../src/components/studio/scene/WhiskyLectureLayout';
 import { advanceLecturePage, lectureLeafState, visibleLecturePages, lectureStackState, stepLectureTurn, lectureSheetPoint } from '../src/components/studio/scene/WhiskyLectureMotion';
 import { focusFov } from '../src/components/studio/scene/config';
 import { createLectureSheet } from '../src/components/studio/scene/WhiskyLectureSheet';
 
 describe('cabinet lecture page turns', () => {
+  test('static paper has the same planar surface and texture coordinates without turn subdivisions', () => {
+    const detailed = createLectureSheet(0);
+    const flat = new PlaneGeometry(WHISKY_LECTURE.width, WHISKY_LECTURE.height);
+    const positions = detailed.getAttribute('position');
+    const uv = detailed.getAttribute('uv');
+    for (let index = 0; index < positions.count; index++) {
+      expect(positions.getX(index)).toBeCloseTo((uv.getX(index) - .5) * WHISKY_LECTURE.width, 6);
+      expect(positions.getY(index)).toBeCloseTo((uv.getY(index) - .5) * WHISKY_LECTURE.height, 6);
+      expect(positions.getZ(index)).toBeCloseTo(0, 7);
+    }
+    detailed.computeBoundingBox(); flat.computeBoundingBox();
+    expect(detailed.boundingBox.equals(flat.boundingBox)).toBe(true);
+    expect(flat.index.count / 3).toBe(2);
+    detailed.dispose(); flat.dispose();
+  });
   test('Given a low frame rate, when a page turns, then it settles in the same wall-clock interval', () => {
     // Given
     const durations = [];

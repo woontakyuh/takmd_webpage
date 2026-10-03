@@ -81,13 +81,13 @@ export function useDocumentTexture({ image, title, eyebrow, detail, dark = false
   return texture;
 }
 
-export function useWorkstationTexture() {
+export function useWorkstationTexture(enabled = true) {
   const anisotropy = useThree(state => Math.max(1, Math.min(16, state.gl.capabilities.getMaxAnisotropy())));
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
-    canvas.width = 2560; canvas.height = 1440;
+    canvas.width = enabled ? 2560 : 1; canvas.height = enabled ? 1440 : 1;
     const context = canvas.getContext('2d');
-    if (context) {
+    if (context && enabled) {
       context.scale(2560 / 1440, 1440 / 810);
       context.textBaseline = 'top';
       context.fillStyle = PALETTE.paperLight; context.fillRect(0, 0, 1440, 810);
@@ -136,8 +136,9 @@ export function useWorkstationTexture() {
     }
     const result = new CanvasTexture(canvas); result.colorSpace = SRGBColorSpace; result.anisotropy = anisotropy;
     return result;
-  }, [anisotropy]);
+  }, [anisotropy, enabled]);
   useEffect(() => {
+    if (!enabled) return;
     let active = true;
     const portrait = new Image();
     portrait.onload = () => {
@@ -150,7 +151,7 @@ export function useWorkstationTexture() {
     };
     portrait.src = profileImage;
     return () => { active = false; portrait.onload = null; };
-  }, [texture]);
+  }, [texture, enabled]);
   useEffect(() => () => texture.dispose(), [texture]);
   return texture;
 }

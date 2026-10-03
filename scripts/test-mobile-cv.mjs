@@ -22,7 +22,8 @@ try {
     if (width === 390 && !ready && !baseline) await page.locator('.studio[data-desk-ready=true][data-room-ready=false]').waitFor({ state: 'attached', timeout: 120000 });
     if (ready) await page.locator('.studio[data-room-ready=true]').waitFor({ state: 'attached', timeout: 120000 });
     // When the visitor opens their CV from the visible navigation.
-    await page.getByRole('link', { name: 'Living CV', exact: true }).click();
+    const automaticReader = await page.locator('.loading-monitor-reader[data-entry-reader=true]').isVisible();
+    if (!automaticReader) await page.getByRole('link', { name: 'Living CV', exact: true }).click();
     const reader = page.locator('.monitor-screen-reader[data-active=true]');
     const content = reader.locator('.monitor-screen-content');
     await content.waitFor();
@@ -98,7 +99,12 @@ try {
       await page.screenshot({ path: `${evidence}/footer-after-reveal-${width}.png` });
       scrollBefore = await content.evaluate(e => e.scrollTop);
     }
+    if (automaticReader && await page.locator('.loading-monitor-reader button[aria-label="Close and return to office"]').isDisabled()) {
+      releaseScene();
+      await page.locator('.studio[data-room-ready=true]').waitFor({ state: 'attached', timeout: 120000 });
+    }
     await page.getByRole('button', { name: 'Close and return to office', exact: true }).click();
+    if (automaticReader) await page.locator('.studio[data-entry=complete]').waitFor({ timeout: 15000 });
     await page.getByRole('link', { name: 'Living CV', exact: true }).click();
     await page.waitForFunction(previous => {
       const element = document.querySelector('.monitor-screen-reader[data-active=true] .monitor-screen-content');

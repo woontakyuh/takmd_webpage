@@ -60,7 +60,7 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'clos
   const top = 1 - 2 * area.top / height;
   const bottom = 1 - 2 * area.bottom / height;
   const centerX = (left + right) / 2, centerY = (top + bottom) / 2;
-  const outward = (collection || (SIMPLE_OFFICE && view === 'open') ? new Vector3(-1.7, .65, -.65) : inspecting ? new Vector3(.08, .12, -1) : closed ? new Vector3(-0.55, 0.22, -1)
+  const outward = (collection ? new Vector3(-1.7, .3, -.3) : (SIMPLE_OFFICE && view === 'open') ? new Vector3(-1.7, .65, -.65) : inspecting ? new Vector3(.08, .12, -1) : closed ? new Vector3(-0.55, 0.22, -1)
     : new Vector3(-1.57, 0.8, -1.7)).normalize();
   const horizontal = new Vector3(0, 1, 0).cross(outward).normalize();
   const vertical = outward.clone().cross(horizontal);
@@ -92,7 +92,7 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'clos
       (verticalPosition + top * tangentY * depth) / ((top - centerY) * tangentY),
       (-verticalPosition - bottom * tangentY * depth) / ((centerY - bottom) * tangentY));
   }
-  distance *= inspecting ? 1.08 : 1.005;
+  distance *= collection ? (layout.stacked ? .8 : 1.04) : inspecting ? 1.08 : 1.005;
   const target = center.addScaledVector(horizontal, -centerX * tangentX * distance)
     .addScaledVector(vertical, -centerY * tangentY * distance);
   const position = target.clone().addScaledVector(outward, distance);
@@ -170,11 +170,17 @@ export function whiskyPresentationPath(cabinet: Group, parent: Object3D, bottle:
   return { start, stage, curve, rotation, obstacles };
 }
 
-export function applyWhiskyPresentation(group: Group, path: ReturnType<typeof whiskyPresentationPath>, progress: number) {
+export function applyWhiskyPresentation(group: Group, path: ReturnType<typeof whiskyPresentationPath>, progress: number, cameraPosition?: Vector3) {
   if (progress === 0) group.position.copy(path.start);
   else if (progress === 1) group.position.copy(path.stage);
   else path.curve.getPointAt(progress, group.position);
-  group.quaternion.identity().slerp(path.rotation, MathUtils.smoothstep(progress, 0.32, 0.92));
+  const rotation = path.rotation.clone();
+  if (cameraPosition && group.parent && progress > 0) {
+    const cameraLocal = group.parent.worldToLocal(cameraPosition.clone());
+    const towardCamera = cameraLocal.sub(group.position);
+    rotation.setFromAxisAngle(new Vector3(0, 1, 0), Math.atan2(towardCamera.x, towardCamera.z));
+  }
+  group.quaternion.identity().slerp(rotation, MathUtils.smoothstep(progress, 0.32, 0.92));
 }
 
 export function advanceWhiskyProgress(progress: number, velocity: number, presenting: boolean, delta: number, reducedMotion: boolean) {

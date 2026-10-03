@@ -55,11 +55,11 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
     focusedScreenRef.current = next;
     setFocusedScreen(next);
   });
-  const monitor = useWorkstationTexture();
+  const monitor = useWorkstationTexture(display !== 'tv');
   const featured = featuredPresentation(presentations);
   const talk = collection.presentation ?? featured;
   const cover = collection.talkSlide?.src ?? talkMedia.find(media => media.id === talk?.id)?.slides[0]?.src;
-  const board = useTvPresentationTexture({ compact, cover: cover ?? null, talk, presentations, treeScrollOffset: tvTreeScrollOffset });
+  const board = useTvPresentationTexture({ compact, cover: cover ?? null, talk, presentations, treeScrollOffset: tvTreeScrollOffset, enabled: display !== 'monitor' });
   return (
     <group>
       {display !== 'tv' && <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}

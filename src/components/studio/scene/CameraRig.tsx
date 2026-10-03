@@ -158,7 +158,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     if (SIMPLE_OFFICE && (entry === 'seated' || entry === 'peeking')) return;
     if (transition.current?.kind === 'intro') transition.current = null;
     if (entry === 'seated' || entry === 'revealing') onEntryComplete();
-    if (editing || !orbit?.enabled || transition.current) return;
+    if (!orbit?.enabled || transition.current) return;
     clearOrbitMomentum(camera, orbit);
     const hit = surfaceAt(clientX, clientY);
     const forward = camera.getWorldDirection(scratch.position);
@@ -190,7 +190,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     if (value.kind === 'return') savedFreePose.current = null;
     if (value.kind === 'restore-inspection') inspectionReturnPose.current = null;
     if (value.kind === 'restore-object') objectReturnPose.current = null;
-    orbit.enabled = !screenReading && !editing;
+    orbit.enabled = !screenReading;
   }, [camera, compact, selected, screenFocused, screenReading, editing, onEntryComplete]);
 
   useLayoutEffect(() => {
@@ -506,7 +506,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
         userMoved.current = true;
         onEntryComplete();
       }
-      if (selected || editing || transition.current || !orbit.enabled
+      if (selected || transition.current || !orbit.enabled
         || !isSceneKeyboardEvent(event, keyTarget, gl.domElement)) return;
       let handled = true;
       switch (event.key) {
@@ -533,12 +533,11 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
   }, [camera, gl, zoomAt, editing, selected, onEntryComplete, entry]);
 
-  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && !screenReading && !(SIMPLE_OFFICE && entry === 'seated'); }, [editing, screenReading, entry]);
+  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !screenReading && !(SIMPLE_OFFICE && entry === 'seated'); }, [editing, screenReading, entry]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;
     if (!orbit) return;
-    if (editing) { orbit.enabled = false; return; }
     if (camera instanceof PerspectiveCamera && Math.abs(camera.fov - targetFov.current) > 0.01) {
       camera.fov += (targetFov.current - camera.fov) * (reducedMotion ? 1 : 1 - Math.exp(-MOTION.camera * Math.min(delta, 0.1)));
       camera.updateProjectionMatrix();

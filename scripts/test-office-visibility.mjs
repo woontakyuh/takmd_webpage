@@ -12,9 +12,9 @@ const results = [];
 let releaseModel = () => {};
 try {
   for (const profile of [
-    { name: 'desktop', width: 1440, height: 1000, idle: 'busy', held: process.env.PUBLIC_OFFICE_STYLE === 'simple' ? '**/models/simple/coat.glb' : '**/models/fender/stratocaster-sunburst.glb*' },
-    { name: 'tablet', width: 768, height: 1024, idle: 'normal', held: '**/models/personal-awards/cgbio-2026/certificate.webp*' },
-    { name: 'phone', width: 375, height: 812, idle: 'unavailable', held: process.env.PUBLIC_OFFICE_STYLE === 'simple' ? '**/models/simple/spine.glb' : '**/models/spine.glb*' },
+    { name: 'desktop', width: 1440, height: 1000, idle: 'busy', held: /\/models\/(?:simple\/coat\.glb|fender\/stratocaster-sunburst\.glb)/ },
+    { name: 'tablet', width: 768, height: 1024, idle: 'normal', held: /\/models\/personal-awards\/cgbio-2026\/certificate(?:-phone)?\.webp/ },
+    { name: 'phone', width: 375, height: 812, idle: 'unavailable', held: /\/models\/(?:simple\/)?spine\.glb/ },
   ].filter(profile => !process.env.VISIBILITY_PROFILE || profile.name === process.env.VISIBILITY_PROFILE)) {
     const context = await browser.newContext({ viewport: { width: profile.width, height: profile.height }, hasTouch: profile.name !== 'desktop', isMobile: profile.name === 'phone' });
     await context.addInitScript(idle => {
@@ -72,9 +72,11 @@ try {
     const page = await context.newPage(), errors = [], failures = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('response', response => { if (response.status() >= 400) failures.push(`${response.status()} ${response.url()}`); });
+    let heldRequest = false;
     {
       const heldModel = new Promise(resolve => { releaseModel = resolve; });
       await page.route(profile.held, async route => {
+        heldRequest = true;
         await heldModel;
         await route.continue();
       });
@@ -84,6 +86,7 @@ try {
       await page.waitForTimeout(6000);
       const held = await page.locator('.studio').getAttribute('data-room-ready');
       await page.screenshot({ path: join(evidence, `${profile.name}-held-loading.png`) });
+      assert(heldRequest, 'The scenario must intercept a requested initial model or texture');
       assert.equal(held, 'false', 'the full-room reveal must wait while an initially visible model is still downloading');
       assert.equal(await page.locator('.studio').getAttribute('data-desk-ready'), 'true', 'the desk must remain usable while room models download');
       releaseModel();

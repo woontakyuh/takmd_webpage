@@ -70,6 +70,11 @@ for (const engine of engines) for (const viewport of viewports) {
     });
     const selectAt = point => viewport.width < 760 ? page.touchscreen.tap(point.x, point.y) : page.mouse.click(point.x, point.y);
     const start = Date.now(); await page.goto(url, { waitUntil: 'domcontentloaded' });
+    if (process.env.WHISKY_DEBUG) { await page.waitForTimeout(8000); console.log(await page.locator('.studio').evaluate(e => ({data:e.dataset,buttons:[...e.querySelectorAll('button')].map(b=>b.textContent)}))); }
+    await page.locator('.studio[data-room-ready=true]').waitFor({timeout:120000});
+    const exploreOffice = page.getByRole('button', { name: 'Explore the office', exact: true });
+    await page.locator('.studio[data-entry=complete]').or(exploreOffice).first().waitFor({timeout:120000});
+    if (await exploreOffice.isVisible()) await exploreOffice.click();
     await page.locator('.studio[data-room-ready=true][data-entry=complete]').waitFor({ timeout: 120000 });
     result.roomMs = Date.now() - start;
     if (viewport.width >= 760) { await page.locator('.office-guided button').filter({ hasText: /(?:Liquor|Whisky) & Music/ }).click(); await settle(page); }
@@ -125,6 +130,20 @@ for (const engine of engines) for (const viewport of viewports) {
     }
     await page.waitForFunction(id => { const s = window.officeScene(); let g; s.scene.traverse(o => { if (o.userData.whiskyBottle === id) g = o; }); return g?.userData.presentationProgress === 1; }, first.id);
     await settle(page); await page.screenshot({ path: `${evidence}/${engine}-${viewport.width}-bottle.png` });
+    result.presentation = await page.evaluate(() => {
+      const s = window.officeScene(); let bottle;
+      s.scene.traverse(o => { if (o.userData.whiskyBottle && o.userData.selected) bottle = o; });
+      const position = bottle.getWorldPosition(s.camera.position.clone());
+      const toward = s.camera.position.clone().sub(position); toward.y = 0; toward.normalize();
+      const facing = bottle.getWorldDirection(position.clone());
+      const upright = position.clone().set(0, 1, 0).transformDirection(bottle.matrixWorld);
+      const paper = s.scene.getObjectByName('Layered lecture paper edges');
+      return { frontAlignment: facing.dot(toward), upright: upright.y,
+        paperInstances: paper?.count, paperInstanced: paper?.isInstancedMesh };
+    });
+    assert(result.presentation.frontAlignment > .995, 'Selected label faces the camera');
+    assert(result.presentation.upright > .999, 'Selected bottle stays upright');
+    assert(result.presentation.paperInstanced && result.presentation.paperInstances === 28, 'All 28 static paper layers share one instanced draw');
     result.inspectedBottles = await exposedBottles(page);
     const available = result.inspectedBottles.filter(b => !b.selected && b.point);
     result.remainingClickable = available.length;

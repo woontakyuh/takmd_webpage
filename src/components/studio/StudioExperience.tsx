@@ -106,6 +106,9 @@ function OfficeExperience(content: StudioContent) {
   const [phoneReader, setPhoneReader] = useState(false);
   const onRoomReady = useCallback(() => setRoomReady(true), []);
   const [entry, setEntry] = useState<OfficeEntryPhase>('seated');
+  const [entryEngaged, setEntryEngaged] = useState(false);
+  const entryMonitor = SIMPLE_OFFICE && (!mounted || phoneReader) && !selected && !details
+    && (entry === 'seated' || entry === 'peeking' || entry === 'reading');
   const [posterHidden, setPosterHidden] = useState(false);
   const onPosterHidden = useCallback(() => setPosterHidden(true), []);
   const onEntryComplete = useCallback(() => setEntry(current => current === 'peeking' ? 'reading' : 'complete'), []);
@@ -117,15 +120,20 @@ function OfficeExperience(content: StudioContent) {
   useLayoutEffect(() => { setLoadingProfileSession(loadingProfileOpen); }, [loadingProfileOpen]);
   useEffect(() => {
     // The poster reports when its fade has finished; if a browser never delivers that report, do not leave the visitor seated forever.
-    if (!ready || posterHidden || entry !== 'seated') return;
+    if (!roomReady || posterHidden || entry !== 'seated') return;
     const timer = window.setTimeout(() => setPosterHidden(true), 3000);
     return () => window.clearTimeout(timer);
-  }, [ready, posterHidden, entry]);
+  }, [roomReady, posterHidden, entry]);
   useEffect(() => {
     if (!posterHidden || !roomReady) return;
-    if (entry === 'seated') setEntry(selected || details ? 'peeking' : 'revealing');
-    if (entry === 'reading' && !selected && !details) setEntry('revealing');
-  }, [entry, selected, details, roomReady, posterHidden]);
+    if (entry === 'seated') setEntry(selected || details || entryMonitor ? 'peeking' : 'revealing');
+    if (entry === 'reading' && !selected && !details && !entryMonitor) setEntry('revealing');
+  }, [entry, selected, details, roomReady, posterHidden, entryMonitor]);
+  useEffect(() => {
+    if (entry !== 'reading' || !entryMonitor || entryEngaged) return;
+    const timer = window.setTimeout(() => setEntry('revealing'), 6000);
+    return () => window.clearTimeout(timer);
+  }, [entry, entryMonitor, entryEngaged]);
   const [zoomed, setZoomed] = useState(false);
   const [explored, setExplored] = useState(false);
   const [compact, setCompact] = useState(false);
@@ -307,10 +315,10 @@ function OfficeExperience(content: StudioContent) {
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
-        <div style={{ display: 'contents' }} inert={loadingProfileOpen} aria-hidden={loadingProfileOpen || undefined}><SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} roomReady={roomReady} onRoomReady={onRoomReady} paused={loadingProfileOpen && entry !== 'peeking'} focused={loadingProfileOpen ? null : focused} guidedSection={guidedSection} readingObject={readingObject} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+        <div style={{ display: 'contents' }} inert={loadingProfileOpen || entryMonitor} aria-hidden={loadingProfileOpen || entryMonitor || undefined}><SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
+          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} roomReady={roomReady} onRoomReady={onRoomReady} paused={(loadingProfileOpen || entryMonitor) && entry !== 'peeking'} focused={loadingProfileOpen ? null : focused} guidedSection={guidedSection} readingObject={readingObject} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary></div>
-        <OfficePoster ready={ready} failed={sceneFailed} night={night} onHidden={onPosterHidden} />
+        <OfficePoster ready={roomReady} failed={sceneFailed} night={night} onHidden={onPosterHidden} />
         <button className="office-secret-trigger" id="studio-exhibit-books" onClick={approachBookshelf}>Browse personal books</button>
         <button className="office-secret-trigger" onClick={openMemory} aria-label="Claude sticker">Claude sticker</button>
         {selected === 'award-photo'
@@ -365,8 +373,9 @@ function OfficeExperience(content: StudioContent) {
         </footer>
       </div>
     </section>
-    {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
-    {!roomReady && !selected && !details && <nav className="office-desk-entry" aria-label="Start at the desk"><button onClick={() => open('ai')}>Read CV</button><button onClick={() => open('research')}>Publications</button></nav>}
+    {(loadingProfileOpen || entryMonitor) && <LoadingMonitorReader entry={entryMonitor} roomReady={roomReady} publicationCount={content.publications.length} presentationCount={content.presentations.length}
+      onClose={entryMonitor ? () => { if (roomReady) { setEntry('revealing'); setExplored(true); } } : close} onEngage={entryMonitor ? () => setEntryEngaged(true) : undefined} scrollState={monitorScroll.current} />}
+    {!roomReady && !selected && !details && !entryMonitor && <nav className="office-desk-entry" aria-label="Start at the desk"><button onClick={() => open('ai')}>Read CV</button><button onClick={() => open('research')}>Publications</button></nav>}
     {showOverviewReturn && <button className="office-overview-return" onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>}
     <ReadingPanel {...content} detailsPath={details} selected={details ? null : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' || selected === 'surfing' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
     {zoomed && <div className="office-approach-actions"><button className="studio-icon-button" onClick={() => window.dispatchEvent(new Event('office:zoom-close'))} aria-label="Return from closer view"><OfficeIcon name="close" /></button></div>}

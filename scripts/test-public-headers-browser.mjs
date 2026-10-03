@@ -98,7 +98,7 @@ try {
     assert.equal(response.headers()['content-security-policy'], (await fetch(fixturePreview.origin)).headers.get('content-security-policy'));
     await page.locator('.studio[data-room-ready=true]').waitFor({ state: 'attached', timeout: 120000 });
     if (path === '/') {
-      if (process.env.PUBLIC_OFFICE_STYLE === 'simple') {
+      if (await page.locator('.studio').getAttribute('data-office-style') === 'simple') {
         assert.equal(decoderResponses.size, 0, 'The miniature uses meshopt assets without loading the unused Draco decoder');
       } else {
       assert.ok(decoderResponses.has('/vendor/draco/draco_wasm_wrapper.js'), 'Draco wrapper must load from the site');

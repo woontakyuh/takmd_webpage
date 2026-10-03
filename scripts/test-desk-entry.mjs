@@ -23,20 +23,26 @@ try {
     assert.equal(await page.locator('.studio').getAttribute('data-room-ready'), 'false');
     const simple = await page.locator('.studio').getAttribute('data-office-style') === 'simple';
     if (simple) {
-      assert.equal(await page.locator('.office-poster img').count(), 0, 'Simple loading must not show the detailed office poster');
+      assert.equal(await page.locator('.office-poster img').count(), 1, 'Loading must retain a whole-room photograph');
+      assert.equal(await page.locator('.office-poster').getAttribute('data-ready'), 'false', 'Poster must remain until the whole room is ready');
       await page.locator('canvas').evaluate(canvas => canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, clientX: 200, clientY: 200, bubbles: true, cancelable: true })));
       assert.equal(await page.locator('.studio').getAttribute('data-entry'), 'seated', 'Input before room readiness must preserve the pending reveal');
     }
     const initial = await page.evaluate(() => ({ deskAt: performance.now(), models: performance.getEntriesByType('resource').filter(entry => /\.(glb|gltf)/.test(entry.name)).map(entry => entry.name) }));
     assert(!initial.models.some(model => /surfboard|garment|plant|spine|eames|stratocaster/.test(model)), 'Room models must not block or compete with the desk');
     await page.screenshot({ path: `${evidence}/desk-${width}.png` });
-    await page.getByRole('button', { name: 'Publications', exact: true }).click();
-    const paper = page.getByRole('dialog', { name: 'Research folio', exact: true });
+    const paperPage = simple && width === 390 ? await context.newPage() : page;
+    if (paperPage !== page) {
+      await paperPage.route(/RoomContents[^/]*\.(?:js|tsx)/, async route => { await gate; await route.continue(); });
+      await paperPage.goto(new URL('?exhibit=research', url).href, { waitUntil: 'domcontentloaded' });
+    } else await page.getByRole('button', { name: 'Publications', exact: true }).click();
+    const paper = paperPage.getByRole('dialog', { name: 'Research folio', exact: true });
     await paper.waitFor();
     assert.equal(await page.locator('.studio').getAttribute('data-room-ready'), 'false');
-    await page.screenshot({ path: `${evidence}/paper-before-room-${width}.png` });
-    await page.keyboard.press('Escape');
+    await paperPage.screenshot({ path: `${evidence}/paper-before-room-${width}.png` });
+    await paperPage.keyboard.press('Escape');
     await paper.waitFor({ state: 'hidden' });
+    if (paperPage !== page) await paperPage.close();
     if (simple) await page.evaluate(() => {
       const request = window.requestAnimationFrame.bind(window);
       const pending = [];
@@ -48,7 +54,8 @@ try {
         for (const callback of pending) request(callback);
       };
     });
-    await page.getByRole('button', { name: 'Read CV', exact: true }).click();
+    if (!(simple && width === 390)) await page.getByRole('button', { name: 'Read CV', exact: true }).click();
+    else assert(await page.locator('.loading-monitor-reader[data-entry-reader=true]').isVisible(), 'Phone entry must automatically show the readable CV');
     const content = page.locator('.loading-monitor-reader .monitor-screen-content');
     await content.waitFor();
     await content.evaluate(element => { element.scrollTop = 400; element.dispatchEvent(new Event('scroll')); });

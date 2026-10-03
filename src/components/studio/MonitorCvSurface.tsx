@@ -21,11 +21,12 @@ type Props = {
   readonly onSnapshot?: (element: HTMLElement) => Promise<boolean>;
   readonly autoFocus?: boolean;
   readonly onEngage?: () => void;
+  readonly closeDisabled?: boolean;
 };
 
 type SurfaceStyle = CSSProperties & { readonly '--monitor-control-scale': number };
 
-export function MonitorCvSurface({ publicationCount, presentationCount, active, onClose, scrollState, controlScale = 1, hovered = false, onSnapshot, autoFocus = true, onEngage }: Props) {
+export function MonitorCvSurface({ publicationCount, presentationCount, active, onClose, scrollState, controlScale = 1, hovered = false, onSnapshot, autoFocus = true, onEngage, closeDisabled = false }: Props) {
   const content = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const restoring = useRef(true);
@@ -39,7 +40,10 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
       // Drei attaches this portal after child layout effects; wait for its scroll box.
       if (element.clientHeight === 0) { frame = requestAnimationFrame(restore); return; }
       if (!active) element.scrollTop = 0;
-      else if (scrollState) element.scrollTop = scrollState.scrollTop;
+      else if (scrollState) {
+        if (element.scrollTop > 0 && scrollState.scrollTop === 0) { scrollState.scrollTop = element.scrollTop; onEngage?.(); }
+        else element.scrollTop = scrollState.scrollTop;
+      }
       restoring.current = false;
       if (active && autoFocus) closeButton.current?.focus({ preventScroll: true });
     };
@@ -70,7 +74,7 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
     onDoubleClick={event => { if (active) event.stopPropagation(); }}>
     {active && <header className="monitor-screen-header">
       <h2>Curriculum Vitae</h2>
-      <button ref={closeButton} type="button" onClick={close} aria-label="Close and return to office"><OfficeIcon name="close" /></button>
+      <button ref={closeButton} type="button" disabled={closeDisabled} onClick={close} aria-label="Close and return to office"><OfficeIcon name="close" /></button>
     </header>}
     <div ref={content} className="monitor-screen-content" inert={!active} tabIndex={active ? 0 : -1}
       role="region" aria-label="Curriculum Vitae · scroll to read"

@@ -20,7 +20,10 @@ try {
     }).observe(document, { subtree: true, attributes: true, childList: true });
   });
   await page.goto(base);
+  assert.equal(await page.locator('.office-poster img').count(), 1, 'Cold entry must retain a room photograph');
   await page.locator('.studio[data-entry="complete"]').waitFor({ timeout: 60000 });
+  assert.equal(await page.locator('.studio').getAttribute('data-room-ready'), 'true');
+  assert.equal(await page.locator('.office-poster').getAttribute('data-ready'), 'true', 'Poster clears only after the room is ready');
   await page.waitForFunction(() => performance.getEntriesByType('resource').filter(r => r.name.includes('/models/whisky/')).length >= 7);
   results.staging = await page.evaluate(() => ({
     profile: document.querySelector('.studio')?.getAttribute('data-office-style'),
@@ -43,7 +46,7 @@ try {
   await page.close();
   }
 
-  const failedAsset = process.env.PUBLIC_OFFICE_STYLE === 'simple' ? '**/models/simple/coat.glb' : '**/models/soft-pad/chair-packed.glb';
+  const failedAsset = /\/models\/(?:simple\/coat\.glb|soft-pad\/chair-packed\.glb)(?:\?|$)/;
   const recovery = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await recovery.route(failedAsset, route => route.abort());
   await recovery.goto(`${base}/?exhibit=research&stage=approach`);

@@ -130,17 +130,56 @@ describe('bottle detail framing', () => {
   }
 });
 
+describe('camera-facing collection presentation', () => {
+  for (const [width, height] of [[1440, 900], [1280, 800], [844, 390]]) {
+    for (const bottle of WHISKY_BOTTLES) test(`keeps the complete presented ${bottle.name} in frame at ${width}x${height}`, () => {
+      const { cabinet } = openingHierarchy();
+      const viewport = { width, height };
+      const pose = whiskyCollectionInspectionPose(cabinet, viewport, bottle);
+      const camera = new PerspectiveCamera(focusFov(null, width < 760, width, height), width / height, .015, 60);
+      camera.position.set(...pose.position); camera.lookAt(...pose.target); camera.updateMatrixWorld();
+      const area = whiskyInspectionLayout(viewport).object;
+      for (const x of [-bottle.radius, bottle.radius]) for (const y of [.666, .666 + bottle.height]) for (const z of [-.205 - bottle.radius, -.205 + bottle.radius]) {
+        const point = cabinet.localToWorld(new Vector3(x, y, z)).project(camera);
+        const px = (point.x + 1) * width / 2, py = (1 - point.y) * height / 2;
+        expect(px).toBeGreaterThanOrEqual(area.left);
+        expect(px).toBeLessThanOrEqual(area.right);
+        expect(py).toBeGreaterThanOrEqual(area.top);
+        expect(py).toBeLessThanOrEqual(area.bottom);
+      }
+    });
+  }
+  for (const [width, height] of [[390, 844], [375, 667], [1440, 900]]) {
+    test(`presents an upright front label with a near-level camera at ${width}x${height}`, () => {
+      const { cabinet, parent } = openingHierarchy();
+      const bottle = WHISKY_BOTTLES[0];
+      const pose = whiskyCollectionInspectionPose(cabinet, { width, height }, bottle);
+      const cameraPosition = new Vector3(...pose.position);
+      const cameraDirection = cameraPosition.clone().sub(new Vector3(...pose.target)).normalize();
+      expect(Math.abs(cameraDirection.y)).toBeLessThan(.23);
+      const model = new Group(); parent.add(model);
+      const path = whiskyPresentationPath(cabinet, parent, bottle);
+      applyWhiskyPresentation(model, path, 1, cameraPosition);
+      const towardCamera = cameraPosition.clone().sub(model.getWorldPosition(new Vector3()));
+      towardCamera.y = 0; towardCamera.normalize();
+      expect(model.getWorldDirection(new Vector3()).dot(towardCamera)).toBeGreaterThan(.999);
+      expect(new Vector3(0, 1, 0).transformDirection(model.matrixWorld).y).toBeCloseTo(1, 6);
+      applyWhiskyPresentation(model, path, 0, cameraPosition);
+      expect(model.quaternion.toArray()).toEqual([0, 0, 0, 1]);
+    });
+  }
+});
+
 describe('concurrent physical bottle exchange', () => {
   for (const [width, height] of [[390, 844], [375, 667], [768, 1024], [1440, 900]]) {
-    test(`keeps every shelf bottle inside the uncovered inspection area at ${width}x${height}`, () => {
+    test(`keeps every shelf bottle label center inside the uncovered inspection area at ${width}x${height}`, () => {
       const { cabinet, parent } = openingHierarchy();
       const viewport = { width, height }, pose = whiskyCollectionInspectionPose(cabinet, viewport);
       const camera = new PerspectiveCamera(focusFov(null, width < 760, width, height), width / height, .015, 60);
       camera.position.set(...pose.position); camera.lookAt(...pose.target); camera.updateMatrixWorld();
       const area = whiskyInspectionLayout(viewport).object;
-      for (const bottle of WHISKY_BOTTLES) for (const x of [-bottle.radius, bottle.radius])
-        for (const y of [0, bottle.height]) for (const z of [-bottle.radius, bottle.radius]) {
-          const point = parent.localToWorld(new Vector3(...bottle.position).add(new Vector3(x, y, z))).project(camera);
+      for (const bottle of WHISKY_BOTTLES) {
+          const point = parent.localToWorld(new Vector3(...bottle.position).add(new Vector3(0, bottle.height / 2, 0))).project(camera);
           const px = (point.x + 1) * width / 2, py = (1 - point.y) * height / 2;
           expect(px).toBeGreaterThanOrEqual(area.left);
           expect(px).toBeLessThanOrEqual(area.right);

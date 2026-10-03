@@ -81,7 +81,7 @@ export function WhiskyCollection({ cabinet, selection, enabled, reducedMotion, o
       const next = advanceWhiskyProgress(motion.progress, motion.velocity, presenting, delta, reducedMotion);
       motion.progress = next.progress;
       motion.velocity = next.velocity;
-      applyWhiskyPresentation(motion.group, motion.path, motion.progress);
+      applyWhiskyPresentation(motion.group, motion.path, motion.progress, state.camera.position);
       motion.group.userData.presentationProgress = motion.progress;
       motion.group.userData.returning = !presenting;
       moving ||= motion.velocity !== 0;

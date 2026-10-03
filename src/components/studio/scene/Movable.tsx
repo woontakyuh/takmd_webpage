@@ -1,12 +1,17 @@
 import { Html } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
-import { useMemo, useRef, type ReactNode, type PointerEvent } from 'react';
+import { useEffect, useMemo, useRef, type ReactNode, type PointerEvent } from 'react';
 import { Plane, Raycaster, Vector2, Vector3 } from 'three';
+import type { OrbitControls } from 'three-stdlib';
 import { FURNITURE, useArrangement, type FurnitureId } from '../arrangement';
 
 export function Movable({ id, children, handle = true }: { readonly id: FurnitureId; readonly children: ReactNode; readonly handle?: boolean }) {
   const state = useArrangement(), pose = state.pose(id), item = FURNITURE[id];
   const { camera, gl } = useThree();
+  const controls = useThree(state => state.controls as OrbitControls | null);
+  const resumeControls = useRef<(() => void) | null>(null);
+  const finishDrag = () => { drag.current = null; resumeControls.current?.(); resumeControls.current = null; };
+  useEffect(() => finishDrag, [controls]);
   const drag = useRef<{ readonly x: number; readonly z: number; readonly start: Vector3 } | null>(null);
   const math = useMemo(() => ({ ray: new Raycaster(), pointer: new Vector2(), floor: new Plane(new Vector3(0, 1, 0), 0), hit: new Vector3() }), []);
   const hit = (event: PointerEvent<HTMLButtonElement>) => {
@@ -19,10 +24,10 @@ export function Movable({ id, children, handle = true }: { readonly id: Furnitur
     <group position={[-item.center[0], 0, -item.center[2]]}>{children}</group>
     {state.editing && handle && <Html center position={[0, item.handle, 0]} zIndexRange={[18, 12]}>
       <button className="office-move-handle" data-active={state.active === id} aria-label={`Move ${item.label}`} title={`Drag ${item.label}`}
-        onPointerDown={event => { event.stopPropagation(); state.select(id); const point = hit(event); if (!point) return; drag.current = { x: pose.x, z: pose.z, start: point.clone() }; event.currentTarget.setPointerCapture(event.pointerId); }}
+        onPointerDown={event => { event.stopPropagation(); state.select(id); const point = hit(event); if (!point) return; if (controls) { const wasEnabled = controls.enabled; controls.enabled = false; resumeControls.current = () => { controls.enabled = wasEnabled; }; } drag.current = { x: pose.x, z: pose.z, start: point.clone() }; event.currentTarget.setPointerCapture(event.pointerId); }}
         onPointerMove={event => { event.stopPropagation(); const start = drag.current, point = hit(event); if (!start || !point) return; state.move(id, { ...pose, x: start.x + point.x - start.start.x, z: start.z + point.z - start.start.z }); }}
-        onPointerUp={event => { drag.current = null; event.currentTarget.releasePointerCapture(event.pointerId); }}
-        onPointerCancel={() => { drag.current = null; }} onLostPointerCapture={() => { drag.current = null; }}
+        onPointerUp={event => { finishDrag(); event.currentTarget.releasePointerCapture(event.pointerId); }}
+        onPointerCancel={finishDrag} onLostPointerCapture={finishDrag}
         onDoubleClick={event => event.stopPropagation()}>✥<span>{item.label}</span></button>
     </Html>}
   </group>;

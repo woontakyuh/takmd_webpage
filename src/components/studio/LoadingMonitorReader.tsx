@@ -9,9 +9,12 @@ type Props = {
   readonly presentationCount: number;
   readonly onClose: () => void;
   readonly scrollState?: MonitorScrollState;
+  readonly entry?: boolean;
+  readonly roomReady?: boolean;
+  readonly onEngage?: () => void;
 };
 
-export function LoadingMonitorReader({ publicationCount, presentationCount, onClose, scrollState }: Props) {
+export function LoadingMonitorReader({ publicationCount, presentationCount, onClose, scrollState, entry = false, roomReady = false, onEngage }: Props) {
   const frame = useRef<HTMLDivElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
   const bezel = useRef<HTMLDivElement>(null);
@@ -19,7 +22,7 @@ export function LoadingMonitorReader({ publicationCount, presentationCount, onCl
   useLayoutEffect(() => {
     const element = bezel.current;
     const poster = overlay.current?.closest('.studio')?.querySelector('.office-poster img');
-    if (!element || !poster || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (entry || !element || !poster || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const source = activeOfficePosterVariant(media => window.matchMedia(media).matches);
     if (!source) return;
     const image = poster.getBoundingClientRect();
@@ -60,7 +63,7 @@ export function LoadingMonitorReader({ publicationCount, presentationCount, onCl
     return () => element.removeEventListener('wheel', containWheel);
   }, []);
 
-  return <div ref={overlay} className="loading-monitor-reader" role="dialog" aria-modal="true" aria-label="Curriculum Vitae on desk monitor"
+  return <div ref={overlay} className="loading-monitor-reader" data-entry-reader={entry || undefined} role={entry ? 'region' : 'dialog'} aria-modal={entry ? undefined : true} aria-label="Curriculum Vitae on desk monitor"
     onPointerDown={event => event.stopPropagation()}
     onDoubleClick={event => event.stopPropagation()}>
     <div ref={bezel} className="loading-monitor-bezel" style={{ aspectRatio: `${MONITOR.width} / ${MONITOR.height}` }}>
@@ -72,9 +75,13 @@ export function LoadingMonitorReader({ publicationCount, presentationCount, onCl
       }}>
         <div className="loading-monitor-surface" style={{ transform: `scale(${scale})` }}>
           <MonitorCvSurface publicationCount={publicationCount} presentationCount={presentationCount}
-            active onClose={onClose} scrollState={scrollState} controlScale={1 / scale} />
+            active onClose={onClose} scrollState={scrollState} controlScale={1 / scale} autoFocus={!entry} onEngage={onEngage} closeDisabled={entry && !roomReady} />
         </div>
       </div>
     </div>
+    {entry && <div className="office-entry-actions">
+      <a href="/cv">Full CV</a>
+      <button type="button" disabled={!roomReady} onClick={onClose}>{roomReady ? 'Explore the office' : 'Opening the office…'}</button>
+    </div>}
   </div>;
 }
