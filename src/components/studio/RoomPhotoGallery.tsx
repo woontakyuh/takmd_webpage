@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { OfficeIcon } from './OfficeIcon';
 import './room-photo-gallery.css';
 
-type Photo = { readonly src: string; readonly caption: string };
+type Photo = { readonly src: string; readonly caption: string; readonly thumbnail?: string; readonly width?: number; readonly height?: number };
 
 function PhotoViewer({ photos, initial, onClose, label }: { readonly photos: readonly Photo[]; readonly initial: number; readonly onClose: () => void; readonly label: string }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -33,9 +33,10 @@ function PhotoViewer({ photos, initial, onClose, label }: { readonly photos: rea
 
 export function RoomPhotoGallery({ photos, label = 'Workshop photograph' }: { readonly photos: readonly Photo[]; readonly label?: string }) {
   const [selected, setSelected] = useState<number | null>(null);
+  if (!photos.length) return null;
   return <>
     <div className="workshop-room-gallery">{photos.map((photo, index) => <figure key={photo.src}>
-      <button type="button" className="room-photo-open" onClick={() => setSelected(index)} aria-label={`Enlarge photograph: ${photo.caption}`}><img src={photo.src} alt={photo.caption} loading="lazy" /><span aria-hidden="true"><OfficeIcon name="expand" /></span></button>
+      <button type="button" className="room-photo-open" onClick={() => setSelected(index)} aria-label={`Enlarge photograph: ${photo.caption}`}><img src={photo.thumbnail ?? photo.src} width={photo.width} height={photo.height} alt={photo.caption} loading="lazy" decoding="async" /><span aria-hidden="true"><OfficeIcon name="expand" /></span></button>
       <figcaption>{photo.caption}</figcaption>
     </figure>)}</div>
     {selected !== null && <PhotoViewer photos={photos} initial={selected} onClose={() => setSelected(null)} label={label} />}

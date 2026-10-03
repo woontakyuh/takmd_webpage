@@ -50,7 +50,11 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
     requestAnimationFrame(() => { if (opener?.isConnected) opener.focus({ preventScroll: true }); });
   }, [onClose]);
 
-  useEffect(() => { setExpanded(false); dialogRef.current?.scrollTo({ top: 0 }); }, [active]);
+  useEffect(() => {
+    setExpanded(false);
+    dialogRef.current?.style.setProperty('--reader-scroll', '0px');
+    dialogRef.current?.scrollTo({ top: 0 });
+  }, [active]);
 
   useEffect(() => {
     if (!open) return;
@@ -109,6 +113,7 @@ export function ReadingPanel({ selected, detailsPath, publications, presentation
       data-screen-focus={screenFocused}
       aria-modal={modal}
       aria-labelledby="studio-panel-title"
+      onScroll={event => event.currentTarget.style.setProperty('--reader-scroll', `${event.currentTarget.scrollTop}px`)}
       onCancel={event => { event.preventDefault(); close(); }}
       onClick={event => {
         if (event.target !== event.currentTarget) return;

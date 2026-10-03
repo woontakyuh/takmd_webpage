@@ -1,7 +1,7 @@
 import { getWorkshop, workshops } from '../../data/workshops';
 import { sessionsFor, workshopSessions, type WorkshopSession } from '../../data/workshop-sessions';
 import { curriculumStages } from '../../data/workshop-curriculum';
-import { workshopDate } from '../workshops/presentation';
+import { sessionPhotos, workshopDate } from '../workshops/presentation';
 import { RoomPhotoGallery } from './RoomPhotoGallery';
 
 export function WorkshopDetails({ slug }: { readonly slug: string }) {
@@ -23,11 +23,12 @@ export function WorkshopDetails({ slug }: { readonly slug: string }) {
   return <>
     <p className="studio-kicker">Spinoscopy Workshop Team{workshop ? ` / Stage ${workshop.stage}` : ''}</p>
     <p className="studio-panel-intro">{animal ? 'A live porcine lab connecting anatomical teaching with supervised endoscopic practice. Small groups work through the procedure with faculty at each station.' : stage?.summary ?? 'A continuous teaching program from simulation to surgical practice.'}</p>
-    <RoomPhotoGallery photos={images} />
     <div className="workshop-session-heading"><h3>Sessions</h3><span>{completed.length} completed · Latest first</span></div>
     <div className="workshop-room-sessions">{ordered.map(session => <section className="workshop-session" key={session.id}>
       <header><span className="studio-kicker">Session {String(session.modalityNo).padStart(2, '0')} · {session.role}{session.status === 'planned' ? ' · Planned' : ''}</span><h3>{workshopDate(session.date)}</h3></header>
       {session.venue && <p className="workshop-session-venue">{session.venue.name}<br />{session.venue.city}</p>}
+      <RoomPhotoGallery photos={sessionPhotos(session.id).map(photo => ({ ...photo, thumbnail: photo.thumb, caption: `${workshopDate(session.date)} · ${photo.role === 'group' ? 'Faculty and participants' : photo.role === 'lecture' ? 'Anatomy and technique teaching' : photo.role === 'practice' ? 'Supervised hands-on practice' : 'Workshop venue'}` }))} />
+      {(session.id === '2025-06-15-dummy' || session.id === '2026-08-08-animal-pig') && <RoomPhotoGallery photos={images} />}
       {session.lectures && <div className="workshop-session-part"><h4>Teaching</h4><ul>{session.lectures.map(lecture => <li key={lecture.title}><p>{lecture.title}</p><small>{lecture.speaker} · {lecture.affiliation}</small></li>)}</ul></div>}
       {session.handsOn && <div className="workshop-session-part"><h4>Hands-on practice</h4><p>{session.handsOn.format}</p><small>{[session.handsOn.groups ? `${session.handsOn.groups} groups` : '', session.handsOn.sessions ? `${session.handsOn.sessions} practical sessions` : '', session.handsOn.durationMin ? `${session.handsOn.durationMin} minutes` : ''].filter(Boolean).join(' · ')}</small></div>}
       {session.trainees && <p className="workshop-session-meta">{session.trainees.count} participants</p>}
