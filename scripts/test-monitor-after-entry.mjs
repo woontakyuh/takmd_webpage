@@ -101,8 +101,15 @@ for (const engine of process.env.MONITOR_ENGINE ? [process.env.MONITOR_ENGINE] :
     });
     const scroll = await content.evaluate(e => e.scrollTop);
     assert(scroll > 50, `${engine}: scroll must advance, received ${scroll}`);
+    await content.screenshot({ path: `${evidence}/${engine}-last-read.png` });
+    const beforeClose = await page.evaluate(() => window.monitorScene().scene.getObjectByName('Desk monitor screen').material.map.version);
     await page.locator('.monitor-screen-portal').getByRole('button', { name: 'Close and return to office', exact: true }).click();
     await page.locator('.studio:not([data-reading])').waitFor();
+    assert(await page.evaluate(version => window.monitorScene().scene.getObjectByName('Desk monitor screen').material.map.version > version, beforeClose), 'The retained image must be ready before the reader closes');
+    const retained = await page.evaluate(() => window.monitorScene().scene.getObjectByName('Desk monitor screen').material.map.image.toDataURL('image/png'));
+    assert.notEqual(retained, texture, 'Leaving a scrolled CV must update the physical monitor, not retain its cover');
+    await writeFile(`${evidence}/${engine}-retained-texture.png`, Buffer.from(retained.split(',')[1], 'base64'));
+    await page.screenshot({ path: `${evidence}/${engine}-closed.png` });
     await page.getByRole('link', { name: 'Living CV', exact: true }).click();
     await content.waitFor();
     await page.waitForFunction(scroll => Math.abs(document.querySelector('.monitor-screen-portal .monitor-screen-content')?.scrollTop - scroll) < 2, scroll).catch(async error => {
@@ -116,8 +123,23 @@ for (const engine of process.env.MONITOR_ENGINE ? [process.env.MONITOR_ENGINE] :
       console.error(JSON.stringify({ engine, expected: scroll, diagnostic }));
       throw error;
     });
-    await page.keyboard.press('Escape');
-    await page.locator('.studio:not([data-reading])').waitFor();
+    for (const exit of ['escape', 'overview']) {
+      await content.focus();
+      await page.keyboard.press(exit === 'escape' ? 'Home' : 'End');
+      await page.waitForFunction(exit => {
+        const element = document.querySelector('.monitor-screen-portal .monitor-screen-content');
+        return element && Math.abs(element.scrollTop - (exit === 'escape' ? 0 : element.scrollHeight - element.clientHeight)) < 1;
+      }, exit);
+      const currentScroll = await content.evaluate(e => e.scrollTop);
+      const version = await page.evaluate(() => window.monitorScene().scene.getObjectByName('Desk monitor screen').material.map.version);
+      if (exit === 'escape') await page.keyboard.press('Escape');
+      else await page.getByRole('button', { name: 'Return to the overview', exact: true }).click();
+      await page.locator('.studio:not([data-reading])').waitFor();
+      assert(await page.evaluate(before => window.monitorScene().scene.getObjectByName('Desk monitor screen').material.map.version > before, version), `${exit}: keep the reader visible until its image is retained`);
+      await page.getByRole('link', { name: 'Living CV', exact: true }).click();
+      await content.waitFor();
+      await page.waitForFunction(expected => Math.abs(document.querySelector('.monitor-screen-portal .monitor-screen-content')?.scrollTop - expected) < 2, currentScroll);
+    }
     assert.deepEqual(errors, []);
     results.push({ engine, box, scroll, errors, passed: true });
   } finally { await browser.close(); }

@@ -20,12 +20,14 @@ import { FOCUS, MONITOR, MOTION, PALETTE, ROOM, WALL_TV } from './config';
 import { setWallTvHovered, useWallTvBacklight } from './hoverReactions';
 import { monitorReadingPose } from './monitorReading';
 import { isScreenFocusSettled } from './screenFocus';
+import { captureMonitorSurface } from './MonitorSurfaceSnapshot';
 
 type DisplaysProps = Pick<StudioSceneProps, 'entry' | 'compact' | 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'> & { readonly display?: 'monitor' | 'tv' };
 
 export function Displays({ entry, compact, ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll, display }: DisplaysProps) {
   const entryReader = ready && !selected && (entry === 'capture' || (!compact && entry === 'seated'));
   const camera = useThree(state => state.camera);
+  const invalidate = useThree(state => state.invalidate);
   const { layout } = useArrangement();
   const monitorMaterial = useRef<MeshStandardMaterial>(null);
   const tvMaterial = useRef<MeshStandardMaterial>(null);
@@ -56,6 +58,16 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
     setFocusedScreen(next);
   });
   const monitor = useWorkstationTexture(display !== 'tv');
+  useEffect(() => {
+    if (display === 'tv') return;
+    const capture = async (element: HTMLElement) => {
+      const captured = await captureMonitorSurface(element, monitor, 2);
+      if (captured) invalidate();
+      return captured;
+    };
+    monitorScroll.onSnapshot = capture;
+    return () => { if (monitorScroll.onSnapshot === capture) delete monitorScroll.onSnapshot; };
+  }, [display, monitor, monitorScroll, invalidate]);
   const featured = featuredPresentation(presentations);
   const talk = collection.presentation ?? featured;
   const cover = collection.talkSlide?.src ?? talkMedia.find(media => media.id === talk?.id)?.slides[0]?.src;

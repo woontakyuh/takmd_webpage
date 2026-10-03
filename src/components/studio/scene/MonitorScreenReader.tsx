@@ -22,33 +22,15 @@ type Props = {
 
 export function MonitorScreenReader({ publicationCount, presentationCount, onClose, texture, active = true, hovered = false, scrollState, entry = false, onEngage }: Props) {
   const surface = useRef<HTMLDivElement>(null);
-  const snapshot = useRef<Promise<boolean> | null>(null);
-  const queuedSnapshot = useRef<HTMLElement | null>(null);
   const size = useThree(state => state.size);
+  const invalidate = useThree(state => state.invalidate);
   const inlineMobile = size.width < 760 || (size.height < 500 && window.matchMedia('(pointer: coarse)').matches);
   const surfaceWidth = inlineMobile ? monitorReadingSize(size.width, size.height) : MONITOR_CV_WIDTH;
-  const capture = useCallback((element: HTMLElement): Promise<boolean> => {
-    queuedSnapshot.current = element;
-    if (snapshot.current) return snapshot.current;
-    const run = async (): Promise<boolean> => {
-      let successful = true;
-      const takeQueued = (): HTMLElement | null => {
-        const queued = queuedSnapshot.current;
-        queuedSnapshot.current = null;
-        return queued;
-      };
-      let next = takeQueued();
-      while (next) {
-        successful = await captureMonitorSurface(next, texture) && successful;
-        next = takeQueued();
-        if (next && !next.isConnected) next = null;
-      }
-      return successful;
-    };
-    const pending = run().finally(() => { snapshot.current = null; });
-    snapshot.current = pending;
-    return pending;
-  }, [texture]);
+  const capture = useCallback(async (element: HTMLElement): Promise<boolean> => {
+    const captured = await captureMonitorSurface(element, texture, inlineMobile ? 2 : 1);
+    if (captured) invalidate();
+    return captured;
+  }, [texture, inlineMobile, invalidate]);
   // Reading and seated entry poses face the screen head-on, so a screen-aligned overlay matches the bezel exactly.
   // Drei's CSS 3D transform mode is avoided: WebKit rasterises its metre-scaled layer at that tiny scale, leaving Safari a blank screen.
   return <Html ref={surface} wrapperClass="monitor-screen-portal" center distanceFactor={MONITOR.screenWidth * size.height / surfaceWidth}
@@ -58,7 +40,7 @@ export function MonitorScreenReader({ publicationCount, presentationCount, onClo
     <MonitorCvSurface publicationCount={publicationCount} presentationCount={presentationCount}
       active={active} hovered={hovered} onClose={onClose} scrollState={scrollState}
       autoFocus={!entry} onEngage={onEngage}
-      onSnapshot={inlineMobile ? undefined : capture}
+      onSnapshot={capture}
       controlScale={surfaceWidth / monitorReadingSize(size.width, size.height)} />
     </div>
   </Html>;

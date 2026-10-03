@@ -91,9 +91,22 @@ for (const engine of process.env.ENTRY_TEST_ENGINE ? [process.env.ENTRY_TEST_ENG
         await page.locator('.studio[data-entry=reading]').waitFor({ timeout: 15000 });
         await page.waitForTimeout(7500);
         assert(await reader.isVisible(), 'Engaged CV must survive the automatic overview timeout');
+        const overview = page.locator('.office-overview-return');
+        await overview.waitFor({ state: 'visible' });
+        await page.setViewportSize({ width: 390, height: 664 });
+        await overview.click({ trial: true });
+        const exitBox = await overview.boundingBox();
+        assert(exitBox.y >= 0 && exitBox.y + exitBox.height <= 664, 'Entry exit must remain on screen when mobile browser controls reduce the viewport');
+        await page.setViewportSize({ width: 390, height: 844 });
         assert(Math.abs(await content.evaluate(e => e.scrollTop) - scroll) < 2, 'Hydration and room readiness must preserve native pre-hydration scroll');
         await page.screenshot({ path: `${evidence}/${name}-retained.png` });
-        await reader.getByRole('button', { name: 'Explore the office', exact: true }).click();
+        const textureVersion = await page.evaluate(() => window.entryScene().scene.getObjectByName('Desk monitor screen').material.map.version);
+        await content.screenshot({ path: `${evidence}/${name}-last-read.png` });
+        if (engine === 'webkit') await overview.click();
+        else await reader.getByRole('button', { name: 'Explore the office', exact: true }).click();
+        await page.waitForFunction(version => window.entryScene().scene.getObjectByName('Desk monitor screen').material.map.version > version, textureVersion, { timeout: 5000 });
+        const retained = await page.evaluate(() => window.entryScene().scene.getObjectByName('Desk monitor screen').material.map.image.toDataURL('image/png'));
+        await writeFile(`${evidence}/${name}-retained-texture.png`, Buffer.from(retained.split(',')[1], 'base64'));
       }
       await page.locator('.studio[data-entry=complete]').waitFor({ timeout: 20000 });
       assert.equal(await reader.count(), 0);

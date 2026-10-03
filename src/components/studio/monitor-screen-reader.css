@@ -65,6 +65,7 @@
 .loading-monitor-reader[data-entry-reader='true'] { display: none; }
 .monitor-screen-header button:disabled { visibility: hidden; }
 .office-entry-actions { display: flex; justify-content: center; align-items: center; gap: 24px; color: var(--studio-ink); }
+.studio[data-night='true'] .office-entry-actions { color: var(--studio-light); }
 .office-entry-actions a, .office-entry-actions button { font: 14px/1.5 var(--studio-sans); padding: 12px 0; min-height: 44px; background: none; border: 0; color: inherit; text-decoration: underline; text-underline-offset: 5px; }
 .office-entry-actions button:disabled { text-decoration: none; color: var(--studio-muted); }
 .loading-monitor-reader::before { content: ''; position: absolute; inset: 0; z-index: -1; background: rgb(32 45 42 / 35%); animation: monitor-backdrop-in var(--studio-panel) var(--studio-ease); }

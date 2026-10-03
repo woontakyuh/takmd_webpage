@@ -66,7 +66,7 @@ function OfficeExperience(content: StudioContent) {
     previousInspectionId.current = nextId;
     if (next !== current) navigation.go(next, true);
   }, [inspection?.id, navigation.current, navigation.go]);
-  const monitorScroll = useRef({ scrollTop: 0 });
+  const monitorScroll = useRef<import('./MonitorCvSurface').MonitorScrollState>({ scrollTop: 0 });
   const setSelected = useCallback((id: ExhibitId | null) => navigation.go({ focused: id, selected: id, details: null }), [navigation.go]);
   const [selectedBook, setSelectedBook] = useState<PersonalBookId>(PERSONAL_BOOKS[0].id);
   const [bookPageIndex, setBookPageIndex] = useState(-1);
@@ -225,7 +225,8 @@ function OfficeExperience(content: StudioContent) {
       if (paper) { setPaperId(paper.id); paperIdRef.current = paper.id; }
     }
   }, []);
-  const close = useCallback(() => {
+  const close = useCallback(async () => {
+    await monitorScroll.current.captureCurrent?.();
     navigation.close();
     requestAnimationFrame(() => {
       const target = returnFocus.current ?? document.querySelector<HTMLElement>('.studio-scene');
@@ -240,6 +241,7 @@ function OfficeExperience(content: StudioContent) {
       if (url.origin !== window.location.origin && url.origin !== 'https://takmd.com') return false;
       const next = officePathView(url.pathname + url.search + url.hash, navigation.current.current);
       if (!next) return false;
+      monitorScroll.current.captureCurrent?.();
       if (roomReady) setEntry('complete');
       setExplored(true);
       const requestedTalk = next.selected === 'education'
@@ -270,6 +272,7 @@ function OfficeExperience(content: StudioContent) {
     const onNavigate = (event: Event) => { if (event instanceof CustomEvent && typeof event.detail === 'string') navigate(event.detail); };
     const onEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || event.defaultPrevented || document.querySelector('dialog[open]')) return;
+      if (entryMonitor && roomReady) { event.preventDefault(); goToView(0); return; }
       if (guidedSection !== null && !navigation.current.current.selected && !navigation.current.current.details && !inspection) { event.preventDefault(); goToView(0); return; }
       if (navigation.current.current.focused || navigation.current.current.details) { event.preventDefault(); close(); }
     };
@@ -279,10 +282,11 @@ function OfficeExperience(content: StudioContent) {
     window.addEventListener('office:navigate', onNavigate);
     window.addEventListener('keydown', onEscape);
     return () => { window.removeEventListener('office:zoomed', onZoomed); document.removeEventListener('click', onLink, true); window.removeEventListener('office:navigate', onNavigate); window.removeEventListener('keydown', onEscape); };
-  }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection, guidedSection, inspection, roomReady]);
+  }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection, guidedSection, inspection, roomReady, entryMonitor]);
   useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
-  const goToView = (view: 0 | 1 | 2 | 3 | 4) => {
+  const goToView = async (view: 0 | 1 | 2 | 3 | 4) => {
+    await monitorScroll.current.captureCurrent?.();
     setGuidedSection(view === 0 ? null : view);
     setEntry('complete');
     setExplored(true);
@@ -308,7 +312,7 @@ function OfficeExperience(content: StudioContent) {
     : selected === 'spine' ? 'Exhibit spine'
     : null;
   const guidedTitle = guided.title;
-  const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed);
+  const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed || (entryMonitor && roomReady));
 
   return <div className="studio" data-office-style={SIMPLE_OFFICE ? 'simple' : undefined} data-entry={entry} data-desk-ready={ready} data-room-ready={roomReady} data-guided={guidedSection ?? undefined} data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
     <section className="studio-stage" aria-label="TakMD's office">
@@ -374,7 +378,7 @@ function OfficeExperience(content: StudioContent) {
       </div>
     </section>
     {(loadingProfileOpen || entryMonitor) && <LoadingMonitorReader entry={entryMonitor} roomReady={roomReady} publicationCount={content.publications.length} presentationCount={content.presentations.length}
-      onClose={entryMonitor ? () => { if (roomReady) { setEntry('revealing'); setExplored(true); } } : close} onEngage={entryMonitor ? () => setEntryEngaged(true) : undefined} scrollState={monitorScroll.current} />}
+      onClose={entryMonitor ? async () => { if (roomReady) { await monitorScroll.current.captureCurrent?.(); setEntry('revealing'); setExplored(true); } } : close} onEngage={entryMonitor ? () => setEntryEngaged(true) : undefined} scrollState={monitorScroll.current} />}
     {!roomReady && !selected && !details && !entryMonitor && <nav className="office-desk-entry" aria-label="Start at the desk"><button onClick={() => open('ai')}>Read CV</button><button onClick={() => open('research')}>Publications</button></nav>}
     {showOverviewReturn && <button className="office-overview-return" onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>}
     <ReadingPanel {...content} detailsPath={details} selected={details ? null : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' || selected === 'surfing' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />

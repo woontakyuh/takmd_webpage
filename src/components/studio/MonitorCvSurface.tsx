@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { CvReader } from './CvReader';
 import { OfficeIcon } from './OfficeIcon';
@@ -8,7 +8,11 @@ import { SIMPLE_OFFICE } from './scene/OfficeStyle';
 export const MONITOR_CV_WIDTH = 1440;
 export const MONITOR_CV_HEIGHT = 810;
 
-export type MonitorScrollState = { scrollTop: number };
+export type MonitorScrollState = {
+  scrollTop: number;
+  onSnapshot?: (element: HTMLElement) => Promise<boolean>;
+  captureCurrent?: () => Promise<boolean> | undefined;
+};
 
 type Props = {
   readonly publicationCount: number;
@@ -31,7 +35,6 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
   const content = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const restoring = useRef(true);
-  const snapshotTimer = useRef(0);
   useLayoutEffect(() => {
     restoring.current = true;
     let frame = 0;
@@ -52,17 +55,23 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
     else frame = requestAnimationFrame(restore);
     return () => cancelAnimationFrame(frame);
   }, [active, autoFocus, scrollState]);
-  useEffect(() => () => {
-    window.clearTimeout(snapshotTimer.current);
+  useLayoutEffect(() => {
     const element = content.current;
-    if (active && element && onSnapshot) onSnapshot(element);
-  }, [active, onSnapshot]);
-
-  const close = (): void => {
-    const element = content.current;
-    if (element && onSnapshot) onSnapshot(element);
-    onClose();
-  };
+    let captured = false;
+    let pending: Promise<boolean> | undefined;
+    const captureCurrent = () => {
+      if (pending) return pending;
+      if (!active || !element?.isConnected) return;
+      captured = true;
+      pending = (onSnapshot ?? scrollState?.onSnapshot)?.(element);
+      return pending;
+    };
+    if (active && scrollState) scrollState.captureCurrent = captureCurrent;
+    return () => {
+      if (!captured) captureCurrent();
+      if (scrollState?.captureCurrent === captureCurrent) delete scrollState.captureCurrent;
+    };
+  }, [active, onSnapshot, scrollState]);
 
   const style: SurfaceStyle = {
     width: MONITOR_CV_WIDTH,
@@ -75,21 +84,13 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
     onDoubleClick={event => { if (active) event.stopPropagation(); }}>
     {active && !embeddedEntry && <header className="monitor-screen-header">
       <h2>Curriculum Vitae</h2>
-      <button ref={closeButton} type="button" disabled={closeDisabled} onClick={close} aria-label="Close and return to office"><OfficeIcon name="close" /></button>
+      <button ref={closeButton} type="button" disabled={closeDisabled} onClick={onClose} aria-label="Close and return to office"><OfficeIcon name="close" /></button>
     </header>}
     <div ref={content} className="monitor-screen-content" inert={!active} tabIndex={active ? 0 : -1}
       role="region" aria-label="Curriculum Vitae · scroll to read"
       onScroll={event => {
         if (scrollState && active && !restoring.current) scrollState.scrollTop = event.currentTarget.scrollTop;
         if (active && !restoring.current) onEngage?.();
-        if (!active || restoring.current || !onSnapshot) return;
-        const element = event.currentTarget;
-        if (snapshotTimer.current === 0) onSnapshot(element);
-        window.clearTimeout(snapshotTimer.current);
-        snapshotTimer.current = window.setTimeout(() => {
-          snapshotTimer.current = 0;
-          onSnapshot(element);
-        }, 350);
       }}>
       <CvReader publicationCount={publicationCount} presentationCount={presentationCount} inScreen />
     </div>

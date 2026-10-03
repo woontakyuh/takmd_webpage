@@ -4,6 +4,7 @@ import type { RoomLightPalette } from './lightingPresets';
 import type { RoomControl } from './OfficeRoomControls';
 import type { OfficeLight } from './localTime';
 import type { OfficeEntryPhase } from './officeEntry';
+import type { MonitorScrollState } from './MonitorCvSurface';
 
 export type ExhibitId = 'spine' | 'research' | 'education' | 'ai' | 'bjj' | 'surfing' | 'projects' | 'family' | 'award' | 'award-photo' | 'bookshelf' | 'books';
 
@@ -69,7 +70,7 @@ export type StudioSceneProps = {
   // On a phone, the object whose content is open in the sheet below the room, by scene name; the camera keeps it in
   // the upper half of the screen.
   readonly readingObject?: string | null;
-  readonly monitorScroll: { scrollTop: number };
+  readonly monitorScroll: MonitorScrollState;
   readonly selectedBook: PersonalBookId;
   readonly bookPageIndex: number;
   readonly onBookSelect: (id: PersonalBookId) => void;
