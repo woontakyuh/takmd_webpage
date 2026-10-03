@@ -160,19 +160,24 @@
   :is(.loading-monitor-reader, .monitor-inline-reader) .monitor-cv-timeline > span, :is(.loading-monitor-reader, .monitor-inline-reader) .monitor-cv-meta { font-size: 14px; }
   :is(.loading-monitor-reader, .monitor-inline-reader) .monitor-cv-footer { flex-wrap: wrap; gap: 16px; padding-top: 24px; }
   .loading-monitor-reader[data-entry-reader='true'] .loading-monitor-screen { position: absolute; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-screen-reader { display: block; font-size: 16px; line-height: 1.45; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-screen-reader { display: block; font: 13px/1.4 Arial, sans-serif; }
   :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-screen-content { position: absolute; inset: 0; border-radius: 0; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-cover { padding: 12px 14px; gap: 12px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-cover { padding: 12px; gap: 10px; }
   :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-eyebrow { font-size: 8px; gap: 8px; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-identity { width: calc(100% - 86px); }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-identity h1 { font-size: 23px; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-identity > p { margin-top: 6px; font-size: 11px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-identity { width: calc(100% - 66px); }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-identity h1 { font-size: 22px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-identity > p { margin-top: 5px; font-size: 10.5px; }
   :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-identity > .monitor-cv-appointment { font-size: 10px; }
   :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-cover h2 { font-size: 10px; }
   :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-interests h2 { margin-bottom: 4px; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-interests p { font-size: 14px; }
-  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-cover > .monitor-cv-portrait { position: absolute; top: 32px; left: auto; right: 14px; width: 72px; height: 96px; }
-  .monitor-inline-reader .monitor-screen-reader { width: 100% !important; height: 100% !important; font-family: var(--studio-sans, Arial, sans-serif); }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-interests p { font-size: 12px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-cover > .monitor-cv-portrait { position: absolute; top: 30px; left: auto; right: 12px; width: 56px; height: 75px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activities { padding-top: 12px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity-columns { margin-top: 10px; gap: 10px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity { margin-bottom: 10px; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity p { font-size: 12px; line-height: 1.4; }
+  :is(.loading-monitor-reader[data-entry-reader='true'], .monitor-inline-reader) .monitor-cv-activity p + p { margin-top: 2px; font-size: 11px; line-height: 1.4; }
+  .monitor-inline-reader .monitor-screen-reader { width: 100% !important; height: 100% !important; }
   .monitor-inline-reader .monitor-screen-header { inset: auto 0 calc(100% + 8px); padding: 0; justify-content: flex-end; color: var(--studio-ink); background: none; }
   .monitor-inline-reader .monitor-screen-header h2 { display: none; }
   .monitor-inline-reader .monitor-screen-header button:hover { background: var(--studio-paper); }

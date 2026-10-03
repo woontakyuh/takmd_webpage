@@ -1,7 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { createElement, useEffect, useMemo } from 'react';
+import { createRoot } from 'react-dom/client';
 import { useThree } from '@react-three/fiber';
 import { CanvasTexture, SRGBColorSpace } from 'three';
-import { academicInterests, activities, currentRoles, profileImage } from '../../../data/cv';
+import { CvCover } from '../CvReader';
+import { captureMonitorSurface } from './MonitorSurfaceSnapshot';
+import { monitorReadingSize } from './monitorReading';
 import { PALETTE } from './config';
 
 type Surface = {
@@ -82,76 +85,46 @@ export function useDocumentTexture({ image, title, eyebrow, detail, dark = false
 }
 
 export function useWorkstationTexture(enabled = true) {
+  const size = useThree(state => state.size);
+  const invalidate = useThree(state => state.invalidate);
   const anisotropy = useThree(state => Math.max(1, Math.min(16, state.gl.capabilities.getMaxAnisotropy())));
+  const mobile = size.width < 760 || (size.height < 500 && window.matchMedia('(pointer: coarse)').matches);
+  const width = mobile ? monitorReadingSize(size.width, size.height) : 1440;
+  const height = width * 9 / 16;
+  const pixelRatio = Math.min(2, 2560 / width);
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
-    canvas.width = enabled ? 2560 : 1; canvas.height = enabled ? 1440 : 1;
+    canvas.width = enabled ? Math.ceil(width * pixelRatio) : 1;
+    canvas.height = enabled ? Math.ceil(height * pixelRatio) : 1;
     const context = canvas.getContext('2d');
-    if (context && enabled) {
-      context.scale(2560 / 1440, 1440 / 810);
-      context.textBaseline = 'top';
-      context.fillStyle = PALETTE.paperLight; context.fillRect(0, 0, 1440, 810);
-      context.fillStyle = PALETTE.teal; context.fillRect(60, 55, 32, 2);
-      context.font = '16px Arial'; context.fillText('CURRICULUM VITAE / TAKMD', 107, 44);
-      context.fillStyle = PALETTE.ink; context.font = '51px Georgia';
-      context.fillText('Woon Tak Yuh, MD.', 60, 91);
-      context.font = '19px Arial'; context.fillStyle = PALETTE.muted;
-      context.fillText('Neurosurgeon · Research · Teaching', 60, 162);
-      context.font = '17px Arial'; context.fillText(currentRoles[0], 60, 202);
-      context.fillStyle = PALETTE.teal; context.font = '15px Arial';
-      context.fillText('ACADEMIC INTERESTS', 60, 226);
-      context.fillStyle = PALETTE.ink; context.font = '22px Arial';
-      academicInterests.forEach((interest, index) => context.fillText(interest, 60, 259 + index * 31.9));
-      context.fillStyle = PALETTE.line; context.fillRect(60, 362, 825, 1);
-      context.fillStyle = PALETTE.teal; context.font = '15px Arial';
-      context.fillText('ACADEMIC & PROFESSIONAL ACTIVITIES', 60, 386);
-      const drawActivityText = (text: string, x: number, y: number, leading: number) => {
-        let line = '';
-        let baseline = y;
-        for (const word of text.split(/\s+/)) {
-          const next = line ? `${line} ${word}` : word;
-          if (line && context.measureText(next).width > 396.5) {
-            context.fillText(line, x, baseline);
-            baseline += leading;
-            line = word;
-          } else line = next;
-        }
-        context.fillText(line, x, baseline);
-        return baseline + leading;
-      };
-      const columnBaselines: [number, number] = [423, 423];
-      activities.forEach((activity, index) => {
-        const column = index < 5 ? 0 : 1;
-        const x = column === 0 ? 60 : 488.5;
-        const y = columnBaselines[column];
-        context.fillStyle = PALETTE.ink;
-        context.font = activity.organization === 'Neurospine' || activity.organization === 'JMISST' ? 'italic 17px Georgia' : '17px Arial';
-        const roleY = drawActivityText(activity.organization, x, y, 20.4);
-        context.fillStyle = PALETTE.muted; context.font = '16px Arial';
-        columnBaselines[column] = drawActivityText(activity.role, x, roleY + 3, 19.2) + 8;
-      });
-      context.fillStyle = PALETTE.line; context.fillRect(60, 756, 1320, 1);
-      context.fillStyle = PALETTE.teal; context.font = '15px Arial';
-      context.fillText('CAREER · EDUCATION · PUBLICATIONS · TEACHING', 60, 772);
-    }
-    const result = new CanvasTexture(canvas); result.colorSpace = SRGBColorSpace; result.anisotropy = anisotropy;
+    if (context) { context.fillStyle = PALETTE.paperLight; context.fillRect(0, 0, canvas.width, canvas.height); }
+    const result = new CanvasTexture(canvas);
+    result.colorSpace = SRGBColorSpace; result.anisotropy = anisotropy;
     return result;
-  }, [anisotropy, enabled]);
+  }, [anisotropy, enabled, width, height, pixelRatio]);
   useEffect(() => {
     if (!enabled) return;
-    let active = true;
-    const portrait = new Image();
-    portrait.onload = () => {
-      if (!active || !(texture.image instanceof HTMLCanvasElement)) return;
-      const context = texture.image.getContext('2d');
-      if (!context) return;
-      context.imageSmoothingQuality = 'high';
-      context.drawImage(portrait, 960, 128, 420, 560);
-      texture.needsUpdate = true;
+    const host = document.createElement('div');
+    host.className = mobile ? 'monitor-inline-reader' : '';
+    host.setAttribute('aria-hidden', 'true');
+    host.inert = true;
+    Object.assign(host.style, { position: 'fixed', left: '-10000px', top: '0', width: `${width}px`, height: `${height}px`, pointerEvents: 'none' });
+    document.body.append(host);
+    const root = createRoot(host);
+    let active = true, disposed = false;
+    const dispose = () => { if (!disposed) { disposed = true; root.unmount(); host.remove(); } };
+    const capture = async (element: HTMLDivElement | null) => {
+      if (!element) return;
+      await document.fonts.ready;
+      await Promise.allSettled([...element.querySelectorAll('img')].map(image => image.decode()));
+      if (!active) return;
+      if (await captureMonitorSurface(element, texture, pixelRatio)) invalidate();
+      queueMicrotask(dispose);
     };
-    portrait.src = profileImage;
-    return () => { active = false; portrait.onload = null; };
-  }, [texture, enabled]);
+    root.render(createElement('section', { className: 'monitor-screen-reader', 'data-active': 'false', style: { width, height } },
+      createElement('div', { className: 'monitor-screen-content', ref: (element: HTMLDivElement | null) => { void capture(element); } }, createElement(CvCover))));
+    return () => { active = false; queueMicrotask(dispose); };
+  }, [enabled, mobile, width, height, pixelRatio, texture, invalidate]);
   useEffect(() => () => texture.dispose(), [texture]);
   return texture;
 }

@@ -150,13 +150,17 @@ describe('camera-facing collection presentation', () => {
     });
   }
   for (const [width, height] of [[390, 844], [375, 667], [1440, 900]]) {
-    test(`presents an upright front label with a near-level camera at ${width}x${height}`, () => {
+    test(`presents an upright front label above the worktop at ${width}x${height}`, () => {
       const { cabinet, parent } = openingHierarchy();
       const bottle = WHISKY_BOTTLES[0];
       const pose = whiskyCollectionInspectionPose(cabinet, { width, height }, bottle);
       const cameraPosition = new Vector3(...pose.position);
       const cameraDirection = cameraPosition.clone().sub(new Vector3(...pose.target)).normalize();
-      expect(Math.abs(cameraDirection.y)).toBeLessThan(.23);
+      if (whiskyInspectionLayout({ width, height }).stacked) {
+        expect(cameraDirection.y).toBeGreaterThan(.45);
+        expect(cameraDirection.y).toBeLessThan(.5);
+        expect(cabinet.worldToLocal(cameraPosition.clone()).y).toBeGreaterThan(.666);
+      } else expect(Math.abs(cameraDirection.y)).toBeLessThan(.23);
       const model = new Group(); parent.add(model);
       const path = whiskyPresentationPath(cabinet, parent, bottle);
       applyWhiskyPresentation(model, path, 1, cameraPosition);

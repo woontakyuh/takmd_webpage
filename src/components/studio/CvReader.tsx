@@ -11,9 +11,8 @@ type Props = {
   readonly inScreen?: boolean;
 };
 
-export function CvReader({ publicationCount, presentationCount, inScreen = false }: Props) {
-  return <article className="cv-reader" data-in-screen={inScreen}>
-    <header className="monitor-cv-cover">
+export function CvCover() {
+  return <header className="monitor-cv-cover">
       <p className="monitor-cv-eyebrow">Curriculum Vitae / TakMD</p>
       <div className="monitor-cv-identity">
         <h1>Woon Tak Yuh, MD.</h1>
@@ -35,7 +34,12 @@ export function CvReader({ publicationCount, presentationCount, inScreen = false
       </section>
       <img className="monitor-cv-portrait" src={profileImage} alt="Woon Tak Yuh, MD" width="960" height="1280" draggable={false} />
       <p className="monitor-cv-cover-footer">Career · Education · Publications · Teaching</p>
-    </header>
+    </header>;
+}
+
+export function CvReader({ publicationCount, presentationCount, inScreen = false }: Props) {
+  return <article className="cv-reader" data-in-screen={inScreen}>
+    <CvCover />
     <div className="monitor-cv-details">
       <section className="monitor-cv-metrics" aria-label="Career in numbers">
         <div><strong>{publicationCount}</strong><span>Publications</span><p>{authorship.first} first · {authorship.corresponding} corresponding · {authorship.coauthor} coauthor</p></div>

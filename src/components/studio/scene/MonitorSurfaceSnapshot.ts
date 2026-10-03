@@ -1,6 +1,6 @@
 import type { CanvasTexture } from 'three';
 
-export async function captureMonitorSurface(source: HTMLElement, texture: CanvasTexture): Promise<boolean> {
+export async function captureMonitorSurface(source: HTMLElement, texture: CanvasTexture, pixelRatio = 1): Promise<boolean> {
   try {
     await document.fonts.ready;
     const { toCanvas } = await import('html-to-image');
@@ -13,6 +13,7 @@ export async function captureMonitorSurface(source: HTMLElement, texture: Canvas
     const clone = surfaceClone.querySelector<HTMLElement>('.monitor-screen-content');
     if (!clone) return false;
     const staging = document.createElement('div');
+    staging.className = surface.parentElement?.className ?? '';
     staging.style.position = 'fixed';
     staging.style.left = '-10000px';
     staging.style.top = '0';
@@ -52,7 +53,7 @@ export async function captureMonitorSurface(source: HTMLElement, texture: Canvas
     document.body.append(staging);
     const snapshot = await toCanvas(clone, {
       backgroundColor: '#F8F6F0', width: source.clientWidth, height: source.clientHeight,
-      pixelRatio: 1, skipAutoScale: true,
+      pixelRatio, skipAutoScale: true, skipFonts: true,
     }).finally(() => staging.remove());
     const context = canvas.getContext('2d');
     if (!context) return false;

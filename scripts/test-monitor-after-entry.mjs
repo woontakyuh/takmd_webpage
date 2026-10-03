@@ -70,6 +70,20 @@ for (const engine of process.env.MONITOR_ENGINE ? [process.env.MONITOR_ENGINE] :
     assert(box.width > 330 && box.width / box.height > 1.7 && box.width / box.height < 1.85);
     assert.equal(await content.evaluate(e => e.scrollWidth > e.clientWidth + 1), false);
     await page.screenshot({ path: `${evidence}/${engine}-physical-monitor.png` });
+    const texture = await page.evaluate(() => window.monitorScene().scene.getObjectByName('Desk monitor screen').material.map.image.toDataURL('image/png'));
+    await writeFile(`${evidence}/${engine}-cover-texture.png`, Buffer.from(texture.split(',')[1], 'base64'));
+    await content.screenshot({ path: `${evidence}/${engine}-cover-interactive.png` });
+    if (mobile) {
+      const typography = await content.evaluate(e => [...e.querySelectorAll('.monitor-cv-activity p')].map(p => ({
+        text: p.textContent, lines: Math.round(p.getBoundingClientRect().height / parseFloat(getComputedStyle(p).lineHeight)),
+      })));
+      assert(typography.filter(p => p.lines === 1).length >= typography.length - 1, JSON.stringify(typography));
+      await content.locator('.monitor-cv-activity').first().evaluate(e => {
+        const parent = e.closest('.monitor-screen-content');
+        parent.scrollTop += e.getBoundingClientRect().top - parent.getBoundingClientRect().top - 10;
+      });
+      await page.screenshot({ path: `${evidence}/${engine}-activities.png` });
+    }
     await content.focus();
     await page.keyboard.press('End');
     await page.waitForFunction(() => {
