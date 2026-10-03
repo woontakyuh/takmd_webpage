@@ -1,11 +1,10 @@
 import { SIMPLE_OFFICE } from './OfficeStyle';
-import { SimpleEamesLounge } from './simple/SimpleSeating';
 import { useGLTF } from '@react-three/drei';
 import { useMemo } from 'react';
 import { Mesh } from 'three';
 
-const LOUNGE_URL = '/models/eames/lounge.glb';
-const OTTOMAN_URL = '/models/eames/ottoman.glb';
+const LOUNGE_URL = SIMPLE_OFFICE ? '/models/simple/lounge.glb?v=faithful-1' : '/models/eames/lounge.glb';
+const OTTOMAN_URL = SIMPLE_OFFICE ? '/models/simple/ottoman.glb?v=faithful-1' : '/models/eames/ottoman.glb';
 const YAW = Math.PI - 0.32;
 
 function DetailedEamesLounge() {
@@ -30,4 +29,4 @@ function DetailedEamesLounge() {
   </>;
 }
 
-export const EamesLounge = SIMPLE_OFFICE ? SimpleEamesLounge : DetailedEamesLounge;
+export const EamesLounge = DetailedEamesLounge;

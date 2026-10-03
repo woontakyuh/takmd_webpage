@@ -4,6 +4,7 @@ import { CatmullRomCurve3, RepeatWrapping, Vector2, Vector3 } from 'three';
 import type { Group, Texture } from 'three';
 import { INTERIOR, PALETTE } from './config';
 import { Block, Rod } from './Primitives';
+import { SIMPLE_OFFICE } from './OfficeStyle';
 import { IsidoroFixedHardware, IsidoroMovingHasps } from './IsidoroHardware';
 import { IsidoroDrawerStorage, IsidoroLowerBottleStorage } from './IsidoroStorage';
 import {
@@ -43,7 +44,7 @@ function ChromeRail({ y, interiorSide }: { readonly y: number; readonly interior
   </group>;
 }
 
-function useLeatherGrain() {
+function useDetailedLeatherGrain() {
   const [normal, roughness] = useTexture(['/textures/isidoro/leather-normal.webp', '/textures/isidoro/leather-roughness.webp']);
   const maps = useMemo(() => [normal, roughness].map(source => {
     const map = source.clone();
@@ -55,6 +56,7 @@ function useLeatherGrain() {
   useEffect(() => () => maps.forEach(map => map.dispose()), [maps]);
   return { normalMap: maps[0], roughnessMap: maps[1], normalScale: new Vector2(0.2, 0.2) };
 }
+const useLeatherGrain = SIMPLE_OFFICE ? () => ({}) : useDetailedLeatherGrain;
 
 function LeatherSeam({ z }: { readonly z: number }) {
   const curve = useMemo(() => {

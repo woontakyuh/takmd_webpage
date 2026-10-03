@@ -45,6 +45,8 @@ for (const texture of json.textures) {
   texture.extensions = { ...texture.extensions, EXT_texture_webp: { source } };
   delete texture.source;
 }
+json.extensionsUsed = [...new Set([...(json.extensionsUsed ?? []), 'EXT_texture_webp'])];
+json.extensionsRequired = [...new Set([...(json.extensionsRequired ?? []), 'EXT_texture_webp'])];
 const pieces = []; let length = 0;
 for (const [index, view] of json.bufferViews.entries()) {
   const originalView = original.bufferViews[index];

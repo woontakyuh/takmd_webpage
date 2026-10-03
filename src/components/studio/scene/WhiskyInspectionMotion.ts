@@ -5,6 +5,8 @@ import type { Point } from './config';
 import type { BottleSpec } from './WhiskyBottleSpecs';
 import { ISIDORO_BOTTLE_SHELF_TOP, ISIDORO_DIMENSIONS, ISIDORO_WORKTOP_TOP } from './WhiskyCabinetLayout';
 import { ISIDORO_LOWER_DOOR_FRONT, isidoroOpeningObstacles } from './IsidoroCollisionGeometry';
+import { SIMPLE_OFFICE } from './OfficeStyle';
+import { WHISKY_BOTTLES } from './WhiskyBottleSpecs';
 
 export const WHISKY_PRESENTATION = {
   position: [0, ISIDORO_WORKTOP_TOP, -0.205],
@@ -44,7 +46,7 @@ function cabinetFramePoints(angles: readonly number[]) {
   return points;
 }
 
-function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'closed' | 'open' | 'bottle', bottle = { height: .37, radius: .062 }) {
+function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'closed' | 'open' | 'bottle', bottle = { height: .37, radius: .062 }, collection = false) {
   const inspecting = view === 'bottle';
   const closed = view === 'closed';
   const { width, height } = viewport;
@@ -58,7 +60,7 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'clos
   const top = 1 - 2 * area.top / height;
   const bottom = 1 - 2 * area.bottom / height;
   const centerX = (left + right) / 2, centerY = (top + bottom) / 2;
-  const outward = (inspecting ? new Vector3(.08, .12, -1) : closed ? new Vector3(-0.55, 0.22, -1)
+  const outward = (collection || (SIMPLE_OFFICE && view === 'open') ? new Vector3(-1.7, .65, -.65) : inspecting ? new Vector3(.08, .12, -1) : closed ? new Vector3(-0.55, 0.22, -1)
     : new Vector3(-1.57, 0.8, -1.7)).normalize();
   const horizontal = new Vector3(0, 1, 0).cross(outward).normalize();
   const vertical = outward.clone().cross(horizontal);
@@ -68,6 +70,18 @@ function fittedCabinetPose(cabinet: Group, viewport: WhiskyViewport, view: 'clos
   const points = inspecting ? [] : cabinetFramePoints(closed ? [0] : Array.from({ length: 13 }, (_, index) => -index * Math.PI / 24));
   if (inspecting) for (const x of [-bottle.radius, bottle.radius]) for (const y of [-bottle.height / 2, bottle.height / 2]) for (const z of [-bottle.radius, bottle.radius]) {
     points.push(center.clone().add(new Vector3(x, y, z)));
+  }
+  if (collection) {
+    const shelf = new Matrix4().makeTranslation(.355, 0, 0)
+      .multiply(new Matrix4().makeRotationY(-Math.PI / 2))
+      .multiply(new Matrix4().makeScale(-1, 1, 1))
+      .multiply(new Matrix4().makeTranslation(.355, 0, -.1275))
+      .multiply(new Matrix4().makeScale(-1, 1, 1));
+    for (const other of WHISKY_BOTTLES) for (const x of [-other.radius, other.radius])
+      for (const y of [0, other.height]) for (const z of [-other.radius, other.radius]) {
+        points.push(new Vector3(...other.position).add(new Vector3(x, y, z)).applyMatrix4(shelf));
+      }
+    center.copy(new Box3().setFromPoints(points).getCenter(new Vector3()));
   }
   for (const point of points) {
     const corner = point.sub(center);
@@ -95,7 +109,11 @@ export function whiskyClosedCabinetPose(cabinet: Group, viewport: WhiskyViewport
 }
 
 export function whiskyInspectionPose(cabinet: Group, viewport: WhiskyViewport, bottle?: Pick<BottleSpec, 'height' | 'radius'>) {
-  return fittedCabinetPose(cabinet, viewport, 'bottle', bottle);
+  return fittedCabinetPose(cabinet, viewport, 'bottle', bottle, SIMPLE_OFFICE);
+}
+
+export function whiskyCollectionInspectionPose(cabinet: Group, viewport: WhiskyViewport, bottle?: Pick<BottleSpec, 'height' | 'radius'>) {
+  return fittedCabinetPose(cabinet, viewport, 'bottle', bottle, true);
 }
 
 function roundedRoute(points: readonly Vector3[]) {

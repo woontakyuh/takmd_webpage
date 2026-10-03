@@ -23,15 +23,23 @@ try {
   await page.locator('.studio[data-entry="complete"]').waitFor({ timeout: 60000 });
   await page.waitForFunction(() => performance.getEntriesByType('resource').filter(r => r.name.includes('/models/whisky/')).length >= 7);
   results.staging = await page.evaluate(() => ({
+    profile: document.querySelector('.studio')?.getAttribute('data-office-style'),
     ready: window.releaseReadyAt,
     albumCovers: performance.getEntriesByType('resource').filter(r => r.name.includes('/models/audio/') && r.initiatorType === 'img').map(r => ({ name: r.name, start: r.startTime })),
     labels: performance.getEntriesByType('resource').filter(r => r.name.includes('/models/whisky/')).map(r => ({ name: r.name, start: r.startTime })),
+    simpleModels: performance.getEntriesByType('resource').filter(r => /\/models\/simple\/[^/?]+\.glb/.test(r.name)).map(r => r.name),
   }));
   assert.ok(results.staging.ready > 0);
   const coverStarts = results.staging.albumCovers.map(cover => cover.start);
   assert.ok(coverStarts.length >= 10, 'Every visible CD sleeve must be loaded');
   assert.ok(Math.max(...coverStarts) - Math.min(...coverStarts) < 250, 'CD sleeve requests must start together, not through a Suspense waterfall');
-  assert.ok(results.staging.labels.every(r => r.start >= results.staging.ready), 'Closed-cabinet labels must start after room readiness');
+  if (results.staging.profile === 'simple') {
+    assert.ok(results.staging.labels.every(r => r.start <= results.staging.ready), 'Simple cabinet labels must start during preparation so first opening can use warmed materials');
+    const paths = results.staging.simpleModels.map(url => new URL(url).pathname);
+    assert.equal(new Set(paths).size, paths.length, 'Preloading and rendering must share the same model URL without duplicate downloads');
+  } else {
+    assert.ok(results.staging.labels.every(r => r.start >= results.staging.ready), 'Closed-cabinet labels must start after room readiness');
+  }
   await page.close();
   }
 

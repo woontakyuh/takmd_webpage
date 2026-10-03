@@ -1,26 +1,32 @@
-# Simple office verification — 3 October 2026
+# Simple office verification — 3 October 2026, revision 2
 
-## Scope and isolation
+## Scope
 
-Independent `codex/simple-office` branch and Cloudflare Pages project `takmd-simple`. The detailed `takmdwebpage` project and its apex/www domains are not deployment targets. `simple.takmd.com` has its own active domain mapping and D1 visitor database. The build-time profile defaults to detailed, with miniature geometry/materials enabled only by `PUBLIC_OFFICE_STYLE=simple`.
+This revision targets the independent `codex/simple-office` branch and Cloudflare Pages project `takmd-simple`. The detailed `takmdwebpage` deployment is checked before and after publication. Its apex/www domains are not deployment targets. Both profiles continue sharing navigation, readers, TV, artwork, workshops, CD operations, arrangement and time-dependent lighting.
 
-The approved direction is an architectural miniature, not a raster replacement for the room. All existing application state machines and content remain shared: guided navigation, object approach/inspection, CV and research readers, TV presentations, artwork/photos, workshops, CD playback/replacement, cabinet/bottles, arrangement, local time, sunlight, room lamps, blinds and night skyline.
+The revised simplification preserves designer geometry instead of replacing furniture with generic shapes. Ten restored models have byte-identical decoded positions, normals, UVs, indices and node transforms: sofa, desk chair, lounge chair, ottoman, coffee table, guitar, coat, gi, palm and pig. Surface microtextures are removed where appropriate; printed/color maps use 1024px WebP. The palm retains leaf transparency. Guitar geometry, sunburst coloring and original material treatment remain in place. Printed content assets remain unchanged. No canvas DPR reduction is used for this conversion.
 
-## Checks
+## Asset budget
 
-- Type check: zero errors and zero warnings; 111 pre-existing advisory hints. Public boundary checks: 23 CLI scenarios passed; security/MIME/cache header tests passed.
-- 418 unit tests passed (70 files, 302,166 assertions).
-- Full release browser suite passed: loading/recovery, desk entry, mobile CV, reader scrolling, content, artwork navigation, response policies/media permissions, music/CD/cabinet, object visibility/cutaway walls, touch, physical family-photo picking and idle/active rendering cadence.
-- WebKit mobile CV reader return, idle material warmup and cabinet opening passed without JavaScript errors, WebGL errors or context loss. During validation, recompiling already-rendered shared matte programs produced WebKit sampler errors; the miniature profile now warms only unseen material programs.
-- All three viewport families are captured in seven states each: overview day/night, research, talks, UBE, music and life (21 images). Research heading contrast, night control contrast and mobile gi atlas integrity were corrected from actual captures.
-- Public build scan excludes private dashboard/clinical dataset/auth/dev-tool/authoring-viewer markers. Header tests retain cross-origin script/frame rejection and real local audio/HLS playback checks.
+The ten validated models total 17,217,480 original GLB bytes versus 9,218,492 derivative GLB bytes. Texture data associated with those models, including the palm's external image, total 11,592,495 versus 1,644,280 bytes (85.8% smaller). Their image dimensions total 57,933,824 versus 15,728,640 pixels (72.9% fewer). These are model-specific figures, not total website transfer sizes or measured GPU memory. The palm's external texture is not included in the GLB byte total. Furniture without texture maps retains its original file size and geometry cost.
 
-Two independent final reviews passed with no blockers on the current complete capture set: `final-code-review.md` and `final-visual-review.md`. Both inspected all 21 captures; the code review also traced batching, tokens, profile isolation and the Safari fix.
+The previous miniature's triangle-reduction figures no longer describe this revision. Geometry retention deliberately restores the original furniture detail; decorative texture reductions and material preparation provide the savings here.
 
-Evidence: `.omo/evidence/simple-office-20261003/`, including `release/browser-results.json`, `safari-final/results.json`, `visual/results.json`, screenshots and `performance.json`.
+## Entry and cabinet recovery
 
-## Performance boundaries
+The simple profile uses a consistent neutral loading backdrop. Wheel, double-tap and keyboard camera interruption cannot cancel the seated loading or peeking transition. An early CV scroll is restored synchronously when layout exists, preventing deferred initialization from overwriting the visitor's first input. Desktop and phone tests delay room assets, issue early camera input, read CV/publications and verify that room reveal preserves reading position.
 
-Measured in fresh Chrome contexts on the same machine at 1440×900, identical camera and DPR 1. The rendered triangle count decreased from 1,065,460 to 552,264 (48.2%); textures decreased from 214 to 184 (14%). Static miniature pieces are merged by finish, preserving parent interactions and transforms. Requested GLB files totalled 22,606,464 bytes in the detailed profile and 7,426,020 bytes in the miniature (67.2% smaller). This is the sum of actual requested model files, not all-page transfer bytes. The implementation does not lower canvas DPR.
+Simple cabinet labels and magazine covers load while preparing the room. Texture upload, asynchronous program linking and uniform discovery occur before first opening. A stable bottle-label shader cache callback avoids recompiling its material on each opening/selection. Warmup restores interior visibility synchronously and excludes already-rendered materials to preserve WebKit shadow samplers. Preloading and rendering use identical versioned model URLs to avoid duplicate fetches.
 
-This is not a claim that every device is faster: the final run measured 59.38 FPS detailed and 59.75 FPS miniature (95th-percentile frame intervals 29 ms and 18 ms), while earlier repeated runs had variable frame-time tails. Both profiles ran near 60 FPS on this host. Physical iPhone hardware was not available; mobile Chromium and WebKit emulation are the validation boundary. Content media remain faithful, so opening large documents or streaming video still depends on network speed.
+A controlled Chrome phone-viewport run reduced the first-open frame gap from approximately 125ms to 16.7ms, with the door opening in approximately 491ms. This is one local measurement, not an iPhone performance guarantee. The bottle view fits the selected bottle and the remaining collection; real projected canvas clicks/taps verify that all six other bottles remain reachable and that selection changes directly.
+
+## Validation
+
+- Type check: 516 files, zero errors/warnings, 114 existing advisory hints.
+- Unit checks: 422 passing tests in 70 files, 303,062 assertions.
+- Public boundary: 23 CLI scenarios passed; security, MIME, range and cache-header checks passed.
+- Full production-build browser suite passed across 12 groups: loading/recovery, desk entry, mobile CV, reader, content, artwork, headers, media/CD/cabinet, visibility/cutaway walls, touch, physical family-photo picking and rendering cadence.
+- WebKit phone CV return, idle shader warmup and cabinet opening passed without JavaScript/WebGL errors or context loss.
+- Ten-model decoded geometry and texture validation passed. Browser captures confirm original furniture/guitar proportions and legible bottle presentation.
+
+Evidence is under `.omo/evidence/faithful-models-20261003/`, `.omo/evidence/entry-recovery-20261003/` and `.omo/evidence/whisky-recovery-20261003/`. Browser checks use desktop Chrome and mobile Chrome/WebKit emulation; physical iPhone hardware was unavailable. Network speed and large document/video content remain independent limits. The original release's review files and performance figures are historical evidence, not approval or measurements of this revision.

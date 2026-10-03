@@ -16,6 +16,7 @@ import { awardPairReadingFov, awardPairReadingLayout } from './awardPairReading'
 import { surfboardReadingLayout, surfboardReadingPose } from './surfboardReading';
 import { folioReadingPose, folioReadingView } from './folioFocus';
 import { DESKTOP_ENTRY, MOBILE_ENTRY } from '../officeEntry';
+import { SIMPLE_OFFICE } from './OfficeStyle';
 
 type CameraRigProps = Pick<StudioSceneProps,
   'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit' | 'entry' | 'onEntryComplete' | 'readingObject'> & { readonly reading: boolean };
@@ -154,6 +155,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   const zoomAt = useCallback((clientX: number, clientY: number, scale: number) => {
     const orbit = controls.current;
+    if (SIMPLE_OFFICE && (entry === 'seated' || entry === 'peeking')) return;
     if (transition.current?.kind === 'intro') transition.current = null;
     if (entry === 'seated' || entry === 'revealing') onEntryComplete();
     if (editing || !orbit?.enabled || transition.current) return;
@@ -241,6 +243,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     let lastTap: { time: number; x: number; y: number } | null = null;
     let touchZoomTime = 0;
     const inspectAt = (x: number, y: number) => {
+      if (SIMPLE_OFFICE && (entry === 'seated' || entry === 'peeking')) return;
       if (editing || screenReading) return;
       cancelSceneSingleAction(gl.domElement);
       const hit = surfaceAt(x, y);
@@ -308,7 +311,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       canvas.removeEventListener('pointerup', touchUp);
       canvas.removeEventListener('pointercancel', cancelTouch, true);
     };
-  }, [camera, gl, raycaster, surfaceAt, editing, screenReading]);
+  }, [camera, gl, raycaster, surfaceAt, editing, screenReading, entry]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -422,6 +425,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       return;
     }
     if (entry === 'seated' || entry === 'capture') {
+      if (SIMPLE_OFFICE && entry === 'seated') orbit.enabled = false;
       applyOrbitLimits(orbit, false, false, compact);
       const pose = compact ? MOBILE_ENTRY : DESKTOP_ENTRY;
       transition.current = null;
@@ -495,6 +499,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const keyTarget = wrapper instanceof HTMLElement ? wrapper : gl.domElement;
     if (!orbit) return;
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (SIMPLE_OFFICE && (entry === 'seated' || entry === 'peeking')) return;
       if (transition.current?.kind === 'intro' && isSceneKeyboardEvent(event, keyTarget, gl.domElement)
         && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) {
         transition.current = null;
@@ -526,9 +531,9 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     };
     keyTarget.addEventListener('keydown', handleKeyDown);
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
-  }, [camera, gl, zoomAt, editing, selected, onEntryComplete]);
+  }, [camera, gl, zoomAt, editing, selected, onEntryComplete, entry]);
 
-  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && !screenReading; }, [editing, screenReading]);
+  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && !screenReading && !(SIMPLE_OFFICE && entry === 'seated'); }, [editing, screenReading, entry]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;

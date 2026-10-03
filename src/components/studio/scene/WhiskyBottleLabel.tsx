@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Color, Float32BufferAttribute } from 'three';
 import type { MeshStandardMaterial, Texture } from 'three';
 import { createBottleGeometry } from './WhiskyBottleGeometry';
@@ -12,6 +12,7 @@ type LabelProps = {
 };
 
 export function WhiskyBottleLabel({ bottle, label, texture }: LabelProps) {
+  const programKey = useCallback(() => `${bottle.image}-${label.kind}-${label.low}-delit-print`, [bottle.image, label.kind, label.low]);
   const geometry = useMemo(() => {
     const patch = createBottleGeometry(bottle, {low: label.low, high: label.high,
       halfAngle: label.halfAngle, offset: .00035});
@@ -73,7 +74,7 @@ export function WhiskyBottleLabel({ bottle, label, texture }: LabelProps) {
   return <mesh name={`${bottle.name} ${label.kind} label`} geometry={geometry} receiveShadow>
     <meshStandardMaterial map={texture} roughness={.68} transparent opacity={1}
       metalness={0} onBeforeCompile={finish}
-      customProgramCacheKey={() => `${bottle.image}-${label.kind}-${label.low}-delit-print`}
+      customProgramCacheKey={programKey}
       polygonOffset polygonOffsetFactor={-1} />
   </mesh>;
 }

@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { CvReader } from './CvReader';
 import { OfficeIcon } from './OfficeIcon';
 import './monitor-screen-reader.css';
+import { SIMPLE_OFFICE } from './scene/OfficeStyle';
 
 export const MONITOR_CV_WIDTH = 1440;
 export const MONITOR_CV_HEIGHT = 810;
@@ -42,7 +43,8 @@ export function MonitorCvSurface({ publicationCount, presentationCount, active, 
       restoring.current = false;
       if (active && autoFocus) closeButton.current?.focus({ preventScroll: true });
     };
-    frame = requestAnimationFrame(restore);
+    if (SIMPLE_OFFICE) restore();
+    else frame = requestAnimationFrame(restore);
     return () => cancelAnimationFrame(frame);
   }, [active, autoFocus, scrollState]);
   useEffect(() => () => {

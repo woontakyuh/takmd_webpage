@@ -1,10 +1,9 @@
 import { SIMPLE_OFFICE } from './OfficeStyle';
-import { SimpleNoguchiTable } from './simple/SimpleSeating';
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { FrontSide, Mesh, MeshPhysicalMaterial } from 'three';
 
-const MODEL_URL = '/models/noguchi/table-packed.glb';
+const MODEL_URL = SIMPLE_OFFICE ? '/models/simple/table.glb?v=faithful-1' : '/models/noguchi/table-packed.glb';
 
 type NoguchiTableProps = {
   readonly position?: [number, number, number];
@@ -43,8 +42,8 @@ function DetailedNoguchiTable({ position, rotation }: NoguchiTableProps) {
       const materials = Array.isArray(object.material) ? object.material : [object.material];
       const transparent = materials.some(material => material.transparent);
       const surface = materials[0]?.name;
-      if (surface === glass.face.name) object.material = glass.face;
-      if (surface === glass.edge.name) object.material = glass.edge;
+      if (!SIMPLE_OFFICE && surface === glass.face.name) object.material = glass.face;
+      if (!SIMPLE_OFFICE && surface === glass.edge.name) object.material = glass.edge;
       object.castShadow = !transparent;
       object.receiveShadow = !transparent;
     });
@@ -57,4 +56,4 @@ function DetailedNoguchiTable({ position, rotation }: NoguchiTableProps) {
   </group>;
 }
 
-export const NoguchiTable = SIMPLE_OFFICE ? SimpleNoguchiTable : DetailedNoguchiTable;
+export const NoguchiTable = DetailedNoguchiTable;

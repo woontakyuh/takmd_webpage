@@ -1,5 +1,4 @@
 import { SIMPLE_OFFICE } from './OfficeStyle';
-import { SimpleFenderStrat } from './simple/SimpleObjects';
 import { useGLTF } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
@@ -159,7 +158,7 @@ function prepareGeometry(source: BufferGeometry): BufferGeometry {
 
 function DetailedFenderStrat() {
   const textureLimit = useThree(state => state.gl.capabilities.maxTextureSize);
-  const { scene } = useGLTF(textureLimit <= 1024 ? '/models/fender/stratocaster-phone.glb?v=20260922-1' : MODEL_URL);
+  const { scene } = useGLTF(SIMPLE_OFFICE ? '/models/simple/guitar.glb?v=faithful-1' : textureLimit <= 1024 ? '/models/fender/stratocaster-phone.glb?v=20260922-1' : MODEL_URL);
   const prepared = useMemo(() => {
     const clone = scene.clone(true);
     const materials: Material[] = [];
@@ -216,4 +215,4 @@ function DetailedFenderStrat() {
   </group>;
 }
 
-export const FenderStrat = SIMPLE_OFFICE ? SimpleFenderStrat : DetailedFenderStrat;
+export const FenderStrat = DetailedFenderStrat;

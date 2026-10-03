@@ -366,10 +366,11 @@ body:has(.studio) { overflow: clip; }
 .studio[data-office-style='simple'] { --miniature-ground: #233D33; --miniature-ink: #F8F6F0; --miniature-muted: #CFD9D0; --miniature-control-ink: #202D2A; --miniature-control: #EAE8E1EE; --miniature-line: #9CAF9D66; --miniature-paper-ink: #202D2A; --miniature-paper-muted: #42554B; --miniature-light-ink: #F8F6F0; }
 .studio[data-office-style='simple'][data-night='true'] { --miniature-ground: #14251F; }
 .studio[data-office-style='simple'] .studio-stage { background: var(--miniature-ground); }
-.studio[data-office-style='simple']:not([data-selected]):not([data-entry='seated']) .studio-stage::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(to bottom, color-mix(in srgb, var(--miniature-ground) 92%, transparent), transparent 180px, transparent calc(100% - 260px), color-mix(in srgb, var(--miniature-ground) 88%, transparent) calc(100% - 160px), var(--miniature-ground)); }
+.studio[data-office-style='simple']:not([data-selected]):not([data-inspecting]):not([data-entry='seated']) .studio-stage::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(to bottom, color-mix(in srgb, var(--miniature-ground) 92%, transparent), transparent 180px, transparent calc(100% - 260px), color-mix(in srgb, var(--miniature-ground) 88%, transparent) calc(100% - 160px), var(--miniature-ground)); }
 .studio[data-office-style='simple'] :is(.office-title, .office-title .studio-kicker, .office-guided-close, .studio-stage-footer) { color: var(--miniature-ink); }
 .studio[data-office-style='simple'] .office-guided { --studio-ink: var(--miniature-ink); --studio-muted: var(--miniature-muted); --studio-line: var(--miniature-line); }
 .studio[data-office-style='simple'] :is(.office-help-toggle, .studio-header nav, .studio-tools button, .office-clock) { background-color: var(--miniature-control); color: var(--miniature-control-ink); }
+.studio[data-office-style='simple'] .whisky-cabinet-exit { color: var(--miniature-ink); }
 @media(max-width:759px) {
   .studio[data-office-style='simple'][data-guided] .office-title { max-width: calc(100vw - 176px); padding-right: 24px; }
   .studio[data-office-style='simple'][data-guided] .office-title .studio-kicker { display: none; }

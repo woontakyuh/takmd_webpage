@@ -14,10 +14,12 @@ import { MAGAZINE_READING, MAGAZINE_REST, whiskyMagazineTransform } from './Whis
 const ID = 'whisky-magazine';
 const { width, height } = EDBM_MAGAZINE;
 
-export function WhiskyMagazine({ enabled, reducedMotion, onBusyChange, onReturn }: {
+export function WhiskyMagazine({ enabled, reducedMotion, onBusyChange, onReturn, onReady }: {
   readonly enabled: boolean; readonly reducedMotion: boolean;
   readonly onBusyChange: (busy: boolean) => void; readonly onReturn: () => void;
+  readonly onReady?: () => void;
 }) {
+  useEffect(() => onReady?.(), [onReady]);
   const { inspection, setInspection } = useSceneInspection();
   const size = useThree(state => state.size);
   const active = inspection?.id === ID;

@@ -21,6 +21,12 @@ try {
     await page.goto(url, { waitUntil: 'domcontentloaded' });
     await page.locator('.studio[data-desk-ready=true]').waitFor({ state: 'attached', timeout: 30000 });
     assert.equal(await page.locator('.studio').getAttribute('data-room-ready'), 'false');
+    const simple = await page.locator('.studio').getAttribute('data-office-style') === 'simple';
+    if (simple) {
+      assert.equal(await page.locator('.office-poster img').count(), 0, 'Simple loading must not show the detailed office poster');
+      await page.locator('canvas').evaluate(canvas => canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, clientX: 200, clientY: 200, bubbles: true, cancelable: true })));
+      assert.equal(await page.locator('.studio').getAttribute('data-entry'), 'seated', 'Input before room readiness must preserve the pending reveal');
+    }
     const initial = await page.evaluate(() => ({ deskAt: performance.now(), models: performance.getEntriesByType('resource').filter(entry => /\.(glb|gltf)/.test(entry.name)).map(entry => entry.name) }));
     assert(!initial.models.some(model => /surfboard|garment|plant|spine|eames|stratocaster/.test(model)), 'Room models must not block or compete with the desk');
     await page.screenshot({ path: `${evidence}/desk-${width}.png` });
@@ -31,12 +37,33 @@ try {
     await page.screenshot({ path: `${evidence}/paper-before-room-${width}.png` });
     await page.keyboard.press('Escape');
     await paper.waitFor({ state: 'hidden' });
+    if (simple) await page.evaluate(() => {
+      const request = window.requestAnimationFrame.bind(window);
+      const pending = [];
+      let held = true;
+      window.requestAnimationFrame = callback => request(time => held ? pending.push(() => callback(time)) : callback(time));
+      window.resumeEntryFrames = () => {
+        held = false;
+        window.requestAnimationFrame = request;
+        for (const callback of pending) request(callback);
+      };
+    });
     await page.getByRole('button', { name: 'Read CV', exact: true }).click();
     const content = page.locator('.loading-monitor-reader .monitor-screen-content');
     await content.waitFor();
     await content.evaluate(element => { element.scrollTop = 400; element.dispatchEvent(new Event('scroll')); });
     const scroll = await content.evaluate(element => element.scrollTop);
+    if (simple) {
+      await page.evaluate(() => window.resumeEntryFrames());
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      assert.equal(await content.evaluate(element => element.scrollTop), scroll, 'Initial CV restoration must not overwrite an early scroll');
+    }
     releaseRoom();
+    if (simple) {
+      await page.locator('.studio[data-entry=peeking]').waitFor({ state: 'attached', timeout: 120000 });
+      await page.locator('canvas').evaluate(canvas => canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, clientX: 200, clientY: 200, bubbles: true, cancelable: true })));
+      await page.locator('.studio-scene').press('ArrowRight');
+    }
     await page.locator('.studio[data-room-ready=true][data-entry=reading]').waitFor({ state: 'attached', timeout: 120000 });
     assert(await content.isVisible(), 'Room reveal must keep the active CV open');
     assert.equal(await content.evaluate(element => element.scrollTop), scroll, 'Room reveal must retain reading position');

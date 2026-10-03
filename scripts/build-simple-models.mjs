@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
-import { copyFile, mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 const runtime = process.argv[2];
 if (!runtime) throw new Error('Supply the gltf-transform tool node_modules directory.');
 const require = createRequire(resolve(runtime, '../package.json'));
@@ -26,8 +26,7 @@ for(const [input,output,ratio] of jobs) {
  const doc=await io.read(`public/models/${input}`), before=triangles(doc);
  // Garment hooks and sleeve decals depend on the original coordinate system.
  if (ratio === 1) {
-  if (output === 'gi.glb') execFileSync(process.execPath, ['scripts/build-simple-garment.mjs', `public/models/${input}`, `public/models/simple/${output}`]);
-  else await copyFile(`public/models/${input}`, `public/models/simple/${output}`);
+  execFileSync(process.execPath, ['scripts/build-simple-garment.mjs', `public/models/${input}`, `public/models/simple/${output}`]);
   report.push({input,output,before,after:before});
   continue;
  }

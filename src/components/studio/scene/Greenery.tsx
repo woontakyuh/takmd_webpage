@@ -1,5 +1,4 @@
 import { SIMPLE_OFFICE } from './OfficeStyle';
-import { SimpleGreenery } from './simple/SimpleGreenery';
 import { useGLTF } from '@react-three/drei';
 import { useCursor } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
@@ -10,7 +9,7 @@ import { INTERIOR, MOTION, PALETTE, ROOM } from './config';
 import { createPalmPlanterGeometries } from './PalmGeometry';
 import { useArrangement } from '../arrangement';
 
-const MODEL_URL = '/models/plant-dypsis/scene-packed.glb';
+const MODEL_URL = SIMPLE_OFFICE ? '/models/simple/plant.glb' : '/models/plant-dypsis/scene-packed.glb';
 const SOIL_HEIGHT = 0.646;
 const FOLIAGE_HEIGHT = 2.05 - SOIL_HEIGHT;
 const HOVER_SWAY_RADIANS = Math.PI / 120;
@@ -85,4 +84,4 @@ function DetailedGreenery({ reducedMotion }: { readonly reducedMotion: boolean }
 
 if (!SIMPLE_OFFICE) useGLTF.preload(MODEL_URL);
 
-export const Greenery = SIMPLE_OFFICE ? SimpleGreenery : DetailedGreenery;
+export const Greenery = DetailedGreenery;

@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { Box3, Group, PerspectiveCamera, Vector3 } from 'three';
 import { WHISKY_BOTTLES } from '../src/components/studio/scene/WhiskyBottleSpecs';
 import { focusFov } from '../src/components/studio/scene/config';
-import { advanceWhiskyProgress, applyWhiskyPresentation, resolveWhiskyBottleClearance, whiskyCabinetPose, whiskyInspectionLayout, whiskyInspectionPose, whiskyPresentationPath } from '../src/components/studio/scene/WhiskyInspectionMotion';
+import { advanceWhiskyProgress, applyWhiskyPresentation, resolveWhiskyBottleClearance, whiskyCabinetPose, whiskyInspectionLayout, whiskyInspectionPose, whiskyCollectionInspectionPose, whiskyPresentationPath } from '../src/components/studio/scene/WhiskyInspectionMotion';
 import { finishWhiskyReturn, returnWhiskyBottle, selectWhiskyBottle } from '../src/components/studio/scene/WhiskyInspectionState';
 
 function openingHierarchy() {
@@ -131,6 +131,24 @@ describe('bottle detail framing', () => {
 });
 
 describe('concurrent physical bottle exchange', () => {
+  for (const [width, height] of [[390, 844], [375, 667], [768, 1024], [1440, 900]]) {
+    test(`keeps every shelf bottle inside the uncovered inspection area at ${width}x${height}`, () => {
+      const { cabinet, parent } = openingHierarchy();
+      const viewport = { width, height }, pose = whiskyCollectionInspectionPose(cabinet, viewport);
+      const camera = new PerspectiveCamera(focusFov(null, width < 760, width, height), width / height, .015, 60);
+      camera.position.set(...pose.position); camera.lookAt(...pose.target); camera.updateMatrixWorld();
+      const area = whiskyInspectionLayout(viewport).object;
+      for (const bottle of WHISKY_BOTTLES) for (const x of [-bottle.radius, bottle.radius])
+        for (const y of [0, bottle.height]) for (const z of [-bottle.radius, bottle.radius]) {
+          const point = parent.localToWorld(new Vector3(...bottle.position).add(new Vector3(x, y, z))).project(camera);
+          const px = (point.x + 1) * width / 2, py = (1 - point.y) * height / 2;
+          expect(px).toBeGreaterThanOrEqual(area.left);
+          expect(px).toBeLessThanOrEqual(area.right);
+          expect(py).toBeGreaterThanOrEqual(area.top);
+          expect(py).toBeLessThanOrEqual(area.bottom);
+        }
+    });
+  }
   const first = WHISKY_BOTTLES[0].image;
   const next = WHISKY_BOTTLES[4].image;
   test('starts the next bottle while the current bottle returns', () => {

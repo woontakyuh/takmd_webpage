@@ -1,5 +1,5 @@
 import { SIMPLE_OFFICE } from './OfficeStyle';
-import { Mesh } from 'three';
+import { Mesh, Texture } from 'three';
 import { Html, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRoomReady } from './DeferredAssets';
@@ -7,7 +7,7 @@ import { prepareAreaLightMaterials } from './AreaLightCulling';
 import { useBoundsRaycast } from './boundsRaycast';
 import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-import type { Group, Object3D, Texture } from 'three';
+import type { Group, Object3D } from 'three';
 import { OfficeIcon } from '../OfficeIcon';
 import { useArrangement } from '../arrangement';
 import { IsidoroBarware } from './IsidoroBarware';
@@ -44,6 +44,8 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const [magazineBusy, setMagazineBusy] = useState(false);
   const [bottlesReady, setBottlesReady] = useState(false);
   const onBottlesReady = useCallback(() => setBottlesReady(true), []);
+  const [magazineReady, setMagazineReady] = useState(false);
+  const onMagazineReady = useCallback(() => setMagazineReady(true), []);
   const pendingBottle = useRef<WhiskyBottleId | null>(null);
   const cabinet = useRef<Group>(null);
   const closing = useRef(false);
@@ -74,7 +76,7 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
   const roomReady = useRoomReady();
   const warmed = useRef(false);
   useEffect(() => {
-    if (!roomReady || !bottlesReady || warmed.current) return;
+    if ((!SIMPLE_OFFICE && !roomReady) || !bottlesReady || (SIMPLE_OFFICE && !magazineReady) || warmed.current) return;
     const idle = window.requestIdleCallback?.bind(window) ?? ((run: () => void) => window.setTimeout(run, 1500));
     const cancel = typeof window.requestIdleCallback === 'function' ? window.cancelIdleCallback.bind(window) : window.clearTimeout.bind(window);
     const handle = idle(() => {
@@ -101,11 +103,36 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
         rendered.forEach(object => object.removeFromParent());
       }
       prepareAreaLightMaterials(materials);
-      try { gl.compile(materials, camera, scene); }
+      try {
+        if (SIMPLE_OFFICE) {
+          const textures = new Set<Texture>();
+          materials.traverse(object => {
+            if (!(object instanceof Mesh)) return;
+            for (const finish of Array.isArray(object.material) ? object.material : [object.material]) {
+              for (const value of Object.values(finish)) if (value instanceof Texture) textures.add(value);
+            }
+          });
+          textures.forEach(texture => gl.initTexture(texture));
+        }
+        if (SIMPLE_OFFICE) {
+          // compile() starts linking but leaves first-use uniform discovery to the first render.
+          // Wait for GPU linking, then populate that cache while the cabinet is still idle.
+          void gl.compileAsync(materials, camera, scene).then(compiled => {
+            if (cabinet.current !== root) return;
+            compiled.traverse(object => {
+              if (!(object instanceof Mesh)) return;
+              for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+                const properties = gl.properties.get(material) as { currentProgram?: { getUniforms(): unknown } };
+                properties.currentProgram?.getUniforms();
+              }
+            });
+          }).catch(error => console.error('Cabinet shader preparation failed', error));
+        } else gl.compile(materials, camera, scene);
+      }
       finally { groups.forEach((group, index) => { if (group) group.visible = shown[index]; }); }
     });
     return () => cancel(handle);
-  }, [roomReady, bottlesReady, gl, camera, scene]);
+  }, [roomReady, bottlesReady, magazineReady, gl, camera, scene]);
   // Bottles and glassware answer pointer rays by their bounding boxes; their triangles are for drawing, not picking.
   // The interior mounts late, so the sweep repeats once a second until nothing new appears.
   const sweep = useRef(0);
@@ -246,11 +273,11 @@ export function WhiskyCabinet({ wood, reducedMotion, lamp }: WhiskyCabinetProps)
       }
       disabled={editing} onActivate={toggle}>
       <group ref={bottles} name="complete seven-bottle whisky and Armagnac collection">
-        {roomReady && <Suspense fallback={null}><WhiskyCollection cabinet={cabinet} selection={selection}
+        {(SIMPLE_OFFICE || roomReady) && <Suspense fallback={null}><WhiskyCollection cabinet={cabinet} selection={selection}
           enabled={ready && !editing} reducedMotion={reducedMotion || editing} onSelect={chooseBottle} onReturned={returned}
           onReady={onBottlesReady} /></Suspense>}
-        {roomReady && <Suspense fallback={null}><WhiskyMagazine enabled={ready && !editing && !selection} reducedMotion={reducedMotion || editing}
-          onBusyChange={setMagazineBusy} onReturn={approachCabinet} /></Suspense>}
+        {(SIMPLE_OFFICE || roomReady) && <Suspense fallback={null}><WhiskyMagazine enabled={ready && !editing && !selection} reducedMotion={reducedMotion || editing}
+          onBusyChange={setMagazineBusy} onReturn={approachCabinet} onReady={onMagazineReady} /></Suspense>}
       </group>
       <IsidoroInteriorLighting lowerShelf={0.648} open={open && !editing} power={lamp} reducedMotion={reducedMotion} />
     </WhiskyCabinetDoor>

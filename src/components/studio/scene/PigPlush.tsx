@@ -1,5 +1,4 @@
 import { SIMPLE_OFFICE } from './OfficeStyle';
-import { SimplePigPlush } from './simple/SimpleObjects';
 import { useGLTF } from '@react-three/drei';
 import { useMemo } from 'react';
 import { Box3, Mesh, Vector3 } from 'three';
@@ -7,7 +6,7 @@ import { Box3, Mesh, Vector3 } from 'three';
 const PLUSH_LENGTH = 0.36;
 
 function DetailedPigPlush() {
-  const { scene } = useGLTF('/models/workshop/plush-pig-packed.glb?v=20260925');
+  const { scene } = useGLTF(SIMPLE_OFFICE ? '/models/simple/pig.glb' : '/models/workshop/plush-pig-packed.glb?v=20260925');
   const model = useMemo(() => {
     const clone = scene.clone(true);
     clone.name = 'Reference pale-pink plush pig';
@@ -29,4 +28,4 @@ function DetailedPigPlush() {
   return <primitive object={model} dispose={null} />;
 }
 
-export const PigPlush = SIMPLE_OFFICE ? SimplePigPlush : DetailedPigPlush;
+export const PigPlush = DetailedPigPlush;

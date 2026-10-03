@@ -1,6 +1,7 @@
 import { Component, useEffect, useRef, type ReactNode } from 'react';
 import { OFFICE_POSTER_MANIFEST } from './officePosterConfig';
 import './office-poster.css';
+import { SIMPLE_OFFICE } from './scene/OfficeStyle';
 
 export class SceneBoundary extends Component<{
   readonly children: ReactNode;
@@ -27,6 +28,12 @@ export function OfficePoster({ ready, failed, night, onHidden }: {
       .then(() => { if (active) onHidden(); });
     return () => { active = false; };
   }, [ready, failed, onHidden]);
+  if (SIMPLE_OFFICE) return <div ref={poster} className="office-poster office-poster-simple" data-ready={ready && !failed} data-failed={failed} aria-hidden={ready && !failed}>
+    <span className="office-poster-simple-status" role="status">
+      {failed ? 'The office couldn’t open.' : 'Opening the office…'}
+      {failed && <button className="office-poster-retry" type="button" onClick={() => window.location.reload()}>Try again</button>}
+    </span>
+  </div>;
   const time = night ? 'night' : 'day';
   const fallback = OFFICE_POSTER_MANIFEST.variants.at(-1);
   if (!fallback) return null;

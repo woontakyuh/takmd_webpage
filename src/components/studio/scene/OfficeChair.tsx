@@ -1,12 +1,11 @@
 import { SIMPLE_OFFICE } from './OfficeStyle';
-import { SimpleOfficeChair } from './simple/SimpleSeating';
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Box3, Mesh, Vector3 } from 'three';
 import type { Group } from 'three';
 
-const MODEL_URL = '/models/soft-pad/chair-packed.glb' as const;
+const MODEL_URL = SIMPLE_OFFICE ? '/models/simple/chair.glb?v=faithful-1' : '/models/soft-pad/chair-packed.glb';
 const TARGET_HEIGHT = 1.08;
 
 function DetailedOfficeChair({ reducedMotion }: { readonly reducedMotion: boolean }) {
@@ -61,4 +60,4 @@ function DetailedOfficeChair({ reducedMotion }: { readonly reducedMotion: boolea
 
 if (!SIMPLE_OFFICE) useGLTF.preload(MODEL_URL);
 
-export const OfficeChair = SIMPLE_OFFICE ? SimpleOfficeChair : DetailedOfficeChair;
+export const OfficeChair = DetailedOfficeChair;
