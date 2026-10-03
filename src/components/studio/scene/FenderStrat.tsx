@@ -68,6 +68,14 @@ function fitGuitarTexture(texture: Texture, limit: number, resized: Map<Texture,
 function adaptMaterial(source: Material, limit: number, resized: Map<Texture, Texture>): Material {
   const material = source.clone();
   if (!(material instanceof MeshStandardMaterial)) return material;
+  if (SIMPLE_OFFICE) {
+    material.roughness = material.name === 'Guitar' ? 0.48 : 0.65;
+    material.metalness = Math.min(material.metalness, 0.35);
+    material.envMapIntensity = 0.35;
+    material.normalMap = null;
+    material.roughnessMap = null;
+    material.metalnessMap = null;
+  }
   for (const key of ['map', 'normalMap', 'roughnessMap', 'metalnessMap'] as const) {
     const texture = material[key];
     if (texture) material[key] = fitGuitarTexture(texture, limit, resized);

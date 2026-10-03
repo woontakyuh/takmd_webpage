@@ -4,6 +4,8 @@ import { Environment, Lightformer } from '@react-three/drei';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { MathUtils, PCFSoftShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
+import { SoftSurfaceFinish } from './scene/SoftSurfaceFinish';
+import { SIMPLE_OFFICE } from './scene/OfficeStyle';
 import { SceneFrameLoop } from './scene/SceneFrameLoop';
 import { StaticMerge } from './scene/StaticMerge';
 import { GuidedViewProvider } from './scene/GuidedView';
@@ -71,6 +73,7 @@ export function StudioScene(props: StudioSceneProps) {
       <GuidedViewProvider section={props.guidedSection ?? null}>
       <SceneFrameLoop active={visible && (!props.paused || !props.roomReady)} settled={props.roomReady && (props.entry === 'complete' || props.entry === 'reading')} />
       <StaticMerge />
+      {SIMPLE_OFFICE && <SoftSurfaceFinish />}
       {ROOM_ENVIRONMENT}
       <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
       <hemisphereLight args={[sun.skyColor, PALETTE.walnut, 0.10 + skyFill * 0.48]} />
