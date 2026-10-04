@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = resolve(root, 'dist');
 const html = await readFile(join(output, 'index.html'), 'utf8');
-if (!html.includes('https://simple.takmd.com/')) throw new Error('Build the simple profile before publishing.');
+if (!html.includes('data-office-render="illustrated"') || !html.includes('https://simple.takmd.com/')) throw new Error('Build the simple profile before publishing.');
 const deployment = await mkdtemp(join(tmpdir(), 'takmd-simple-deploy-'));
 try {
   // Pages only accepts wrangler.toml in its working directory. Isolate it from the original site's config.

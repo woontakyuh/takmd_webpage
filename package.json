@@ -25,8 +25,8 @@
     "test:public:headers": "node scripts/test-public-headers.mjs",
     "test:release:browser": "node scripts/test-release-browser.mjs",
     "check:release": "bun run check && bun test --timeout 20000 && bun run test:public && bun run test:public:headers && bun run build && bun run test:release:browser",
-    "build:simple": "PUBLIC_OFFICE_STYLE=simple PUBLIC_SITE_ORIGIN=https://simple.takmd.com bun run build",
-    "build:main": "PUBLIC_OFFICE_STYLE=simple PUBLIC_SITE_ORIGIN=https://takmd.com bun run build",
+    "build:simple": "PUBLIC_OFFICE_RENDER=illustrated PUBLIC_OFFICE_STYLE=simple PUBLIC_SITE_ORIGIN=https://simple.takmd.com bun run build",
+    "build:main": "PUBLIC_OFFICE_RENDER=faithful PUBLIC_OFFICE_STYLE=simple PUBLIC_SITE_ORIGIN=https://takmd.com bun run build",
     "deploy:main": "bun run build:main && node scripts/deploy-main.mjs",
     "deploy:simple": "bun run build:simple && node scripts/deploy-simple.mjs"
   },

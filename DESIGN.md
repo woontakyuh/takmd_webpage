@@ -1063,3 +1063,14 @@ Display the owner's December 10, 2020 SZQ Gallery painting beside the existing 2
 - Procedural replacement foliage/furniture must avoid loading original GLBs. Target a material and geometry reduction measured against the same baseline viewport, rather than a promised unmeasured FPS number.
 - Separate build, poster fingerprint, deployment project and subdomain. Never run the original deployment command for the simple variant.
 - Acceptance: day/night desktop/mobile screenshots, functional browser suite, Safari smoke test, and runtime geometry/network evidence. Concept image is a reference only, never a scene background.
+
+
+## 2026-10-04 — Simple-only rendered material profile
+
+The simple domain now uses `PUBLIC_OFFICE_RENDER=illustrated`; the main domain keeps the existing faithful finish. The shared geometry, object transforms, silhouettes, upholstery seams, guitar hardware, lettering, artworks, and interaction state must remain identical. No polygon simplification or replacement furniture is permitted for this revision.
+
+The visual direction is a softly lit architectural 3D render: broad matte highlights, clean surfaces, restrained reflections, and the existing warm ivory / forest / wood palette. Color maps containing identity, labels, photos, or artwork remain intact. Micro-normal, bump, roughness, and metalness maps can be omitted from opaque decorative surfaces. Transparent glass retains its optical treatment. Area lighting uses a diffuse analytic approximation with broad highlights only in this profile; positions, colors, switches, blinds, TV light, and day/night state remain shared.
+
+Acceptance: matching-camera desktop/mobile day/night captures, unchanged geometry and transforms for recognizable furniture and guitar, runtime console/shader checks, shared interaction smoke tests, and measured before/after rendering performance. The poster fingerprint includes the render profile so the entry image matches the live room. Main-site deployment is out of scope.
+
+The illustrated profile uses hemisphere fill instead of environment reflections on opaque surfaces, crisp single-sample sun shadows at the existing shadow-map resolution, and an analytic softly rippled Han River instead of a second mirrored city render. The river/city geometry, moving traffic, night lighting and camera parallax are unchanged. Glass and optical liquid retain their original shaders. Scene-image uploads use the existing 1024px phone assets on desktop as well; HTML readers and gallery originals remain full resolution.

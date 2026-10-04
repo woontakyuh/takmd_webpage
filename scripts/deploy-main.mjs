@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
-if (!html.includes('rel="canonical" href="https://takmd.com/"') || !html.includes('data-office-style="simple"')) {
+if (!html.includes('rel="canonical" href="https://takmd.com/"') || !html.includes('data-office-style="simple"') || html.includes('data-office-render="illustrated"')) {
   throw new Error('Main deployment requires the lightweight office build with the takmd.com canonical URL.');
 }
 const commit = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' });

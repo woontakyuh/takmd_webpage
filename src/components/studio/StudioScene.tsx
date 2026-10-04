@@ -2,10 +2,10 @@ import { Movable } from './scene/Movable';
 import { Canvas } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { MathUtils, PCFSoftShadowMap } from 'three';
+import { BasicShadowMap, MathUtils, PCFSoftShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { SoftSurfaceFinish } from './scene/SoftSurfaceFinish';
-import { SIMPLE_OFFICE } from './scene/OfficeStyle';
+import { RENDERED_OFFICE, SIMPLE_OFFICE } from './scene/OfficeStyle';
 import { SceneFrameLoop } from './scene/SceneFrameLoop';
 import { StaticMerge } from './scene/StaticMerge';
 import { GuidedViewProvider } from './scene/GuidedView';
@@ -62,11 +62,11 @@ export function StudioScene(props: StudioSceneProps) {
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
     <Canvas ref={canvas} frameloop="never" camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
-      dpr={props.entry === 'capture' ? 2 : [1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
+      dpr={props.entry === 'capture' ? 2 : [1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: RENDERED_OFFICE ? BasicShadowMap : PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       // A phone's web process is killed near 1.5 GB and the room held 858 MB of textures alone, fifteen of them 2048².
       // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
-      onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, mobile ? 1024 : 2048); if (mobile) servePhoneImages(); }}
+      onCreated={({ gl }) => { gl.capabilities.maxTextureSize = Math.min(gl.capabilities.maxTextureSize, (mobile || RENDERED_OFFICE) ? 1024 : 2048); if (mobile || RENDERED_OFFICE) servePhoneImages(); }}
       style={{ touchAction: props.selected === 'ai' ? 'pan-y pinch-zoom' : 'none' }}>
       <DeviceProvider phone={mobile}>
       <RoomReadyProvider ready={props.roomReady}>
@@ -75,8 +75,8 @@ export function StudioScene(props: StudioSceneProps) {
       <StaticMerge />
       {SIMPLE_OFFICE && <SoftSurfaceFinish />}
       {ROOM_ENVIRONMENT}
-      <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
-      <hemisphereLight args={[sun.skyColor, PALETTE.walnut, 0.10 + skyFill * 0.48]} />
+      <ambientLight intensity={RENDERED_OFFICE ? 0.15 + skyFill * 0.24 : 0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
+      <hemisphereLight args={[sun.skyColor, PALETTE.walnut, (RENDERED_OFFICE ? 0.16 + skyFill * 0.72 : 0.10 + skyFill * 0.48)]} />
       <directionalLight position={[...position]} intensity={sun.sunIntensity}
         color={sun.sunColor} castShadow shadow-mapSize={[mobile ? 1024 : 2048, mobile ? 1024 : 2048]}
         shadow-camera-left={-5} shadow-camera-right={5} shadow-camera-top={6} shadow-camera-bottom={-5}

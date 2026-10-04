@@ -1,4 +1,4 @@
-import { SIMPLE_OFFICE } from './scene/OfficeStyle';
+import { RENDERED_OFFICE, SIMPLE_OFFICE } from './scene/OfficeStyle';
 import { Suspense, lazy, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ArrangementProvider, useArrangement } from './arrangement';
 import { ArrangementControls } from './ArrangementControls';
@@ -314,7 +314,7 @@ function OfficeExperience(content: StudioContent) {
   const guidedTitle = guided.title;
   const showOverviewReturn = Boolean(focused || selected || details || inspection || zoomed || (entryMonitor && roomReady));
 
-  return <div className="studio" data-office-style={SIMPLE_OFFICE ? 'simple' : undefined} data-entry={entry} data-desk-ready={ready} data-room-ready={roomReady} data-guided={guidedSection ?? undefined} data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
+  return <div className="studio" data-office-render={RENDERED_OFFICE ? 'illustrated' : 'faithful'} data-office-style={SIMPLE_OFFICE ? 'simple' : undefined} data-entry={entry} data-desk-ready={ready} data-room-ready={roomReady} data-guided={guidedSection ?? undefined} data-night={night} data-selected={selected ?? focused ?? (details ? 'details' : undefined)} data-reading={selected ?? undefined} data-approached={focused ?? undefined} data-inspecting={inspection ? 'whisky' : undefined} data-explored={explored} data-arranging={arrangement.editing}>
     <section className="studio-stage" aria-label="TakMD's office">
       <div className="studio-scene" aria-label="Explore the office" aria-describedby="office-help" tabIndex={0}
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}

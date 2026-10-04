@@ -1,4 +1,5 @@
 /** Build-time visual variant; interaction, content and lighting state stay shared. */
+export const RENDERED_OFFICE = import.meta.env.PUBLIC_OFFICE_RENDER === 'illustrated';
 export const SIMPLE_OFFICE = import.meta.env.PUBLIC_OFFICE_STYLE === 'simple';
 export const MAQUETTE = {
   cream: '#E8DFCF', cushion: '#DED2BE', timber: '#BA9C72',

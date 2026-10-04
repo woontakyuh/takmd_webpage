@@ -2,6 +2,7 @@ import { useThree } from '@react-three/fiber';
 import { useLayoutEffect } from 'react';
 import { Mesh, MeshStandardMaterial } from 'three';
 import type { Material, Object3D } from 'three';
+import { RENDERED_OFFICE } from './OfficeStyle';
 import { useRoomReady } from './DeferredAssets';
 
 const FURNITURE = /^(Eames lounge chair|Eames ottoman|Eames Soft Pad Executive chair|Florence Knoll Relaxed two-seater|Noguchi coffee table|bodil-kjaer-office-desk|usm-haller-lowboard)$/;
@@ -27,8 +28,8 @@ function soften(source: MeshStandardMaterial, surfaceName: string): MeshStandard
     finish.envMapIntensity = 0.5;
   } else if (/alumini?um|chrome|steel|metal/i.test(surfaceName) || source.metalness >= 0.2) {
     finish.roughness = 0.4;
-    finish.metalness = 0.7;
-    finish.envMapIntensity = 0.55;
+    finish.metalness = RENDERED_OFFICE ? 0.22 : 0.7;
+    finish.envMapIntensity = RENDERED_OFFICE ? 0.18 : 0.55;
   } else {
     finish.roughness = /leather/i.test(surfaceName) ? 0.64
       : /wood|oak|ash|veneer|timber|walnut/i.test(surfaceName) ? 0.72 : 0.88;

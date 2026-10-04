@@ -64,6 +64,7 @@ export async function sourceFingerprint(reference = new Date()): Promise<string>
   const files = (tracked ?? (await Promise.all(fingerprintRoots.map(path => filesBelow(join(POSTER_ROOT, path))))).flat()).toSorted();
   const hash = createHash('sha256');
   hash.update(process.env.PUBLIC_OFFICE_STYLE ?? 'detailed');
+  hash.update(process.env.PUBLIC_OFFICE_RENDER ?? 'faithful');
   for (const path of files) {
     hash.update(relative(POSTER_ROOT, path)); hash.update('\0');
     hash.update(await readFile(path)); hash.update('\0');

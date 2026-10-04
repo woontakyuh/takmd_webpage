@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { RENDERED_OFFICE } from './OfficeStyle';
 import { BANPO_APPEARANCE, banpoGlslColor } from './BanpoAppearance';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
@@ -72,6 +73,28 @@ const WATER_SHADER = {
   `,
 } as const;
 
+const RENDERED_WATER_FRAGMENT = `
+  uniform vec3 color;
+  uniform float uTime;
+  uniform float uNightMix;
+  uniform vec3 uFogColor;
+  varying vec3 vWorldPosition;
+  void main() {
+    vec3 eye = normalize(cameraPosition - vWorldPosition);
+    float horizon = pow(1.0 - max(eye.y, 0.0), 3.0);
+    float ripple = sin(vWorldPosition.x * 0.032 + vWorldPosition.z * 0.014 + uTime * 0.38)
+      * sin(vWorldPosition.z * 0.074 - uTime * 0.24);
+    vec3 skyTint = mix(vec3(0.55, 0.72, 0.78), vec3(0.025, 0.055, 0.09), uNightMix);
+    vec3 result = mix(color * 0.92, skyTint, horizon * 0.38);
+    result += vec3(ripple * 0.012 * (1.0 - uNightMix * 0.8));
+    float distanceToEye = length(cameraPosition - vWorldPosition);
+    result = mix(result, uFogColor, smoothstep(2000.0, 4800.0, distanceToEye));
+    gl_FragColor = vec4(result, 1.0);
+    #include <tonemapping_fragment>
+    #include <colorspace_fragment>
+  }
+`;
+
 export function updateRiverReflectionCamera(source: THREE.PerspectiveCamera, target: THREE.PerspectiveCamera): void {
   target.copy(source);
   target.clearViewOffset();
@@ -101,11 +124,12 @@ export function createRiverAtmosphere(scene: THREE.Scene, fog: THREE.Fog) {
       gl_FragColor = vec4(mix(texColor * ${BANPO_APPEARANCE.atmosphere.skyDayIntensity}, nightSky, uNightMix), 1.0);`);
   scene.add(sky);
 
-  const normals = new THREE.TextureLoader().load('/textures/river-water-normals.jpg');
+  const normals = RENDERED_OFFICE ? new THREE.Texture() : new THREE.TextureLoader().load('/textures/river-water-normals.jpg');
   normals.wrapS = normals.wrapT = THREE.RepeatWrapping;
   normals.anisotropy = 4;
   const water = new Reflector(new THREE.PlaneGeometry(1700, 13000), {
-    textureWidth: 1024, textureHeight: 1024, clipBias: 0.002, multisample: 0, shader: WATER_SHADER,
+    textureWidth: RENDERED_OFFICE ? 1 : 1024, textureHeight: RENDERED_OFFICE ? 1 : 1024, clipBias: 0.002, multisample: 0,
+    shader: RENDERED_OFFICE ? { ...WATER_SHADER, fragmentShader: RENDERED_WATER_FRAGMENT } : WATER_SHADER,
   });
   if (!(water.material instanceof THREE.ShaderMaterial)) throw new TypeError('Reflector requires a shader material');
   const reflectionSource = new THREE.PerspectiveCamera();
@@ -115,6 +139,7 @@ export function createRiverAtmosphere(scene: THREE.Scene, fog: THREE.Fog) {
   // traffic instead of every frame; the previous texture and its matrix stay valid while the camera holds still.
   const lastReflection = { matrix: new THREE.Matrix4(), at: -Infinity };
   water.onBeforeRender = (renderer, renderScene, camera, geometry, material, group) => {
+    if (RENDERED_OFFICE) return;
     if (camera instanceof THREE.PerspectiveCamera) {
       // The window crop must not truncate the reflected scene at oblique room views.
       updateRiverReflectionCamera(camera, reflectionSource);

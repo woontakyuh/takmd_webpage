@@ -41,6 +41,7 @@ export function createWhiskyLiquidMaterial(bottle: BottleSpec) {
     side: FrontSide, ior: 1.36,
   });
   // The existing room probe approximates transmitted light without replaying the opaque scene.
+  material.userData.preserveOpticalFinish = true;
   material.onBeforeCompile = shader => {
     shader.uniforms.liquidBottom = { value: 0.012 };
     shader.uniforms.liquidTop = { value: bottle.fillHeight * bottle.height };
