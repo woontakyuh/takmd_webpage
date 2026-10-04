@@ -13,10 +13,7 @@ export function CadaverExperience({ onTalk }: { readonly onTalk: (id: string) =>
       <p>{appearance.venue.name}</p>
       <p className="office-detail-source">{appearance.relation === 'team-dispatch' ? 'Team faculty exchange' : 'Invited faculty'}{appearance.id === '2026-09-12-cgbio-cadaver' ? ' · Participants from Korea and Brazil' : ''}</p>
       {'links' in appearance && <RoomPhotoGallery photos={talkMedia.find(media => media.id === appearance.links.presentationId && media.kind === 'photos')?.slides ?? []} />}
-      {appearance.id === '2026-06-08-tsess-hualien' && <RoomPhotoGallery photos={[
-        ...tsessPhotos,
-        { src: '/models/personal-awards/additions/tsess-instructor-2026.webp', thumbnail: '/models/personal-awards/additions/tsess-instructor-2026-phone.webp', caption: 'TSESS 2026 · Instructor certificate' },
-      ]} />}
+      {appearance.id === '2026-06-08-tsess-hualien' && <RoomPhotoGallery photos={tsessPhotos} />}
       {appearance.id === '2026-09-12-cgbio-cadaver' && <RoomPhotoGallery photos={[
         { src: '/models/personal-awards/cgbio-2026/group-photo.webp', thumbnail: '/models/personal-awards/cgbio-2026/group-photo-phone.webp', caption: 'CGBIO Academy · Faculty and participants' },
         { src: '/models/personal-awards/cgbio-2026/certificate.webp', thumbnail: '/models/personal-awards/cgbio-2026/certificate-phone.webp', caption: 'CGBIO Academy · Faculty certificate' },
