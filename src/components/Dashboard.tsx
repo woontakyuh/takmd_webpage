@@ -3,7 +3,7 @@ import { useState } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line,
-  type TooltipProps,
+  type DefaultTooltipContentProps,
 } from "recharts";
 import rawData from "../data/surgery-data.json";
 import { useMemo } from "react";
@@ -332,7 +332,11 @@ function fmtDateRange(e: string, l: string) {
   return `${f(e)} — ${f(l)}`;
 }
 
-function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) {
+type ChartTooltipProps = Pick<DefaultTooltipContentProps<number, string>, "payload" | "label"> & {
+  readonly active?: boolean;
+};
+
+function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-white rounded-xl shadow-lg border border-neutral-100 px-4 py-3">

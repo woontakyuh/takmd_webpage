@@ -1,0 +1,13 @@
+.clinical-topics { display:flex; flex-wrap:wrap; gap:4px 16px; margin:24px 0; border-bottom:1px solid var(--studio-line); }
+.clinical-topics button { background:transparent; border:0; border-bottom:2px solid transparent; padding:12px 0; min-height:44px; color:var(--studio-muted); font:inherit; font-size:13px; cursor:pointer; }
+.clinical-topics button[aria-pressed="true"] { color:var(--studio-ink); border-bottom-color:var(--studio-teal); }
+.clinical-story button:focus-visible { outline:2px solid var(--studio-teal); outline-offset:4px; }
+.clinical-topic h4 { margin:24px 0 12px; font:400 24px/1.2 Georgia,serif; color:var(--studio-ink); }
+.clinical-topic p { font-size:14px; line-height:1.7; }
+.clinical-topic figure { margin:24px 0; }
+.clinical-topic img { display:block; width:100%; height:auto; }
+.clinical-topic figcaption { margin-top:8px; font-size:11px; line-height:1.6; color:var(--studio-muted); }
+.clinical-paper { display:flex; flex-direction:column; gap:8px; padding:20px 0; margin:20px 0; border-top:1px solid var(--studio-line); border-bottom:1px solid var(--studio-line); color:var(--studio-ink); text-decoration:none; }
+.clinical-paper strong { font-size:16px; font-weight:500; line-height:1.5; }
+.clinical-paper > span:last-child, .clinical-talk { color:var(--studio-teal); font-size:13px; text-decoration:underline; text-underline-offset:4px; }
+.clinical-talk { min-height:44px; padding:8px 0; border:0; background:transparent; text-align:left; cursor:pointer; }

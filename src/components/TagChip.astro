@@ -9,8 +9,8 @@ const { label, color } = Astro.props;
 
 <span
   class:list={[
-    'inline-flex rounded-full border px-2.5 py-0.5 text-xs',
-    color ? color : 'border-[var(--color-border)] bg-[var(--color-surface-alt)] text-[var(--color-text-secondary)]',
+    'tag',
+    color ? color : '',
   ]}
 >
   {label}

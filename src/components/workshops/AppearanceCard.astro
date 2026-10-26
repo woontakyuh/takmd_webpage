@@ -1,0 +1,14 @@
+---
+import type { FacultyAppearance } from '../../data/workshop-faculty-appearances';
+import { workshopDate } from './presentation';
+interface Props { appearance: FacultyAppearance }
+const { appearance: a } = Astro.props;
+---
+<article class="wk-appearance" id={a.id}>
+  <p class="eyebrow"><time datetime={a.date}>{workshopDate(a.date)}</time>{a.endDate && <> – {workshopDate(a.endDate)}</>}{a.status === 'planned' && <> · Planned</>}</p>
+  <h3>{a.event}</h3>{a.title && <p>{a.title}</p>}
+  <p class="wk-location">{a.venue.name} · {a.venue.city}, {a.venue.country}</p>
+  {a.requestedBy && <p>Invited by {a.requestedBy.name} · {a.requestedBy.affiliation}</p>}
+  {a.note && <p>{a.note}</p>}
+  {a.links?.presentationId && <a class="wk-link" href={`/?exhibit=education&talk=${encodeURIComponent(a.links.presentationId)}`}>View the presentation ↗</a>}
+</article>

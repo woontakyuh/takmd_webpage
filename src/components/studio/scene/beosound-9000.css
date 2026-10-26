@@ -1,0 +1,6 @@
+.beosound-close, .beosound-entry { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #27362e; cursor: pointer; touch-action: manipulation; }
+.beosound-close { font: 24px/1 Arial, sans-serif; }
+.beosound-close:focus-visible, .beosound-entry:focus-visible { outline: 1px solid #677568; outline-offset: -5px; }
+.beosound-entry::after { content: ''; width: 4px; height: 4px; border-radius: 50%; background: #d0d7ca; opacity: .45; }
+.beosound-entry:hover::after, .beosound-entry:focus-visible::after { opacity: 1; box-shadow: 0 0 0 4px #d0d7ca22; }
+.beosound-accessibility { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; pointer-events: none; }

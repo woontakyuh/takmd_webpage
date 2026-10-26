@@ -1,0 +1,66 @@
+# Office follow-up — 12 September 2026
+
+## Latest archive and river work
+
+Han River/Jamsu and click-only music are released under `.omo/evidence/banpo-park-completeness-2026-09-12/release.json`: mapped park facilities, three Seoraeseom footbridges, and the continuous lower Jamsu crossing beneath Banpo. Entry and ordinary room clicks remain silent; explicit CD/transport starts playback.
+
+The archive pass is recorded separately in `.omo/evidence/edbm-magazine-2026-09-12/release.json` (absent means local only). The physical Liquor Journal belongs inside the left Isidoro shelf. Bar exterior/interior photographs follow the original magnetic lecture cover, then the original lecture resumes. No separate magnetic photo is intended. The supplied pages are excerpts, not a complete issue scan.
+
+The amplifier proposal frame has asset-gated integration only. The owner's edited video and poster are still needed; no fake media is present. CD rack/swapping, additional album tracks, EQ, physical presets, permanent arrangements, deferred lectures and actual-device iPhone profiling below remain open.
+
+## Real north-bank buildings and exterior depth
+
+Current receipt: `.omo/evidence/river-real-fidelity-2026-09-12/release.json`; absent means this pass is still local. All fifteen existing Seobinggo Shindonga blocks and the three Raemian Caelitus towers use individual mapped footprints. Source-led facades replace their old baked surfaces. The retained smaller-neighborhood layer now totals 1,000 footprints, and 2,611 eligible local road ways supply a single terrain-following street layer. Water and distant terrain shading are refined. Shared appearance tokens and a separate exterior camera depth range keep the result coherent at the real viewing distance. Closed-cabinet interior culling preserves pixel-identical closed/open views while removing 50 concealed meshes when closed.
+
+This is a mapped, photograph-informed model, not a survey or photogrammetric replica. Exact facade geometry, most metric heights, individual vegetation placement and an actual iPhone Safari performance recording remain open. Matched desktop mobile emulation and full visual evidence are recorded under the receipt directory; do not describe those measurements as iPhone results. Earlier entries below are historical.
+
+## Fin, Han River and measured rendering refinement
+
+Current receipt: `.omo/evidence/fin-river-performance-2026-09-11/release.json`; absent means not yet deployed. The fin follows the broader supplied anniversary outline, then the owner's additional 10% enlargement with its root centered in the box. The original size printing remains. Added 380 mapped low-rise footprints, varied night-window occupancy and continuous oblique-view river reflection. Repeated Mac mini/shelf meshes are instanced; the coat has a checked 2K derivative. Mobile distant-glass simplification now removes the extra room refraction pass in overview, restoring original optics during close inspection. Matched mobile simulation improved the night median frame interval from 83.0 to 29.7ms; physical iPhone performance remains unmeasured. Older entries below are historical.
+
+## Late-evening continuity
+
+Release receipt: `.omo/evidence/hide-collection-tabs-2026-09-11/release.json`; absent means not yet deployed. Hidden on-room tabs, automatic 1–6–1 music with Paper Bag first, flush wall/floor junction, single-click TV reader arrival, and larger night-readable surfboard story are included. Browser autoplay may require a first gesture. Open items below remain open.
+
+## Evening refinement
+
+The current release receipt is `.omo/evidence/calendar-audio-refinement-2026-09-11/release.json`; absence means local work only. Placement A, raised switches, empty left cabinet shelves, separated Hue lamp, readable calendar ledger, six native music tracks and the Beacon/Flex anniversary fin are included. Older release descriptions below are historical.
+
+## Earlier release scope
+
+The afternoon release receipt in `.omo/evidence/isidoro-paper-fidelity-2026-09-11/release.json` is authoritative for this pass's commit, pushed remote and production deployment. Until that receipt exists, this pass remains local. The earlier `cabinet-entry-poster-2026-09-11/release.json` records the preceding checkpoint.
+
+1. Closed cabinet: first click approaches its front without opening; the next click opens it. Its physical left free edge closes it. Grip markers and visible instructional boxes are removed. The lecture paper sits 30mm further right and 35mm lower.
+2. Magnetic lecture: one substantial upper-left magnet holds the A3 stack. Click the right sheet for the next page, the parked left sheet for the previous page. The existing 26 approved slides, high-resolution images, X/Escape and reduced-motion support remain; no TV handoff button is shown.
+3. TV and monitor: the ordinary room contains only depth-tested screen geometry. A sharp interactive reader is mounted when the camera settles; the two surfaces are not shown together. The TV retains its selected lecture/page, and the CV retains its reading position without navigating away from the office.
+4. Wall controls: the blind switch stays on the left of the window. Both light and blind plates are now 1.46m high and use a more visible subdued warm gray finish.
+5. Credentials and awards: a first click frames the three-object collection; selecting one then brings it closer and shows its English description without a panel box. X returns to the earlier room view; Overview remains available. Existing photographed originals and dimensions are preserved.
+6. Clock: one click opens the real clock with a paper-style monthly conference calendar beside it, or below it on a phone. The reviewed snapshot has 33 academic events, including attendance and faculty roles. Month edges and keyboard arrows navigate; event names remain readable in the scrollable ledger. This is a curated snapshot, not an automatic Notion watcher or comprehensive worldwide conference calendar.
+7. Information typography: book, photo, whisky and collection descriptions use quieter editorial type and unboxed layouts. Original Korean material and the Ppomppu Easter egg remain unchanged. The original CV portrait layout is retained.
+8. Loading image: the regular build checks source/asset fingerprints and produces eight responsive day/night office images when needed. Unchanged builds reuse the verified images. The early CV transition origin follows the corresponding photographed monitor corners. This is build-time work and does not add screenshot rendering to a visitor’s device.
+
+## Afternoon fidelity and interaction additions
+
+- Rebuilt the Isidoro strap, two combination catches, shelf guards, recessed glazed bottle storage, drawer and nesting trays against the supplied photographs. Kept the approved taupe finish and corner opening. All seven visible bottles remain directly selectable, including through the lower glass; solid cabinet parts still block clicks.
+- Reworked the magnetic lecture into printed sheets with a real-thickness nickel pot magnet, curled page turns and conserved left/right stack thickness. Existing 26 approved slides remain the source.
+- Brought photograph, credential, plaque, whisky and research explanations next to their objects. Placed the SNU degree text upper-right, rectified the KOMISS photographed border, and added 2026 to the KOSESS event caption. Opening a new object dismisses previous details.
+- Anchored lighting, blinds and Halo controls nearby; connected multi-day calendar events and fixed the month navigation positions. Prevented native focus from scrolling the room out of its viewport.
+- Increased the research viewing angle and corrected Mac mini focus to the front/right of the actual monitor geometry.
+- Composed eight Spine Summit photographs into three boards and connected four TV backlight regions to the displayed image colors.
+- Rebuilt the owner's amber Bing board from six photographs, with distinct deck/bottom graphics, wax texture, corrected fin and rounded profile.
+- Replaced the soundbar with Beosound 9000 and two Beolab 8000 speakers; physical CD selection, clamper movement, glass and transport/volume controls are available. Six supplied tracks are connected in the subsequent evening pass below.
+
+## Decisions and work still open
+
+- **Music library expansion:** all six supplied tracks are connected: Asoto Union, Brown Eyes, GIRIBOY, Two Ton Shoe, Radiohead and John Splithoff. All six use embedded album covers; CD 3 retains its approved image. The CD rack and swap flow were discussed and left for the next task when the owner closed this release scope. More tracks per album, seeking and EQ also remain open. See `docs/beosound-9000.md`.
+- **Surfboard purchase story:** Bing Beacon 60th Anniversary, bought 30 September 2019 at the Bing factory in Encinitas, with the original IMG_0282 purchase photo. The fin now has a rounded 9.2mm root and a fuller midsection instead of appearing like a thin sheet.
+- **Physical preset integration:** the proposed engraved touch labels with a small active LED remain a design recommendation. Existing presets work; the owner has not selected a replacement treatment.
+- **Performance:** the initial batching/2K coat pass reduced submissions and calculated texture storage but did not improve cadence. The subsequent mobile glass pass improved matched night simulation from 83.0 to 29.7ms (1,648→843 calls), with music playing. Coarse-pointer landscape and book DPR are capped at 1. Actual iPhone Safari, close refractive scenes and large initial payload remain the next measurement targets. Never equate desktop simulation with actual-device FPS or calculated storage with resident VRAM. Evidence: `.omo/evidence/fin-river-performance-2026-09-11/performance-mobile-remedy-after.json` and the initial `performance-implementation-report.md`.
+- **Han River:** source-led Shindonga/Caelitus facades, local roads and 1,000 small-building footprints are now included. Other complexes retain generic facades; most small-building heights remain explicitly estimated. More verified landmark facades, ground-level greenery and reference-photograph calibration can continue. Do not claim a photogrammetric city or survey-accurate heights. Preserve mapped bridges and performance budgets.
+- **Corner lamp:** researched alternatives remain uninstalled. No new model is implied by the speaker research.
+- **Administrator arrangements:** permanent furniture-layout editing remains deferred. Current Arrange is visit-only.
+- **Lecture imports:** 2024 and earlier remain deferred at the owner’s request. Additional absent PDF assets are not substituted with invented content. Existing TVPDF_/TVIMG imports are explicit processing, not a Dropbox watcher.
+
+## Existing items to preserve
+
+The original CV portrait, real Fender guitar and cabinet, both bookshelves, certificate/award photographs, award-photo/gold-plaque pairing, whole-plaque Shorts link, closed-cover book entry, enlarged research folio, Mac mini/cable/dial placement, current English captions, visitors counter and in-room external-link boundaries are continuity requirements. Unrelated local reference folders and unused Beolab experiments are excluded from this release.

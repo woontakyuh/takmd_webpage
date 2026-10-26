@@ -1,7 +1,9 @@
+import { fileURLToPath } from "node:url";
+
 /**
  * Build-time script: Fetches ALL surgical cases from Notion Patient DB,
  * anonymizes them, computes per-category stats + PROM trends,
- * and writes surgery-data.json for the dashboard.
+ * and writes surgery-data.json for the internal dashboard plus a public totals-only summary.
  *
  * Usage: bun run scripts/fetch-notion-data.ts
  * Requires: NOTION_TOKEN env var (or ~/.journal_alert_env)
@@ -359,10 +361,19 @@ async function main() {
 
   const fs = await import("fs");
   const path = await import("path");
-  const outDir = path.join(import.meta.dir, "..", "src", "data");
+  const outDir = fileURLToPath(new URL("../src/data/", import.meta.url));
   fs.mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, "surgery-data.json");
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
+  const publicSummary = {
+    totalCases: overallStats.totalCases,
+    categoryCounts: {
+      UBE: categoryCounts["UBE"] ?? 0,
+      "Full-endo": categoryCounts["Full-endo"] ?? 0,
+      ULBD: categoryCounts["ULBD"] ?? 0,
+    },
+  };
+  fs.writeFileSync(path.join(outDir, "public-surgery-summary.json"), JSON.stringify(publicSummary, null, 2) + "\n");
   console.log(`\nWritten to ${outPath}`);
   console.log(`Total: ${overallStats.totalCases} cases, ${Object.keys(categoryStats).length} categories with stats`);
   for (const [cat, count] of Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])) {

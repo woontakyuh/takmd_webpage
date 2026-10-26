@@ -1,0 +1,11 @@
+Based on "Herman Miller Eames Lounge Chair" by alexshupp.
+Source: https://sketchfab.com/3d-models/herman-miller-eames-lounge-chair-d8a999565942444d844afd39dbaf5425
+Author: https://sketchfab.com/alexshupp
+Licensed under Creative Commons Attribution 4.0: https://creativecommons.org/licenses/by/4.0/
+
+Modified for TakMD in 2026: separated chair/ottoman, normalized dimensions, reduced geometry, warm-beige woven-fabric/pale-oak/polished-aluminium materials, corrected plywood normals and optimized textures.
+Fabric normal: Rough Linen by Rico Cilliers / colormass, Poly Haven, CC0: https://polyhaven.com/a/rough_linen
+
+Oak albedo: Oak Veneer 04 by Jenelle van Heerden, Poly Haven, CC0, resized and pale color grade: https://polyhaven.com/a/oak_veneer_04
+
+No endorsement by the original model author or furniture manufacturer is implied.
