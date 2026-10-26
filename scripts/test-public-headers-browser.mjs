@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { chromium } from 'playwright-core';
 import { startPublicPreview } from './preview-public-build.mjs';
 
+const academic = /ACADEMIC_OFFICE\s*=\s*true/.test(await readFile(new URL('../src/components/studio/scene/roomEdition.ts', import.meta.url), 'utf8'));
 const fixture = await mkdtemp(join(tmpdir(), 'takmd-header-policy-'));
 let browser;
 let fixturePreview;
@@ -100,16 +101,18 @@ try {
     if (path === '/') {
       assert.ok(decoderResponses.has('/vendor/draco/draco_wasm_wrapper.js'), 'Draco wrapper must load from the site');
       assert.ok(decoderResponses.has('/vendor/draco/draco_decoder.wasm'), 'Draco WebAssembly must load from the site');
-      await page.getByRole('button', { name: 'Play music', exact: true }).click();
-      await page.waitForFunction(() => document.querySelector('audio[data-active=true]')?.currentTime > .1);
-      await page.getByRole('button', { name: 'Pause music', exact: true }).click();
-      await page.getByRole('button', { name: 'Play proposal recording', exact: true }).focus();
-      await page.keyboard.press('Enter');
-      await page.waitForFunction(() => {
-        const video = document.querySelector('video[data-office-memory=proposal]');
-        return video?.currentSrc.startsWith('blob:') && video.currentTime > .1;
-      }, null, { timeout: 30000 });
-      console.log('PASS: music and HLS recording actually play through the local playlist and blob MediaSource');
+      if (!academic) {
+        await page.getByRole('button', { name: 'Play music', exact: true }).click();
+        await page.waitForFunction(() => document.querySelector('audio[data-active=true]')?.currentTime > .1);
+        await page.getByRole('button', { name: 'Pause music', exact: true }).click();
+        await page.getByRole('button', { name: 'Play proposal recording', exact: true }).focus();
+        await page.keyboard.press('Enter');
+        await page.waitForFunction(() => {
+          const video = document.querySelector('video[data-office-memory=proposal]');
+          return video?.currentSrc.startsWith('blob:') && video.currentTime > .1;
+        }, null, { timeout: 30000 });
+        console.log('PASS: music and HLS recording actually play through the local playlist and blob MediaSource');
+      }
     }
     assert.deepEqual(await page.evaluate(() => window.policyViolations), [], `CSP violations on ${path}`);
     assert.deepEqual(errors, [], `Runtime errors on ${path}`);
