@@ -30,6 +30,10 @@ export function OfficePoster({ ready, failed, night, onHidden }: {
   }, [ready, failed, onHidden]);
   const time = night ? 'night' : 'day';
   if (ACADEMIC_OFFICE) return <div ref={poster} className="office-poster office-poster-academic" data-ready={ready && !failed} data-failed={failed} aria-hidden={ready && !failed}>
+    <picture aria-hidden="true">
+      <source media="(max-width: 759px) and (orientation: portrait)" srcSet="/studio/academic-office-loading-mobile.webp" />
+      <img src="/studio/academic-office-loading-desktop.webp" alt="" width="1440" height="900" fetchPriority="high" decoding="async" />
+    </picture>
     <span role="status">{failed ? 'The office couldn’t open.' : 'Opening the office…'}
       {failed && <button className="office-poster-retry" type="button" onClick={() => window.location.reload()}>Try again</button>}
     </span>

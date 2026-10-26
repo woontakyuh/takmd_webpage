@@ -22,12 +22,20 @@ const presentationsUpdatedAt = presentationsData.generatedAt.slice(0, 10);
   hideFooter
 >
   <main id="main-content">
+    <picture class="studio-boot-poster" aria-hidden="true">
+      <source media="(max-width: 759px) and (orientation: portrait)" srcset="/studio/academic-office-loading-mobile.webp" />
+      <img src="/studio/academic-office-loading-desktop.webp" alt="" width="1440" height="900" fetchpriority="high" decoding="async" />
+    </picture>
     <StudioExperience client:load publications={publications} presentations={presentations} updatedAt={updatedAt} presentationsUpdatedAt={presentationsUpdatedAt} />
     <noscript><div class="studio-noscript">Explore the studio collection: <a href="/ube">Clinical practice</a> · <a href="/research">Research</a> · <a href="/education">Education</a> · <a href="/ai">Clinical AI</a> · <a href="/jiu-jitsu">Jiu-jitsu</a> · <a href="/surfing">Surfing</a> · <a href="/cv">Living CV</a></div></noscript>
   </main>
 </Layout>
 
 <style>
+  #main-content { position: relative; min-height: 100svh; background: #182824; }
+  .studio-boot-poster { position: fixed; inset: 0; display: block; }
+  .studio-boot-poster img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  #main-content > :global(.studio) { position: relative; z-index: 1; }
   .studio-noscript { position: fixed; bottom: 0; inset-inline: 0; z-index: 10; padding: 16px; background: #f8f6f0; color: #202d2a; font-size: 14px; }
   .studio-noscript a { text-decoration: underline; }
 </style>
