@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useThree } from '@react-three/fiber';
 import { CanvasTexture, SRGBColorSpace } from 'three';
-import { academicInterests, activities, currentRoles, profileImage } from '../../../data/cv';
+import { academicInterests, activities, profileImage } from '../../../data/cv';
 import { PALETTE } from './config';
 
 type Surface = {
@@ -91,20 +91,20 @@ export function useWorkstationTexture() {
       context.scale(2560 / 1440, 1440 / 810);
       context.textBaseline = 'top';
       context.fillStyle = PALETTE.paperLight; context.fillRect(0, 0, 1440, 810);
-      context.fillStyle = PALETTE.teal; context.fillRect(60, 55, 32, 2);
-      context.font = '16px Arial'; context.fillText('CURRICULUM VITAE / TAKMD', 107, 44);
+      context.fillStyle = '#000'; context.font = 'italic 700 32px Georgia';
+      context.fillText('Curriculum Vitae', 60, 44);
       context.fillStyle = PALETTE.ink; context.font = '51px Georgia';
       context.fillText('Woon Tak Yuh, MD.', 60, 91);
       context.font = '19px Arial'; context.fillStyle = PALETTE.muted;
       context.fillText('Neurosurgeon · Research · Teaching', 60, 162);
-      context.font = '17px Arial'; context.fillText(currentRoles[0], 60, 202);
       context.fillStyle = PALETTE.teal; context.font = '15px Arial';
       context.fillText('ACADEMIC INTERESTS', 60, 226);
       context.fillStyle = PALETTE.ink; context.font = '22px Arial';
-      academicInterests.forEach((interest, index) => context.fillText(interest, 60, 259 + index * 31.9));
-      context.fillStyle = PALETTE.line; context.fillRect(60, 362, 825, 1);
+      context.fillText(academicInterests.slice(0, 3).join(', '), 60, 259);
+      context.fillText(academicInterests[3], 60, 291);
+      context.fillStyle = PALETTE.line; context.fillRect(60, 338, 825, 1);
       context.fillStyle = PALETTE.teal; context.font = '15px Arial';
-      context.fillText('ACADEMIC & PROFESSIONAL ACTIVITIES', 60, 386);
+      context.fillText('ACADEMIC & PROFESSIONAL ACTIVITIES', 60, 362);
       const drawActivityText = (text: string, x: number, y: number, leading: number) => {
         let line = '';
         let baseline = y;
@@ -119,20 +119,29 @@ export function useWorkstationTexture() {
         context.fillText(line, x, baseline);
         return baseline + leading;
       };
-      const columnBaselines: [number, number] = [423, 423];
+      const columnBaselines: [number, number] = [399, 399];
       activities.forEach((activity, index) => {
-        const column = index < 5 ? 0 : 1;
+        const column = index < 4 ? 0 : 1;
         const x = column === 0 ? 60 : 488.5;
         const y = columnBaselines[column];
         context.fillStyle = PALETTE.ink;
         context.font = activity.organization === 'Neurospine' || activity.organization === 'JMISST' ? 'italic 17px Georgia' : '17px Arial';
-        const roleY = drawActivityText(activity.organization, x, y, 20.4);
-        context.fillStyle = PALETTE.muted; context.font = '16px Arial';
-        columnBaselines[column] = drawActivityText(activity.role, x, roleY + 3, 19.2) + 8;
+        if (column === 1) {
+          context.fillText(activity.organization, x, y);
+          const titleWidth = context.measureText(activity.organization).width;
+          context.font = '16px Arial'; context.fillStyle = PALETTE.muted;
+          context.fillText(`, ${activity.role}`, x + titleWidth, y);
+          columnBaselines[column] = y + 20.4 + 24;
+        } else {
+          let roleY = drawActivityText(activity.organization, x, y, 20.4);
+          context.fillStyle = PALETTE.muted; context.font = '16px Arial';
+          for (const role of activity.role.split('\n')) roleY = drawActivityText(role, x, roleY + 3, 19.2);
+          columnBaselines[column] = roleY + 24;
+        }
       });
       context.fillStyle = PALETTE.line; context.fillRect(60, 756, 1320, 1);
       context.fillStyle = PALETTE.teal; context.font = '15px Arial';
-      context.fillText('CAREER · EDUCATION · PUBLICATIONS · TEACHING', 60, 772);
+      context.fillText('EDUCATION · CAREER · AWARDS · TEACHING & EDUCATION', 60, 772);
     }
     const result = new CanvasTexture(canvas); result.colorSpace = SRGBColorSpace; result.anisotropy = anisotropy;
     return result;
