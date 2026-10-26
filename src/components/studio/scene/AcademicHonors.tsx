@@ -32,7 +32,7 @@ export function AcademicHonors({ wood, onAwardPhoto, selected, reducedMotion }: 
     {PRINTS.map((frame, index) => {
       const top = index < 4;
       const x = top ? 1.50 + index * .25 : 1.48 + (index - 4) * .25;
-      const y = top ? 2.4 : 2.0;
+      const y = top ? 2.0 : 1.7;
       const item = top ? ADDITIONAL_DOCUMENTS[index].item : CREDENTIAL_ITEMS[index - 4];
       return <CollectionInspectionItem key={frame.id} item={item}>
         <group position={[x - 3.75, y, 3.12]} scale={top ? .68 : .76}>
@@ -41,7 +41,7 @@ export function AcademicHonors({ wood, onAwardPhoto, selected, reducedMotion }: 
       </CollectionInspectionItem>;
     })}
     <CollectionInspectionItem item={SNU_MASTERS_ITEM}>
-      <group position={[-1.5, 2.0, 3.12]} rotation={[0, Math.PI, 0]} scale={.65}><SnuMastersPlaque wood={wood} /></group>
+      <group position={[-1.5, 1.7, 3.12]} rotation={[0, Math.PI, 0]} scale={.65}><SnuMastersPlaque wood={wood} /></group>
     </CollectionInspectionItem>
     {trophies.map((trophy, index) => <CollectionInspectionItem key={AWARD_ITEMS[index].id} item={AWARD_ITEMS[index]}>
       <group position={[1.55 + index * .32, 1.7, 3.115]} rotation={[0, Math.PI, 0]} scale={.8}>{trophy}</group>
