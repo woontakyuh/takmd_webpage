@@ -57,6 +57,7 @@ export type HaloSettings = {
 export type BlindLift = readonly [number, number];
 
 export type StudioSceneProps = {
+  readonly tvTeachingPath?: string | null;
   readonly entry: OfficeEntryPhase;
   readonly onEntryComplete: () => void;
   readonly ready: boolean;
@@ -98,6 +99,9 @@ export type StudioSceneProps = {
   readonly onClose: () => void;
   readonly onClaudeSticker: () => void;
   readonly onAwardPhoto: () => void;
+  readonly publications: readonly Publication[];
+  readonly publicationsUpdatedAt: string;
+  readonly onPaper: (id: string) => void;
   readonly onPaperStep: (direction: 1 | -1) => void;
   readonly onReady: () => void;
   readonly onTalk: (id: string | null) => void;

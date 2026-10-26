@@ -1,3 +1,5 @@
+import { ACADEMIC_OFFICE } from './roomEdition';
+import { ResearchBook } from './ResearchBook';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -15,7 +17,7 @@ import { usePrintedTexture } from './Textures';
 import { MOTION, PALETTE, ROOM } from './config';
 import { scheduleSceneSingleAction } from './sceneGesture';
 
-type FolioProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'collection'>;
+type FolioProps = Pick<StudioSceneProps, 'publications' | 'publicationsUpdatedAt' | 'onPaper' | 'onClose' | 'selected' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'collection'>;
 
 type FolioPaper = {
   readonly id: string;
@@ -41,7 +43,7 @@ function paperFromCollection(collection: OfficeCollection): FolioPaper {
 
 const CLICK_DRAG_THRESHOLD = 5;
 
-export function Folio({ selected, onSelect, onPaperStep, reducedMotion, collection }: FolioProps) {
+function OriginalFolio({ selected, onSelect, onPaperStep, reducedMotion, collection }: FolioProps) {
   const canvas = useThree(state => state.gl.domElement);
   const cover = useRef<Group>(null);
   const placement = useRef<Group>(null);
@@ -209,4 +211,8 @@ export function Folio({ selected, onSelect, onPaperStep, reducedMotion, collecti
     </group>
     </group>
   </Interactive></group>;
+}
+
+export function Folio(props: FolioProps) {
+  return ACADEMIC_OFFICE ? <ResearchBook {...props} /> : <OriginalFolio {...props} />;
 }

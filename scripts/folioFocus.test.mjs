@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { Group, PerspectiveCamera, Raycaster, Scene, Vector3 } from 'three';
 import { FOCUS, MOBILE_FOCUS, MONITOR, ROOM, SIDE_READER_SPACE, focusFov } from '../src/components/studio/scene/config';
 import { folioReadingPanelLeft, folioReadingPose, folioReadingView } from '../src/components/studio/scene/folioFocus';
+import { ACADEMIC_OFFICE } from '../src/components/studio/scene/roomEdition';
 import { MONITOR_SCREEN } from '../src/components/studio/scene/monitorReading';
 import { MonitorArm } from '../src/components/studio/scene/MonitorArm';
 import { Block } from '../src/components/studio/scene/Primitives';
@@ -144,14 +145,25 @@ describe('object reading camera composition', () => {
       camera.updateMatrixWorld(true);
       const book = new Group();
       book.position.set(...ROOM.folio.position);
-      book.rotation.y = ROOM.folio.rotation;
-      book.scale.setScalar(.3);
+      book.rotation.y = ACADEMIC_OFFICE ? Math.PI : ROOM.folio.rotation;
+      book.scale.setScalar(ACADEMIC_OFFICE ? .25 : .3);
       book.updateMatrixWorld(true);
-      const corners = [-.515, .515].flatMap(x => [-.68, .68].map(z => book.localToWorld(new Vector3(x, .06, z)).project(camera)));
+      const xs = ACADEMIC_OFFICE ? [-2, .5] : [-.515, .515];
+      const zs = ACADEMIC_OFFICE ? [-Math.SQRT2 / 2, Math.SQRT2 / 2] : [-.68, .68];
+      const corners = xs.flatMap(x => zs.map(z => book.localToWorld(new Vector3(x, .063, z)).project(camera)));
       const left = Math.min(...corners.map(point => (point.x + 1) * width / 2));
       const right = Math.max(...corners.map(point => (point.x + 1) * width / 2));
       const top = Math.min(...corners.map(point => (1 - point.y) * height / 2));
       const bottom = Math.max(...corners.map(point => (1 - point.y) * height / 2));
+      if (ACADEMIC_OFFICE) {
+        expect(elevation(pose)).toBeGreaterThan(89.99);
+        expect(left).toBeGreaterThanOrEqual(15);
+        expect(right).toBeLessThanOrEqual(width - 15);
+        expect(top).toBeGreaterThanOrEqual(15);
+        expect(bottom).toBeLessThanOrEqual(height - 15);
+        expect(right - left).toBeGreaterThan(Math.min(width * .7, height * 1.3));
+        return;
+      }
       expect(left).toBeGreaterThanOrEqual(15.9);
       expect(top).toBeGreaterThanOrEqual(79.9);
       expect(right - left).toBeGreaterThan(200);

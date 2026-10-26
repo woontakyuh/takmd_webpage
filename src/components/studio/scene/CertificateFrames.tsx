@@ -24,7 +24,7 @@ const A4 = { short: .210, long: .297 } as const;
 const FRAME_MARGIN = (FRAME.face + FRAME.paperInset) * 2;
 const CREDENTIAL_SHELF_TOP = 2.0;
 
-const CREDENTIALS = [
+export const CREDENTIALS = [
   {
     id: 'ksns-permanent-membership-2022',
     name: 'KSNS permanent member certificate',

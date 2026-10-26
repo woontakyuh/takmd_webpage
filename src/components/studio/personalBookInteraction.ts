@@ -1,4 +1,5 @@
-export const BOOK_SHELF_CENTER = [-1.875, 1.445, 3.004] as const;
+import { ACADEMIC_OFFICE, TV_WALL_SHIFT } from './scene/roomEdition';
+export const BOOK_SHELF_CENTER = ACADEMIC_OFFICE ? [1.875, .963, 3.004 + TV_WALL_SHIFT] as const : [-1.875, 1.445, 3.004] as const;
 const SHELF_REACH = 1.2;
 const CLICK_DRAG_THRESHOLD = 5;
 

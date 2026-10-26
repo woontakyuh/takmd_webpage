@@ -1,3 +1,4 @@
+import { ACADEMIC_OFFICE } from './roomEdition';
 import { Movable } from './Movable';
 import { useFrame } from '@react-three/fiber';
 import { useThree } from '@react-three/fiber';
@@ -11,19 +12,22 @@ import { Interactive } from './Interactive';
 import { MonitorArm } from './MonitorArm';
 import { Block } from './Primitives';
 import { ScreenBarHalo2 } from './ScreenBarHalo2';
-import { useWorkstationTexture } from './CollectionTextures';
+import { TvTeachingReader } from './TvTeachingReader';
+import { tvTeachingTopic } from '../tvTeaching';
+import { useWorkstationTexture, useDocumentTexture } from './CollectionTextures';
 import { useTvPresentationTexture } from './TvPresentationTexture';
 import { TvScreenReader } from './TvScreenReader';
 import { MonitorScreenReader } from './MonitorScreenReader';
 import { MONITOR_SCREEN } from './monitorReading';
 import { FOCUS, MONITOR, MOTION, PALETTE, ROOM, WALL_TV } from './config';
 import { setWallTvHovered, useWallTvBacklight } from './hoverReactions';
+import { TEACHING_WALL_POSE } from './config';
 import { monitorReadingPose } from './monitorReading';
 import { isScreenFocusSettled } from './screenFocus';
 
-type DisplaysProps = Pick<StudioSceneProps, 'entry' | 'compact' | 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'> & { readonly display?: 'monitor' | 'tv' };
+type DisplaysProps = Pick<StudioSceneProps, 'tvTeachingPath' | 'guidedSection' | 'entry' | 'compact' | 'ready' | 'selected' | 'onSelect' | 'reducedMotion' | 'halo' | 'presentations' | 'collection' | 'onTalk' | 'onTalkSlide' | 'onClose' | 'monitorScroll'> & { readonly display?: 'monitor' | 'tv' };
 
-export function Displays({ entry, compact, ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll, display }: DisplaysProps) {
+export function Displays({ tvTeachingPath, guidedSection, entry, compact, ready, selected, onSelect, reducedMotion, halo, presentations, collection, onTalk, onTalkSlide, onClose, monitorScroll, display }: DisplaysProps) {
   const entryReader = ready && !selected && (entry === 'capture' || (!compact && entry === 'seated'));
   const camera = useThree(state => state.camera);
   const { layout } = useArrangement();
@@ -38,7 +42,7 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
   useEffect(() => {
     focusedScreenRef.current = null;
     setFocusedScreen(null);
-  }, [selected]);
+  }, [selected, Boolean(tvTeachingPath)]);
   useFrame((_, delta) => {
     if (tvMaterial.current) {
       const target = tvHovered || selected === 'education' ? 0.5 : 0.1;
@@ -49,8 +53,8 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
     if (monitorMaterial.current) monitorMaterial.current.emissiveIntensity = reducedMotion ? targetBrightness
       : MathUtils.damp(monitorMaterial.current.emissiveIntensity, targetBrightness, MOTION.object, delta);
     if (selected !== 'ai' && selected !== 'education') return;
-    const pose = moveFocus(selected === 'ai' ? monitorReadingPose() : FOCUS.education, selected, layout);
-    const next = isScreenFocusSettled(true, camera.position, camera.getWorldDirection(cameraDirection), pose) ? selected : null;
+    const pose = moveFocus(selected === 'ai' ? monitorReadingPose() : tvTeachingPath ? TEACHING_WALL_POSE : FOCUS.education, selected, layout);
+    const next = (tvTeachingPath && focusedScreenRef.current === 'education') || isScreenFocusSettled(true, camera.position, camera.getWorldDirection(cameraDirection), pose) ? selected : null;
     if (next === focusedScreenRef.current) return;
     focusedScreenRef.current = next;
     setFocusedScreen(next);
@@ -60,9 +64,12 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
   const talk = collection.presentation ?? featured;
   const cover = collection.talkSlide?.src ?? talkMedia.find(media => media.id === talk?.id)?.slides[0]?.src;
   const board = useTvPresentationTexture({ compact, cover: cover ?? null, talk, presentations, treeScrollOffset: tvTreeScrollOffset });
+  const teachingTopic = tvTeachingTopic(tvTeachingPath ?? null);
+  const teachingCover = useDocumentTexture({ image: null, title: teachingTopic?.title ?? 'UBE & Teaching', eyebrow: 'Clinical practice · Teaching', detail: 'Explore the clinical and teaching portfolio', dark: true });
+  const screenTexture = teachingTopic ? teachingCover : board;
   return (
     <group>
-      {display !== 'tv' && <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
+      {display !== 'tv' && !tvTeachingPath && !(ACADEMIC_OFFICE && (guidedSection === 2 || selected === 'education')) && <Movable id="desk" handle={false}><Interactive id="ai" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
         position={ROOM.monitor.position} rotation={ROOM.monitor.rotation} onHoverChange={setMonitorHovered}>
         <MonitorArm />
         <group position={MONITOR_SCREEN.mount} rotation={[MONITOR_SCREEN.tilt, 0, 0]}>
@@ -81,10 +88,11 @@ export function Displays({ entry, compact, ready, selected, onSelect, reducedMot
           <mesh visible={focusedScreen !== 'education'} name="Wall TV screen" position={[0, 0.003, WALL_TV.depth / 2 + 0.001]}>
             <planeGeometry args={[WALL_TV.screenWidth, WALL_TV.screenHeight]} />
             {/* Keep the shallow screen clear of its chassis at distant, oblique camera angles. */}
-            <meshStandardMaterial ref={tvMaterial} map={board} emissiveMap={board} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4}
+            <meshStandardMaterial ref={tvMaterial} map={screenTexture} emissiveMap={screenTexture} emissive={PALETTE.white} emissiveIntensity={0.1} roughness={0.4}
               polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
           </mesh>
-          {focusedScreen === 'education' && <TvScreenReader active compact={compact} hovered={tvHovered} talk={talk} slide={collection.talkSlide} presentations={presentations}
+          {focusedScreen === 'education' && teachingTopic && <TvTeachingReader path={teachingTopic.path} onTalk={onTalk} onClose={onClose} />}
+          {focusedScreen === 'education' && !teachingTopic && <TvScreenReader active compact={compact} hovered={tvHovered} talk={talk} slide={collection.talkSlide} presentations={presentations}
             onTalk={onTalk} onSlide={onTalkSlide} onClose={onClose} treeScrollOffset={tvTreeScrollOffset} onTreeScrollOffset={setTvTreeScrollOffset} />}
           <mesh position={[WALL_TV.width / 2 - 0.034, -WALL_TV.height / 2 + 0.008, 0.017]}><sphereGeometry args={[0.0015, 8, 6]} /><meshBasicMaterial color={PALETTE.tealLight} /></mesh>
         </group>

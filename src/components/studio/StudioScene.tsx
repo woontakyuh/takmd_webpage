@@ -59,7 +59,7 @@ export function StudioScene(props: StudioSceneProps) {
   const skyFill = MathUtils.smoothstep(sun.altitude, -6, 32);
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
-    <Canvas ref={canvas} frameloop="never" camera={{ position: [...TOUR[0].position], fov: 42, near: 0.015, far: 60 }}
+    <Canvas ref={canvas} frameloop="never" camera={{ position: [...TOUR[props.viewCommand.view].position], fov: 42, near: 0.015, far: 60 }}
       dpr={props.entry === 'capture' ? 2 : [1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       // A phone's web process is killed near 1.5 GB and the room held 858 MB of textures alone, fifteen of them 2048².

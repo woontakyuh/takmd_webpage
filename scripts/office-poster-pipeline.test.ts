@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { ACADEMIC_OFFICE } from '../src/components/studio/scene/roomEdition';
 import { describe, test } from 'node:test';
 import {
   CAPTURE_VARIANTS,
@@ -9,7 +10,7 @@ import {
 } from './office-poster-pipeline';
 
 describe('office poster projection', () => {
-  test('Given the desktop opening camera, the complete monitor is large enough to read with room visible around it', () => {
+  test('Personal-room seated poster frames the monitor (academic edition opens directly at Front)', { skip: ACADEMIC_OFFICE }, () => {
     const geometry = projectMonitorGeometry({
       ...CAPTURE_VARIANTS.desktopLandscape,
       width: 1440,

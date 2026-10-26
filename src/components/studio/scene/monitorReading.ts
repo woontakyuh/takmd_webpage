@@ -11,7 +11,7 @@ export const MONITOR_SCREEN = {
 } as const;
 
 export function monitorReadingSize(width: number, height: number): number {
-  const verticalClearance = width > height && height < 560 ? 32 : 128;
+  const verticalClearance = width > height && height < 560 ? 160 : 176;
   const bezelWidth = Math.min(Math.max(32, width - 32), Math.max(32, height - verticalClearance) * MONITOR.width / MONITOR.height);
   return bezelWidth * MONITOR.screenWidth / MONITOR.width;
 }

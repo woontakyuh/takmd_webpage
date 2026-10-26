@@ -1,3 +1,4 @@
+import { ACADEMIC_OFFICE, TV_WALL_SHIFT } from './roomEdition';
 import type { SceneInspection } from './SceneInspection';
 import type { CollectionId } from './CollectionInspectionState';
 import type { Box3 } from 'three';
@@ -64,7 +65,8 @@ export function collectionInspection(collection: CollectionId, width: number, he
     honors: [-1.875, 2.55, 3.12], certificates: [1.875, 2.52, 3.12],
     'workshop-certificates': [1.875, 1.82, 3.14],
   } as const;
-  const target = targets[collection];
+  const academicHeights = { credentials: 2.14, awards: 1.82, honors: 2.53, certificates: 2.53, 'workshop-certificates': .93 };
+  const target = ACADEMIC_OFFICE ? [1.875, academicHeights[collection], 3.12 + TV_WALL_SHIFT] as const : targets[collection];
   const verticalFov = width < height ? 60 : 42;
   const tangent = Math.tan(verticalFov * Math.PI / 360);
   const distance = Math.max(0.97 / (0.84 * 2 * tangent * width / height), 0.35 / (0.76 * 2 * tangent)) + .04;

@@ -16,6 +16,7 @@ import { Movable } from './Movable';
 import { Displays } from './Displays';
 import { PERSONAL_LINKS } from '../personal';
 import { ROOM } from './config';
+import { ACADEMIC_OFFICE, TV_WALL_SHIFT } from './roomEdition';
 import { preloadRoomAssets } from './preloadRoomAssets';
 import type { StudioSceneProps } from '../types';
 
@@ -36,22 +37,22 @@ export function RoomContents(props: StudioSceneProps & { readonly phone: boolean
   return <group name="office-surroundings">
     <Suspense fallback={null}>
       <Architecture night={props.night} sky={props.lighting.sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} phone={props.phone} />
-      <WindowDaylight daylight={props.daylight} blindLift={props.blindLift} />
+      {!ACADEMIC_OFFICE && <WindowDaylight daylight={props.daylight} blindLift={props.blindLift} />}
       <StageReady onReady={advance} />
     </Suspense>
     {stage >= 1 && <Suspense fallback={null}>
       <Furniture {...props} lamp={props.lighting.sun.lamp} />
-      <OfficeLounge />
+      {!ACADEMIC_OFFICE && <OfficeLounge />}
       <Displays {...props} display="tv" />
       <OfficeLighting palette={props.roomPalette} power={props.lighting.sun.lamp} tvFocused={props.selected === 'education'} reducedMotion={props.reducedMotion} />
       <RoomSwitches onControl={props.onRoomControl} panel={props.roomControlPanel} />
       <StageReady onReady={advance} />
     </Suspense>}
     {stage >= 2 && <Suspense fallback={null}>
-      <BookshelfBooks selected={props.selected} selectedBook={props.selectedBook} pageIndex={props.bookPageIndex} reducedMotion={props.reducedMotion} onBookSelect={props.onBookSelect} onBookStep={props.onBookStep} onApproach={props.onBookshelfApproach} shelfReady={props.bookshelfReady} onShelfReady={props.onBookshelfReady} />
+      {<group position={ACADEMIC_OFFICE ? [0, -.482, TV_WALL_SHIFT] : [0, 0, 0]}><BookshelfBooks selected={props.selected} selectedBook={props.selectedBook} pageIndex={props.bookPageIndex} reducedMotion={props.reducedMotion} onBookSelect={props.onBookSelect} onBookStep={props.onBookStep} onApproach={props.onBookshelfApproach} shelfReady={props.bookshelfReady} onShelfReady={props.onBookshelfReady} /></group>}
       <PersonalCorner {...props} />
       <CalendarClock reducedMotion={props.reducedMotion} />
-      <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={ROOM.award.position} rotation={ROOM.award.rotation} focused={props.selected === 'award-photo'} reducedMotion={props.reducedMotion} onSelect={props.onAwardPhoto} />
+      {!ACADEMIC_OFFICE && <GoldAward channelUrl={PERSONAL_LINKS.awardShort} position={ROOM.award.position} rotation={ROOM.award.rotation} focused={props.selected === 'award-photo'} reducedMotion={props.reducedMotion} onSelect={props.onAwardPhoto} />}
       <StageReady onReady={advance} />
     </Suspense>}
     {stage >= 3 && <Suspense fallback={null}>

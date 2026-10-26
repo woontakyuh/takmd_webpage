@@ -4,12 +4,12 @@ import type { ExhibitId } from './types';
 import { WHISKY_CABINET } from './scene/WhiskyCabinetLayout';
 
 export const FURNITURE = {
-  desk: { label: 'Desk', center: [-0.05, 0, -1.5], radius: 1.02, handle: 1.35 },
-  chair: { label: 'Desk chair', center: [-0.2, 0, -2.59], radius: 0.40, handle: 1.15 },
+  desk: { label: 'Desk', center: ROOM.desk.position, radius: 1.02, handle: 1.35 },
+  chair: { label: 'Desk chair', center: ROOM.chair.position, radius: 0.40, handle: 1.15 },
   sofa: { label: 'Sofa', center: [2, 0, 1.14], radius: 0.85, handle: 1.0 },
   table: { label: 'Coffee table', center: [0.78, 0, 1.08], radius: 0.65, handle: 0.55 },
   lounge: { label: 'Eames & ottoman', center: [-0.9, 0, 2.12], radius: 0.66, handle: 1.05 },
-  plant: { label: 'Palm', center: [2.18, 0, -0.55], radius: 0.28, handle: 2.15 },
+  plant: { label: 'Palm', center: ROOM.plant.position, radius: 0.28, handle: 2.15 },
   mantis: { label: 'Mantis', center: [-1.75, 0, 2.62], radius: 0.15, handle: 1.7 },
   signe: { label: 'Signe', center: ROOM.signe.position, radius: ROOM.signe.radius, handle: 1.6 },
   whisky: { label: 'Isidoro drinks cabinet', center: WHISKY_CABINET.center,

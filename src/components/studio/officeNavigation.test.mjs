@@ -20,6 +20,13 @@ describe('office addresses never resurrect the education page', () => {
   it('leaves the other office routes alone', () => {
     expect(officePathView('/research#overview', OFFICE_HOME).details).toBe('/research#overview');
     expect(officePathView('/workshops/dummy', OFFICE_HOME).details).toBe('/workshops/dummy');
-    expect(officePathView('/ube', OFFICE_HOME)).toEqual({ focused: 'spine', selected: 'spine', details: '/ube' });
+    expect(officePathView('/ube', OFFICE_HOME)).toEqual({ focused: 'education', selected: 'education', details: '/ube' });
   });
+});
+
+it('routes each teaching object and old saved model address to the TV', () => {
+  for (const path of ['/ube', '/workshops/dummy', '/workshops/animal-pig', '/workshops/cadaver']) {
+    expect(officePathView(path, OFFICE_HOME)).toEqual({ focused: 'education', selected: 'education', details: path });
+    expect(view(`?exhibit=spine&detail=${encodeURIComponent(path)}`)).toEqual({ focused: 'education', selected: 'education', details: path });
+  }
 });

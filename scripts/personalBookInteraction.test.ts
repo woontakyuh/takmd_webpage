@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { bookPageAfter, canReadShelfBook, beginBookPagePress, moveBookPagePress, finishBookPagePress } from '../src/components/studio/personalBookInteraction';
+import { BOOK_SHELF_CENTER, bookPageAfter, canReadShelfBook, beginBookPagePress, moveBookPagePress, finishBookPagePress } from '../src/components/studio/personalBookInteraction';
 
 const mouse = { pointerId: 1, clientX: 100, clientY: 100, button: 0, isPrimary: true, shiftKey: false, ctrlKey: false, metaKey: false, altKey: false };
 assert.equal(bookPageAfter(-1, 2, 1), 0);
@@ -11,8 +11,8 @@ assert.equal(bookPageAfter(-1, 2, -1), -1);
 assert.equal(bookPageAfter(-1, 0, 1), -1);
 assert.equal(bookPageAfter(0, 0, -1), -1);
 assert.equal(canReadShelfBook({ x: 4.5, y: 3.4, z: -6.5 }), false);
-assert.equal(canReadShelfBook({ x: -1.875, y: 2.12, z: 2.35 }), true);
-assert.equal(canReadShelfBook({ x: -1.875, y: 1.82, z: .9 }), false);
+assert.equal(canReadShelfBook({ x: BOOK_SHELF_CENTER[0], y: BOOK_SHELF_CENTER[1] + .675, z: BOOK_SHELF_CENTER[2] - .654 }), true);
+assert.equal(canReadShelfBook({ x: BOOK_SHELF_CENTER[0], y: BOOK_SHELF_CENTER[1] + .375, z: BOOK_SHELF_CENTER[2] - 2.104 }), false);
 
 const givenPress = beginBookPagePress(mouse, 1);
 assert.equal(finishBookPagePress(givenPress, mouse, 1), true);

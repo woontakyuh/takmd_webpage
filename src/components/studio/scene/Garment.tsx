@@ -40,13 +40,13 @@ function coatSleeveEmblem(garment: Mesh, texture: Texture) {
   // +X is the garment's front, so its wearer's left sleeve is on -Z.
   const surface = new Mesh(garment.geometry, garment.material);
   const geometry = new DecalGeometry(surface, new Vector3(-0.043, 0.15, -0.246),
-    new Euler(0.17, Math.PI, 0), new Vector3(0.128, 0.111, 0.12));
+    new Euler(0.17, Math.PI, 0), new Vector3(0.128, 0.095, 0.12));
   const material = new MeshStandardMaterial({
     map: texture, roughness: 0.96, metalness: 0, transparent: true, alphaTest: 0.05,
     depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4,
   });
   const emblem = new Mesh(geometry, material);
-  emblem.name = 'Davos Hospital emblem · wearer left sleeve';
+  emblem.name = 'Chamjoeun Hospital emblem · wearer left sleeve';
   emblem.receiveShadow = true;
   return emblem;
 }
@@ -127,7 +127,7 @@ function HangingGarment({ url, file = url, emblem }: HangingGarmentProps) {
 
 export function DoctorCoat() {
   const phone = usePhone();
-  const source = useTexture('/images/brands/davos-hospital-emblem.png');
+  const source = useTexture('/images/brands/chamjoeun-hospital-emblem.svg');
   const emblem = useMemo(() => {
     const texture = source.clone();
     texture.colorSpace = SRGBColorSpace;

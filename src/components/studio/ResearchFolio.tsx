@@ -4,8 +4,10 @@ import publicationDetails from '../../data/publication-details.json';
 import publicationMetrics from '../../data/publication-metrics.json';
 import type { PaperMedia, Publication } from './types';
 import { ResearchProfile } from './ResearchProfile';
+import { researchRoles } from './researchIndex';
 
 type Props = {
+  readonly embedded?: boolean;
   readonly publications: readonly Publication[];
   readonly updatedAt: string;
   readonly publication: Publication | null;
@@ -44,7 +46,7 @@ const requestCopyUrl = (publication: Publication) => {
   return `mailto:woontak.yuh@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 };
 
-export function ResearchFolio({ publications, updatedAt, publication, media, direction, onPaper }: Props) {
+export function ResearchFolio({ embedded = false, publications, updatedAt, publication, media, direction, onPaper }: Props) {
   const [archive, setArchive] = useState(false);
   const [citing, setCiting] = useState(false);
   const [copyStatus, setCopyStatus] = useState('');
@@ -53,7 +55,7 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
   const [figure, setFigure] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   useEffect(() => { contentRef.current?.scrollTo({ top: 0 }); setCiting(false); setCopyStatus(''); }, [publication?.id, archive]);
-  const papers = orderedPapers(publications);
+  const papers = embedded ? publications : orderedPapers(publications);
   const index = papers.findIndex(paper => paper.id === publication?.id);
   const years = [...new Set(publications.map(paper => paper.year))].sort((a, b) => b - a);
   const filtered = papers.filter(paper => (year === 'all' || String(paper.year) === year) && `${paper.title} ${paper.journal}`.toLowerCase().includes(query.toLowerCase()));
@@ -69,10 +71,10 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
 
   return <div className="research-folio" data-active-paper={publication?.id} data-direction={direction} data-archive={archive}>
     <div className="folio-toolbar">
-      <nav className="folio-navigation" aria-label="Research views">
+      {!embedded && <nav className="folio-navigation" aria-label="Research views">
         <button aria-pressed={!archive} onClick={() => setArchive(false)}>This paper</button>
         <button aria-pressed={archive} onClick={() => setArchive(true)}>Research index <span>{publications.length}</span></button>
-      </nav>
+      </nav>}
       {!archive && publication && <div className="folio-paging"><span role="status" aria-label={`Paper ${index + 1} of ${papers.length}`}>{String(index + 1).padStart(2, '0')} / {papers.length}</span><div>
         <button aria-label="Previous paper" disabled={index <= 0} onClick={() => selectPaper(papers[index - 1])}>←</button>
         <button aria-label="Next paper" disabled={index === papers.length - 1} onClick={() => selectPaper(papers[index + 1])}>→</button>
@@ -97,7 +99,7 @@ export function ResearchFolio({ publications, updatedAt, publication, media, dir
             <small>Checked {metrics.checkedAt} · Counts vary by source.</small>
           </div>}
           <section className="folio-abstract" aria-labelledby={`abstract-${publication.id}`}><h4 id={`abstract-${publication.id}`}>Abstract</h4>{detail?.abstract ? <div className="folio-abstract-copy">{abstractSections(detail.abstract).map((section, sectionIndex) => <section key={`${section.label ?? 'abstract'}-${sectionIndex}`}>{section.label && <h5>{section.label}</h5>}<p>{section.text}</p></section>)}</div> : <p className="folio-abstract-missing">An abstract is not available in the source record. Open the publisher page for the article.</p>}{detail?.abstractSource && <small>Source: {detail.abstractSource}</small>}</section>
-          <dl className="folio-identifiers">{detail?.pmid && <><dt>PMID</dt><dd><a href={`https://pubmed.ncbi.nlm.nih.gov/${detail.pmid}/`} target="_blank" rel="noreferrer">{detail.pmid} ↗</a></dd></>}<dt>Contribution</dt><dd>{authorRole(publication.role)}</dd></dl>
+          <dl className="folio-identifiers">{detail?.pmid && <><dt>PMID</dt><dd><a href={`https://pubmed.ncbi.nlm.nih.gov/${detail.pmid}/`} target="_blank" rel="noreferrer">{detail.pmid} ↗</a></dd></>}<dt>Contribution</dt><dd>{researchRoles(publication).map(authorRole).join(' · ')}</dd></dl>
           <div className="folio-access">
             {detail?.access.oaStatus === 'free-public-pdf' && <small>Free publisher PDF; reuse license not confirmed.</small>}
             {detail?.access.oaStatus !== 'confirmed-oa' && <><a className="studio-text-link" href={requestCopyUrl(publication)}>Request a copy by email ↗</a><small>Opens your email app with the title and DOI filled in. Nothing is sent automatically.</small></>}

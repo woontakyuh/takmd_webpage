@@ -16,7 +16,7 @@ type Props = {
   readonly treeScrollOffset?: number;
 };
 
-const TREE_WIDTH = 304;
+const TREE_WIDTH = 480;
 const FOOTER_HEIGHT = 80;
 
 function fittedText(context: CanvasRenderingContext2D, text: string, width: number): string {
@@ -43,8 +43,6 @@ function drawLectureTree(context: CanvasRenderingContext2D, talk: Presentation |
   const selectedYear = talk?.date.slice(0, 4) ?? ordered[0]?.date.slice(0, 4);
   const years = [...new Set(ordered.map(item => item.date.slice(0, 4)))];
   const yearTalks = ordered.filter(item => item.date.startsWith(selectedYear ?? ''));
-  const dates = [...new Set(yearTalks.map(item => item.date))];
-  const visibleDates = dates;
 
   context.fillStyle = '#182824';
   context.fillRect(0, 0, TREE_WIDTH, 900);
@@ -58,7 +56,7 @@ function drawLectureTree(context: CanvasRenderingContext2D, talk: Presentation |
   context.font = '14px Arial';
   context.fillText('LECTURE ARCHIVE', 22, 22);
   const selectedYearIndex = Math.max(0, years.indexOf(selectedYear ?? ''));
-  let yearTop = 62;
+  let yearTop = 50;
   for (const year of years.slice(0, selectedYearIndex)) {
     const count = ordered.filter(item => item.date.startsWith(year)).length;
     context.fillStyle = '#D3DED4';
@@ -66,45 +64,44 @@ function drawLectureTree(context: CanvasRenderingContext2D, talk: Presentation |
     context.fillText(`▸  ${year}`, 22, yearTop);
     context.fillStyle = '#93A399';
     context.font = '14px Arial';
-    context.fillText(String(count), 270, yearTop + 2);
-    yearTop += 63;
+    context.fillText(String(count), TREE_WIDTH - 34, yearTop + 2);
+    yearTop += 40;
   }
   context.fillStyle = '#F6F3EA';
   context.font = '17px Arial';
   context.fillText(`▾  ${selectedYear ?? 'Talks'}`, 22, yearTop);
   context.fillStyle = '#93A399';
   context.font = '14px Arial';
-  context.fillText(String(yearTalks.length), 270, yearTop + 2);
+  context.fillText(String(yearTalks.length), TREE_WIDTH - 34, yearTop + 2);
 
-  let top = 137 + selectedYearIndex * 63;
-  for (const date of visibleDates) {
-    const items = yearTalks.filter(item => item.date === date);
-    const label = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
-      .format(new Date(`${date}T00:00:00Z`));
-    context.fillStyle = '#93A399';
-    context.font = '14px Arial';
-    context.fillText(label, 34, top + 8);
-    let entryTop = top + 25;
-    for (const item of items) {
-      const selected = item.id === talk?.id;
-      context.font = selected ? '500 17px "Manrope Variable", "Avenir Next", sans-serif' : '17px "Manrope Variable", "Avenir Next", sans-serif';
-      context.letterSpacing = '-0.34px';
-      const lines = wrappedText(context, item.title, TREE_WIDTH - 70);
-      const rowHeight = lines.length > 2 ? 85 : 62;
-      if (selected) {
-        context.fillStyle = '#355A50';
-        context.fillRect(31, entryTop, TREE_WIDTH - 42, rowHeight);
-        context.fillStyle = '#D9C596';
-        context.fillRect(31, entryTop, 3, rowHeight);
-      }
-      context.fillStyle = selected ? '#FFFFFF' : '#D3DED4';
-      lines.forEach((line, index) => context.fillText(line, 43, entryTop + 14 + index * 23));
-      entryTop += rowHeight;
-      if (entryTop > 844) break;
+  let top = 90 + selectedYearIndex * 40;
+  let previousMonth = '';
+  for (const item of yearTalks) {
+    const selected = item.id === talk?.id;
+    const rowHeight = item.title.length > 65 ? 62 : 44;
+    if (selected) {
+      context.fillStyle = '#355A50'; context.fillRect(11, top, TREE_WIDTH - 22, rowHeight);
+      context.fillStyle = '#D9C596'; context.fillRect(11, top, 3, rowHeight);
     }
-    context.letterSpacing = '0px';
-    top = entryTop + 29;
-    if (top > 844) break;
+    context.fillStyle = '#ADBEB3'; context.font = '13px Arial';
+    const month = item.date.slice(0, 7);
+    if (month !== previousMonth) {
+      context.fillStyle = '#93A399'; context.font = '11px Arial';
+      context.fillText(new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' }).format(new Date(`${item.date}T00:00:00Z`)), 19, top + (rowHeight - 32) / 2);
+    }
+    context.fillStyle = '#ADBEB3'; context.font = '14px Arial';
+    context.fillText(String(Number(item.date.slice(8, 10))), 19, top + (rowHeight - (month !== previousMonth ? 32 : 18)) / 2 + (month !== previousMonth ? 14 : 0));
+    previousMonth = month;
+    context.fillStyle = selected ? '#FFFFFF' : '#D3DED4';
+    context.font = `${selected ? '500 ' : ''}14px "Manrope Variable", "Avenir Next", sans-serif`;
+    const titleLines = item.title.length > 65 ? wrappedText(context, item.title, TREE_WIDTH - 92) : [fittedText(context, item.title, TREE_WIDTH - 92)];
+    titleLines.forEach((line, index) => context.fillText(line, 73, top + (item.venue ? 5 : 13) + index * 18));
+    if (item.venue) {
+      context.fillStyle = '#ADBEB3';
+      context.font = '12px "Manrope Variable", "Avenir Next", sans-serif';
+      context.fillText(fittedText(context, item.venue, TREE_WIDTH - 92), 73, top + 5 + titleLines.length * 18);
+    }
+    top += rowHeight;
   }
 
   const adjacentYears = years.slice(selectedYearIndex + 1, selectedYearIndex + 3);
@@ -116,8 +113,8 @@ function drawLectureTree(context: CanvasRenderingContext2D, talk: Presentation |
     context.fillText(`▸  ${year}`, 22, top);
     context.fillStyle = '#93A399';
     context.font = '14px Arial';
-    context.fillText(String(count), 270, top + 2);
-    top += 63;
+    context.fillText(String(count), TREE_WIDTH - 34, top + 2);
+    top += 40;
   }
   context.restore();
 }
@@ -205,10 +202,10 @@ export function useTvPresentationTexture({ compact, cover, talk, presentations, 
     context.textBaseline = 'top';
     context.fillStyle = '#F6F3EA';
     context.font = '500 17px "Manrope Variable", "Avenir Next", sans-serif';
-    context.fillText(fittedText(context, talk?.topic || talk?.title || 'Talks & teaching', 980), treeWidth + 17, 827);
+    context.fillText(fittedText(context, talk?.topic || talk?.title || 'Talks & teaching', 1471 - treeWidth), treeWidth + 17, 827);
     context.fillStyle = '#C3D0C7';
     context.font = '14px "Manrope Variable", "Avenir Next", sans-serif';
-    context.fillText(fittedText(context, [talk?.date, talk?.venue].filter(Boolean).join(' · '), 980), treeWidth + 17, 855);
+    context.fillText(fittedText(context, talk?.date ?? '', 1471 - treeWidth), treeWidth + 17, 855);
     context.fillStyle = '#D3DED4';
     context.font = '17px "Manrope Variable", "Avenir Next", sans-serif';
     context.fillText(count ? `${current + 1} / ${count}` : 'Record', 1510, 836);

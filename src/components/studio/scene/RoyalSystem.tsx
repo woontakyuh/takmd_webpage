@@ -3,6 +3,7 @@ import { Color, CylinderGeometry, InstancedMesh, MeshStandardMaterial, Object3D,
 import type { Texture } from 'three';
 import type { StudioSceneProps } from '../types';
 import { INTERIOR, PALETTE } from './config';
+import { ACADEMIC_OFFICE } from './roomEdition';
 import { Block, Rod } from './Primitives';
 import { HallymPlaque } from './HallymPlaque';
 import { SnuhAward } from './SnuhAward';
@@ -11,6 +12,7 @@ import { AwardCeremonyPhoto, CertificateFrames } from './CertificateFrames';
 import { CollectionInspectionExit, CollectionInspectionItem } from './CollectionInspection';
 import { AWARD_ITEMS } from './CollectionInspectionData';
 import { AdditionalHonors } from './AdditionalHonors';
+import { AcademicHonors } from './AcademicHonors';
 import { CgbioCertificate } from './CgbioCertificate';
 
 const WOOD_BASE = new Color(PALETTE.paperLight);
@@ -71,7 +73,8 @@ export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: Roy
     </group>
     <SteelHangers />
 
-    <group name="personal-awards-collection">
+    {ACADEMIC_OFFICE && <AcademicHonors wood={wood} onAwardPhoto={onAwardPhoto} selected={selected} reducedMotion={reducedMotion} />}
+    {!ACADEMIC_OFFICE && <group name="personal-awards-collection">
       <AdditionalHonors wood={wood} />
       <CgbioCertificate />
       <CertificateFrames />
@@ -92,7 +95,7 @@ export function RoyalSystem({ wood, onAwardPhoto, selected, reducedMotion }: Roy
         </group>
       </CollectionInspectionItem>
       <CollectionInspectionExit collection="awards" />
-    </group>
+    </group>}
   </group>;
 }
 

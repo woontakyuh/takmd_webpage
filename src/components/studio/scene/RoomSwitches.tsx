@@ -4,6 +4,7 @@ import { useRef, useState, type RefObject } from 'react';
 import type { RoomControl } from '../OfficeRoomControls';
 import { Block, Rod } from './Primitives';
 import { ROOM, type Point } from './config';
+import { ACADEMIC_OFFICE, TV_WALL_SHIFT } from './roomEdition';
 import { useArrangement } from '../arrangement';
 import { scheduleSceneSingleAction } from './sceneGesture';
 import { useRoomControlPanelAnchor } from './useRoomControlPanelAnchor';
@@ -15,8 +16,8 @@ export function RoomSwitches({ onControl, panel }: {
   readonly panel?: RefObject<HTMLDivElement | null>;
 }) {
   return <>
-    <WallButton position={[2.57, SWITCH_HEIGHT, 3.305]} rotation={Math.PI} label="Room lights" control="room" panel={panel} onClick={() => onControl('room')} />
-    <WallButton position={[ROOM.architecture.leftX + 0.055, SWITCH_HEIGHT, ROOM.architecture.window.centerZ + ROOM.architecture.window.width / 2 + 0.13]} rotation={Math.PI / 2} label="Roller blinds" control="shades" panel={panel} double onClick={() => onControl('shades')} />
+    <WallButton position={[2.57, SWITCH_HEIGHT, 3.305 + TV_WALL_SHIFT]} rotation={Math.PI} label="Room lights" control="room" panel={panel} onClick={() => onControl('room')} />
+    {!ACADEMIC_OFFICE && <WallButton position={[ROOM.architecture.leftX + 0.055, SWITCH_HEIGHT, ROOM.architecture.window.centerZ + ROOM.architecture.window.width / 2 + 0.13]} rotation={Math.PI / 2} label="Roller blinds" control="shades" panel={panel} double onClick={() => onControl('shades')} />}
   </>;
 }
 

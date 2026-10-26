@@ -1,3 +1,4 @@
+import { ACADEMIC_OFFICE } from './roomEdition';
 import { useArrangement, moveFocus } from '../arrangement';
 import { OrbitControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
@@ -6,7 +7,7 @@ import { Box3, MathUtils, Mesh, PerspectiveCamera, Vector2, Vector3 } from 'thre
 import type { Camera, Object3D } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import type { StudioSceneProps } from '../types';
-import { FOCUS, focusFov, MOBILE_FOCUS, MOBILE_TOUR, MOTION, SIDE_READER_SPACE, TOUR } from './config';
+import { ROOM, FOCUS, focusFov, MOBILE_FOCUS, MOBILE_TOUR, MOTION, SIDE_READER_SPACE, TOUR, TEACHING_WALL_POSE, teachingWallFov } from './config';
 import type { CameraPose } from './config';
 import { cancelSceneSingleAction, zoomPoseForPoint } from './sceneGesture';
 import { useSceneInspection } from './SceneInspection';
@@ -18,7 +19,7 @@ import { folioReadingPose, folioReadingView } from './folioFocus';
 import { DESKTOP_ENTRY, MOBILE_ENTRY } from '../officeEntry';
 
 type CameraRigProps = Pick<StudioSceneProps,
-  'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit' | 'entry' | 'onEntryComplete' | 'readingObject'> & { readonly reading: boolean };
+  'guidedSection' | 'tvTeachingPath' | 'selected' | 'compact' | 'reducedMotion' | 'viewCommand' | 'onReady' | 'bookshelfVisit' | 'entry' | 'onEntryComplete' | 'readingObject'> & { readonly reading: boolean };
 
 type SavedPose = {
   readonly position: Vector3;
@@ -71,6 +72,8 @@ function applyOrbitLimits(orbit: OrbitControlsImpl, focused: boolean, surfing = 
     : surfing ? FREE_ORBIT_LIMITS.maxDistance : limits.maxDistance;
   orbit.minPolarAngle = limits.minPolarAngle;
   orbit.maxPolarAngle = limits.maxPolarAngle;
+  orbit.minAzimuthAngle = -Infinity;
+  orbit.maxAzimuthAngle = Infinity;
 }
 
 function isSceneControl(object: Object3D): boolean {
@@ -94,11 +97,12 @@ function isVisibleSurface(object: Object3D): boolean {
     && (isSceneControl(object) || !material.transparent || material.opacity > 0.1));
 }
 
-export function CameraRig({ selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit, reading, entry, onEntryComplete, readingObject = null }: CameraRigProps) {
+export function CameraRig({ guidedSection, tvTeachingPath, selected, compact, reducedMotion, viewCommand, onReady, bookshelfVisit, reading, entry, onEntryComplete, readingObject = null }: CameraRigProps) {
   const { editing, layout } = useArrangement();
   const { inspection, setInspection } = useSceneInspection();
   const screenFocused = selected === 'education' || selected === 'ai';
-  const screenReading = screenFocused && reading;
+  const screenReading = screenFocused && reading && !tvTeachingPath;
+  const cameraLocked = screenReading || (ACADEMIC_OFFICE && (guidedSection != null || selected !== null));
   const { camera, size, gl, raycaster, scene } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const transition = useRef<Transition | null>(null);
@@ -126,14 +130,15 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     const position = centre.clone().addScaledVector(direction, distance);
     return { position: [position.x, position.y, position.z], target: [centre.x, centre.y, centre.z], zoom: 1 };
   }, [readingObject, scene, size.width, size.height, selected, compact]);
-  const focusPose = useCallback(() => (compact && sheetPose()) || moveFocus(selected === 'ai' ? monitorReadingPose()
-    : selected === 'research' ? reading ? folioReadingPose(size.width, size.height) : { position: [0.66, 1.65, -2.05], target: [0.66, 0.8, -1.55], zoom: 1 }
+  const focusPose = useCallback(() => (selected === 'education' && tvTeachingPath ? TEACHING_WALL_POSE : null) || (compact && sheetPose()) || moveFocus(selected === 'ai' ? monitorReadingPose()
+    : selected === 'research' ? reading ? folioReadingPose(size.width, size.height) : { position: [ROOM.folio.stowed.position[0], 1.65, ROOM.folio.stowed.position[2] - .5], target: [ROOM.folio.stowed.position[0], 0.8, ROOM.folio.stowed.position[2]], zoom: 1 }
     : selected === 'surfing' ? surfboardReadingPose(size.width, size.height)
-    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height, reading, sheetPose]);
+    : (compact ? MOBILE_FOCUS : FOCUS)[selected ?? 'research'], selected ?? 'research', layout), [selected, compact, layout, size.width, size.height, reading, sheetPose, tvTeachingPath]);
   const activeView = useRef<0 | 1 | 2 | 3 | 4>(viewCommand.view);
   const lastViewSequence = useRef(viewCommand.sequence);
   const previousSelected = useRef(selected);
   const previousReading = useRef(reading);
+  const previousTeaching = useRef(Boolean(tvTeachingPath));
   const userMoved = useRef(false);
   const ready = useRef(false);
   const readyFrames = useRef(0);
@@ -181,15 +186,15 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     if (screenFocused) orbit.maxPolarAngle = Math.PI;
     if (value.kind === 'return' || value.kind === 'guide' || value.kind === 'intro') applyOrbitLimits(orbit, false, false, compact);
     if (value.kind === 'inspect' || value.kind === 'restore-inspection' || value.kind === 'object' || value.kind === 'restore-object') applyOrbitLimits(orbit, selected !== null, selected === 'surfing', compact);
-    if (selected === 'research') orbit.minPolarAngle = 0.25;
+    if (selected === 'research') orbit.minPolarAngle = ACADEMIC_OFFICE ? 0.000001 : 0.25;
     orbit.update();
     transition.current = null;
     if (value.kind === 'intro') onEntryComplete();
     if (value.kind === 'return') savedFreePose.current = null;
     if (value.kind === 'restore-inspection') inspectionReturnPose.current = null;
     if (value.kind === 'restore-object') objectReturnPose.current = null;
-    orbit.enabled = !screenReading && !editing;
-  }, [camera, compact, selected, screenFocused, screenReading, editing, onEntryComplete]);
+    orbit.enabled = !cameraLocked && !editing;
+  }, [camera, compact, selected, screenFocused, cameraLocked, editing, onEntryComplete]);
 
   useLayoutEffect(() => {
     const orbit = controls.current;
@@ -241,7 +246,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     let lastTap: { time: number; x: number; y: number } | null = null;
     let touchZoomTime = 0;
     const inspectAt = (x: number, y: number) => {
-      if (editing || screenReading) return;
+      if (editing || cameraLocked) return;
       cancelSceneSingleAction(gl.domElement);
       const hit = surfaceAt(x, y);
       const point = hit?.point ?? raycaster.ray.at(camera.position.distanceTo(orbit.target), new Vector3());
@@ -308,7 +313,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       canvas.removeEventListener('pointerup', touchUp);
       canvas.removeEventListener('pointercancel', cancelTouch, true);
     };
-  }, [camera, gl, raycaster, surfaceAt, editing, screenReading]);
+  }, [camera, gl, raycaster, surfaceAt, editing, cameraLocked]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -335,8 +340,9 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   useEffect(() => {
     const orbit = controls.current;
-    if (!orbit || (previousSelected.current === selected && (selected !== 'research' || previousReading.current === reading))) return;
+    if (!orbit || (previousSelected.current === selected && previousTeaching.current === Boolean(tvTeachingPath) && (selected !== 'research' || previousReading.current === reading))) return;
     previousReading.current = reading;
+    previousTeaching.current = Boolean(tvTeachingPath);
     inspectionReturnPose.current = null;
     window.dispatchEvent(new CustomEvent('office:zoomed', { detail: false }));
     if (!selected && inspection) {
@@ -367,11 +373,11 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
         : toTransition('return', fallback);
     }
     previousSelected.current = selected;
-  }, [camera, compact, inspection, selected, size.width, size.height, reading]);
+  }, [camera, compact, inspection, selected, size.width, size.height, reading, tvTeachingPath]);
 
   useEffect(() => {
     const orbit = controls.current;
-    if (!orbit || viewCommand.sequence === lastViewSequence.current) return;
+    if (!orbit || (viewCommand.sequence === lastViewSequence.current && viewCommand.view === activeView.current)) return;
     inspectionReturnPose.current = null;
     lastViewSequence.current = viewCommand.sequence;
     activeView.current = viewCommand.view;
@@ -445,7 +451,8 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
 
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
-    targetFov.current = selected === 'ai' ? monitorReadingFov(size.width, size.height)
+    targetFov.current = ((selected === 'education' && tvTeachingPath) || (ACADEMIC_OFFICE && !selected && viewCommand.view === 2)) ? teachingWallFov(size.width, size.height)
+      : selected === 'ai' ? monitorReadingFov(size.width, size.height)
       : selected === 'research' && reading ? folioReadingView(size.width, size.height).fov
       : selected === 'award-photo' ? awardPairReadingFov(size.width, size.height)
       : !selected && !compact && viewCommand?.view === 1
@@ -487,7 +494,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
     };
-  }, [camera, compact, selected, reading, size.height, size.width, viewCommand, readingObject]);
+  }, [camera, compact, selected, reading, size.height, size.width, viewCommand, readingObject, tvTeachingPath]);
 
   useEffect(() => {
     const orbit = controls.current;
@@ -501,7 +508,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
         userMoved.current = true;
         onEntryComplete();
       }
-      if (selected || editing || transition.current || !orbit.enabled
+      if ((selected && !tvTeachingPath) || editing || transition.current || !orbit.enabled
         || !isSceneKeyboardEvent(event, keyTarget, gl.domElement)) return;
       let handled = true;
       switch (event.key) {
@@ -526,9 +533,9 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
     };
     keyTarget.addEventListener('keydown', handleKeyDown);
     return () => keyTarget.removeEventListener('keydown', handleKeyDown);
-  }, [camera, gl, zoomAt, editing, selected, onEntryComplete]);
+  }, [camera, gl, zoomAt, editing, selected, onEntryComplete, tvTeachingPath]);
 
-  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && !screenReading; }, [editing, screenReading]);
+  useEffect(() => { if (controls.current && !transition.current) controls.current.enabled = !editing && !cameraLocked; }, [editing, cameraLocked]);
 
   useFrame((_, delta) => {
     const orbit = controls.current;
@@ -561,7 +568,7 @@ export function CameraRig({ selected, compact, reducedMotion, viewCommand, onRea
   });
 
   return (
-    <OrbitControls ref={controls} makeDefault enablePan zoomToCursor={!selected} enableDamping={!reducedMotion}
+    <OrbitControls ref={controls} makeDefault enablePan enableRotate zoomToCursor={!selected} enableDamping={!reducedMotion}
       dampingFactor={0.08}
       onStart={() => {
         if (entry === 'seated' || entry === 'revealing') {

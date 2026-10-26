@@ -7,6 +7,7 @@ import type { StudioSceneProps } from '../types';
 import { Interactive } from './Interactive';
 import { requestOfficePath } from '../officeNavigation';
 import { Block } from './Primitives';
+import { ACADEMIC_OFFICE } from './roomEdition';
 import { PALETTE, ROOM } from './config';
 
 class AnatomyBoundary extends Component<{ readonly children: ReactNode }, { readonly failed: boolean }> {
@@ -61,7 +62,7 @@ type SpineProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotio
 
 export function SpineExhibit({ selected, onSelect, reducedMotion }: SpineProps) {
   return (
-    <Interactive id="spine" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.spine.position} onActivate={() => selected === 'spine' ? requestOfficePath('/workshops/cadaver') : onSelect('spine')}>
+    <Interactive id="spine" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion} position={ROOM.spine.position} onActivate={() => ACADEMIC_OFFICE || selected === 'spine' ? requestOfficePath('/workshops/cadaver') : onSelect('spine')}>
       <Block size={[0.26, 0.035, 0.22]} position={[0, 0.0175, 0]} radius={0.006} color={PALETTE.ink} roughness={0.78} />
       <group position={[0, 0.055, 0]} rotation={[0, ROOM.spine.rotation, 0]}>
         <AnatomyBoundary><AnatomyModel /></AnatomyBoundary>

@@ -10,6 +10,7 @@ import { MantisFloor } from './MantisFloor';
 import { SigneFloor } from './SigneFloor';
 import { Block } from './Primitives';
 import { LIGHTING, PALETTE, ROOM, WALL_TV } from './config';
+import { ACADEMIC_OFFICE, TV_WALL_SHIFT } from './roomEdition';
 import { useWallTvBacklight } from './hoverReactions';
 import { tvBacklightMix, TV_WARM_WHITE } from './tvBacklightColor';
 import type { TvEdgeLight } from './tvBacklightColor';
@@ -33,11 +34,32 @@ export function OfficeLighting({ power, palette, tvFocused, reducedMotion }: {
   readonly power: number; readonly palette: RoomLightPalette; readonly tvFocused: boolean; readonly reducedMotion: boolean;
 }) {
   return <group name="warm-office-lighting">
-    <Movable id="mantis"><MantisFloor power={power} color={palette.color} /></Movable>
-    <Movable id="signe"><SigneFloor power={power} palette={palette} /></Movable>
-    <UnderStorageWash power={power} color={palette.gradient[0]} />
-    <ShelfWash palette={palette} power={power} />
+    {ACADEMIC_OFFICE ? <MouldingLight power={power} color={palette.color} /> : <>
+      <Movable id="mantis"><group position={[0, 0, TV_WALL_SHIFT]}><MantisFloor power={power} color={palette.color} /></group></Movable>
+      <Movable id="signe"><SigneFloor power={power} palette={palette} /></Movable>
+      <UnderStorageWash power={power} color={palette.gradient[0]} />
+      <group position={[0, 0, TV_WALL_SHIFT]}><ShelfWash palette={palette} power={power} /></group>
+    </>}
     <TvBacklight power={power} focused={tvFocused} reducedMotion={reducedMotion} />
+  </group>;
+}
+
+function MouldingLight({ power, color }: { readonly power: number; readonly color: string }) {
+  const { height, farZ, leftX } = ROOM.architecture;
+  const [width, , depth] = ROOM.platform.size;
+  return <group name="Time-controlled concealed crown lighting">
+    <mesh position={[0, height - .126, farZ - .095]} rotation={[Math.PI / 2, 0, 0]}>
+      <planeGeometry args={[width - .16, .025]} />
+      <meshStandardMaterial color="#fff4df" emissive={color} emissiveIntensity={power * 3} />
+    </mesh>
+    <mesh position={[leftX + .095, height - .126, ROOM.platform.position[2]]} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
+      <planeGeometry args={[depth - .16, .025]} />
+      <meshStandardMaterial color="#fff4df" emissive={color} emissiveIntensity={power * 3} />
+    </mesh>
+    <rectAreaLight position={[0, height - .14, farZ - .14]} rotation={[-Math.PI / 2, 0, 0]}
+      width={width - .2} height={.18} color={color} intensity={power * 14} />
+    <rectAreaLight position={[leftX + .14, height - .14, ROOM.platform.position[2]]} rotation={[-Math.PI / 2, 0, Math.PI / 2]}
+      width={depth - .2} height={.18} color={color} intensity={power * 14} />
   </group>;
 }
 

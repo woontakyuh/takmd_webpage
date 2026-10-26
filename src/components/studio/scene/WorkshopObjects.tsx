@@ -9,6 +9,7 @@ import { BiportalEndoscope } from './BiportalEndoscope';
 import { EndoscopicLumbarBox } from './EndoscopicLumbarBox';
 import { PigPlush } from './PigPlush';
 import { PALETTE, ROOM } from './config';
+import { ACADEMIC_OFFICE, TV_WALL_SHIFT } from './roomEdition';
 import type { Point } from './config';
 import { useSceneAction } from './useSceneAction';
 
@@ -27,7 +28,7 @@ function WorkshopLink({ focused, onApproach, position, route, children }: Worksh
   const direct = useGuidedView() === 2;
   const { hovered, handlers } = useSceneAction({
     disabled: false,
-    onActivate: () => focused === 'spine' || direct ? requestOfficePath(route) : onApproach(),
+    onActivate: () => ACADEMIC_OFFICE || focused === 'spine' || direct ? requestOfficePath(route) : onApproach(),
   });
   return <group name={`Workshop ${route}`} position={[...position]} {...handlers}>
     <HoverAccent active={hovered}>{children}</HoverAccent>
@@ -49,6 +50,18 @@ function EndoscopeTray() {
 export function WorkshopObjects({ focused, onApproach }: { readonly focused: ExhibitId | null; readonly onApproach: () => void }) {
   const dummy = workshops[0];
   const animal = workshops[2];
+
+  if (ACADEMIC_OFFICE) return <group name="Teaching models on the shelf below the TV">
+    <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${dummy.slug}`} position={[0.3, 0.834, 3.11 + TV_WALL_SHIFT]}>
+      <group rotation={[0, Math.PI, 0]}><EndoscopicLumbarBox /></group>
+    </WorkshopLink>
+    <WorkshopLink focused={focused} onApproach={onApproach} route={`/workshops/${animal.slug}`} position={[-0.3, 0.82, 3.11 + TV_WALL_SHIFT]}>
+      <group rotation={[0, Math.PI / 2, 0]}><PigPlush /></group>
+    </WorkshopLink>
+    <WorkshopLink focused={focused} onApproach={onApproach} route="/ube" position={[0.9, 0.82, 3.11 + TV_WALL_SHIFT]}>
+      <group rotation={[0, Math.PI / 2, 0]}><EndoscopeTray /></group>
+    </WorkshopLink>
+  </group>;
 
   return (
     <group rotation={[0, 0, 0]}>

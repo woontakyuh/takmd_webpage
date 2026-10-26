@@ -1,3 +1,5 @@
+import { ACADEMIC_OFFICE } from './scene/roomEdition';
+import { tvTeachingTopic } from './tvTeaching';
 import type { ExhibitId } from './types';
 
 export type OfficeView = {
@@ -17,6 +19,7 @@ export function officeViewFromUrl(url: URL): OfficeView {
   const requested = url.searchParams.get('exhibit');
   const exhibit = requested === 'award' ? 'award-photo' : requested;
   const detail = url.searchParams.get('detail');
+  if (ACADEMIC_OFFICE && tvTeachingTopic(detail)) return { focused: 'education', selected: 'education', details: detail };
   return {
     focused: isExhibit(exhibit) ? exhibit : null,
     selected: isExhibit(exhibit) && (exhibit === 'award-photo' || exhibit === 'family' || url.searchParams.get('stage') !== 'approach') ? exhibit : null,
@@ -27,6 +30,7 @@ export function officeViewFromUrl(url: URL): OfficeView {
 export function officePathView(path: string, current: OfficeView): OfficeView | null {
   const url = new URL(path, 'https://takmd.com');
   const route = url.pathname.replace(/\/$/, '') || '/';
+  if (ACADEMIC_OFFICE && tvTeachingTopic(route)) return { focused: 'education', selected: 'education', details: route };
   let selected: ExhibitId;
   switch (route) {
     case '/': return url.searchParams.has('exhibit') ? officeViewFromUrl(url) : OFFICE_HOME;

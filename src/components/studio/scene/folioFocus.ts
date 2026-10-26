@@ -1,12 +1,17 @@
+import { ACADEMIC_OFFICE } from './roomEdition';
 import { FOCUS, MOBILE_FOCUS, ROOM, SIDE_READER_SPACE, focusFov } from './config';
 import type { Point } from './config';
 
 const dot = (left: Point, right: Point) => left[0] * right[0] + left[1] * right[1] + left[2] * right[2];
 
 export const folioUsesCompactReader = (width: number, height: number) => width < 760 || height < 560;
-export const folioReadingPose = (width: number, height: number) => folioUsesCompactReader(width, height) ? MOBILE_FOCUS.research : FOCUS.research;
+export const folioReadingPose = (width: number, height: number) => ACADEMIC_OFFICE ? { position: [ROOM.folio.position[0] + .1875, 1.9, ROOM.folio.position[2] - .00001] as Point, target: [ROOM.folio.position[0] + .1875, .801, ROOM.folio.position[2]] as Point, zoom: 1 } : folioUsesCompactReader(width, height) ? MOBILE_FOCUS.research : FOCUS.research;
 
 export function folioReadingView(width: number, height: number) {
+  if (ACADEMIC_OFFICE) {
+    const visibleHeight = Math.max(.44, .72 * height / Math.max(1, width));
+    return { fov: 2 * Math.atan(visibleHeight / (2 * 1.11)) * 180 / Math.PI, offsetX: 0, offsetY: 0 };
+  }
   if (!folioUsesCompactReader(width, height)) return { fov: focusFov('research', false, width, height), offsetX: SIDE_READER_SPACE / 2, offsetY: 0 };
   const landscape = width > height && height < 560;
   const readerWidth = Math.min(width * .48, 360);

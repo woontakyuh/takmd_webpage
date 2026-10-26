@@ -6,6 +6,7 @@ import type { Group } from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { cornerSegments, usePhone } from './Device';
 import { INTERIOR, ROOM } from './config';
+import { ACADEMIC_OFFICE } from './roomEdition';
 import type { Point } from './config';
 import { Block } from './Primitives';
 import { WindowBay } from './WindowBay';
@@ -17,17 +18,19 @@ const [width, , depth] = ROOM.platform.size;
 const windowStart = windowBay.centerZ - windowBay.width / 2;
 const windowEnd = windowBay.centerZ + windowBay.width / 2;
 const FAR_WALL = { size: [width, height, 0.08], position: [0, height / 2, farZ] } as const;
-const LEFT_WALLS = [
+const WINDOW_WALLS = [
   { size: [0.08, height, windowStart + depth / 2], position: [leftX, height / 2, (windowStart - depth / 2) / 2] },
   { size: [0.08, height, depth / 2 - windowEnd], position: [leftX, height / 2, (windowEnd + depth / 2) / 2] },
   { size: [0.08, windowBay.bottom, windowBay.width], position: [leftX, windowBay.bottom / 2, windowBay.centerZ] },
   { size: [0.08, height - windowBay.top, windowBay.width], position: [leftX, (height + windowBay.top) / 2, windowBay.centerZ] },
 ] as const;
+const centerZ = ROOM.platform.position[2];
+const LEFT_WALLS = ACADEMIC_OFFICE ? [{ size: [0.08, height, depth] as const, position: [leftX, height / 2, centerZ] as const }] : WINDOW_WALLS;
 const SHADOW_ENCLOSURE: readonly { readonly size: readonly [number, number, number]; readonly position: readonly [number, number, number] }[] = [
   FAR_WALL, ...LEFT_WALLS,
-  { size: [width + 0.1, 0.08, depth + 0.1], position: [0, height + 0.06, 0] },
-  { size: [0.08, height + 0.1, depth + 0.1], position: [width / 2 + 0.04, height / 2, 0] },
-  { size: [width + 0.1, height + 0.1, 0.08], position: [0, height / 2, -depth / 2 - 0.04] },
+  { size: [width + 0.1, 0.08, depth + 0.1], position: [0, height + 0.06, centerZ] },
+  { size: [0.08, height + 0.1, depth + 0.1], position: [width / 2 + 0.04, height / 2, centerZ] },
+  { size: [width + 0.1, height + 0.1, 0.08], position: [0, height / 2, centerZ - depth / 2 - 0.04] },
 ];
 
 type ArchitectureProps = {
@@ -57,9 +60,9 @@ export function Architecture({ night, sky, blindLift, reducedMotion, phone = fal
       </CutawayWall>
       <CutawayWall axis="x" boundary={leftX + 0.08}>
         {LEFT_WALLS.map((wall, index) => <PlasterWall key={index} {...wall} axis="x" surface={plaster} />)}
-        <Block size={[0.22, 0.075, depth]} position={[leftX + 0.05, height - 0.035, 0]} color={INTERIOR.ivory} radius={0.004} />
-        <Block size={[0.13, 0.05, depth]} position={[leftX + 0.03, height - 0.097, 0]} color={INTERIOR.plaster} radius={0.004} />
-        <WindowBay night={night} sky={sky} blindLift={blindLift} reducedMotion={reducedMotion} phone={phone} />
+        <Block size={[0.22, 0.075, depth]} position={[leftX + 0.05, height - 0.035, centerZ]} color={INTERIOR.ivory} radius={0.004} />
+        <Block size={[0.13, 0.05, depth]} position={[leftX + 0.03, height - 0.097, centerZ]} color={INTERIOR.plaster} radius={0.004} />
+        {!ACADEMIC_OFFICE && <WindowBay night={night} sky={sky} blindLift={blindLift} reducedMotion={reducedMotion} phone={phone} />}
       </CutawayWall>
     </group>
   );

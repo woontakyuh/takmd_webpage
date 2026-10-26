@@ -150,7 +150,7 @@ export function TvScreenReader({ active, compact, hovered, talk, slide, presenta
           {!slides.length && <p>{record.statusLabel} · {record.materials}</p>}
         </article>}
         <footer className="tv-screen-context">
-          <div><strong>{talk?.topic || talk?.title}</strong><span>{[talk?.date, talk?.venue].filter(Boolean).join(' · ')}</span></div>
+          <div><strong>{talk?.topic || talk?.title}</strong><span>{talk?.date}</span></div>
           <button disabled={count < 2} aria-label="Toggle slide thumbnails" aria-expanded={railOpen}
             onClick={() => { setRailOpen(value => !value); setInfoOpen(false); setTreeOpen(false); }}>
             <span role="status">{count ? `${current + 1} / ${count}` : 'Record'}</span><small>{count ? currentPage ? `${slides.length} photos` : photos ? 'Photos' : 'Slides' : 'Event'}</small>

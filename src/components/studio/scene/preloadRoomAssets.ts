@@ -1,9 +1,14 @@
 import { useGLTF, useTexture } from '@react-three/drei';
 import { BEOSOUND_ALBUMS } from './BeosoundAlbums';
+import { ACADEMIC_OFFICE } from './roomEdition';
 
 // These objects all appear before the room is ready. Start them together instead of waiting for each
 // suspended sibling to resolve; call after the phone texture URL modifier has been installed.
 export function preloadRoomAssets(phone: boolean): void {
+  if (ACADEMIC_OFFICE) {
+    ['/models/spine.glb', '/models/workshop/plush-pig-packed.glb?v=20260925', '/models/workshop/biportal-endoscope.glb', phone ? '/models/garments/physician-coat-phone.glb' : '/models/garments/physician-coat-2k.glb?v=20260918-original'].forEach(model => useGLTF.preload(model));
+    return;
+  }
   Object.values(BEOSOUND_ALBUMS).forEach(album => useTexture.preload(album.cover));
   const models = [
     '/models/florence-knoll/relaxed-two-seater-ivory-packed.glb',

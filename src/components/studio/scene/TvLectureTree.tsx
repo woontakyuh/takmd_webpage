@@ -64,12 +64,15 @@ export function TvLectureTree({ id, presentations, selected, onSelect, scrollOff
         <span aria-hidden="true">{expanded.includes(year) ? '▾' : '▸'}</span>{year}<small>{dates.reduce((total, item) => total + item.talks.length, 0)}</small>
       </button>
       <div id={`tv-year-${year}`} hidden={!expanded.includes(year)}>
-        {dates.map(({ date, talks }) => <section className="tv-lecture-date" key={date} aria-label={date}>
-          <time dateTime={date}>{new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`))}</time>
+        {dates.map(({ date, talks }, dateIndex) => <section className="tv-lecture-date" key={date} aria-label={date}>
           {talks.map(talk => {
-            return <button key={talk.id} className="tv-lecture-entry" aria-current={selected === talk.id ? 'true' : undefined}
-              title={[talk.title, talk.topic].filter(Boolean).join(' · ')} onClick={() => onSelect(talk.id)}>
-              <strong>{talk.title}</strong>
+            return <button key={talk.id} className="tv-lecture-entry" data-long-title={talk.title.length > 65 || undefined} aria-current={selected === talk.id ? 'true' : undefined}
+              title={[talk.title, talk.venue, talk.topic].filter(Boolean).join(' · ')} onClick={() => onSelect(talk.id)}>
+              <time dateTime={date} aria-label={new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`))}>
+                {(dateIndex === 0 || dates[dateIndex - 1].date.slice(0, 7) !== date.slice(0, 7)) && <span className="tv-lecture-month">{new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`))}</span>}
+                <span className="tv-lecture-day">{Number(date.slice(8, 10))}</span>
+              </time>
+              <div className="tv-lecture-label"><strong>{talk.title}</strong>{talk.venue && <small>{talk.venue}</small>}</div>
             </button>;
           })}
         </section>)}

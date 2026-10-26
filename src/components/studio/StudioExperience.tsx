@@ -1,3 +1,5 @@
+import { tvTeachingTopic } from './tvTeaching';
+import { ACADEMIC_OFFICE } from './scene/roomEdition';
 import { Suspense, lazy, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ArrangementProvider, useArrangement } from './arrangement';
 import { ArrangementControls } from './ArrangementControls';
@@ -25,7 +27,7 @@ import type { LightMode } from './localTime';
 import { LIGHT_PRESETS, type LightPreset } from './lightingPresets';
 import { PERSONAL_LINKS } from './personal';
 import { SceneInspectionProvider, useSceneInspection } from './scene/SceneInspection';
-import { officeEntryPhase, type OfficeEntryPhase } from './officeEntry';
+import { officeEntryPhase, officeInitialView, type OfficeEntryPhase } from './officeEntry';
 
 const Scene = lazy(async () => {
   const { useGLTF } = await import('@react-three/drei/core/Gltf.js');
@@ -74,8 +76,8 @@ function OfficeExperience(content: StudioContent) {
   const [familyPhoto] = useState(selectFamilyPhoto);
   const [memory, setMemory] = useState<PhotoMemory | null>(null);
   const openMemory = useCallback(() => { if (!arrangement.editing) setMemory(PHOTO_MEMORIES.ppomppu); }, [arrangement.editing]);
-  const [guidedSection, setGuidedSection] = useState<'research' | 1 | 2 | 3 | 4 | null>(null);
-  const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 | 3 | 4 }>({ sequence: 0, view: 0 });
+  const [guidedSection, setGuidedSection] = useState<'research' | 1 | 2 | 3 | 4 | null>(ACADEMIC_OFFICE ? 1 : null);
+  const [viewCommand, setViewCommand] = useState<{ readonly sequence: number; readonly view: 0 | 1 | 2 | 3 | 4 }>({ sequence: 0, view: ACADEMIC_OFFICE ? 1 : 0 });
   const [lightMode, setLightMode] = useState<LightMode>('local');
   const localLighting = useOfficeLight(lightMode);
   const [manualLights, setManualLights] = useState<boolean | null>(null);
@@ -104,11 +106,17 @@ function OfficeExperience(content: StudioContent) {
   const [roomReady, setRoomReady] = useState(false);
   const [phoneReader, setPhoneReader] = useState(false);
   const onRoomReady = useCallback(() => setRoomReady(true), []);
-  const [entry, setEntry] = useState<OfficeEntryPhase>('seated');
+  const [entry, setEntry] = useState<OfficeEntryPhase>(ACADEMIC_OFFICE ? 'complete' : 'seated');
   const [posterHidden, setPosterHidden] = useState(false);
   const onPosterHidden = useCallback(() => setPosterHidden(true), []);
   const onEntryComplete = useCallback(() => setEntry(current => current === 'peeking' ? 'reading' : 'complete'), []);
-  useLayoutEffect(() => { setEntry(officeEntryPhase(new URL(window.location.href))); }, []);
+  useLayoutEffect(() => {
+    const url = new URL(window.location.href);
+    const view = officeInitialView(url);
+    setEntry(officeEntryPhase(url));
+    setViewCommand({ sequence: 0, view });
+    setGuidedSection(view === 1 ? 1 : null);
+  }, []);
   const [sceneFailed, setSceneFailed] = useState(false);
   const onSceneError = useCallback(() => setSceneFailed(true), []);
   const [loadingProfileSession, setLoadingProfileSession] = useState(false);
@@ -216,14 +224,27 @@ function OfficeExperience(content: StudioContent) {
       if (paper) { setPaperId(paper.id); paperIdRef.current = paper.id; }
     }
   }, []);
+  const goToView = useCallback((view: 0 | 1 | 2 | 3 | 4) => {
+    setGuidedSection(view === 0 ? null : view);
+    setEntry('complete');
+    setExplored(true);
+    setInspection(null);
+    setZoomed(false);
+    navigation.go(OFFICE_HOME);
+    progress.current = view / 4;
+    setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
+  }, [navigation.go, setInspection]);
+
   const close = useCallback(() => {
-    navigation.close();
+    const current = navigation.current.current;
+    if (ACADEMIC_OFFICE && current.selected === 'education' && !current.details) goToView(1);
+    else navigation.close();
     requestAnimationFrame(() => {
       const target = returnFocus.current ?? document.querySelector<HTMLElement>('.studio-scene');
       returnFocus.current = null;
       target?.focus({ preventScroll: true });
     });
-  }, [navigation.close]);
+  }, [navigation.close, navigation.current, goToView]);
 
   useEffect(() => {
     const navigate = (href: string) => {
@@ -273,26 +294,19 @@ function OfficeExperience(content: StudioContent) {
   }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection, guidedSection, inspection, roomReady]);
   useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
-  const goToView = (view: 0 | 1 | 2 | 3 | 4) => {
-    setGuidedSection(view === 0 ? null : view);
-    setEntry('complete');
-    setExplored(true);
-    setInspection(null);
-    setZoomed(false);
-    navigation.go(OFFICE_HOME);
-    progress.current = view / 4;
-    setViewCommand(previous => ({ sequence: previous.sequence + 1, view }));
-  };
+
 
   // Each view names what is in front of the visitor and what to do with it, instead of repeating one house line.
   const guided = guidedSection === 'research' ? { title: 'Research.', kicker: 'PEER-REVIEWED WORK · OPEN THE FOLIO' }
-    : guidedSection === 1 ? { title: 'Talks & Recognition.', kicker: 'LECTURES, PRESENTATIONS, AND AWARDS' }
+    : guidedSection === 1 ? { title: ACADEMIC_OFFICE ? 'Front.' : 'Talks & Recognition.', kicker: ACADEMIC_OFFICE ? 'WOON TAK YUH, MD · THE ACADEMIC OFFICE' : 'LECTURES, PRESENTATIONS, AND AWARDS' }
     : guidedSection === 2 ? { title: 'UBE & Teaching.', kicker: 'CONCEPT, EXPANDING INDICATIONS, AND TRAINING' }
     : guidedSection === 3 ? { title: 'Liquor & Music.', kicker: 'SINGLE MALTS, SIX STRINGS, AND ONE MUSIC VIDEO' }
     : guidedSection === 4 ? { title: 'Work & Life Balance.', kicker: 'THE OPERATING ROOM, THE MAT, AND THE SEA' }
     : { title: 'The office.', kicker: 'WOON TAK YUH, MD · TOUCH ANYTHING' };
+  const tvTeachingPath = ACADEMIC_OFFICE && tvTeachingTopic(details) ? details : null;
+
   // The /ube page belongs to the endoscope tray even though it selects the spine model, so the address decides first.
-  const readingObject = !compact ? null
+  const readingObject = !compact || tvTeachingPath ? null
     : details?.startsWith('/ube') ? 'Workshop /ube'
     : details?.startsWith('/workshops/dummy') ? 'Workshop /workshops/dummy'
     : details?.startsWith('/workshops/animal-pig') ? 'Workshop /workshops/animal-pig'
@@ -307,7 +321,7 @@ function OfficeExperience(content: StudioContent) {
         onPointerDown={() => setExplored(true)} onWheelCapture={() => setExplored(true)}
         onKeyDown={event => { if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', '_'].includes(event.key)) setExplored(true); }}>
         <div style={{ display: 'contents' }} inert={loadingProfileOpen} aria-hidden={loadingProfileOpen || undefined}><SceneBoundary onError={onSceneError}>{mounted && lighting && <Suspense fallback={null}>
-          <Scene entry={entry} onEntryComplete={onEntryComplete} ready={ready} roomReady={roomReady} onRoomReady={onRoomReady} paused={loadingProfileOpen && entry !== 'peeking'} focused={loadingProfileOpen ? null : focused} guidedSection={guidedSection} readingObject={readingObject} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
+          <Scene publications={content.publications} publicationsUpdatedAt={content.updatedAt} onPaper={selectPaper} tvTeachingPath={tvTeachingPath} entry={entry} onEntryComplete={onEntryComplete} ready={ready} roomReady={roomReady} onRoomReady={onRoomReady} paused={loadingProfileOpen && entry !== 'peeking'} focused={loadingProfileOpen ? null : focused} guidedSection={guidedSection} readingObject={readingObject} monitorScroll={monitorScroll.current} selectedBook={selectedBook} bookPageIndex={bookPageIndex} onBookSelect={selectBook} onBookStep={stepBook} onBookshelfApproach={approachBookshelf} bookshelfVisit={bookshelfVisit} bookshelfReady={bookshelfReady} onBookshelfReady={setBookshelfReady} familyPhotoSrc={familyPhoto.src} progress={progress} selected={loadingProfileOpen ? null : selected} night={night} lighting={lighting} roomPalette={LIGHT_PRESETS[lightPreset]} blindLift={blindLift} halo={halo} onHaloControls={openHaloControls} onRoomControl={setRoomControl} roomControlPanel={roomControlPanel} reducedMotion={reducedMotion} compact={compact} collection={collection} viewCommand={viewCommand} presentations={content.presentations} onSelect={approach} onClose={close} onClaudeSticker={openMemory} onAwardPhoto={() => approach('award-photo')} onPaperStep={onPaperStep} onTalk={selectTalk} onTalkSlide={setTalkSlideIndex} onReady={onReady} />
         </Suspense>}</SceneBoundary></div>
         <OfficePoster ready={ready} failed={sceneFailed} night={night} onHidden={onPosterHidden} />
         <button className="office-secret-trigger" id="studio-exhibit-books" onClick={approachBookshelf}>Browse personal books</button>
@@ -316,7 +330,6 @@ function OfficeExperience(content: StudioContent) {
           ? <a className="office-secret-trigger" id="studio-exhibit-award" href={PERSONAL_LINKS.awardShort} target="_blank" rel="noopener noreferrer">Watch the award-winning Short on YouTube (opens in a new tab)</a>
           : <button className="office-secret-trigger" id="studio-exhibit-award" onClick={openAwardPhoto}>Inspect the gold award</button>}
         <button className="office-secret-trigger" id="studio-exhibit-award-photo" onClick={openAwardPhoto}>View the KOSESS award photograph</button>
-        <a className="office-secret-trigger" href={PERSONAL_LINKS.hospital} target="_blank" rel="noopener noreferrer">Davos Hospital · physician coat (opens in a new tab)</a>
         <button className="office-secret-trigger" id="studio-exhibit-surfing" onClick={() => open('surfing')}>Explore the Bing Beacon surfboard</button>
         {!showCollectionTabs && exhibits.map(item => <button className="office-secret-trigger" id={`studio-exhibit-${item.id}`} key={item.id} onClick={() => item.id === 'ai' && (!ready || sceneFailed) ? openLoadingProfile() : open(item.id)}>{item.label}: {item.detail}</button>)}
         {!showCollectionTabs && <button className="office-secret-trigger" id="studio-exhibit-projects" onClick={() => open('projects')}>AI projects</button>}
@@ -339,12 +352,20 @@ function OfficeExperience(content: StudioContent) {
           onAutomaticLight={() => { setManualLights(null); setRoomBrightness(1); }} roomBrightness={roomBrightness}
           onRoomBrightness={value => { setRoomBrightness(value); setManualLights(true); }}
           haloSettings={haloSettings} haloOn={halo.power > 0} onHaloSettings={setHaloSettings} />
-        <ArrangementControls onStart={() => { setRoomControl(null); setSelected(null); }} />
+        {!ACADEMIC_OFFICE && <ArrangementControls onStart={() => { setRoomControl(null); setSelected(null); }} />}
         <LocalClockReadout />
       </div>
       <div className="office-bottom">
         <div className="office-summary">
-          <div className="office-guided" aria-label="Guided views"><span>A closer look</span><button onClick={() => { setGuidedSection('research'); setEntry('complete'); setExplored(true); navigation.go({ focused: 'research', selected: null, details: null }); }}>Research</button><button onClick={() => goToView(1)}>Talks &amp; Recognition</button><button onClick={() => goToView(2)}>UBE &amp; Teaching</button><button onClick={() => goToView(3)}>Liquor &amp; Music</button><button onClick={() => goToView(4)}>Work &amp; Life Balance</button></div>
+          <div className="office-guided" aria-label="Guided views">
+            <button onClick={() => goToView(0)}>Overview</button>
+            {ACADEMIC_OFFICE && <button onClick={() => goToView(1)}>Front</button>}
+            <button onClick={() => { setGuidedSection(null); open('ai'); }}>CV</button>
+            <button onClick={() => { if (ACADEMIC_OFFICE) { setGuidedSection(null); open('education'); } else goToView(1); }}>{ACADEMIC_OFFICE ? 'Talks' : 'Talks & Recognition'}</button>
+            <button onClick={() => { setGuidedSection('research'); setEntry('complete'); setExplored(true); navigation.go({ focused: 'research', selected: null, details: null }); }}>Research</button>
+            <button onClick={() => goToView(2)}>UBE &amp; Teaching</button>
+            {!ACADEMIC_OFFICE && <><button onClick={() => goToView(3)}>Liquor &amp; Music</button><button onClick={() => goToView(4)}>Work &amp; Life Balance</button></>}
+          </div>
         </div>
         <footer className="studio-stage-footer">
         <OfficeHelp ready={ready} explored={explored} compact={compact} onControl={setRoomControl} />
@@ -367,7 +388,7 @@ function OfficeExperience(content: StudioContent) {
     {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
     {!roomReady && !selected && !details && <nav className="office-desk-entry" aria-label="Start at the desk"><button onClick={() => open('ai')}>Read CV</button><button onClick={() => open('research')}>Publications</button></nav>}
     {showOverviewReturn && <button className="office-overview-return" onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>}
-    <ReadingPanel {...content} detailsPath={details} selected={details ? null : selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' || selected === 'surfing' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
+    <ReadingPanel {...content} detailsPath={tvTeachingPath ? null : details} selected={details ? null : (ACADEMIC_OFFICE && selected === 'research') || selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' || selected === 'surfing' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
     {zoomed && <div className="office-approach-actions"><button className="studio-icon-button" onClick={() => window.dispatchEvent(new Event('office:zoom-close'))} aria-label="Return from closer view"><OfficeIcon name="close" /></button></div>}
     {!zoomed && !selected && focused && !details && <div className="office-approach-actions"><button className="studio-icon-button" onClick={close} aria-label="Return to previous office view"><OfficeIcon name="close" /></button><button onClick={() => open(focused)}>{focused === 'spine' ? 'UBE & Teaching' : <>Open {focused === 'ai' ? 'monitor' : focused === 'education' ? 'TV' : 'object'}</>}</button></div>}
     {(selected === 'family' || selected === 'award-photo') && <PhotoFrameInfo memory={selected === 'family' ? familyPhoto : PHOTO_MEMORIES['kosess-award']} variant={selected === 'award-photo' ? 'award-pair' : 'frame'} onClose={close} />}

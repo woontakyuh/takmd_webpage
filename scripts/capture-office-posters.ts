@@ -1,3 +1,4 @@
+import { ACADEMIC_OFFICE } from '../src/components/studio/scene/roomEdition';
 import { createHash } from 'node:crypto';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { copyFile, mkdir, mkdtemp, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
@@ -19,6 +20,11 @@ type PosterManifest = {
 };
 class PosterPipelineError extends Error {
   constructor(message: string) { super(message); this.name = 'PosterPipelineError'; }
+}
+// The academic Front entry renders directly and does not consume seated-room posters.
+if (ACADEMIC_OFFICE) {
+  console.log('Academic office uses direct Front entry; seated-room posters are retained for the personal edition.');
+  process.exit(0);
 }
 const root = POSTER_ROOT;
 const manifestPath = join(root, 'src/components/studio/office-poster-manifest.json');

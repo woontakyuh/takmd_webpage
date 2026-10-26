@@ -2,6 +2,7 @@
 .office-poster picture, .office-poster img { display: block; width: 100%; height: 100%; }
 .office-poster img { object-fit: cover; object-position: center; }
 .office-poster[data-ready="true"] { opacity: 0; visibility: hidden; }
+.office-poster-academic { display: grid; place-items: center; color: var(--studio-ink); font: italic 24px/1.4 Georgia, serif; }
 .office-desk-entry { position: absolute; z-index: 40; left: 0; right: 0; bottom: max(28px, env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 24px; }
 .office-desk-entry button { min-height: 44px; padding: 8px 4px; border: 0; background: transparent; color: var(--studio-ink); font: 500 16px/1.4 var(--studio-sans); text-decoration: underline; text-underline-offset: 6px; cursor: pointer; }
 .office-desk-entry button:focus-visible { outline: 2px solid var(--studio-teal); outline-offset: 4px; }

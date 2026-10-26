@@ -1,4 +1,5 @@
 import type { ExhibitId } from '../types';
+import { ACADEMIC_OFFICE, TV_WALL_SHIFT } from './roomEdition';
 
 export const LIGHTING = {
   finish: '#30332E', reflector: '#F4EBDD', warm: '#FFD29A',
@@ -40,7 +41,7 @@ export type CameraPose = {
   readonly zoom: number;
 };
 
-export const ROOM = {
+export const PERSONAL_ROOM = {
   platform: { size: [5.6, 0.08, 6.8], position: [0, -0.045, 0], radius: 0.008 },
   architecture: { height: 3.2, farZ: 3.36, leftX: -2.76,
     window: { centerZ: 0.55, width: 3.4, bottom: 0.75, top: 2.6 } },
@@ -62,6 +63,23 @@ export const ROOM = {
   surfboard: { position: [-2.382, 0, -3.01], rotation: Math.PI / 2 + 0.18 },
 } as const;
 
+export const ROOM = ACADEMIC_OFFICE ? {
+  ...PERSONAL_ROOM,
+  platform: { ...PERSONAL_ROOM.platform, size: [6.0, 0.08, 4.2] as const, position: [0, -0.045, -2.1] as const },
+  architecture: { ...PERSONAL_ROOM.architecture, farZ: PERSONAL_ROOM.architecture.farZ + TV_WALL_SHIFT, leftX: -2.96 },
+  desk: { ...PERSONAL_ROOM.desk, position: [-0.05, 0, -2.45] as const },
+  chair: { ...PERSONAL_ROOM.chair, position: [-0.2, 0.0185, -3.54] as const },
+  monitor: { ...PERSONAL_ROOM.monitor, position: [-0.05, 0.781, -2.15] as const },
+  folio: { ...PERSONAL_ROOM.folio, position: [0.30, 0.7805, -2.45] as const,
+    stowed: { ...PERSONAL_ROOM.folio.stowed, position: [0.46, 0.7805, -2.45] as const } },
+  wardrobe: { ...PERSONAL_ROOM.wardrobe, position: [-2.858, 0.0185, -1.95] as const },
+  gallery: { ...PERSONAL_ROOM.gallery, position: [0, 1.82, 3.245 + TV_WALL_SHIFT] as const },
+  clock: { ...PERSONAL_ROOM.clock, position: [0, 2.70, 3.20 + TV_WALL_SHIFT] as const },
+  signe: { ...PERSONAL_ROOM.signe, position: [-2.63, 0.0185, 3.18 + TV_WALL_SHIFT] as const },
+  plant: { ...PERSONAL_ROOM.plant, position: [2.2, 0.0185, -2.2] as const },
+  spine: { ...PERSONAL_ROOM.spine, position: [-0.9, 0.82, 3.11 + TV_WALL_SHIFT] as const, height: 0.30, rotation: Math.PI },
+} : PERSONAL_ROOM;
+
 export const FAMILY_PHOTO = {
   position: [0.67, 0.0185 + ROOM.desk.height, -0.23],
   rotation: -0.13,
@@ -82,7 +100,7 @@ const familyFocus: CameraPose = {
   zoom: 1,
 };
 
-export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
+export const PERSONAL_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
   { position: [5.43472317, 3.236, -4.71354786], target: [-0.15, 1.35, -0.4], zoom: 1 },
   { position: [0, 1.6, -0.8], target: [0, 1.6, 3.2], zoom: 1 },
   { position: [0.6, 2.1, 0.44], target: [-2.42, 0.867, 0.44], zoom: 1 },
@@ -90,7 +108,18 @@ export const TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, Cam
   { position: [1.7, 1.92, -3.45], target: [-2.48, 1.55, -2.35], zoom: 1 },
 ];
 
-export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
+export const TEACHING_WALL_POSE: CameraPose = {
+  position: [0, 1.55, -2.7], target: [0, 1.55, -0.28], zoom: 1,
+};
+
+export const TOUR: typeof PERSONAL_TOUR = ACADEMIC_OFFICE ? [
+  { position: [6.8, 4.4, -8.8], target: [0, 1.1, -1.9], zoom: 1 },
+  { position: [0, 1.7, -4.8], target: [0, 1.65, -0.15], zoom: 1 },
+  TEACHING_WALL_POSE,
+  PERSONAL_TOUR[3], PERSONAL_TOUR[4],
+] : PERSONAL_TOUR;
+
+export const PERSONAL_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   bookshelf: { position: [-1.875, 1.42, 2.35], target: [-1.875, 1.445, 3.004], zoom: 1 },
   books: { position: [-1.80, 1.64, 1.87], target: [-1.80, 1.25, 2.15], zoom: 1 },
   spine: { position: [-0.45, 1.6, 0.17], target: [-2.38, 0.9, 1.22], zoom: 1 },
@@ -105,7 +134,25 @@ export const FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   surfing: { position: [0.15, 1.85, -5.5], target: [-2.382, 1.46, -3.01], zoom: 1 },
 };
 
-export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
+function shiftDeskPose(pose: CameraPose): CameraPose {
+  const offset = ROOM.desk.position[2] - PERSONAL_ROOM.desk.position[2];
+  return { ...pose, position: [pose.position[0], pose.position[1], pose.position[2] + offset],
+    target: [pose.target[0], pose.target[1], pose.target[2] + offset] };
+}
+
+export const FOCUS: typeof PERSONAL_FOCUS = ACADEMIC_OFFICE ? {
+  ...PERSONAL_FOCUS,
+  education: { position: [0, 1.823, 1.02 + TV_WALL_SHIFT], target: [0, 1.823, 3.22 + TV_WALL_SHIFT], zoom: 1 },
+  spine: TOUR[2],
+  research: shiftDeskPose(PERSONAL_FOCUS.research),
+  ai: shiftDeskPose(PERSONAL_FOCUS.ai),
+  projects: shiftDeskPose(PERSONAL_FOCUS.projects),
+  bookshelf: { position: [1.875, 1.0, -1.05], target: [1.875, 0.963, -0.396], zoom: 1 },
+  books: { position: [1.95, 1.158, -1.53], target: [1.95, 0.768, -1.25], zoom: 1 },
+  'award-photo': { position: [1.87, 1.5, -1.1], target: [1.87, 1.42, -0.3], zoom: 1 },
+} : PERSONAL_FOCUS;
+
+export const PERSONAL_MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPose, CameraPose] = [
   { position: [6, 3.5, -6.5], target: [0.1, 0.85, -0.1], zoom: 1 },
   // Talks along the wall from the far right: the certificates, the award photo and the gold plaque on the left, the
   // whole television, the clock and the Beosound below; the books bay only peeks in at the edge (owner's reference).
@@ -115,7 +162,13 @@ export const MOBILE_TOUR: readonly [CameraPose, CameraPose, CameraPose, CameraPo
   { position: [.95, 2.074, -3.375], target: [-2.48, 1.5, -2.35], zoom: 1 },
 ];
 
-export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
+export const MOBILE_TOUR: typeof PERSONAL_MOBILE_TOUR = ACADEMIC_OFFICE ? [
+  { position: [7.6, 5.0, -9.5], target: [0, 1.1, -1.9], zoom: 1 },
+  { position: [0, 1.8, -6.4], target: [0, 1.7, -0.15], zoom: 1 },
+  TOUR[2], PERSONAL_MOBILE_TOUR[3], PERSONAL_MOBILE_TOUR[4],
+] : PERSONAL_MOBILE_TOUR;
+
+export const PERSONAL_MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   bookshelf: FOCUS.bookshelf,
   books: FOCUS.books,
   spine: { position: [1.55, 2.12, 0.85], target: [-2.42, 0.867, 0.85], zoom: 1 },
@@ -129,6 +182,9 @@ export const MOBILE_FOCUS: Readonly<Record<ExhibitId, CameraPose>> = {
   bjj: { position: [-0.7, 2.05, -0.88], target: [-2.505, 1.30, -2.318], zoom: 1 },
   surfing: { position: [0.8, 2.15, -5.5], target: [-2.082, 1.46, -2.71], zoom: 1 },
 };
+
+export const MOBILE_FOCUS: typeof PERSONAL_MOBILE_FOCUS = ACADEMIC_OFFICE
+  ? { ...PERSONAL_MOBILE_FOCUS, spine: TOUR[2], research: shiftDeskPose(PERSONAL_MOBILE_FOCUS.research), projects: shiftDeskPose(PERSONAL_MOBILE_FOCUS.projects) } : PERSONAL_MOBILE_FOCUS;
 
 export const MOTION = { camera: 4.5, object: 8, hoverLift: 0.008 } as const;
 
@@ -165,4 +221,13 @@ export function focusFov(id: ExhibitId | null, compact: boolean, width: number, 
   const distance = Math.hypot(...pose.position.map((value, index) => value - pose.target[index]));
   const fitted = 2 * Math.atan(0.8 * height / (2 * distance * availableWidth)) * 180 / Math.PI;
   return Math.max(base, fitted);
+}
+
+
+
+
+export function teachingWallFov(width: number, height: number): number {
+  const distance = TEACHING_WALL_POSE.target[2] - TEACHING_WALL_POSE.position[2];
+  const visibleHeight = Math.max(2.1, 2.8 * height / Math.max(1, width));
+  return 2 * Math.atan(visibleHeight / (2 * distance)) * 180 / Math.PI;
 }

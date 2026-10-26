@@ -60,7 +60,7 @@ export function LoadingMonitorReader({ publicationCount, presentationCount, onCl
     return () => element.removeEventListener('wheel', containWheel);
   }, []);
 
-  return <div ref={overlay} className="loading-monitor-reader" role="dialog" aria-modal="true" aria-label="Curriculum Vitae on desk monitor"
+  return <div ref={overlay} className="loading-monitor-reader" role="dialog" aria-modal="false" aria-label="Curriculum Vitae on desk monitor"
     onPointerDown={event => event.stopPropagation()}
     onDoubleClick={event => event.stopPropagation()}>
     <div ref={bezel} className="loading-monitor-bezel" style={{ aspectRatio: `${MONITOR.width} / ${MONITOR.height}` }}>
