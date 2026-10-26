@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { startPublicPreview } from './preview-public-build.mjs';
 
@@ -8,8 +8,9 @@ const evidence = resolve(process.env.RELEASE_EVIDENCE_DIR ?? '.omo/evidence/rele
 await mkdir(evidence, { recursive: true });
 const preview = await startPublicPreview(resolve('dist'));
 const results = [];
+const academic = /ACADEMIC_OFFICE\s*=\s*true/.test(await readFile('src/components/studio/scene/roomEdition.ts', 'utf8'));
 try {
-  for (const [name, file] of [
+  for (const [name, file] of (academic ? [['academic-office', 'test-academic-release.mjs'], ['headers', 'test-public-headers-browser.mjs']] : [
     ['loading', 'test-office-loading.mjs'],
     ['desk-entry', 'test-desk-entry.mjs'],
     ['mobile-cv', 'test-mobile-cv.mjs'],
@@ -22,7 +23,7 @@ try {
     ['touch', 'test-office-touch.mjs'],
     ['family-photo', 'test-family-photo.mjs'],
     ['cadence', 'test-office-cadence.mjs'],
-  ]) {
+  ])) {
     console.log(`Release browser check: ${name}`);
     const started = Date.now();
     const exitCode = await new Promise((accept, reject) => {
