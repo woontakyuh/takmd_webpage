@@ -24,6 +24,10 @@
 .studio-scene { position: absolute; inset: 0; z-index: 1; touch-action: none; }
 .studio-scene canvas { touch-action: none; }
 .studio[data-reading='ai'] .studio-scene { touch-action: pan-y pinch-zoom; }
+/* A pinch or double-tap that starts on the tabs, title or any overlay zoomed the whole page in iOS Safari: the 3D view
+   blurred, the tabs grew past the screen and the room lagged. Outside the CV, where reading may want a zoom, the office
+   allows only scrolling; ancestors' touch-action limits every descendant, so readers keep their pan-y scrolling. */
+.studio:not([data-reading='ai']) { touch-action: pan-x pan-y; }
 .studio-scene:focus-visible { outline-offset: -5px; }
 .studio-header { position: absolute; z-index: 5; top: 28px; left: 32px; right: 32px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
 .studio-header nav { display: flex; align-items: center; gap: 28px; font-size: 12px; padding: 0 10px; margin-right: -10px; border: 1px solid color-mix(in srgb,var(--studio-line) 80%,transparent); border-radius: 12px; background: color-mix(in srgb,var(--studio-paper) 70%,transparent); backdrop-filter: blur(5px); }

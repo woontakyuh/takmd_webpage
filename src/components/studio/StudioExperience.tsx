@@ -293,6 +293,13 @@ function OfficeExperience(content: StudioContent) {
     return () => { window.removeEventListener('office:zoomed', onZoomed); document.removeEventListener('click', onLink, true); window.removeEventListener('office:navigate', onNavigate); window.removeEventListener('keydown', onEscape); };
   }, [navigation.go, navigation.current, close, featuredTalk?.id, content.presentations, setInspection, guidedSection, inspection, roomReady]);
   useEffect(() => { if (inspection) window.scrollTo({ top: 0, behavior: 'instant' }); }, [inspection]);
+  // Safari's own pinch gesture can still start outside the office element (the safe areas); keep it for the CV only.
+  useEffect(() => {
+    if (selected === 'ai') return;
+    const block = (event: Event) => event.preventDefault();
+    document.addEventListener('gesturestart', block, { passive: false });
+    return () => document.removeEventListener('gesturestart', block);
+  }, [selected]);
   const onReady = useCallback(() => requestAnimationFrame(() => setReady(true)), []);
 
 
