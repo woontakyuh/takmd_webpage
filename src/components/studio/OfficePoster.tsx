@@ -1,4 +1,4 @@
-import { Component, useEffect, useRef, type ReactNode } from 'react';
+import { Component, useEffect, useRef, useState, type ReactNode } from 'react';
 import { OFFICE_POSTER_MANIFEST } from './officePosterConfig';
 import './office-poster.css';
 import { ACADEMIC_OFFICE } from './scene/roomEdition';
@@ -22,6 +22,13 @@ export function OfficePoster({ ready, failed, night, onHidden, opening = 'the of
   readonly onHidden: () => void;
 }) {
   const poster = useRef<HTMLDivElement>(null);
+  // Slow connections can take a minute; a rising figure shows the room is arriving rather than stuck.
+  const [percent, setPercent] = useState(0);
+  useEffect(() => {
+    const onProgress = (event: Event) => { if (event instanceof CustomEvent && typeof event.detail === 'number') setPercent(value => Math.max(value, Math.min(99, Math.floor(event.detail * 100)))); };
+    window.addEventListener('office:load-progress', onProgress);
+    return () => window.removeEventListener('office:load-progress', onProgress);
+  }, []);
   useEffect(() => {
     if (!ready || failed || !poster.current) return;
     let active = true;
@@ -36,7 +43,7 @@ export function OfficePoster({ ready, failed, night, onHidden, opening = 'the of
       <source media="(max-width: 759px) and (orientation: portrait)" srcSet="/studio/academic-office-loading-mobile.webp" />
       <img src="/studio/academic-office-loading-desktop.webp" alt="" width="1440" height="900" fetchPriority="high" decoding="async" />
     </picture>
-    <span role="status">{failed ? 'The office couldn’t open.' : `Opening ${opening}…`}
+    <span role="status">{failed ? 'The office couldn’t open.' : `Opening ${opening}…${percent > 0 ? ` ${percent}%` : ''}`}
       {failed && <button className="office-poster-retry" type="button" onClick={() => window.location.reload()}>Try again</button>}
     </span>
   </div>;

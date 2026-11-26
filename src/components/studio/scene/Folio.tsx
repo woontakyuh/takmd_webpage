@@ -17,7 +17,7 @@ import { usePrintedTexture } from './Textures';
 import { MOTION, PALETTE, ROOM } from './config';
 import { scheduleSceneSingleAction } from './sceneGesture';
 
-type FolioProps = Pick<StudioSceneProps, 'publications' | 'publicationsUpdatedAt' | 'onPaper' | 'onClose' | 'selected' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'collection'>;
+type FolioProps = Pick<StudioSceneProps, 'publications' | 'publicationsUpdatedAt' | 'onPaper' | 'onClose' | 'selected' | 'onSelect' | 'onPaperStep' | 'reducedMotion' | 'collection' | 'compact'>;
 
 type FolioPaper = {
   readonly id: string;

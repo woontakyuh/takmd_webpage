@@ -13,7 +13,7 @@ import { usePrintedTexture } from './Textures';
 import { PALETTE, ROOM } from './config';
 import '../research-book.css';
 
-type Props = Pick<StudioSceneProps, 'publications' | 'publicationsUpdatedAt' | 'collection' | 'onPaper' | 'onClose' | 'selected' | 'onSelect' | 'reducedMotion'>;
+type Props = Pick<StudioSceneProps, 'publications' | 'publicationsUpdatedAt' | 'collection' | 'onPaper' | 'onClose' | 'selected' | 'onSelect' | 'reducedMotion' | 'compact'>;
 const PAGE_HEIGHT = Math.SQRT2;
 const TURN_MS = 720;
 // World width of the open spread: 1250 CSS px laid over 2.5 book units at the folio's quarter scale.
@@ -51,7 +51,7 @@ function FittedDetails({ children, paperId }: { children: ReactNode; paperId?: s
   return <><section ref={element} className="research-book-detail" aria-label="Paper details">{children}</section>{overflow && <span className="research-book-scroll-hint">Scroll for full details ↓</span>}</>;
 }
 
-export function ResearchBook({ publications, publicationsUpdatedAt, collection, onPaper, onClose, selected, onSelect, reducedMotion }: Props) {
+export function ResearchBook({ publications, publicationsUpdatedAt, collection, onPaper, onClose, selected, onSelect, reducedMotion, compact }: Props) {
   const [filters, setFilters] = useState<ResearchFilters>({ topics: [], authors: [] });
   const [opened, setOpened] = useState(false);
   const [turn, setTurn] = useState<{ to: Publication; direction: number } | null>(null);
@@ -172,8 +172,9 @@ export function ResearchBook({ publications, publicationsUpdatedAt, collection, 
           </group>
         </group>
         {/* The pages mount only once the camera looks straight down at the open book, so a screen-aligned overlay is exact.
+            A phone held upright is too narrow for the spread, so the reading panel carries the same papers there.
             Drei's CSS 3D transform mode is avoided: WebKit rasterises its metre-scaled layer at that tiny scale, leaving Safari blank pages. */}
-        {active && opened && <Html center position={[-.75, .063, 0]} distanceFactor={SPREAD_WIDTH * size.height / 1250} zIndexRange={[22, 18]}>{surface}</Html>}
+        {active && opened && !compact && <Html center position={[-.75, .063, 0]} distanceFactor={SPREAD_WIDTH * size.height / 1250} zIndexRange={[22, 18]}>{surface}</Html>}
       </group></Interactive>
     </group>
 

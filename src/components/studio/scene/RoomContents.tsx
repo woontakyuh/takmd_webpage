@@ -1,5 +1,6 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { useProgress } from '@react-three/drei';
 import { Architecture } from './Architecture';
 import { Furniture } from './Furniture';
 import { OfficeLounge } from './OfficeLounge';
@@ -20,6 +21,13 @@ import { ACADEMIC_OFFICE, TV_WALL_SHIFT } from './roomEdition';
 import { preloadRoomAssets } from './preloadRoomAssets';
 import type { StudioSceneProps } from '../types';
 
+// The loading picture stands outside the canvas bundle, so the share of room files received reaches it as an event.
+function LoadProgress() {
+  const { loaded, total } = useProgress();
+  useEffect(() => { if (total) window.dispatchEvent(new CustomEvent('office:load-progress', { detail: loaded / total })); }, [loaded, total]);
+  return null;
+}
+
 function StageReady({ onReady }: { readonly onReady: () => void }) {
   const frames = useRef(0);
   useFrame(() => { if (++frames.current === 2) onReady(); });
@@ -35,6 +43,7 @@ export function RoomContents(props: StudioSceneProps & { readonly phone: boolean
     pending.current = requestAnimationFrame(() => setStage(value => value + 1));
   }, []);
   return <group name="office-surroundings">
+    <LoadProgress />
     <Suspense fallback={null}>
       <Architecture night={props.night} sky={props.lighting.sun.windowSky} blindLift={props.blindLift} reducedMotion={props.reducedMotion} phone={props.phone} />
       {!ACADEMIC_OFFICE && <WindowDaylight daylight={props.daylight} blindLift={props.blindLift} />}

@@ -1,7 +1,28 @@
 {
   "generatedAt": "2026-09-18T06:05:37.449Z",
-  "count": 55,
+  "count": 58,
   "presentations": [
+    {
+      "id": "3e5908af25b98180a042cca17b3cb5c7",
+      "date": "2026-11-28",
+      "year": 2026,
+      "name": "World Spinoscopy Congress (WSC) 2026 — AI & Robotics for MIS",
+      "place": "Hall 1, Songdo Convensia, Incheon, South Korea",
+      "societies": [
+        "WSC",
+        "KOMISS"
+      ],
+      "categories": [
+        "Conference",
+        "Lecture",
+        "Spine",
+        "내시경학회"
+      ],
+      "topics": [
+        "Surgical World Models and Physical AI: Toward State-Aware Minimally Invasive Spine Surgery"
+      ],
+      "url": ""
+    },
     {
       "id": "3c5908af25b981e5b940f4e8ce3d83d1",
       "date": "2026-11-27",
@@ -40,6 +61,45 @@
       ],
       "topics": [
         "Building the K-Spinoscopy Framework: Integrating the KOMISS Registry with AI Applications"
+      ],
+      "url": ""
+    },
+    {
+      "id": "3f5908af25b98152b25bde9c65015a9c",
+      "date": "2026-11-14",
+      "year": 2026,
+      "name": "WUBE Workshop 2026 — WUBE Think Tank",
+      "place": "Conrad Seoul, Seoul, South Korea",
+      "societies": [
+        "WUBES"
+      ],
+      "categories": [
+        "Workshop",
+        "Lecture",
+        "AI"
+      ],
+      "topics": [
+        "AI: Where Do We Start?"
+      ],
+      "url": ""
+    },
+    {
+      "id": "3f9908af25b9816a94a4d31cc6c47ac7",
+      "date": "2026-11-07",
+      "year": 2026,
+      "name": "5th EOC Spine Conference & Training 2026",
+      "place": "MedLab Training Institute, Dubai Science Park, Dubai, UAE",
+      "societies": [
+        "EOC Spine"
+      ],
+      "categories": [
+        "Conference",
+        "해외학회",
+        "Spine"
+      ],
+      "topics": [
+        "Tailored Biportal Lumbar Decompression Beyond ULBD",
+        "Biportal Endoscopic Resection of Dumbbell Schwannoma"
       ],
       "url": ""
     },
