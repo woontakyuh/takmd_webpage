@@ -1,6 +1,7 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useProgress } from '@react-three/drei';
+import type { Object3D, SpotLight } from 'three';
 import { Architecture } from './Architecture';
 import { Furniture } from './Furniture';
 import { OfficeLounge } from './OfficeLounge';
@@ -25,6 +26,29 @@ import type { StudioSceneProps } from '../types';
 function LoadProgress() {
   const { loaded, total } = useProgress();
   useEffect(() => { if (total) window.dispatchEvent(new CustomEvent('office:load-progress', { detail: loaded / total })); }, [loaded, total]);
+  return null;
+}
+
+// Three compiles a shader for each distinct lighting setup the first time it draws with it. The Talks and UBE views
+// unmount the desk and with it the ScreenBar's spot lights, so the first visit to either recompiled about sixty programs
+// and froze a phone for a moment. Once the room is in, both lighting setups are compiled ahead of time.
+function ShaderWarmup() {
+  const gl = useThree(state => state.gl), scene = useThree(state => state.scene), camera = useThree(state => state.camera);
+  useEffect(() => {
+    let cancelled = false;
+    const idle = window.requestIdleCallback ?? ((callback: () => void) => window.setTimeout(callback, 200));
+    idle(() => {
+      if (cancelled) return;
+      void gl.compileAsync(scene, camera).catch(() => undefined);
+      const deskLights: Object3D[] = [];
+      scene.traverse(object => { if (object.visible && object.name.startsWith('ScreenBar Halo 2') && (object as SpotLight).isSpotLight) deskLights.push(object); });
+      if (!deskLights.length) return;
+      // compileAsync settles every program's parameters synchronously, so the lights are back before the next frame.
+      for (const light of deskLights) light.visible = false;
+      try { void gl.compileAsync(scene, camera).catch(() => undefined); } finally { for (const light of deskLights) light.visible = true; }
+    });
+    return () => { cancelled = true; };
+  }, [gl, scene, camera]);
   return null;
 }
 
@@ -69,6 +93,7 @@ export function RoomContents(props: StudioSceneProps & { readonly phone: boolean
       <SpineExhibit {...props} />
       <WorkshopObjects focused={props.focused} onApproach={() => props.onSelect('spine')} />
       <StageReady onReady={props.onRoomReady} />
+      <ShaderWarmup />
     </Suspense>}
   </group>;
 }

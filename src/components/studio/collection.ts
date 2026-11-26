@@ -19,10 +19,16 @@ export function orderedPapers(publications: readonly Publication[]): readonly Pu
   return publications.toSorted((a, b) => b.year - a.year || (b.date ?? '').localeCompare(a.date ?? '') || Number(!!mediaForPaper(b)) - Number(!!mediaForPaper(a)));
 }
 
-export function featuredPresentation(presentations: readonly Presentation[]): Presentation | null {
-  const today = new Date().toISOString().slice(0, 10);
-  return presentations.filter(talk => talk.date <= today && talkMedia.some(media => media.id === talk.id))
-    .toSorted((a, b) => b.date.localeCompare(a.date))[0] ?? presentations[0] ?? null;
+const FEATURE_AHEAD_DAYS = 7;
+const seoulDate = (time: number) => new Date(time + 9 * 3600_000).toISOString().slice(0, 10);
+
+// The TV leads with a lecture about to be given in the coming week, so visitors met at a congress see that talk;
+// otherwise it shows the most recent lecture already given. Dates are Seoul calendar days.
+export function featuredPresentation(presentations: readonly Presentation[], now = Date.now()): Presentation | null {
+  const today = seoulDate(now), horizon = seoulDate(now + FEATURE_AHEAD_DAYS * 86400_000);
+  const withSlides = presentations.filter(talk => talk.date <= horizon && talkMedia.some(media => media.id === talk.id));
+  const upcoming = withSlides.filter(talk => talk.date >= today).toSorted((a, b) => a.date.localeCompare(b.date))[0];
+  return upcoming ?? withSlides.toSorted((a, b) => b.date.localeCompare(a.date))[0] ?? presentations[0] ?? null;
 }
 
 export function presentationNavigation(presentations: readonly Presentation[], id: string | undefined) {

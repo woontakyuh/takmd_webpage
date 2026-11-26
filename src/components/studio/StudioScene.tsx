@@ -2,7 +2,7 @@ import { Movable } from './scene/Movable';
 import { Canvas } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { MathUtils, PCFSoftShadowMap } from 'three';
+import { MathUtils, PCFShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { SceneFrameLoop } from './scene/SceneFrameLoop';
 import { StaticMerge } from './scene/StaticMerge';
@@ -60,7 +60,7 @@ export function StudioScene(props: StudioSceneProps) {
   const windowOpen = (props.blindLift[0] + props.blindLift[1]) / 2;
   return (
     <Canvas ref={canvas} frameloop="never" camera={{ position: [...TOUR[props.viewCommand.view].position], fov: 42, near: 0.015, far: 60 }}
-      dpr={props.entry === 'capture' ? 2 : [1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFSoftShadowMap }}
+      dpr={props.entry === 'capture' ? 2 : [1, mobile ? 1 : props.selected === 'books' ? 2 : 1.25]} shadows={{ type: PCFShadowMap }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       // A phone's web process is killed near 1.5 GB and the room held 858 MB of textures alone, fifteen of them 2048².
       // Three resizes any image above this limit on a canvas before upload, so capping it here caps every loader at once.
