@@ -35,7 +35,7 @@ try {
   const layout = await page.evaluate(() => {
     const surface = document.querySelector('.research-book-surface');
     const r = surface.getBoundingClientRect();
-    return { inBook: !!surface.closest('[style*="matrix3d"]'), dialog: !!document.querySelector('dialog[open]'), image: document.querySelector('.research-book-preview img').naturalWidth, rect: r.toJSON(), categories: [...document.querySelectorAll('.research-book-category')].map(e => e.textContent), dropdowns: document.querySelectorAll('.research-book-index select').length };
+    return { inBook: !!surface.closest('.studio') && !surface.closest('[style*="matrix3d"]'), dialog: !!document.querySelector('dialog[open]'), image: document.querySelector('.research-book-preview img').naturalWidth, rect: r.toJSON(), categories: [...document.querySelectorAll('.research-book-category')].map(e => e.textContent), dropdowns: document.querySelectorAll('.research-book-index select').length };
   });
   assert(layout.inBook && !layout.dialog && layout.image > 0);
   assert.equal(layout.dropdowns, 0);

@@ -16,6 +16,8 @@ import '../research-book.css';
 type Props = Pick<StudioSceneProps, 'publications' | 'publicationsUpdatedAt' | 'collection' | 'onPaper' | 'onClose' | 'selected' | 'onSelect' | 'reducedMotion'>;
 const PAGE_HEIGHT = Math.SQRT2;
 const TURN_MS = 720;
+// World width of the open spread: 1250 CSS px laid over 2.5 book units at the folio's quarter scale.
+const SPREAD_WIDTH = .625;
 const AUTHOR_OPTIONS: { value: AuthorFilter; label: string }[] = [
   { value: 'first', label: 'First Author' },
   { value: 'corresponding', label: 'Corresponding Author' },
@@ -61,6 +63,7 @@ export function ResearchBook({ publications, publicationsUpdatedAt, collection, 
   const turnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const turnSequence = useRef(0);
   const invalidate = useThree(state => state.invalidate);
+  const size = useThree(state => state.size);
   const linen = usePrintedTexture('linen');
   const coverPrint = usePrintedTexture('folio');
   const documentTexture = useDocumentTexture({ image: collection.paperMedia?.pageImage ?? null, title: collection.publication?.title ?? '', eyebrow: collection.publication?.journal ?? '', detail: 'Published first page' });
@@ -168,7 +171,9 @@ export function ResearchBook({ publications, publicationsUpdatedAt, collection, 
             <Block size={[.5, .004, PAGE_HEIGHT]} position={[.25, -.007, 0]} color="#eae8df" radius={.001} />
           </group>
         </group>
-        {active && opened && <Html transform position={[-.75, .063, 0]} rotation={[-Math.PI / 2, 0, 0]} distanceFactor={.8} zIndexRange={[22, 18]}>{surface}</Html>}
+        {/* The pages mount only once the camera looks straight down at the open book, so a screen-aligned overlay is exact.
+            Drei's CSS 3D transform mode is avoided: WebKit rasterises its metre-scaled layer at that tiny scale, leaving Safari blank pages. */}
+        {active && opened && <Html center position={[-.75, .063, 0]} distanceFactor={SPREAD_WIDTH * size.height / 1250} zIndexRange={[22, 18]}>{surface}</Html>}
       </group></Interactive>
     </group>
 

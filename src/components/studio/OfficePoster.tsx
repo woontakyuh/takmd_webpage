@@ -13,7 +13,9 @@ export class SceneBoundary extends Component<{
   render() { return this.state.failed ? null : this.props.children; }
 }
 
-export function OfficePoster({ ready, failed, night, onHidden }: {
+export function OfficePoster({ ready, failed, night, onHidden, opening = 'the office' }: {
+  /** What the visitor asked for while the room was still loading, so a menu click is visibly acknowledged. */
+  readonly opening?: string;
   readonly ready: boolean;
   readonly failed: boolean;
   readonly night: boolean;
@@ -34,7 +36,7 @@ export function OfficePoster({ ready, failed, night, onHidden }: {
       <source media="(max-width: 759px) and (orientation: portrait)" srcSet="/studio/academic-office-loading-mobile.webp" />
       <img src="/studio/academic-office-loading-desktop.webp" alt="" width="1440" height="900" fetchPriority="high" decoding="async" />
     </picture>
-    <span role="status">{failed ? 'The office couldn’t open.' : 'Opening the office…'}
+    <span role="status">{failed ? 'The office couldn’t open.' : `Opening ${opening}…`}
       {failed && <button className="office-poster-retry" type="button" onClick={() => window.location.reload()}>Try again</button>}
     </span>
   </div>;
