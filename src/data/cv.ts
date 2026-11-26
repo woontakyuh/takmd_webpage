@@ -1,4 +1,4 @@
-export const profileImage = '/images/profile-chamjoeun-cutout.webp';
+export const profileImage = '/images/profile-chamjoeun-front.webp';
 
 export const academicInterests = [
   'MISS',
@@ -38,7 +38,7 @@ export const career = [
   { year: '2022–2023', text: 'Clinical Assistant Professor, Hallym University Dongtan Sacred Heart Hospital' },
   { year: '2023–2025', text: 'Assistant Professor, Hallym University College of Medicine / Dongtan Sacred Heart Hospital' },
   { year: '2025–Oct 2026', text: 'Director, Center for Endoscopic Spine Surgery, Davos Hospital' },
-  { year: 'From Nov 2026', text: 'Clinical Professor, Spine Center, Chamjoeun General Hospital (affiliated with Kyung Hee University Medical Center)' },
+  { year: 'Nov 2026–present', text: 'Clinical Professor, Spine Center, Chamjoeun General Hospital (affiliated with Kyung Hee University Medical Center)' },
 ];
 
 export const educationPrograms = [

@@ -29,7 +29,7 @@ export function CvReader({ inScreen = false }: Props) {
           </div>)}</div>)}
         </div>
       </section>
-      <img className="monitor-cv-portrait" src={profileImage} alt="Woon Tak Yuh, MD" width="900" height="1360" draggable={false} />
+      <img className="monitor-cv-portrait" src={profileImage} alt="Woon Tak Yuh, MD" width="900" height="1329" draggable={false} />
       <p className="monitor-cv-cover-footer">Education · Career · Awards · Teaching & Education</p>
     </header>
     <div className="monitor-cv-details">
