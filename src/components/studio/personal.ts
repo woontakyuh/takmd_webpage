@@ -1,6 +1,6 @@
 export const PERSONAL_LINKS = {
   email: 'mailto:woontak.yuh@gmail.com',
-  hospital: 'https://www.davoshospital.co.kr/depart/page02-detail.html?dr_idx=139',
+  hospital: 'https://chamhosp.co.kr/?p=10_view&doctorId=125&dType=department',
   instagram: 'https://www.instagram.com/tak_md/',
   youtube: 'https://www.youtube.com/@tak_md/shorts',
   linkedin: 'https://www.linkedin.com/in/woon-tak-yuh-03420311b/',

@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode }
 import { MathUtils, type Group } from 'three';
 import { ResearchFolio } from '../ResearchFolio';
 import { mediaForPaper } from '../collection';
-import { filterResearch, RESEARCH_TOPICS, researchRoles, researchSubject, researchTopic, toggleResearchFilter, type AuthorFilter, type ResearchFilters } from '../researchIndex';
+import { filterResearch, RESEARCH_TOPICS, researchRoles, researchSubject, researchTopics, toggleResearchFilter, type AuthorFilter, type ResearchFilters } from '../researchIndex';
 import type { Publication, StudioSceneProps } from '../types';
 import { Block } from './Primitives';
 import { Interactive } from './Interactive';
@@ -98,7 +98,7 @@ export function ResearchBook({ publications, publicationsUpdatedAt, collection, 
     const flapAmount = MathUtils.smootherstep(Math.max(0, (amount - .7) / .3), 0, 1);
     cover.current.rotation.z = Math.PI * coverAmount;
     cover.current.position.y = .072 * (1 - coverAmount) + .018 * coverAmount;
-    flap.current.rotation.z = Math.PI * (1 - flapAmount);
+    flap.current.rotation.z = Math.PI * (1 + flapAmount);
     const from = ROOM.folio.stowed.position, to = ROOM.folio.position;
     placement.current.position.set(...from.map((value, axis) => MathUtils.lerp(value, to[axis], coverAmount)) as [number, number, number]);
     if (active && amount === 1 && !opened) setOpened(true);
@@ -140,7 +140,7 @@ export function ResearchBook({ publications, publicationsUpdatedAt, collection, 
       <header className="research-book-index-header"><h2>Index</h2><button aria-label="Close research book" onClick={onClose}>×</button></header>
       {filterControls}
       <div className="research-book-count" role="status"><strong>{matching.length}</strong> papers <span>of {publications.length}</span><small>First {counts.first} · Corresponding {counts.corresponding} · Co-author {counts.coauthor}</small><small>Joint first authors included; overlapping roles counted once in total.</small></div>
-      <nav aria-label="Filtered papers">{groups.map(year => <section key={year}><h3>{year}<span>{matching.filter(paper => paper.year === year).length}</span></h3>{matching.filter(paper => paper.year === year).map(paper => <button key={paper.id} title={paper.title} aria-label={`${paper.date ?? paper.year} · ${paper.journal} · ${paper.title}`} aria-current={paper.id === collection.publication?.id ? 'true' : undefined} onClick={() => void choose(paper)}><time>{paper.date ? new Date(`${paper.date.slice(0,10)}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' }) : '—'}</time><span>{paper.journal}</span><span className="research-book-category" aria-label={`Category: ${researchTopic(paper)}`}>{researchTopic(paper)}</span><small>{researchSubject(paper)}</small></button>)}</section>)}{!matching.length && <p>No matching papers.</p>}</nav>
+      <nav aria-label="Filtered papers">{groups.map(year => <section key={year}><h3>{year}<span>{matching.filter(paper => paper.year === year).length}</span></h3>{matching.filter(paper => paper.year === year).map(paper => <button key={paper.id} title={paper.title} aria-label={`${paper.date ?? paper.year} · ${paper.journal} · ${paper.title}`} aria-current={paper.id === collection.publication?.id ? 'true' : undefined} onClick={() => void choose(paper)}><time>{paper.date ? new Date(`${paper.date.slice(0,10)}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' }) : '—'}</time><span>{paper.journal}</span><span className="research-book-category" aria-label={`Categories: ${researchTopics(paper).join(', ')}`}>{researchTopics(paper).join(' · ')}</span><small>{researchSubject(paper)}</small></button>)}</section>)}{!matching.length && <p>No matching papers.</p>}</nav>
     </aside>
     <FittedDetails paperId={collection.publication?.id}>
       {matching.length > 0 ? <ResearchFolio embedded publications={matching} updatedAt={publicationsUpdatedAt} publication={collection.publication} media={collection.paperMedia} direction={collection.paperDirection} onPaper={id => void choose(matching.find(paper => paper.id === id))} /> : <p>No papers match these filters.</p>}

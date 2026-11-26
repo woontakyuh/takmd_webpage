@@ -12,11 +12,10 @@ export function toggleResearchFilter<T extends string>(selected: readonly T[], v
   return selected.includes(value) ? selected.filter(item => item !== value) : [...selected, value];
 }
 
-// One primary subject per paper keeps the totals additive; mixed-topic papers are classified by their main question.
-const SUBJECTS: Record<string, ResearchTopic> = {
+const SUBJECTS: Record<string, ResearchTopic | ResearchTopic[]> = {
   '10.21182/jmisst.2026.03300': 'UBE',
   '10.3340/jkns.2026.0029': 'AI',
-  '10.21182/jmisst.2025.02747': 'UBE',
+  '10.21182/jmisst.2025.02747': ['UBE', 'Tumor'],
   '10.13004/kjnt.2025.21.e35': 'Other',
   '10.21182/jmisst.2025.02726': 'UBE',
   '10.1038/s41598-024-82902-w': 'AI',
@@ -80,8 +79,11 @@ const SHORT_SUBJECTS: Record<string, string> = {
   '10.14245/kjs.2015.12.3.160': 'Spinal oligodendroglioma',
 };
 const doi = (paper: Publication) => paper.doiUrl.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').toLowerCase();
-export const researchTopic = (paper: Publication): ResearchTopic => SUBJECTS[doi(paper)] ?? 'Other';
-export const researchSubject = (paper: Publication): string => SHORT_SUBJECTS[doi(paper)] ?? researchTopic(paper);
+export const researchTopics = (paper: Publication): ResearchTopic[] => {
+  const subjects = SUBJECTS[doi(paper)] ?? 'Other';
+  return Array.isArray(subjects) ? subjects : [subjects];
+};
+export const researchSubject = (paper: Publication): string => SHORT_SUBJECTS[doi(paper)] ?? researchTopics(paper)[0];
 export function researchRoles(paper: Publication) {
   const record = records.publications.find(item => item.doi.toLowerCase() === doi(paper));
   return record ? publicationRoles(record) : [paper.role];
@@ -90,7 +92,7 @@ export function filterResearch(papers: readonly Publication[], filters: Research
   return orderedPapers(papers).filter(paper => {
     const roles = researchRoles(paper);
     const lead = roles.includes('first') || roles.includes('corresponding');
-    return (!filters.topics.length || filters.topics.includes(researchTopic(paper)))
+    return (!filters.topics.length || researchTopics(paper).some(topic => filters.topics.includes(topic)))
       && (!filters.authors.length || filters.authors.some(role => role === 'coauthor' ? !lead && roles.includes('coauthor') : roles.includes(role)));
   });
 }

@@ -36,7 +36,7 @@
 .monitor-cv-activity p { font: 17px/1.2 Arial, sans-serif; }
 .monitor-cv-activity p[data-journal='true'] { font-family: Georgia, serif; font-style: italic; }
 .monitor-cv-activity p + p { margin-top: 3px; font-size: 16px; color: var(--studio-muted); }
-.monitor-cv-portrait { position: absolute; top: 128px; left: 960px; width: 420px; height: 560px; object-fit: cover; object-position: center top; }
+.monitor-cv-portrait { position: absolute; bottom: 54px; left: 980px; width: 400px; height: auto; }
 .monitor-cv-cover-footer { position: absolute; left: 60px; right: 60px; bottom: 16px; padding-top: 15px; border-top: 1px solid var(--studio-line); font-size: 15px; text-transform: uppercase; color: var(--studio-teal); }
 .monitor-cv-details { padding: 56px 60px 48px; }
 .monitor-cv-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; padding-bottom: 48px; border-bottom: 1px solid var(--studio-line); }
@@ -133,8 +133,9 @@
   .loading-monitor-reader .monitor-cv-activity { margin-bottom: 24px; }
   .loading-monitor-reader .monitor-cv-activity:last-child { margin-bottom: 0; }
   .loading-monitor-reader .monitor-cv-activity p { font: inherit; }
+  .loading-monitor-reader .monitor-cv-activity .monitor-cv-inline { white-space: normal; overflow-wrap: anywhere; }
   .loading-monitor-reader .monitor-cv-activity p + p { font-size: 14px; line-height: 1.65; }
-  .loading-monitor-reader .monitor-cv-cover > .monitor-cv-portrait { width: min(100%, 240px); height: auto; aspect-ratio: 3 / 4; }
+  .loading-monitor-reader .monitor-cv-cover > .monitor-cv-portrait { width: min(100%, 240px); height: auto; }
   .loading-monitor-reader .monitor-cv-cover-footer { font-size: 12px; padding-top: 16px; }
   .loading-monitor-reader .monitor-cv-details { padding: 0 20px 24px; }
   .loading-monitor-reader .monitor-cv-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; padding-bottom: 24px; }

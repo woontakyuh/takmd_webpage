@@ -1,4 +1,4 @@
-export const profileImage = '/images/profile.webp';
+export const profileImage = '/images/profile-chamjoeun-cutout.webp';
 
 export const academicInterests = [
   'MISS',

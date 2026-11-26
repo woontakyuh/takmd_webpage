@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import data from '../src/data/publications.json';
-import { filterResearch, researchRoles, researchTopic, toggleResearchFilter, RESEARCH_TOPICS } from '../src/components/studio/researchIndex';
+import { filterResearch, researchRoles, researchTopics, toggleResearchFilter, RESEARCH_TOPICS } from '../src/components/studio/researchIndex';
 const papers = data.publications.map(paper => ({ ...paper, id: paper.doiUrl }));
 const all = { topics: [], authors: [] };
 describe('research multi-select and page sequence', () => {
@@ -21,10 +21,22 @@ describe('research multi-select and page sequence', () => {
     const selected = filterResearch(papers, { topics: ['AI', 'UBE'], authors: ['first', 'corresponding'] });
     const union = [...filterResearch(papers, { topics: ['AI'], authors: ['first', 'corresponding'] }), ...filterResearch(papers, { topics: ['UBE'], authors: ['first', 'corresponding'] })];
     expect(new Set(selected.map(paper => paper.id))).toEqual(new Set(union.map(paper => paper.id)));
-    expect(selected.every(paper => ['AI', 'UBE'].includes(researchTopic(paper)))).toBe(true);
+    expect(selected.every(paper => researchTopics(paper).some(topic => ['AI', 'UBE'].includes(topic)))).toBe(true);
     expect(selected.map(paper => paper.date)).toEqual(selected.map(paper => paper.date).toSorted().reverse());
-    expect(RESEARCH_TOPICS.reduce((sum, topic) => sum + filterResearch(papers, { ...all, topics: [topic] }).length, 0)).toBe(papers.length);
+    expect(RESEARCH_TOPICS.reduce((sum, topic) => sum + filterResearch(papers, { ...all, topics: [topic] }).length, 0)).toBe(papers.length + 1);
     expect(filterResearch(papers, { topics: ['AI'], authors: ['coauthor'] })).toHaveLength(4);
+  });
+  test('C1–2 ED schwannoma appears under UBE and Tumor without doubling a combined count', () => {
+    const doi = 'jmisst.2025.02747';
+    const paper = papers.find(item => item.doiUrl.includes(doi));
+    expect(researchTopics(paper)).toEqual(['UBE', 'Tumor']);
+    const ube = filterResearch(papers, { ...all, topics: ['UBE'] });
+    const tumor = filterResearch(papers, { ...all, topics: ['Tumor'] });
+    const both = filterResearch(papers, { ...all, topics: ['UBE', 'Tumor'] });
+    expect(ube.some(item => item.doiUrl.includes(doi))).toBe(true);
+    expect(tumor.some(item => item.doiUrl.includes(doi))).toBe(true);
+    expect(both.filter(item => item.doiUrl.includes(doi))).toHaveLength(1);
+    expect(both).toHaveLength(ube.length + tumor.length - 1);
   });
   test('toggling retains other selections and removing the last restores All', () => {
     const combined = toggleResearchFilter(['AI'], 'UBE');

@@ -10,7 +10,7 @@ export const contactCards = [
   },
   {
     label: 'Hospital',
-    value: 'Davos Hospital',
+    value: 'Chamjoeun General Hospital',
     description: 'Clinical profile and hospital-facing professional information.',
     href: PERSONAL_LINKS.hospital,
   },

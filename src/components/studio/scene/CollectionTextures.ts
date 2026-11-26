@@ -154,7 +154,11 @@ export function useWorkstationTexture() {
       const context = texture.image.getContext('2d');
       if (!context) return;
       context.imageSmoothingQuality = 'high';
-      context.drawImage(portrait, 960, 128, 420, 560);
+      const portraitWidth = 400;
+      const portraitHeight = portrait.height * portraitWidth / portrait.width;
+      context.drawImage(portrait, 980, 756 - portraitHeight, portraitWidth, portraitHeight);
+      context.fillStyle = PALETTE.line;
+      context.fillRect(60, 756, 1320, 1);
       texture.needsUpdate = true;
     };
     portrait.src = profileImage;

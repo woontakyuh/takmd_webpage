@@ -1,12 +1,10 @@
 import { useGLTF, useTexture } from '@react-three/drei';
 import { useEffect, useMemo } from 'react';
 import { usePhone } from './Device';
-import { Box3, Euler, Mesh, MeshStandardMaterial, SRGBColorSpace, Vector3 } from 'three';
-import type { BufferGeometry, Texture } from 'three';
-import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
+import { Box3, Mesh, MeshStandardMaterial, PlaneGeometry, Raycaster, SRGBColorSpace, Vector3 } from 'three';
+import type { BufferGeometry, Material, Texture } from 'three';
 import { RACK_RAIL_HALF_HEIGHT } from './GarmentRack';
 
-// Preserve the coat's vertices: hook widening and the sleeve emblem depend on them.
 // The phone derivative changes only texture images, with geometry bytes checked by its build script.
 const COAT_URL = '/models/garments/physician-coat-2k.glb?v=20260918-original' as const;
 const COAT_URL_PHONE = '/models/garments/physician-coat-phone.glb' as const;
@@ -36,17 +34,25 @@ type HangingGarmentProps = {
   readonly file?: string;
 };
 
-function coatSleeveEmblem(garment: Mesh, texture: Texture) {
-  // +X is the garment's front, so its wearer's left sleeve is on -Z.
-  const surface = new Mesh(garment.geometry, garment.material);
-  const geometry = new DecalGeometry(surface, new Vector3(-0.043, 0.15, -0.246),
-    new Euler(0.17, Math.PI, 0), new Vector3(0.128, 0.095, 0.12));
+function coatPocketEmbroidery(garment: Mesh, texture: Texture) {
+  const geometry = new PlaneGeometry(0.105, 0.12, 8, 12);
+  const positions = geometry.getAttribute('position');
+  const ray = new Raycaster();
+  for (let i = 0; i < positions.count; i++) {
+    const y = 0.035 + positions.getY(i);
+    const z = -0.105 - positions.getX(i);
+    ray.set(new Vector3(0.2, y, z), new Vector3(-1, 0, 0));
+    const hit = ray.intersectObject(garment)[0];
+    positions.setXYZ(i, (hit?.point.x ?? 0.065) + 0.001, y, z);
+  }
+  geometry.computeVertexNormals();
   const material = new MeshStandardMaterial({
-    map: texture, roughness: 0.96, metalness: 0, transparent: true, alphaTest: 0.05,
-    depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4,
+    map: texture, transparent: true, alphaTest: 0.05,
+    roughness: 1, metalness: 0, depthWrite: false,
+    polygonOffset: true, polygonOffsetFactor: -2,
   });
   const emblem = new Mesh(geometry, material);
-  emblem.name = 'Chamjoeun Hospital emblem · wearer left sleeve';
+  emblem.name = 'Chamjoeun Hospital pocket embroidery';
   emblem.receiveShadow = true;
   return emblem;
 }
@@ -80,7 +86,7 @@ function HangingGarment({ url, file = url, emblem }: HangingGarmentProps) {
   const fitted = useMemo(() => {
     const model = scene.clone(true);
     const ownedGeometries: BufferGeometry[] = [];
-    const ownedMaterials: MeshStandardMaterial[] = [];
+    const ownedMaterials: Material[] = [];
     const coatMeshes: Mesh[] = [];
     model.traverse((child) => {
       if (!(child instanceof Mesh)) return;
@@ -98,7 +104,7 @@ function HangingGarment({ url, file = url, emblem }: HangingGarmentProps) {
     const scale = ASSEMBLY_HEIGHT / Math.max(size.y, 0.000_001);
     if (emblem) {
       coatMeshes.forEach(mesh => {
-        const patch = coatSleeveEmblem(mesh, emblem);
+        const patch = coatPocketEmbroidery(mesh, emblem);
         mesh.add(patch);
         ownedGeometries.push(patch.geometry);
         ownedMaterials.push(patch.material);
@@ -127,7 +133,7 @@ function HangingGarment({ url, file = url, emblem }: HangingGarmentProps) {
 
 export function DoctorCoat() {
   const phone = usePhone();
-  const source = useTexture('/images/brands/chamjoeun-hospital-emblem.svg');
+  const source = useTexture('/models/garments/chamjoeun-pocket-embroidery.webp');
   const emblem = useMemo(() => {
     const texture = source.clone();
     texture.colorSpace = SRGBColorSpace;

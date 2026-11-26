@@ -25,7 +25,7 @@ const MAILS: Mail[] = [
         { label: 'woontak.yuh@gmail.com', href: 'mailto:woontak.yuh@gmail.com' },
         { label: 'LinkedIn — Woon Tak Yuh', href: 'https://www.linkedin.com/in/woon-tak-yuh-03420311b/' },
         { label: 'Instagram — @takmd', href: 'https://instagram.com/takmd' },
-        { label: 'Davos Hospital — Center for Endoscopic Spine Surgery', href: 'https://www.davoshospital.co.kr/depart/page02-detail.html?dr_idx=139' },
+        { label: 'Chamjoeun General Hospital — Spine Center', href: 'https://chamhosp.co.kr/?p=10_view&doctorId=125&dType=department' },
       ],
     },
   },
