@@ -386,7 +386,8 @@ function OfficeExperience(content: StudioContent) {
       </div>
     </section>
     {loadingProfileOpen && <LoadingMonitorReader publicationCount={content.publications.length} presentationCount={content.presentations.length} onClose={close} scrollState={monitorScroll.current} />}
-    {!roomReady && !selected && !details && <nav className="office-desk-entry" aria-label="Start at the desk"><button onClick={() => open('ai')}>Read CV</button><button onClick={() => open('research')}>Publications</button></nav>}
+    {/* The academic office already offers CV and Research in its tab row, and this pair would sit on the loading status. */}
+    {!ACADEMIC_OFFICE && !roomReady && !selected && !details && <nav className="office-desk-entry" aria-label="Start at the desk"><button onClick={() => open('ai')}>Read CV</button><button onClick={() => open('research')}>Publications</button></nav>}
     {showOverviewReturn && <button className="office-overview-return" onClick={() => goToView(0)} aria-label="Return to the overview"><OfficeIcon name="overview" /><span>Overview</span></button>}
     <ReadingPanel {...content} detailsPath={tvTeachingPath ? null : details} selected={details ? null : (ACADEMIC_OFFICE && selected === 'research' && !compact) || selected === 'ai' || selected === 'education' || selected === 'family' || selected === 'award-photo' || selected === 'books' || selected === 'bookshelf' || selected === 'surfing' ? null : selected} collection={collection} onPaper={selectPaper} onTalk={selectTalk} talkSlideIndex={talkSlideIndex} onTalkSlide={setTalkSlideIndex} onClose={close} />
     {zoomed && <div className="office-approach-actions"><button className="studio-icon-button" onClick={() => window.dispatchEvent(new Event('office:zoom-close'))} aria-label="Return from closer view"><OfficeIcon name="close" /></button></div>}
