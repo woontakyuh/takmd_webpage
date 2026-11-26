@@ -1,0 +1,21 @@
+.tv-teaching, .tv-teaching-expanded { --studio-ink: #202d2a; --studio-muted: #5c655f; --studio-paper: #eae8e1; --studio-light: #f8f6f0; --studio-line: #cbcdc3; --studio-teal: #355a50; }
+.tv-teaching { display: flex; flex-direction: column; background: #f8f6f0; color: #202d2a; font-size: 14px; overflow: hidden; }
+.tv-teaching header, .tv-teaching-expanded > header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid #cbcdc3; flex-shrink: 0; }
+.tv-teaching nav { display: flex; gap: 12px; flex: 1; overflow: auto; }
+.tv-teaching button, .tv-teaching-expanded > header button { border: 0; background: transparent; color: inherit; cursor: pointer; font: inherit; padding: 6px 2px; white-space: nowrap; }
+.tv-teaching button[aria-pressed=true] { box-shadow: 0 2px #355a50; }
+.tv-teaching button svg, .tv-teaching-expanded > header svg { width: 20px; height: 20px; }
+.tv-teaching-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 18px 24px; touch-action: pan-y; }
+.tv-teaching .reader-detail-title { font-size: clamp(20px, 2.2vw, 32px); }
+.tv-teaching .studio-panel-intro { font-size: 15px; }
+.tv-teaching-expanded { position: fixed; inset: 0; width: min(1000px, calc(100vw - 24px)); height: calc(100dvh - 24px); max-height: none; max-width: none; margin: auto; padding: 0; border: 0; background: #f8f6f0; color: #202d2a; }
+.tv-teaching-expanded[open] { display: flex; flex-direction: column; }
+.tv-teaching-expanded::backdrop { background: #202d2a80; }
+.tv-teaching-expanded > header { justify-content: space-between; }
+@media (max-width: 760px) {
+  .tv-teaching { font-size: 11px; }
+  .tv-teaching header { padding: 3px 6px; gap: 5px; }
+  .tv-teaching nav { gap: 10px; }
+  .tv-teaching-scroll { padding: 12px 16px; }
+  .tv-teaching-expanded { width: 100%; height: 100dvh; }
+}

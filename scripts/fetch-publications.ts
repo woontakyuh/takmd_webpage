@@ -1,3 +1,6 @@
+import { fileURLToPath } from "node:url";
+import { countPublicationRoles, PUBLICATION_OWNER } from "../src/data/publicationAuthorship";
+
 /**
  * Build-time script: Fetches all Published papers from Notion "연구DB",
  * sorts by publication date desc, and writes publications.json for the site.
@@ -9,7 +12,7 @@
 const DATABASE_ID = "c222e1a3-0c07-4227-bb6c-b26365cd0509";
 const API_VERSION = "2022-06-28";
 const API_BASE = "https://api.notion.com/v1";
-const OWNER = "여운탁";
+const OWNER = PUBLICATION_OWNER;
 
 if (!process.env.NOTION_TOKEN) {
   const fs = await import("fs");
@@ -130,7 +133,8 @@ function transformPage(page: NotionPage): Publication | null {
     id: page.id.replace(/-/g, "").substring(0, 8),
     title,
     shortTitle: manualShort || shortenTitle(title),
-    journal: getSelect(p["Target J"]),
+    // The Notion journal category abbreviates this verified Bioengineering record.
+    journal: doi === "10.3390/bioengineering10121363" ? "Bioengineering" : getSelect(p["Target J"]),
     year: parseInt(pubDate.substring(0, 4), 10),
     date: pubDate,
     firstAuthor,
@@ -189,11 +193,7 @@ async function main() {
     .filter((p): p is Publication => p !== null)
     .sort((a, b) => b.date.localeCompare(a.date));
 
-  // Count by role
-  const byRole = publications.reduce((acc, p) => {
-    acc[p.role] = (acc[p.role] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const byRole = countPublicationRoles(publications);
 
   console.log(`\nValid publications: ${publications.length}`);
   console.log(`  First author: ${byRole.first ?? 0}`);
@@ -209,7 +209,7 @@ async function main() {
 
   const fs = await import("fs");
   const path = await import("path");
-  const outDir = path.join(import.meta.dir, "..", "src", "data");
+  const outDir = fileURLToPath(new URL("../src/data/", import.meta.url));
   fs.mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, "publications.json");
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2));

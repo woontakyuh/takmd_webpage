@@ -17,19 +17,26 @@ const { Content } = await render(entry);
 ---
 
 <Layout title={`${entry.data.title} - Knowledge - takmd`} description={entry.data.description}>
-  <article class="page-shell py-14">
-    <header class="max-w-3xl">
-      <p class="text-sm text-[var(--color-text-muted)]">{entry.data.date.toLocaleDateString('en-CA')}</p>
-      <h1 class="page-title-gradient mt-2 text-3xl font-extrabold sm:text-4xl">{entry.data.title}</h1>
-      <div class="mt-4 flex flex-wrap gap-2">
-        {entry.data.tags.map((tag: string) => (
-          <TagChip label={tag} />
-        ))}
-      </div>
-    </header>
+  <main id="main-content">
+    <article class="page-shell page-section">
+      <header class="max-w-3xl">
+        <p class="eyebrow">Knowledge note · {entry.data.date.toLocaleDateString('en-CA')}</p>
+        <h1 class="mt-5 font-serif text-5xl leading-none tracking-[-0.04em] text-[var(--color-text)] sm:text-6xl">{entry.data.title}</h1>
+        <p class="mt-5 text-lg leading-8 text-[var(--color-text-secondary)]">{entry.data.description}</p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          {entry.data.tags.map((tag: string) => (
+            <TagChip label={tag} />
+          ))}
+        </div>
+      </header>
 
-    <div class="prose-content mt-10">
-      <Content />
-    </div>
-  </article>
+      <div class="prose-content mt-12 rounded-[16px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 sm:p-8">
+        <Content />
+      </div>
+
+      <div class="mt-10">
+        <a href="/knowledge" class="text-link">Back to knowledge base</a>
+      </div>
+    </article>
+  </main>
 </Layout>

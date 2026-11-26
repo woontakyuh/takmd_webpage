@@ -1,3 +1,7 @@
+import { fileURLToPath } from "node:url";
+import { applyOverrides } from "./schedule-overrides";
+import type { ScheduleOverride } from "./schedule-overrides";
+
 /**
  * Build-time script: Fetches all 발표 entries from Notion Schedule DB,
  * parses multi-topic entries (1) ..., 2) ...), and writes presentations.json.
@@ -119,35 +123,17 @@ function transformPage(page: NotionPage): Presentation | null {
 
 // ─── Overrides (manual English translations) ─────────────
 
-interface Override {
-  name?: string;
-  place?: string;
-  topics?: string[];
-}
-
-async function loadOverrides(): Promise<Record<string, Override>> {
+async function loadOverrides(): Promise<Record<string, ScheduleOverride>> {
   const fs = await import("fs");
-  const path = await import("path");
-  const p = path.join(import.meta.dir, "..", "src", "data", "schedule-overrides.json");
+  const p = fileURLToPath(new URL("../src/data/schedule-overrides.json", import.meta.url));
   if (!fs.existsSync(p)) return {};
   const raw = JSON.parse(fs.readFileSync(p, "utf-8"));
   // Strip metadata keys starting with _
-  const result: Record<string, Override> = {};
+  const result: Record<string, ScheduleOverride> = {};
   for (const [k, v] of Object.entries(raw)) {
-    if (!k.startsWith("_")) result[k] = v as Override;
+    if (!k.startsWith("_")) result[k] = v as ScheduleOverride;
   }
   return result;
-}
-
-function applyOverrides(pres: Presentation, overrides: Record<string, Override>): Presentation {
-  const o = overrides[pres.date];
-  if (!o) return pres;
-  return {
-    ...pres,
-    name: o.name ?? pres.name,
-    place: o.place ?? pres.place,
-    topics: o.topics ?? pres.topics,
-  };
 }
 
 // ─── Fetch ───────────────────────────────────────────────
@@ -230,7 +216,7 @@ async function main() {
 
   const fs = await import("fs");
   const path = await import("path");
-  const outDir = path.join(import.meta.dir, "..", "src", "data");
+  const outDir = fileURLToPath(new URL("../src/data/", import.meta.url));
   fs.mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, "presentations.json");
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
