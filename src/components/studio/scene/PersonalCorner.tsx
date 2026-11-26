@@ -9,6 +9,9 @@ import { TexturedArtwork } from './TexturedArtwork';
 import { Surfboard } from './Surfboard';
 import { SurfboardStoryAnchor } from './SurfboardStoryAnchor';
 import { ROOM } from './config';
+import { HoverAccent } from './HoverAccent';
+import { useSceneAction } from './useSceneAction';
+import { PERSONAL_LINKS } from '../personal';
 import { ACADEMIC_OFFICE } from './roomEdition';
 
 type PersonalCornerProps = Pick<StudioSceneProps, 'selected' | 'onSelect' | 'reducedMotion'>;
@@ -22,11 +25,7 @@ export function PersonalCorner({ selected, onSelect, reducedMotion }: PersonalCo
       <TexturedArtwork />
       <group position={[...wardrobe.position]} rotation={[0, wardrobe.rotation, 0]}>
         <GarmentRack />
-        <group name="Chamjoeun Hospital physician coat · no external link"
-          position={[EPOCH_HANGER_POSITIONS.coat[0], EPOCH_HANGER_POSITIONS.coat[1] - RACK_RAIL_HALF_HEIGHT, EPOCH_HANGER_POSITIONS.coat[2]]}
-          rotation={[0, Math.PI / 2 + 0.08, 0]}>
-          <DoctorCoat />
-        </group>
+        <CoatLink />
         {!ACADEMIC_OFFICE && <Interactive id="bjj" selected={selected} onSelect={onSelect} reducedMotion={reducedMotion}
           fixed position={[EPOCH_HANGER_POSITIONS.gi[0], EPOCH_HANGER_POSITIONS.gi[1] - RACK_RAIL_HALF_HEIGHT, EPOCH_HANGER_POSITIONS.gi[2]]}
           rotation={Math.PI / 2}>
@@ -40,4 +39,17 @@ export function PersonalCorner({ selected, onSelect, reducedMotion }: PersonalCo
       </Interactive>}
     </group>
   );
+}
+
+// The Chamjoeun coat opens the hospital's own page for the doctor, in a new tab so the office stays open behind it.
+function CoatLink() {
+  const { hovered, handlers } = useSceneAction({
+    disabled: false,
+    onActivate: () => { window.open(PERSONAL_LINKS.hospital, '_blank', 'noopener,noreferrer'); },
+  });
+  return <group name="Chamjoeun Hospital physician coat · opens the hospital profile"
+    position={[EPOCH_HANGER_POSITIONS.coat[0], EPOCH_HANGER_POSITIONS.coat[1] - RACK_RAIL_HALF_HEIGHT, EPOCH_HANGER_POSITIONS.coat[2]]}
+    rotation={[0, Math.PI / 2 + 0.08, 0]} {...handlers}>
+    <HoverAccent active={hovered}><DoctorCoat /></HoverAccent>
+  </group>;
 }
