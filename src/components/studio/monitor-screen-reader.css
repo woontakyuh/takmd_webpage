@@ -115,27 +115,32 @@
   .loading-monitor-bezel::after { display: none; }
   .loading-monitor-screen { position: relative; inset: auto !important; width: 100% !important; height: 100%; aspect-ratio: auto !important; }
   .loading-monitor-surface { position: relative; inset: auto; height: 100%; transform: none !important; }
-  .loading-monitor-reader .monitor-screen-reader { --monitor-control-scale: 1 !important; width: 100% !important; height: 100% !important; display: grid; grid-template-rows: auto minmax(0, 1fr); font: 16px/1.65 var(--studio-sans, Arial, sans-serif); }
+  .loading-monitor-reader .monitor-screen-reader { --monitor-control-scale: 1 !important; width: 100% !important; height: 100% !important; display: grid; grid-template-rows: auto minmax(0, 1fr); font: 15px/1.55 var(--studio-sans, Arial, sans-serif); }
   .loading-monitor-reader .monitor-screen-header { position: static; min-width: 0; padding-left: 16px; border-radius: 4px 4px 0 0; }
   .loading-monitor-reader .monitor-screen-header h2 { font-size: 14px; }
   .loading-monitor-reader .monitor-screen-content { position: relative; inset: auto; min-height: 0; border-radius: 0 0 4px 4px; }
   .loading-monitor-reader .cv-reader { width: 100%; }
-  .loading-monitor-reader .monitor-cv-cover { height: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 24px; }
+  /* The portrait sits beside the name on the opening screen instead of after every activity. */
+  .loading-monitor-reader .monitor-cv-cover { height: auto; padding: 20px 18px; display: grid; grid-template-columns: minmax(0, 1fr) 96px; column-gap: 12px; row-gap: 18px; align-items: start; }
+  .loading-monitor-reader .monitor-cv-cover > :not(.monitor-cv-portrait) { grid-column: 1 / -1; }
+  .loading-monitor-reader .monitor-cv-cover > :is(.monitor-cv-eyebrow, .monitor-cv-identity) { grid-column: 1; }
+  .loading-monitor-reader .monitor-cv-cover > .monitor-cv-eyebrow { grid-row: 1; align-self: end; }
+  .loading-monitor-reader .monitor-cv-cover > .monitor-cv-identity { grid-row: 2; }
   .loading-monitor-reader .monitor-cv-cover > * { position: static; width: auto; }
-  .loading-monitor-reader .monitor-cv-eyebrow { font-size: 28px; gap: 12px; }
-  .loading-monitor-reader .monitor-cv-identity h1 { font-size: 32px; line-height: 1.15; }
-  .loading-monitor-reader .monitor-cv-identity > p { font-size: 16px; }
+  .loading-monitor-reader .monitor-cv-eyebrow { font-size: 21px; gap: 12px; }
+  .loading-monitor-reader .monitor-cv-identity h1 { font-size: 25px; line-height: 1.15; }
+  .loading-monitor-reader .monitor-cv-identity > p { margin-top: 8px; font-size: 12.5px; }
   .loading-monitor-reader .monitor-cv-identity > .monitor-cv-appointment { font-size: 14px; }
-  .loading-monitor-reader .monitor-cv-cover h2 { font-size: 14px; }
+  .loading-monitor-reader .monitor-cv-cover h2 { font-size: 13px; }
   .loading-monitor-reader .monitor-cv-interests p { font: inherit; }
-  .loading-monitor-reader .monitor-cv-activities { padding-top: 24px; }
+  .loading-monitor-reader .monitor-cv-activities { padding-top: 18px; }
   .loading-monitor-reader .monitor-cv-activity-columns { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .loading-monitor-reader .monitor-cv-activity { margin-bottom: 24px; }
+  .loading-monitor-reader .monitor-cv-activity { margin-bottom: 14px; }
   .loading-monitor-reader .monitor-cv-activity:last-child { margin-bottom: 0; }
   .loading-monitor-reader .monitor-cv-activity p { font: inherit; }
   .loading-monitor-reader .monitor-cv-activity .monitor-cv-inline { white-space: normal; overflow-wrap: anywhere; }
-  .loading-monitor-reader .monitor-cv-activity p + p { font-size: 14px; line-height: 1.65; }
-  .loading-monitor-reader .monitor-cv-cover > .monitor-cv-portrait { width: min(100%, 240px); height: auto; }
+  .loading-monitor-reader .monitor-cv-activity p + p { font-size: 13px; line-height: 1.5; }
+  .loading-monitor-reader .monitor-cv-cover > .monitor-cv-portrait { grid-column: 2; grid-row: 1 / span 2; width: 100%; height: auto; border-radius: 4px; }
   .loading-monitor-reader .monitor-cv-cover-footer { font-size: 12px; padding-top: 16px; }
   .loading-monitor-reader .monitor-cv-details { padding: 0 20px 24px; }
   .loading-monitor-reader .monitor-cv-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; padding-bottom: 24px; }
