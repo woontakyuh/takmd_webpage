@@ -6,6 +6,7 @@ import { MathUtils, PCFShadowMap } from 'three';
 import { OfficeRenderer } from './scene/OfficeRenderer';
 import { SceneFrameLoop } from './scene/SceneFrameLoop';
 import { StaticMerge } from './scene/StaticMerge';
+import { PhoneMerge } from './scene/PhoneMerge';
 import { GuidedViewProvider } from './scene/GuidedView';
 import { RoomReadyProvider } from './scene/DeferredAssets';
 import { DeviceProvider } from './scene/Device';
@@ -71,6 +72,7 @@ export function StudioScene(props: StudioSceneProps) {
       <GuidedViewProvider section={props.guidedSection ?? null}>
       <SceneFrameLoop active={visible && (!props.paused || !props.roomReady)} settled={props.roomReady && (props.entry === 'complete' || props.entry === 'reading')} />
       <StaticMerge />
+      {mobile && <PhoneMerge />}
       {ROOM_ENVIRONMENT}
       <ambientLight intensity={0.06 + skyFill * 0.16} color={PALETTE.paperLight} />
       <hemisphereLight args={[sun.skyColor, PALETTE.walnut, 0.10 + skyFill * 0.48]} />
